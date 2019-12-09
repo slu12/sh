@@ -9,11 +9,11 @@
           <div class="box_row rowRight">
             <div class="body-r-1 inputSty">
               <Input v-model="param.xmLike"
-                     :placeholder='$t("USER_NAME")' style="width: 200px"
+                     placeholder='用户名' style="width: 200px"
                      @on-keyup.enter="findMessList()"
                      @on-change="findMessList"></Input>
               <Input v-model="param.sjhLike"
-                     :placeholder='$t("PHONE_NUMBER")' style="width: 200px"
+                     placeholder='电话号码' style="width: 200px"
                      @on-keyup.enter="findMessList()"
                      @on-change="findMessList"></Input>
             </div>
@@ -33,7 +33,6 @@
             <Table ref="table"
                    size='large'
                    :height="tabHeight"
-                   :row-class-name="rowClassName"
                    :columns="tableTiT"
                    :data="tableData"></Table>
           </Row>
@@ -78,33 +77,28 @@
                 pageTotal: 2,
                 tableTiT: [{
                     title: "序号",
-                      tit:"ORDER",
                     width: 80,
                     align: 'center',
                     type: 'index'
                 },
                     {
                         title: '帐号',
-                        tit:"ID",
                         align: 'center',
                         key: 'zh'
                     },
                     {
                         title: '姓名',
-                          tit:"NAME",
                           minWidth:100,
                         align: 'center',
                         key: 'xm'
                     },
                     {
                         title: '证件号码',
-                          tit:"ID_NUMBER",
                         align: 'center',
                         key: 'zjhm'
                     },
                     {
                         title: '性别',
-                          tit:"GENDER",
                         align: 'center',
                         key: 'xb',
                         render: (h, params) => {
@@ -113,20 +107,17 @@
                     },
                     {
                         title: '手机号',
-                          tit:"TELPHONE_NUM",
                         width: 120,
                         align: 'center',
                         key: 'sjh'
                     },
                     {
                         title: '职务',
-                          tit:"DUTY",
                         align: 'center',
                         key: 'zw'
                     },
                     {
                         title: '类型',
-                          tit:"TYPE",
                         align: 'center',
                         key: 'lx',
                         render: (h, p) => {
@@ -137,7 +128,6 @@
                     },
                     {
                         title: '操作',
-                          tit:"OPERATION",
                         key: 'action',
                         width: 150,
                         align: 'center',
@@ -223,21 +213,20 @@
 //			},
         },
         created() {
-            this.$store.commit('setCurrentPath', [{
-                title: '首页',
-            }, {
-                title: '系统管理',
-            }, {
-                title: '用户管理',
-            }]),
-                this.tabHeight = this.getWindowHeight() - 260
+            // this.$store.commit('setCurrentPath', [{
+            //     title: '首页',
+            // }, {
+            //     title: '系统管理',
+            // }, {
+            //     title: '用户管理',
+            // }]),
+            this.tabHeight = this.getWindowHeight() - 260
             this.getmess()
             this.getDict()
         },
         methods: {
             getDict() {
                 this.yhlxDict = this.dictUtil.getByCode(this, this.yhlxDictCode);
-                log(this.yhlxDict);
             },
             enter(mes) {
 //				log(mes)

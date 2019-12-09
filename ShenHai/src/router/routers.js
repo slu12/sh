@@ -103,20 +103,24 @@ export default [
       //   title: '组织机构',
       //   component: () => import('@/viewDevelop/system/system-framework')
       // },
-      // {
-      //   path: 'system-dictionary',
-      //   icon: 'android-clipboard',
-      //   name: 'system-dictionary',
-      //   title: '字典管理',
-      //   component: () => import('@/viewDevelop/system/system-dictionary')
-      // },
-      // {
-      //   path: 'system-ITSM',
-      //   icon: 'android-clipboard',
-      //   name: 'system-ITSM',
-      //   title: '服务管理',
-      //   component: () => import('@/viewDevelop/system/system-ITSM')
-      // },
+      {
+        path: 'system-dictionary',
+        name: 'system-dictionary',
+        meta: {
+          icon: 'md-contacts',
+          title: '字典管理',
+        },
+        component: () => import('@/viewDevelop/system/system-dictionary')
+      },
+      {
+        path: 'system-ITSM',
+        name: 'system-ITSM',
+        meta: {
+          icon: 'md-contacts',
+          title: '服务管理',
+        },
+        component: () => import('@/viewDevelop/system/system-ITSM')
+      },
       // {
       //   path: 'system-function',
       //   icon: 'android-clipboard',
@@ -124,13 +128,15 @@ export default [
       //   title: '功能管理',
       //   component: () => import('@/viewDevelop/system/system-function')
       // },
-      // {
-      //   path: 'system-daily',
-      //   icon: 'android-clipboard',
-      //   name: 'system-daily',
-      //   title: '日志管理',
-      //   component: () => import('@/viewDevelop/system/system-daily')
-      // },
+      {
+        path: 'system-daily',
+        name: 'system-daily',
+        meta: {
+          icon: 'md-contacts',
+          title: '日志管理',
+        },
+        component: () => import('@/viewDevelop/system/system-daily')
+      },
       // {
       //   path: 'system-suggestions',
       //   icon: 'android-clipboard',
@@ -159,6 +165,51 @@ export default [
       //   title: '活动管理',
       //   component: () => import('@/viewDevelop/system/system-advertising')
       // }
+    ]
+  },
+  {
+    path: '/terminal',
+    name: 'terminal',
+    meta: {
+      icon: 'ios-cog',
+      title: '终端管理',
+    },
+    component: Main,
+    children:[
+      {
+        path: 'terminal-car',
+        name: 'terminal-car',
+        meta: {
+          icon: 'ios-cog',
+          title: '北斗终端管理',
+        },
+        component: () => import('@/viewDevelop/terminal/terminal-car')
+      },
+      {
+        path: 'terminal_OBD',
+        name: 'terminal_OBD',
+        meta: {
+          icon: 'ios-cog',
+          title: '终端拔出管理',
+        },
+        component: () => import('@/viewDevelop/terminal/terminal_OBD')
+      },
+      {
+        path: 'terminal_GPS',
+        name: 'terminal_GPS',
+        meta: {
+          icon: 'ios-cog',
+          title: '终端数据库对接',
+        },
+        component: () => import('@/viewDevelop/terminal/terminal_GPS')
+      },
+      // {
+      //   path: 'terminal-station',
+      //   icon: 'android-clipboard',
+      //   name: 'terminal-station',
+      //   title: '智能站牌',
+      //   component: () => import('@/viewDevelop/terminal/terminal-station')
+      // },
     ]
   },
 

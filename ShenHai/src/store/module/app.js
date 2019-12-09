@@ -56,6 +56,9 @@ export default {
     setHomeRoute (state, routes) {
       state.homeRoute = getHomeRoute(routes, homeName)
     },
+    clearTagNavList(state){
+      state.tagNavList = []
+    },
     setTagNavList (state, list) {
       let tagList = []
       if (list) {
@@ -68,7 +71,8 @@ export default {
         tagList.unshift(homeTag)
       }
       state.tagNavList = tagList
-      setTagNavListInLocalstorage([...tagList])
+      //本地缓存的导航页
+      // setTagNavListInLocalstorage([...tagList])
     },
     closeTag (state, route) {
       let tag = state.tagNavList.filter(item => routeEqual(item, route))

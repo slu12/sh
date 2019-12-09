@@ -5,7 +5,7 @@ import user from './module/user'
 import app from './module/app'
 import createLogger from 'vuex/dist/logger';
 Vue.use(Vuex)
-const debug = false
+const debug = true
 export default new Vuex.Store({
   state: {
     //

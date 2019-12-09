@@ -16,15 +16,23 @@
 
 <script>
 import LoginForm from './comp/loginform'
-import { mapActions } from 'vuex'
+import { mapActions,mapMutations } from 'vuex'
 export default {
   components: {
     LoginForm
+  },
+  created(){
+  },
+  mounted(){
+    this.clearTagNavList()
   },
   methods: {
     ...mapActions([
       'handleLogin',
       'getUserInfo'
+    ]),
+    ...mapMutations([
+      'clearTagNavList'
     ]),
     handleSubmit ({ userName, password }) {
           this.$router.push({

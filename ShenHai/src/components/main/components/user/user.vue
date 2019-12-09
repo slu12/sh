@@ -17,7 +17,7 @@
 
 <script>
 import './user.less'
-import { mapActions } from 'vuex'
+import { mapActions,mapMutations } from 'vuex'
 export default {
   name: 'User',
   props: {
@@ -34,8 +34,12 @@ export default {
     ...mapActions([
       'handleLogOut'
     ]),
+    ...mapMutations([
+      'clearTagNavList'
+    ]),
     logout () {
       this.handleLogOut().then(() => {
+        this.clearTagNavList()
         this.$router.push({
           name: 'login'
         })

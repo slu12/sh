@@ -3,39 +3,33 @@
 </style>
 <!--服务管理-->
 <template>
-	<div class="boxbackborder box">
-		<Card>
-			<Row class="margin-top-10" style='background-color: #fff;position: relative;'>
-				<span class="tabPageTit">
-    				<Icon type="ios-paper" size='30' color='#fff'></Icon>
-    			</span>
-				<div style="height: 45px;line-height: 45px;">
-					<div class="margin-top-10 box-row">
-						<div class="titmess">
-							<span>{{$t("SERVICE_MANAGEMENT")}}</span>
-						</div>
-						<div class="body-r-1 inputSty">
-							<Input v-model="param.fwmcLike" :placeholder='$t("SERVICE_NAME")' style="width: 200px" @on-keyup.enter="formList()"></Input>
-						</div>
-						<div class="butevent">
-							<Button type="primary" @click="formList()">
-								<Icon type="md-search"></Icon>
-								<!--查询-->
-							</Button>
-							<!--<Button type="primary" @click="AddDataList()">-->
-								<!--<Icon type="md-add"></Icon>-->
-							<!--</Button>-->
-						</div>
-					</div>
-				</div>
-			</Row>
-			<Row style="position: relative;">
-				<Table ref="table"  :height="tabHeight" :row-class-name="rowClassName" :columns="tableTiT" :data="tableData"></Table>
-			</Row>
-			<Row class="margin-top-10 pageSty">
-				<Page :total=pageTotal :current=param.pageNum :page-size=param.pageSize :page-size-opts=[8,10,20,30,40,50]  @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}' show-total show-elevator show-sizer placement='top' @on-change='pageChange'></Page>
-			</Row>
-		</Card>
+	<div class="box_col">
+    <div class="box_row rowBetween colItemCenter boxMar_B">
+      <pager-tit></pager-tit>
+      <div class="box_row rowRight">
+        <div class="body-r-1 inputSty">
+          <Input v-model="param.fwmcLike" placeholder='请输入服务名称' style="width: 200px" @on-keyup.enter="formList()"></Input>
+        </div>
+        <div class="butevent">
+          <Button type="primary" @click="formList()">
+            <Icon type="md-search"></Icon>
+            <!--查询-->
+          </Button>
+          <!--<Button type="primary" @click="AddDataList()">-->
+          <!--<Icon type="md-add"></Icon>-->
+          <!--</Button>-->
+        </div>
+      </div>
+
+    </div>
+		<div class="box_col_auto">
+      <Row style="position: relative;">
+        <Table ref="table"  :height="tabHeight" :columns="tableTiT" :data="tableData"></Table>
+      </Row>
+      <Row class="margin-top-10 pageSty">
+        <Page :total=pageTotal :current=param.pageNum :page-size=param.pageSize :page-size-opts=[8,10,20,30,40,50]  @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}' show-total show-elevator show-sizer placement='top' @on-change='pageChange'></Page>
+      </Row>
+    </div>
 		<component
 			:is="compName"
 			:chmess="chmess"
@@ -46,8 +40,6 @@
 <script>
 	import mixins from '@/mixins'
 	import i18nTabTit from '@/mixins/i18nTabTit'
-
-
 	import addmess from './comp/addmess.vue'
 	import mess from './comp/mess.vue'
 	export default {
@@ -219,11 +211,10 @@
 		methods: {
 			getLXDic(){
                 this.Dictionary = this.dictUtil.getByCode(this,this.lmdmDictionary);
-                log('字典',this.Dictionary)
             },
 			getmess(){
 				var v = this
-				this.$http.get(this.apis.ITMS.QUERY).then((res) =>{
+				this.$http.get('').then((res) =>{
 					v.tableData = res.page.list
 					v.SpinShow = false;
 					v.pageTotal=res.page.total
@@ -231,7 +222,7 @@
 			},
 			//删除数据
 			listDele(id){
-				this.util.del(this,this.apis.ITMS.DELE,[id],()=>{
+				this.util.del(this,'',[id],()=>{
                     this.getmess();
 				});
 			},

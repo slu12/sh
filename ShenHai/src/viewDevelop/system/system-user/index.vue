@@ -30,8 +30,7 @@
     </div>
     <div class="box_col_auto">
       <div :id="tabBox" style="position: relative;height: 100%">
-        <Table v-if="tab_H>0"
-               size='large'
+        <Table size='large'
                :height="tab_H"
                :columns="tableTiT"
                :data="tableData"></Table>

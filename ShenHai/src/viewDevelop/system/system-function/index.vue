@@ -45,13 +45,12 @@
 </template>
 
 <script>
-    import mixins from '@/mixins'
     import formData from './comp/formData.vue'
     import i18nTabTit from '@/mixins/i18nTabTit'
 
     export default {
         name: 'char',
-        mixins: [mixins,i18nTabTit],
+        mixins: [i18nTabTit],
         components: {
             formData
         },

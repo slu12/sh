@@ -123,8 +123,6 @@
       </div>
 </template>
 <script>
-    import mixins from '@/mixins'
-
     import treeList from './comp/treelist.vue'
     import modelForm from './comp/modelForm.vue'
     import FormItems from "../../components/formItems";
@@ -138,7 +136,7 @@
             FormItems,
             treeList, modelForm, zdTab, addZd
         },
-        mixins: [mixins],
+        mixins: [],
         data() {
             return {
                 jgmc: '',

@@ -44,7 +44,6 @@
 </template>
 
 <script>
-    import mixins from '@/mixins'
     import i18nTabTit from '@/mixins/i18nTabTit'
 
 
@@ -52,7 +51,7 @@
 
     export default {
         name: 'char',
-        mixins: [mixins, i18nTabTit],
+        mixins: [i18nTabTit],
         components: {
             compModal
         },

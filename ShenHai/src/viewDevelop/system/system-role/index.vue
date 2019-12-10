@@ -59,14 +59,13 @@
 </template>
 
 <script>
-    import mixins from '@/mixins'
     import i18nTabTit from '@/mixins/i18nTabTit'
     import addrole from './comp/addmess.vue'
     import modifyRolePermission from './comp/modifyRolePermission.vue'
 
     export default {
         name: 'char',
-        mixins: [mixins, i18nTabTit],
+        mixins: [i18nTabTit],
         components: {
             addrole,
             modifyRolePermission

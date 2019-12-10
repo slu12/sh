@@ -95,7 +95,6 @@
 	</div>
 </template>
 <script>
-	import mixins from '@/mixins'
 
 
     import expandRow from './table-expand.vue';
@@ -108,7 +107,7 @@
         	addmess,
 			mess
         },
-        mixins:[mixins,i18nTabTit],
+        mixins:[i18nTabTit],
         data () {
             return {
             	Carousel:3,

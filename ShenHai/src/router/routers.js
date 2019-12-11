@@ -69,15 +69,15 @@ export default [
       //   },
       //   component: () => import('@/viewDevelop/system/systemUser')
       // },
-      // {
-      //   path: 'organization',
-      //   name: 'ORGANIZATION',
-      //   meta: {
-      //     icon: 'md-arrow-dropdown-circle',
-      //     title: '组织架构'
-      //   },
-      //   component: () => import('@/viewDevelop/system/organization')
-      // },
+      {
+        path: 'organization',
+        name: 'ORGANIZATION',
+        meta: {
+          icon: 'md-arrow-dropdown-circle',
+          title: '组织架构'
+        },
+        component: () => import('@/viewDevelop/system/organization')
+      },
       {
         path: 'system-user',
         name: 'system-user',
@@ -271,11 +271,69 @@ export default [
         name: 'ship-certificate',
         meta: {
           icon: 'ios-cog',
-          title: '证书',
+          title: '证书管理',
         },
         component: () => import('@/viewDevelop/Shipmanagement/ship-certificate')
       },
+      {
+        path: 'ElectronicFence',
+        name: 'ElectronicFence',
+        meta: {
+          icon: 'ios-cog',
+          title: '电子围栏',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ElectronicFence')
+      },
+      {
+        path: 'ship-Up',
+        name: 'ship-Up',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶数据上传',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Up')
+      }
+
     ]
+  },
+  {
+    path: '/Personnel',
+    name: 'Personnel',
+    meta: {
+      icon: 'ios-cog',
+      title: '人事管理',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/boatman',
+        name: 'boatman',
+        meta: {
+          icon: 'ios-cog',
+          title: '船员管理',
+        },
+        component: () => import('@/viewDevelop/Personnel/boatman')
+      },
+      {
+        path: '/Ship-Manning',
+        name: 'Ship-Manning',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶配员',
+        },
+        component: () => import('@/viewDevelop/Personnel/Ship-Manning')
+      },
+      {
+        path: '/certificate',
+        name: 'certificate',
+        meta: {
+          icon: 'ios-cog',
+          title: '船员证书',
+        },
+        component: () => import('@/viewDevelop/Personnel/certificate')
+      },
+    ]
+
   },
   {
     path: '/security',

@@ -212,6 +212,93 @@ export default [
       // },
     ]
   },
+  {
+    path: '/Shipmanagement',
+    name: 'Shipmanagement',
+    meta: {
+      icon: 'ios-cog',
+      title: '船舶管理',
+    },
+    component: Main,
+    children:[
+      {
+        path: 'ship-mess',
+        name: 'ship-mess',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶详情',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-mess')
+      },
+      {
+        path: 'ship-Track',
+        name: 'ship-Track',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶跟踪',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
+      },
+      {
+        path: 'ship-trajectory',
+        name: 'ship-trajectory',
+        meta: {
+          icon: 'ios-cog',
+          title: '轨迹管理',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-trajectory')
+      },
+      {
+        path: 'ship-Video',
+        name: 'ship-Video',
+        meta: {
+          icon: 'ios-cog',
+          title: '视频监控',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Video')
+      },
+      {
+        path: 'ship-team',
+        name: 'ship-team',
+        meta: {
+          icon: 'ios-cog',
+          title: '船队管理',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-team')
+      },
+      {
+        path: 'ship-certificate',
+        name: 'ship-certificate',
+        meta: {
+          icon: 'ios-cog',
+          title: '证书',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-certificate')
+      },
+    ]
+  },
+  {
+    path: '/security',
+    name: 'security',
+    meta: {
+      icon: 'ios-cog',
+      title: '安全管理',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/rule',
+        name: 'rule',
+        meta: {
+          icon: 'ios-cog',
+          title: '规则管理',
+        },
+        component: () => import('@/viewDevelop/security/rule')
+      },
+    ]
+
+  },
+
 
 
 

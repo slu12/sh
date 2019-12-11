@@ -1,0 +1,16 @@
+1． 接口文档
+pdf文档：龙船数据API开发接口V1.2.8-船舶信息版.pdf
+
+2． 神海的Key，2年后到期
+6eaba9892bfb40feaa9a7998d10dba75
+
+3． 概要的接口调用方式
+    3.1GetComKey
+    http://api.shipdt.com/DataApiServer/getComKey
+    获得加密种子，如20190306
+    3.2获得报文字符串
+    md5(加密种子+Key)，没有+号，小写
+    如:201903066eaba9892bfb40feaa9a7998d10dba75
+    MD5:004f271b197489491377852ff7814cea
+    3.3调用API
+    POST方式，详细的9个接口参数和返回见附件的API开发接口文档。

@@ -1,0 +1,6 @@
+com\ldz\dao\obd\mapper\TravelReportMapper.class
+com\ldz\dao\obd\model\GpsObdMessageBean.class
+com\ldz\dao\obd\model\ObdFaultCodeBean.class
+com\ldz\dao\obd\mapper\GpsObdMapper.class
+com\ldz\dao\obd\model\ObdTravelItineraryBean.class
+com\ldz\dao\obd\mapper\ObdFaultCodeMapper.class

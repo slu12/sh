@@ -44,8 +44,6 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 	private JsyService jsyService;
 	@Autowired
 	private ZdxmService zdxmService;
-	@Value("${znzpurl}")
-	private String deleteZnzpRedisKeyUrl;
 	@Autowired
 	private ZdglService zdglService;
 	@Autowired
@@ -144,7 +142,6 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 		}
 
 		save(entity);
-		redisUtil.deleteRedisKey(deleteZnzpRedisKeyUrl + "/deleteRedisKey","com.ldz.znzp.mapper.ClClMapper");
 		return ApiResponse.saveSuccess();
 	}
 
@@ -155,7 +152,6 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 		entity.setXgr(getOperateUser());
 		entity.setXgsj(new Date());
 		update(entity);
-		redisUtil.deleteRedisKey(deleteZnzpRedisKeyUrl + "/deleteRedisKey","com.ldz.znzp.mapper.ClClMapper");
 		return ApiResponse.success();
 	}
 

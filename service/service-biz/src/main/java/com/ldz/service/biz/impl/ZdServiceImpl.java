@@ -41,8 +41,6 @@ public class ZdServiceImpl extends BaseServiceImpl<ClZd,String> implements ZdSer
     private XlService xlService;
     @Autowired
     private ZnzpService znzpService;
-    @Value("${znzpurl}")
-    private String deleteZnzpRedisKeyUrl;
     @Autowired
     private RedisUtil redisUtil;
 
@@ -67,7 +65,6 @@ public class ZdServiceImpl extends BaseServiceImpl<ClZd,String> implements ZdSer
          entity.setJgdm(user.getJgdm());
          entity.setJgmc(org.getJgmc());
          save(entity);
-        redisUtil.deleteRedisKey(deleteZnzpRedisKeyUrl + "/deleteRedisKey","com.ldz.znzp.mapper.ClXlMapper");
         return ApiResponse.saveSuccess();
     }
 
@@ -339,7 +336,6 @@ public class ZdServiceImpl extends BaseServiceImpl<ClZd,String> implements ZdSer
 	        entity.setXgr(getOperateUser());
 	        entity.setXgsj(new Date());
 	        update(entity);
-        redisUtil.deleteRedisKey(deleteZnzpRedisKeyUrl + "/deleteRedisKey","com.ldz.znzp.mapper.ClXlMapper");
 		return ApiResponse.success();
 	}
 }

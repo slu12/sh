@@ -1,0 +1,11 @@
+spring:
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    database: 10
+  datasource:
+    url: jdbc:mysql://192.168.0.245:3306/eshenhai?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: root
+    password: 'G7%bB2@dF6@g'
+biz:
+  scTime: 30000

@@ -44,7 +44,6 @@ public interface ZdglService extends BaseService<ClZdgl,String>{
 
     ApiResponse<String> getAllZd(Page<ClZdgl> page);
 
-    ApiResponse<String> check(String zdbh);
 
     ApiResponse<String> updateDelay(String zdbh, String fwnx) throws ParseException;
 

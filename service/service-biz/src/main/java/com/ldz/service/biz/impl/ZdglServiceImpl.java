@@ -55,8 +55,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
     private String apiurl;
     @Value("${staticPath:/}")
     private String staticPath;
-    @Value("${obdCheckUrl}")
-    private String obdCheckUrl;
+
     @Autowired
     private ClZdglMapper entityMapper;
     @Autowired
@@ -626,14 +625,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
         return result;
     }
 
-    @Override
-    public ApiResponse<String> check(String zdbh) {
-        Map<String,String> params = new HashMap<>();
-        params.put("deviceId",zdbh);
-        String response = HttpUtil.post(obdCheckUrl,params, "UTF-8");
-        ApiResponse<String> apiResponse = JsonUtil.toBean(response,ApiResponse.class);
-        return apiResponse;
-    }
+
 
     @Override
     public ApiResponse<String> updateDelay(String zdbh, String fwnx) throws ParseException {

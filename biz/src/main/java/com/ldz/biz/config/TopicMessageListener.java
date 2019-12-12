@@ -38,7 +38,7 @@ public class TopicMessageListener implements MessageListener {
 
 
     private String url;
-    private String znzpurl;
+//    private String znzpurl;
     private String bizurl;
     public double distance;
     private double lowSpeed;
@@ -61,7 +61,7 @@ public class TopicMessageListener implements MessageListener {
     Logger error = LoggerFactory.getLogger("error_info");
 
     public TopicMessageListener(ZdxmService zdxmService,XcService xcService, ClYyService clYyService,
-                                GpsService gpsService,GpsLsService gpsLsService, ZdglService zdglService, RedisTemplateUtil redisTemplate,String url,String znzpurl,String bizurl,double distance,double lowSpeed) {
+                                GpsService gpsService,GpsLsService gpsLsService, ZdglService zdglService, RedisTemplateUtil redisTemplate,String url,String bizurl,double distance,double lowSpeed) {
 
         this.zdxmService = zdxmService;
         this.xcService = xcService;
@@ -71,7 +71,6 @@ public class TopicMessageListener implements MessageListener {
         this.zdglService = zdglService;
         this.redisTemplate = redisTemplate;
         this.url = url;
-        this.znzpurl = znzpurl;
         this.bizurl = bizurl;
         this.distance = distance;
         this.lowSpeed = lowSpeed;

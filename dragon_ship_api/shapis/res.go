@@ -6,10 +6,10 @@ package shapis
 
 type SingleResult struct {
 	Status int
-	Result interface{}
+	Result string
 }
 type ListResult struct {
-	Result []interface{}
+	Result string
 	Status int
 	Total  int
 }

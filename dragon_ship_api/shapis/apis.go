@@ -2,7 +2,7 @@
 @Name : chenwei
 @Time : 2019/12/10 11:48 下午
 **/
-package apis
+package shapis
 
 import (
 	"dragon_ship_api/tool"
@@ -29,28 +29,28 @@ func QueryShip(term string) ([]byte, error) {
 	return tool.HttpGet(getShipIdUrl + p.Encode())
 }
 
-func getShipBasicInformation(shipid string) ([]byte, error) {
+func GetShipBasicInformation(shipid string) ([]byte, error) {
 	token := getToken()
 	var p = url.Values{}
 	p.Add("shipid", shipid)
 	p.Add("key", token)
 	return tool.HttpGet(getShipBasicInformationUrl + p.Encode())
 }
-func getShipLatest(shipid string) ([]byte, error) {
+func GetShipLatest(shipid string) ([]byte, error) {
 	token := getToken()
 	var p = url.Values{}
 	p.Add("shipid", shipid)
 	p.Add("key", token)
 	return tool.HttpGet(getShipLatestUrl + p.Encode())
 }
-func getShipLatestInformation(shipid string) ([]byte, error) {
+func GetShipLatestInformation(shipid string) ([]byte, error) {
 	token := getToken()
 	var p = url.Values{}
 	p.Add("shipid", shipid)
 	p.Add("key", token)
 	return tool.HttpGet(getShipLatestInformationUrl + p.Encode())
 }
-func getShipHistoryTrack(shipid, startUtcTime, endUtcTime string) ([]byte, error) {
+func GetShipHistoryTrack(shipid, startUtcTime, endUtcTime string) ([]byte, error) {
 	token := getToken()
 	var p = url.Values{}
 	p.Add("shipid", shipid)
@@ -59,7 +59,7 @@ func getShipHistoryTrack(shipid, startUtcTime, endUtcTime string) ([]byte, error
 	p.Add("endUtcTime", endUtcTime)
 	return tool.HttpGet(getShipHistoryTrackUrl + p.Encode())
 }
-func getShipHistoryVoyage(shipid, startUtcTime, endUtcTime, language string) ([]byte, error) {
+func GetShipHistoryVoyage(shipid, startUtcTime, endUtcTime, language string) ([]byte, error) {
 	token := getToken()
 	if language == "" {
 		language = "cn"
@@ -72,7 +72,7 @@ func getShipHistoryVoyage(shipid, startUtcTime, endUtcTime, language string) ([]
 	p.Add("language", language)
 	return tool.HttpGet(getShipHistoryVoyageUrl + p.Encode())
 }
-func getShipCurrentVoyage(shipid, language string) ([]byte, error) {
+func GetShipCurrentVoyage(shipid, language string) ([]byte, error) {
 	token := getToken()
 	if language == "" {
 		language = "cn"
@@ -83,7 +83,7 @@ func getShipCurrentVoyage(shipid, language string) ([]byte, error) {
 	p.Add("language", language)
 	return tool.HttpGet(getShipCurrentVoyageUrl + p.Encode())
 }
-func getShipListByRect(shipid, xmin, ymin, xmax, ymax, hour string) ([]byte, error) {
+func GetShipListByRect(shipid, xmin, ymin, xmax, ymax, hour string) ([]byte, error) {
 	token := getToken()
 	var p = url.Values{}
 	p.Add("key", token)
@@ -94,7 +94,7 @@ func getShipListByRect(shipid, xmin, ymin, xmax, ymax, hour string) ([]byte, err
 	p.Add("hour", hour)
 	return tool.HttpGet(getShipListByRectUrl + p.Encode())
 }
-func getShipByNear(shipid, lon, lat, distance string) ([]byte, error) {
+func GetShipByNear(shipid, lon, lat, distance string) ([]byte, error) {
 	token := getToken()
 	var p = url.Values{}
 	p.Add("key", token)

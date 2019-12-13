@@ -2,7 +2,7 @@
 @Name : chenwei
 @Time : 2019/12/11 12:01 上午
 **/
-package apis
+package shapis
 
 import (
 	"dragon_ship_api/tool"

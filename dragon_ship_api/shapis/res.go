@@ -2,7 +2,7 @@
 @Name : chenwei
 @Time : 2019/12/13 7:33 上午
 **/
-package apis
+package shapis
 
 type SingleResult struct {
 	Status int

@@ -5,11 +5,11 @@
 package main
 
 import (
-	"dragon_ship_api/apis"
+	"dragon_ship_api/shapis"
 	"log"
 )
 
 func main() {
-	res, err := apis.QueryShip("福远渔")
+	res, err := shapis.QueryShip("福远渔")
 	log.Println(string(res), err)
 }

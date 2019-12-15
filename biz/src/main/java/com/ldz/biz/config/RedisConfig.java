@@ -35,8 +35,6 @@ public class RedisConfig {
 
 	@Value("${apiurl}")
 	public  String url;
-	@Value("${znzpurl}")
-	public  String znzpurl;
 	@Value("${biz_url: }") // : http://47.98.39.45:8080
 	public  String bizurl;
 	@Value("${distance}")
@@ -131,7 +129,7 @@ public class RedisConfig {
 
 		//topicMessageListener.setRedisTemplate(redisTemplateUtil);
 		container.addMessageListener(messageReceiver, topics);
-		container.addMessageListener(new TopicMessageListener(zdxmService,xcService,clYyService,gpsservice,gpsLsService,zdglService,redisTemplateUtil,url,znzpurl,bizurl,distance,lowSpeed) , channelTopic);
+		container.addMessageListener(new TopicMessageListener(zdxmService,xcService,clYyService,gpsservice,gpsLsService,zdglService,redisTemplateUtil,url,bizurl,distance,lowSpeed) , channelTopic);
 		container.addMessageListener(checkMessageReceiver,topicList);
 		container.addMessageListener(reportListener,zdTopicList);
 		//这个container 可以添加多个 messageListener

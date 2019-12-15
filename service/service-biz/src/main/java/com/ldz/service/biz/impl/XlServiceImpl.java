@@ -42,8 +42,6 @@ public class XlServiceImpl extends BaseServiceImpl<ClXl, String> implements XlSe
 	private ClXlzdMapper xlzdMapper;
 	@Autowired
 	private ClZdMapper clzdMapper;
-	@Value("${znzpurl}")
-	private String deleteZnzpRedisKeyUrl;
 	@Autowired
 	private RedisUtil redisUtil;
 
@@ -72,7 +70,6 @@ public class XlServiceImpl extends BaseServiceImpl<ClXl, String> implements XlSe
 			List<String> stationIds = Arrays.asList(entity.getZdIds().split(","));
 			saveRouterStations(entity, stationIds);
 		}
-		redisUtil.deleteRedisKey(deleteZnzpRedisKeyUrl + "/deleteRedisKey","com.ldz.znzp.mapper.ClXlMapper");
 		return ApiResponse.saveSuccess();
 	}
 
@@ -141,7 +138,6 @@ public class XlServiceImpl extends BaseServiceImpl<ClXl, String> implements XlSe
 			List<String> stationIds = Arrays.asList(entity.getZdIds().split(","));
 			saveRouterStations(entity, stationIds);
 		}
-		redisUtil.deleteRedisKey(deleteZnzpRedisKeyUrl + "/deleteRedisKey","com.ldz.znzp.mapper.ClXlMapper");
 		return ApiResponse.success();
 	}
 

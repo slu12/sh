@@ -7,6 +7,7 @@ package main
 import (
 	"dragon_ship_api/component/config"
 	"dragon_ship_api/component/db"
+	"dragon_ship_api/component/logs"
 	"dragon_ship_api/module/jobs"
 	"flag"
 )
@@ -20,6 +21,7 @@ func main() {
 	flag.Parse()
 	config.Load(env)
 	db.Init()
+	logs.Init()
 
 	testGetShipPosition(ids)
 	//res, err := shapis.QueryShip("福远渔")

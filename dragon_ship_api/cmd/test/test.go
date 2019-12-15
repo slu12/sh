@@ -4,7 +4,27 @@
 **/
 package main
 
+import (
+	"dragon_ship_api/component/config"
+	"dragon_ship_api/component/db"
+	"dragon_ship_api/module/jobs"
+	"flag"
+)
+
+var env string
+var ids string
+
 func main() {
+	flag.StringVar(&env, "e", "test", "environment")
+	flag.StringVar(&ids, "ids", "", "ids")
+	flag.Parse()
+	config.Load(env)
+	db.Init()
+
+	testGetShipPosition(ids)
 	//res, err := shapis.QueryShip("福远渔")
 	//log.Println(string(res), err)
+}
+func testGetShipPosition(ids string) {
+	jobs.TestUpdateShipPosition(ids)
 }

@@ -114,6 +114,9 @@ func (p *Logger) Errorf(format string, args ...interface{}) {
 
 // 30（黑色）、31（红色）、32（绿色）、 33（黄色）、34（蓝色）、35（洋红）、36（青色）、37（白色）
 func (p *Logger) printWithColor(color int, m ...string) {
+	if m == nil {
+		return
+	}
 	if len(m) == 0 {
 		return
 	}
@@ -126,6 +129,9 @@ func (p *Logger) printWithColor(color int, m ...string) {
 	p.Write([]byte(s))
 }
 func (p *Logger) PlainText(m ...string) {
+	if m == nil {
+		return
+	}
 	var c string
 	if len(m) == 0 {
 		return

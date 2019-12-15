@@ -2,7 +2,7 @@
 @Name : chenwei
 @Time : 2019/12/10 11:48 下午
 **/
-package shapis
+package shipapis
 
 import (
 	"dragon_ship_api/component/logs"
@@ -47,6 +47,7 @@ func getListResult(getUrl string) (*ListResult, error) {
 		logs.RunLog.Error("getShipId error:", err.Error())
 		return nil, err
 	}
+	logs.RunLog.Print("body:", string(body))
 	res := ListResult{}
 	if err := json.Unmarshal(body, res); err != nil {
 		logs.RunLog.Error("Unmarshal:", err.Error())

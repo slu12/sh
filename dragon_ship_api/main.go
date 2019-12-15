@@ -5,7 +5,7 @@
 package main
 
 import (
-	"dragon_ship_api/config"
+	"dragon_ship_api/component/config"
 	"flag"
 	"log"
 )

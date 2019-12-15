@@ -4,7 +4,7 @@
 **/
 package shapis
 
-type SingleResult struct {
+type ApiResult struct {
 	Status int
 	Result string
 }

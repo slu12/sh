@@ -5,7 +5,7 @@
 package shapis
 
 import (
-	"dragon_ship_api/tool"
+	"dragon_ship_api/component/tool"
 	"encoding/json"
 	"log"
 )
@@ -43,4 +43,8 @@ func getToken() string {
 		token = tool.Md5(sd + KEY)
 	}
 	return token
+}
+func getNewToken() string {
+	token = ""
+	return getToken()
 }

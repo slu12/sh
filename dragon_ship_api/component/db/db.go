@@ -1,8 +1,8 @@
 package db
 
 import (
-	"dragon_ship_api/config"
-	"dragon_ship_api/model"
+	"dragon_ship_api/component/config"
+	"dragon_ship_api/module/model"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
@@ -22,10 +22,5 @@ func init() {
 	// 使用单数表名
 	Db.SingularTable(true)
 	Db.AutoMigrate(&model.ShipInfo{})
-	//Db.AutoMigrate(&model.AwardConf{})
-	//Db.AutoMigrate(&model.CommonConf{})
-	//Db.AutoMigrate(&model.Area{})
-	//Db.AutoMigrate(&model.Shop{},&model.Ad{},&model.Admin{},&model.Screen{},&model.ScreenAd{})
-	//Db.AutoMigrate(&model.Ad{})
 	Db.LogMode(true)
 }

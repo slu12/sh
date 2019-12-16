@@ -2,10 +2,10 @@
 @Name : chenwei
 @Time : 2019/12/11 12:01 上午
 **/
-package apis
+package shipapis
 
 import (
-	"dragon_ship_api/tool"
+	"dragon_ship_api/component/tool"
 	"encoding/json"
 	"log"
 )
@@ -43,4 +43,8 @@ func getToken() string {
 		token = tool.Md5(sd + KEY)
 	}
 	return token
+}
+func getNewToken() string {
+	token = ""
+	return getToken()
 }

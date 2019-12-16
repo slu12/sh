@@ -2,14 +2,14 @@
 @Name : chenwei
 @Time : 2019/12/13 7:33 上午
 **/
-package apis
+package shipapis
 
-type SingleResult struct {
+type ApiResult struct {
 	Status int
-	Result interface{}
+	Result string
 }
 type ListResult struct {
-	Result []interface{}
+	Result []string
 	Status int
 	Total  int
 }

@@ -5,14 +5,12 @@
 package model
 
 import (
-	genid "dragon_ship_api/component/id"
 	"strconv"
 	"time"
 )
 
-type ClGpsLs struct {
-	ID          string    `gorm:"ID",json:"ID"`
-	Zdbh        string    `gorm:"ZDBH",json:"mmsi"`
+type ClGps struct {
+	Zdbh        string    `gorm:"primary_key;column:ZDBH",json:"mmsi"`
 	JD          string    `gorm:"JD",json:"longitude"`
 	WD          string    `gorm:"WD",json:"latitude"`
 	FXJ         float64   `gorm:"FXJ",json:"heading"`
@@ -24,7 +22,7 @@ type ClGpsLs struct {
 	CJSJ        time.Time `gorm:"CJSJ",json:"CJSJ"`
 }
 
-func MapToClGpsLs(m map[string]interface{}) *ClGpsLs {
+func MapToClGps(m map[string]interface{}) *ClGps {
 	mmsi := m["mmsi"].(string)
 	longitude := m["longitude"].(float64)
 	latitude := m["latitude"].(float64)
@@ -40,9 +38,7 @@ func MapToClGpsLs(m map[string]interface{}) *ClGpsLs {
 	if err != nil {
 		heading = 0
 	}
-	id := genid.NextId()
-	c := ClGpsLs{
-		ID:          strconv.FormatInt(id, 10),
+	c := ClGps{
 		Zdbh:        mmsi,
 		JD:          strconv.FormatFloat(longitude, 'E', -1, 64),
 		WD:          strconv.FormatFloat(latitude, 'E', -1, 64),

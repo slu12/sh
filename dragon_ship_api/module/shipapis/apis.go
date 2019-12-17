@@ -30,11 +30,11 @@ func getApiResult(getUrl string) (*ApiResult, error) {
 		return nil, err
 	}
 	res := ApiResult{}
-	if err := json.Unmarshal(body, res); err != nil {
+	if err := json.Unmarshal(body, &res); err != nil {
 		logs.RunLog.Error("Unmarshal:", err.Error())
 		return nil, err
 	}
-	if res.Status == 1 {
+	if res.Status == "1" {
 		logs.RunLog.Error("token invalid,try to get a new token")
 		getNewToken()
 		return getApiResult(getUrl)
@@ -49,11 +49,11 @@ func getListResult(getUrl string) (*ListResult, error) {
 	}
 	logs.RunLog.Print("body:", string(body))
 	res := ListResult{}
-	if err := json.Unmarshal(body, res); err != nil {
+	if err := json.Unmarshal(body, &res); err != nil {
 		logs.RunLog.Error("Unmarshal:", err.Error())
 		return nil, err
 	}
-	if res.Status == 1 {
+	if res.Status == "1" {
 		logs.RunLog.Error("token invalid,try to get a new token")
 		getNewToken()
 		return getListResult(getUrl)

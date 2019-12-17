@@ -39,47 +39,47 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
+                      <Poptip v-if="item.clid != ''" title='船舶信息'
                               placement="left" width="300"
                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
                                 style="font-weight: 700;color: black">
-                          OBD
+                          船舶信息
                         </Button>
                         <div slot="content">
                           <h3 v-if="gpsObdMessage == null">
-                            $t("NONE_DATE")</h3>
+                            暂无数据</h3>
                           <Row v-if="gpsObdMessage != null">
                             <Col span="8">
                               更新日期
                             </Col>
-                            <Col span="16"><span>{{formatDate(gpsObdMessage.creatorDate)}} {{formatTime(gpsObdMessage.creatortime)}}</span>
+                            <Col span="16"><span>{{formatDate(gpsObdMessage.xgsj)}} {{formatTime(gpsObdMessage.xgsj)}}</span>
                             </Col>
                           </Row>
                           <Row v-if="gpsObdMessage != null">
                             <Col span="8">
-                              $t("ENGINE_REVOLUTION")
+                              识别号
                             </Col>
-                            <Col span="16"><span>{{gpsObdMessage.engineSpeed}} r/min</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">$t("SPEED")</Col>
-                            <Col span="16"><span>{{gpsObdMessage.obdSpeed}} KM/h</span>
+                            <Col span="16"><span>{{gpsObdMessage.cbsbh}}</span>
                             </Col>
                           </Row>
                           <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              $t("RESIDUAL_OIL")
-                            </Col>
-                            <Col span="16"><span>{{gpsObdMessage.syyl}} L</span>
+                            <Col span="8">登记号码</Col>
+                            <Col span="16"><span>{{gpsObdMessage.djhm}}</span>
                             </Col>
                           </Row>
                           <Row v-if="gpsObdMessage != null">
                             <Col span="8">
-                              $t("OIL_CONSUMPTION")
+                              呼号
                             </Col>
-                            <Col span="16"><span>{{gpsObdMessage.hyl}} L</span>
+                            <Col span="16"><span>{{gpsObdMessage.callsign}} L</span>
+                            </Col>
+                          </Row>
+                          <Row v-if="gpsObdMessage != null">
+                            <Col span="8">
+                              IMO
+                            </Col>
+                            <Col span="16"><span>{{gpsObdMessage.imo}} L</span>
                             </Col>
                           </Row>
                           <Row v-if="obdFaultCode && obdFaultCode.length != 0">
@@ -128,7 +128,7 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
+                      <Poptip v-if="item.obdId != ''" title='船舶信息'
                               placement="left" width="300"
                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
@@ -295,7 +295,7 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title="OBD信息"
+                      <Poptip  title="船舶信息"
                               placement="left" width="300"
                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
@@ -430,7 +430,7 @@
         },
         dhlabel: (h) => {
           return h('div', [
-            h('span', '在线'),
+            h('span', '在航'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -443,7 +443,7 @@
         },
         xhlabel: (h) => {
           return h('div', [
-            h('span','熄火'),
+            h('span','锚泊'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -659,12 +659,12 @@
         var v = this
         this.gpsObdMessage = null;
         this.obdFaultCode = [];
-        this.$http.post(this.apis.CLJK.getObdTimely, {obdId: item.obdId}).then((res) => {
+        this.$http.get('/api/cl/query', {params:{clId: item.clId}}).then((res) => {
           if (res.code === 200) {
-            if (res.result.gpsObdMessage) {
-              this.gpsObdMessage = res.result.gpsObdMessage;
+            if (res.result) {
+              this.gpsObdMessage = res.result[0];
             }
-            if (res.result.obdFaultCode) {
+            if (res.result[0].obdFaultCode) {
               this.obdFaultCode = res.result.obdFaultCode;
             }
           }
@@ -837,7 +837,6 @@
             r.status = 1;
             r.text = '更新时间';
         }
-        log(r);
         return r;
       },
       handleItem(item) {

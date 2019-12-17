@@ -3,9 +3,11 @@
     <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
       <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-        <div class="logo-con">
-          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
-          <img v-show="collapsed" :src="minLogo" key="min-logo" />
+        <div class="logo-con" style="text-align: center;">
+<!--          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />-->
+<!--          <img v-show="collapsed" :src="minLogo" key="min-logo" />-->
+          <Button v-show="!collapsed" type="primary" :size="buttonSize">船联网大数据平台</Button>
+          <Button v-show="collapsed" type="primary" size="small">船</Button>
         </div>
       </side-menu>
     </Sider>
@@ -63,6 +65,7 @@ export default {
   },
   data () {
     return {
+      buttonSize: 'large',
       collapsed: false,
       minLogo,
       maxLogo,

@@ -13,13 +13,58 @@
         <Card>
             <p slot="title">
                 <Icon type="soup-can-outline"></Icon>
-                {{car.cph}}
+                {{car.shipname}}
                 <i-switch v-model="switchTyp" @on-change="switchG" v-if="car.zxzt=='00'"></i-switch>
             </p>
             <a href="#" slot="extra">
                 <Icon type="md-close" @click.native="close"></Icon>
             </a>
             <Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+               名称: {{car.shipname}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              所属机构: {{car.jgmc}}
+            </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+                类型: {{car.shiptypename}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+                型深: {{car.xs}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              呼号: {{car.callsign}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              IMO: {{car.imo}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              长度: {{car.length}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+                宽度: {{car.breadth}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              船籍: {{car.nationality}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+                识别号: {{car.cbsbh}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              MMSI: {{car.mmsi}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              总吨位: {{car.zdw}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              净吨: {{car.jd}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              主机种类: {{car.zjzl}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              主机数量: {{car.zjsl}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              主机总功率: {{car.zjgl}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              造船厂: {{car.zcc}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              建成日期: {{car.jcrq}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+                登记号码: {{car.djhm}}
+              </Row>
+
                 <Row style="z-index: 1000000;" class="buttons" v-if="car != null">
 <!--                    <Col span="12" style="text-align: center">-->
 <!--                        <Button shape="circle"  type="success" @click="setControl('12','1-10')" icon="md-camera"></Button><br>-->
@@ -322,7 +367,20 @@
                 this.stopVideoCount();
             },
             init(item){
-                this.car = item;
+              console.log(item,'item');
+              this.car = item
+              if (item.clid!=''){
+                this.$http.get('/api/cl/query'+'?clId='+item.clid).then((res) => {
+                  if (res.code === 200) {
+                    if (res.result) {
+                      this.car = res.result[0];
+                    }else {
+                      this.car = {}
+                    }
+                  }
+                })
+              }
+
                 // this.$refs.carInfo.init(item);
                 this.resetPhotoCount();
                 this.resetVideoCount();

@@ -542,7 +542,13 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		return null;
 	}
 
-	public static int differentDaysByMillisecond(Date date1,Date date2)
+    @Override
+    public ApiResponse<String> shipInfo(String mmsi) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		return null;
+    }
+
+    public static int differentDaysByMillisecond(Date date1,Date date2)
 	    {
 	        int days = (int) ((date2.getTime() - date1.getTime()) / (1000*3600*24));
 	        return days;

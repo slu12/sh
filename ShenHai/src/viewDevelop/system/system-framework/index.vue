@@ -29,97 +29,95 @@
       }
 </style>
 <template>
-      <div class="boxbackborder box">
+      <div class="box_col">
             <component :is="componentName"></component>
-            <Row class="margin-top-10" style='background-color: #fff;position: relative;'>
-				<span class="tabPageTit">
-    				<Icon type="ios-paper" size='30' color='#fff'></Icon>
-    			</span>
-                  <div style="height: 45px;line-height: 45px;">
-                        <div class="margin-top-10 box-row">
-                              <div class="titmess">
-                                    <span>{{$t("MANUFACTURER_MANAGEMENT")}}</span>
-                              </div>
-                        </div>
-                  </div>
-            </Row>
-            <div class="box-row framework">
-                  <div class='frame-tree'>
-                        <div class="box">
-                              <div class="tit" style="margin: 6px;">
-                                    <Button type="primary" style="width: 100%;font-size: 14px;"
-                                            @click="rootClick(RootTree)">
-                                          <b>
-                                                平台管理
-                                          </b>
-                                    </Button>
-                              </div>
-                              <div class="body" style="margin: 6px;"
-                                   :style="RootTree.children.length==0 ? TreeListStyleC : TreeListStyleF">
-                                    <Tree v-for="(item,index) in RootTree.children" :data="item"
-                                          @on-select-change="treeClick"
-                                          @on-toggle-expand="treeToggleClick"></Tree>
-                              </div>
-                        </div>
-                  </div>
-                  <div class="body-F frame-mess">
+            <div class="box_row rowBetween colItemCenter boxMar_B">
+                  <pager-tit></pager-tit>
+                  <div class="box_row rowRight">
 
-                        <div style="padding: 6px;">
+                  </div>
+            </div>
+            <div class="box_col_auto">
+                  <div class="box-row framework">
+                        <div class='frame-tree'>
                               <div class="box">
-                                    <div class="tit"
-                                         style="font-size: 16px;border-bottom:solid 2px #989898;height: 35px;">
-                                          <b>
-                                                {{treeMess.title}}
-                                          </b>
-                                          <Button v-if="treeMess.jgdm!='100'"
-                                                  style="float: right;margin-right: 8px;" type="error"
-                                                  shape="circle" icon="md-close" @click="del(treeMess)"></Button>
-                                          <Button style="float: right;margin-right: 8px;" type="primary"
-                                                  shape="circle" icon="md-add" @click="add()"></Button>
-                                          <Button style="float: right;margin-right: 8px;" type="primary"
-                                                  shape="circle" icon="md-menu"
-                                                  @click="edit(treeMess)"></Button>
+                                    <div class="tit" style="margin: 6px;">
+                                          <Button type="primary" style="width: 100%;font-size: 14px;"
+                                                  @click="rootClick(RootTree)">
+                                                <b>
+                                                      平台管理
+                                                </b>
+                                          </Button>
                                     </div>
-                                    <div style="height: 120px;color: #999999">
-                                          <Row type="flex" :getter="12"
-                                               style="margin-top: 6px;font-size: 18px;font-weight: 600">
-                                                <Col span="6">{{treeMess.title}}</Col>
-                                                <Col span="6"><span>终端数量:</span> {{treeMess.zdsl}}</Col>
-                                                <Col span="6"><span>接口授权码</span>
-                                                      <i-switch v-model="treeMess.jkSq" :disabled="true"
-                                                                true-value="00" false-value="10"
-                                                                size="large">
-                                                            <span slot="open">授权</span>
-                                                            <span slot="close">停用</span>
-                                                      </i-switch>
-                                                </Col>
-                                                <Col span="6"><span>备注说明:</span> {{treeMess.jgsm}}</Col>
-                                          </Row>
-                                          <Row type="flex" :getter="12"
-                                               style="margin-top: 6px;font-size: 18px;font-weight: 600">
-                                                <Col span="6">
-                                                      <span>负责人:</span>{{treeMess.glyxm}}
-                                                </Col>
-                                                <Col span="6">
-                                                      <span>联系电话:</span>{{treeMess.lxdh}}
-                                                </Col>
-                                                <Col span="12">
-                                                      <span>地址所在:</span>{{treeMess.dz}}
-                                                </Col>
-                                          </Row>
-                                          <Row style="margin-top: 6px">
-                                                <Button type="info" @click="componentName='addZd'">设备绑定</Button>
-                                          </Row>
+                                    <div class="body" style="margin: 6px;"
+                                         :style="RootTree.children.length==0 ? TreeListStyleC : TreeListStyleF">
+                                          <Tree v-for="(item,index) in RootTree.children" :data="item"
+                                                @on-select-change="treeClick"
+                                                @on-toggle-expand="treeToggleClick"></Tree>
                                     </div>
-                                    <div class="body">
-                                          <!--<div v-if="treeMess.jgdm">-->
-                                          <zd-tab ref="zdtab" :tabHeight="this.getWindowHeight() - 330-120"></zd-tab>
-                                          <!--</div>-->
+                              </div>
+                        </div>
+                        <div class="body-F frame-mess">
+
+                              <div style="padding: 6px;">
+                                    <div class="box">
+                                          <div class="tit"
+                                               style="font-size: 16px;border-bottom:solid 2px #989898;height: 35px;">
+                                                <b>
+                                                      {{treeMess.title}}
+                                                </b>
+                                                <Button v-if="treeMess.jgdm!='100'"
+                                                        style="float: right;margin-right: 8px;" type="error"
+                                                        shape="circle" icon="md-close" @click="del(treeMess)"></Button>
+                                                <Button style="float: right;margin-right: 8px;" type="primary"
+                                                        shape="circle" icon="md-add" @click="add()"></Button>
+                                                <Button style="float: right;margin-right: 8px;" type="primary"
+                                                        shape="circle" icon="md-menu"
+                                                        @click="edit(treeMess)"></Button>
+                                          </div>
+                                          <div style="height: 120px;color: #999999">
+                                                <Row type="flex" :getter="12"
+                                                     style="margin-top: 6px;font-size: 18px;font-weight: 600">
+                                                      <Col span="6">{{treeMess.title}}</Col>
+                                                      <Col span="6"><span>终端数量:</span> {{treeMess.zdsl}}</Col>
+                                                      <Col span="6"><span>接口授权码</span>
+                                                            <i-switch v-model="treeMess.jkSq" :disabled="true"
+                                                                      true-value="00" false-value="10"
+                                                                      size="large">
+                                                                  <span slot="open">授权</span>
+                                                                  <span slot="close">停用</span>
+                                                            </i-switch>
+                                                      </Col>
+                                                      <Col span="6"><span>备注说明:</span> {{treeMess.jgsm}}</Col>
+                                                </Row>
+                                                <Row type="flex" :getter="12"
+                                                     style="margin-top: 6px;font-size: 18px;font-weight: 600">
+                                                      <Col span="6">
+                                                            <span>负责人:</span>{{treeMess.glyxm}}
+                                                      </Col>
+                                                      <Col span="6">
+                                                            <span>联系电话:</span>{{treeMess.lxdh}}
+                                                      </Col>
+                                                      <Col span="12">
+                                                            <span>地址所在:</span>{{treeMess.dz}}
+                                                      </Col>
+                                                </Row>
+                                                <Row style="margin-top: 6px">
+                                                      <Button type="info" @click="componentName='addZd'">设备绑定</Button>
+                                                </Row>
+                                          </div>
+                                          <div class="body">
+                                                <!--<div v-if="treeMess.jgdm">-->
+                                                <zd-tab ref="zdtab" :tabHeight="this.getWindowHeight() - 330-120"></zd-tab>
+                                                <!--</div>-->
+                                          </div>
                                     </div>
                               </div>
                         </div>
                   </div>
             </div>
+
+
       </div>
 </template>
 <script>
@@ -129,14 +127,16 @@
 
     import zdTab from './comp/zdTab'
     import addZd from './comp/formData'
+    import i18nTabTit from '@/mixins/i18nTabTit'
+    import mixin from '@/mixins'
 
     export default {
         name: '',
+          mixins: [i18nTabTit,mixin],
         components: {
             FormItems,
             treeList, modelForm, zdTab, addZd
         },
-        mixins: [],
         data() {
             return {
                 jgmc: '',

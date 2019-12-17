@@ -9,17 +9,28 @@
         <DropdownItem name="message">
           消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
         </DropdownItem>
+        <DropdownItem name="password">修改密码</DropdownItem>
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
+    <component :is="compName"></component>
   </div>
 </template>
 
 <script>
 import './user.less'
 import { mapActions,mapMutations } from 'vuex'
+import passworld from "./passworld";
 export default {
   name: 'User',
+  components: {
+    passworld
+  },
+  data(){
+    return{
+      compName: '',
+    }
+  },
   props: {
     userAvatar: {
       type: String,
@@ -50,11 +61,16 @@ export default {
         name: 'message_page'
       })
     },
+    xgmm(){
+      this.compName = 'passworld'
+    },
     handleClick (name) {
       switch (name) {
         case 'logout': this.logout()
           break
         case 'message': this.message()
+          break
+        case 'passworld': this.xgmm()
           break
       }
     }

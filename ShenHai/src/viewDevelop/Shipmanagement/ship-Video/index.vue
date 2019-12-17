@@ -3,26 +3,20 @@
        <div class="box_row rowBetween colItemCenter boxMar_B">
          <pager-tit></pager-tit>
          <div class="box_row rowRight">
-           <!--<div class="body-r-1 inputSty">-->
-           <!--<Select v-model="param.wjmLike" @on-change="findMessList()">-->
-           <!--<Option value="F" >前摄像头</Option>-->
-           <!--<Option value="B" >后摄像头</Option>-->
-           <!--</Select>-->
-           <!--</div>-->
            <div class="body-r-1 inputSty">
              <DatePicker v-model="cjsjInRange"
                          format="yyyy-MM-dd"
                          type="daterange"
                          placement="bottom-end"
-                         placeholder='"TIME_RESEARCH"'
+                         placeholder='请选择时间'
                          @on-keyup.enter="findMessList()"
                          style="width: 220px"></DatePicker>
            </div>
            <div class="body-r-1 inputSty">
-             <Input type="text" v-model="param.cphLike" placeholder='$t("CAR_NUMBER")'></Input>
+             <Input type="text" v-model="param.cphLike" placeholder='船舶号'></Input>
            </div>
            <div class="body-r-1 inputSty">
-             <Input type="text" v-model="param.zdbhLike" placeholder='$t("TERMINAL_NUM")'></Input>
+             <Input type="text" v-model="param.zdbhLike" placeholder='终端号'></Input>
            </div>
            <div class="butevent">
              <Button type="primary" @click="findMessList()">
@@ -33,13 +27,24 @@
          </div>
        </div>
       <div class="box_col_auto">
-        <div>
-          <Tabs type="card" v-model="param.wjmLike" @on-click="findMessList()">
-            <TabPane label='$t("FRONT_CAMERA")' name="F"></TabPane>
-            <TabPane label='$t("REAR_CAMERA")' name="B"></TabPane>
-          </Tabs>
-        </div>
-        <div v-show="vadeoShow" class="body" style="border: 1px solid #dddee1">
+<!--        <htmlpanel :url.asyc="url1"></htmlpanel>-->
+        <Row style="padding: 0 290px">
+           <Col span="8" style="padding-top: 5px"  v-for="(item,index) in 9">
+             <Card style="width:550px;height: 360px">
+               <p slot="title">
+                 <Icon type="ios-film-outline"></Icon>
+                 {{index+1}}号
+               </p>
+               <ul>
+                 <iframe  style="width: 100%;height: 280px" :src="url1"></iframe>
+               </ul>
+             </Card>
+           </Col>
+        </Row>
+
+
+
+        <div class="body">
           <div class="box-row-list">
             <div class="bodyC videoSty"
                  style="min-height: 140px;"
@@ -52,7 +57,6 @@
                 </div>
                 <img style="width: 100%;height: 200px"
                      :src="videoPath+item.imgdz"/>
-
               </div>
               <video v-else
                      style="width: 100%;height: 200px"
@@ -86,29 +90,31 @@
             {{param.cphLike}}暂无视频数据
           </h1>
         </div>
-        <div class="margin-top-10 pageSty" style="height: 60px;">
-          <Page
-            :total=pageTotal
-            :current=param.pageNum
-            :page-size=param.pageSize :page-size-opts=[8,10,20,30,40,50]
-            @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}'
-            show-total
-            show-elevator show-sizer placement='top'
-            @on-change='pageChange'></Page>
-        </div>
+<!--        <div class="margin-top-10 pageSty" style="height: 60px;">-->
+<!--          <Page-->
+<!--            :total=pageTotal-->
+<!--            :current=param.pageNum-->
+<!--            :page-size=param.pageSize :page-size-opts=[8,10,20,30,40,50]-->
+<!--            @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}'-->
+<!--            show-total-->
+<!--            show-elevator show-sizer placement='top'-->
+<!--            @on-change='pageChange'></Page>-->
+<!--        </div>-->
       </div>
     </div>
 </template>
 
 <script>
   // import mixins from '@/mixins'
+  import htmlpanel from './htmlpanel'
 
   export default {
     name: '',
     // mixins: [mixins],
-    components: {},
+    components: {htmlpanel},
     data() {
       return {
+        url1:'http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno=30895&jsession=b678293e-66f1-45d3-a571-662765d8c0b5&channel=2',
         vadeoShow: true,
         videoPath: '',
         activeName: 0,

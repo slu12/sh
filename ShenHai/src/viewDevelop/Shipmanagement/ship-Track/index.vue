@@ -705,7 +705,7 @@
       },
       initGps() {
         var v = this
-        this.$http.get(this.apis.CLJK.QUERY, {
+        this.$http.get('/api/cl/InitClGps', {
           params: {
             zdLx: '30',
             positionType: this.local == 'en-US' ? 'gcj02' : ''

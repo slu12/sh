@@ -359,6 +359,27 @@ export default [
     ]
 
   },
+  {
+    path: '/VehicleMonitoring',
+    name: 'VehicleMonitoring',
+    meta: {
+      icon: 'ios-cog',
+      title: '船舶监控',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/jk',
+        name: 'jk',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶监控',
+        },
+        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
+      },
+    ]
+
+  },
 
 
 

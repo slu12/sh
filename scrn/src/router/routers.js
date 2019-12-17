@@ -19,6 +19,16 @@ import parentView from '@/components/parent-view'
 
 export default [
   {
+    path: '/',
+    name: 'SCRN',
+    meta: {
+      title: '超級管理',
+      hideInMenu: true
+    },
+    component: () => import('@/scrn')
+  }
+  /**
+  {
     path: '/login',
     name: 'login',
     meta: {
@@ -788,4 +798,6 @@ export default [
     },
     component: () => import('@/view/error-page/404.vue')
   }
+   *
+   * */
 ]

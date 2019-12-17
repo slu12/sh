@@ -448,7 +448,11 @@
       };
     },
     created() {
-      this.compName = this.local == 'en-US' ? 'G_myMap' : 'B_myMap'
+
+
+    },
+    mounted() {
+      this.compName = 'B_myMap'
       this.$store.commit('setCurrentPath', [{
         title: '首页',
       }, {
@@ -456,10 +460,8 @@
       }, {
         title: '位置监控',
       }])
-      this.initGps()
-    },
-    mounted() {
       this.$nextTick(() => {
+        this.initGps()
       })
     },
     beforeDestroy() {

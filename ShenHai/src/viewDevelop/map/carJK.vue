@@ -62,13 +62,8 @@
         created() {
         },
         mounted() {
-          setTimeout(()=>{
-            this.$nextTick(()=>{
               this.Buildmap()
               this.init();
-            })
-          },2000)
-
         },
         methods: {
             showFance(carId) {

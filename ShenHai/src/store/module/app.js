@@ -95,6 +95,12 @@ export default {
       localSave('local', lang)
       state.local = lang
     },
+    ChcarCodeList(state,data){
+      state.carCodeList = data;
+    },
+    setCurrentPath (state, pathArr) {
+      state.currentPath = pathArr;
+    },
     addError (state, error) {
       state.errorList.push(error)
     },

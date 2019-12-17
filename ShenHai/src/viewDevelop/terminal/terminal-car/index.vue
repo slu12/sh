@@ -35,21 +35,21 @@
                   <Icon type="md-search"></Icon>
                 </Button>
               </Tooltip>
-              <!--<Tooltip content="新增" placement="top">-->
-              <!--<Button type="primary" @click="AddMess()">-->
-              <!--<Icon type="md-add"></Icon>-->
-              <!--</Button>-->
-              <!--</Tooltip>-->
-              <!--<Tooltip content="批量导入" placement="top">-->
-              <!--<Button type="success" @click="componentName='plmess'">-->
-              <!--<Icon type="md-redo"></Icon>-->
-              <!--</Button>-->
-              <!--</Tooltip>-->
-              <!--<Tooltip content="升级设备" placement="top">-->
-              <!--<Button type="warning" @click="batchUpdate()">-->
-              <!--<Icon type="md-arrow-round-up"></Icon>-->
-              <!--</Button>-->
-              <!--</Tooltip>-->
+<!--              <Tooltip content="新增" placement="top">-->
+<!--              <Button type="primary" @click="AddMess()">-->
+<!--              <Icon type="md-add"></Icon>-->
+<!--              </Button>-->
+<!--              </Tooltip>-->
+<!--              <Tooltip content="批量导入" placement="top">-->
+<!--              <Button type="success" @click="componentName='plmess'">-->
+<!--              <Icon type="md-redo"></Icon>-->
+<!--              </Button>-->
+<!--              </Tooltip>-->
+              <Tooltip content="升级设备" placement="top">
+              <Button type="warning" @click="batchUpdate()">
+              <Icon type="md-arrow-round-up"></Icon>
+              </Button>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -87,12 +87,13 @@
     import setting from './setting'
     import plmess from './plMess'
     import i18nTabTit from '@/mixins/i18nTabTit'
+    import mixin from '@/mixins'
 
     import zdxq from '../../components/zd_xq'
 
     export default {
         name: 'char',
-        mixins: [i18nTabTit],
+        mixins: [i18nTabTit,mixin],
         components: {
             zdxq,
             formData, change, jkdz, setting, update, plmess
@@ -405,7 +406,7 @@
                     zdbhLike:'',
                     pageNum: 1,
                     pageSize: 15,
-                    zdLx: '10',//终端类型 字典：ZDCLK1017
+                    // zdLx: '10',//终端类型 字典：ZDCLK1017
                 },
                 Dictionary: [],
                 lmdmDictionary: 'ZDCLK0032',//在线状态
@@ -438,7 +439,7 @@
             getPageData() {
                 this.pageTotal = 0;
                 this.tableData = [];
-                this.$http.get('', {params: this.param}).then((res) => {
+                this.$http.get('/api/zdgl/pager', {params: this.param}).then((res) => {
                     this.SpinShow = false;
                     if (res.code === 200) {
                         this.tableData = res.page.list;

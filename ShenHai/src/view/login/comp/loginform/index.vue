@@ -14,22 +14,25 @@
         </span>
       </Input>
     </FormItem>
-    <Row>
-      <Col span="14">
-        <FormItem prop="captcha">
-          <Input v-model="form.captcha" placeholder="请输入验证码">
-            <span slot="prepend">
-              <Icon :size="14" type="md-key"></Icon>
-            </span>
-          </Input>
-        </FormItem>
-      </Col>
-      <Col span="10">
-        <img :src="YzUrl" width="100%" alt="验证码" style="margin-left: 8px;cursor: pointer" @click="getUrl">
-      </Col>
+    <Row class="wjmima">
+      <Col align="right"><div>忘记密码?</div></Col>
     </Row>
+<!--    <Row>-->
+<!--      <Col span="14">-->
+<!--        <FormItem prop="captcha">-->
+<!--          <Input v-model="form.captcha" placeholder="请输入验证码">-->
+<!--            <span slot="prepend">-->
+<!--              <Icon :size="14" type="md-key"></Icon>-->
+<!--            </span>-->
+<!--          </Input>-->
+<!--        </FormItem>-->
+<!--      </Col>-->
+<!--      <Col span="10">-->
+<!--        <img :src="YzUrl" width="100%" alt="验证码" style="margin-left: 8px;cursor: pointer" @click="getUrl">-->
+<!--      </Col>-->
+<!--    </Row>-->
     <FormItem>
-      <Button @click="handleSubmit" type="primary" long>登录</Button>
+      <Button @click="handleSubmit" type="primary" style="background-color: #363E4F" long>登录</Button>
     </FormItem>
   </Form>
 </template>
@@ -103,6 +106,8 @@
                   v.$router.push({
                     name: this.$config.homeName
                   })
+                }else {
+                  v.$Message.error(res.message)
                 }
             }).catch(err=>{})
           }
@@ -111,3 +116,13 @@
     }
   }
 </script>
+<style lang="less">
+   .wjmima{
+     padding: 20px 0 ;
+     font-size:14px;
+     font-family:Microsoft YaHei;
+     font-weight:400;
+     color:rgba(54,62,79,1);
+     line-height:9px;
+   }
+</style>

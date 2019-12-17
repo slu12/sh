@@ -44,4 +44,6 @@ public interface CbService extends BaseService<Cb,String>{
     ApiResponse<String> photo(String mmsi, String chn);
 
     ApiResponse<String> getHcByApi(String mmsi, String start, String end);
+
+    ApiResponse<String> shipInfo(String mmsi);
 }

@@ -171,5 +171,13 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.getHcByApi(mmsi, start, end);
 	}
 
+	/**
+	 * 实时Gps 点
+	 */
+	@GetMapping("/shipInfo")
+	public ApiResponse<String> shipInfo(String mmsi){
+		return clservice.shipInfo(mmsi);
+	}
+
 
 }

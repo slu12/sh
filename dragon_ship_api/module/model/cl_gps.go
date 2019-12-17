@@ -38,6 +38,7 @@ func MapToClGps(m map[string]interface{}) *ClGps {
 	if err != nil {
 		heading = 0
 	}
+	t := time.Unix(1576591084, 0)
 	c := ClGps{
 		Zdbh:        mmsi,
 		JD:          strconv.FormatFloat(longitude, 'E', -1, 64),
@@ -48,7 +49,7 @@ func MapToClGps(m map[string]interface{}) *ClGps {
 		NAVSTATUS:   navStatus,
 		TEMPERATURE: "",
 		GSM:         "",
-		CJSJ:        time.Now(),
+		CJSJ:        t,
 	}
 	return &c
 }

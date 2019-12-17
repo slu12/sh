@@ -19,6 +19,7 @@
                    v-show="tabShowFlag">
             <Row v-for="(item,index) in carArray[0]" v-if="item.show"
                  @click.native="rowClick(item)">
+              {{item.shipname}}
               <Col span="24">
                 <Card style="margin:0 15px 5px 15px;"
                       :class="{'choosed':choosedCar == item}">
@@ -744,6 +745,7 @@
       },
       filter() {
         this.classify();
+        console.log(this.status, "status");
         this.mapCarList = this.carArray[this.status];
         this.$refs.map.init();
       },
@@ -809,6 +811,7 @@
         return r;
       },
       handleItem(item) {
+        console.log("item-->" , item)
         item.lng = item.bdjd;
         item.lat = item.bdwd;
         if (item.zxzt) {

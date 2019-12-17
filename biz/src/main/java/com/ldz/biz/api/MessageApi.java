@@ -67,11 +67,6 @@ public class MessageApi {
 	//事件 10急加速，20急刹车，30急转弯 ，40超速，50点火，60熄火,70不在电子围栏范围,80离线
 	@GetMapping("/testExcel")
 	public void testExcel(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-
-
-
-
 			List<Map<Integer, String>> data = new ArrayList<>();
 			Map<Integer, String> map = new HashMap<>();
 			map.put(0, "终端编号");

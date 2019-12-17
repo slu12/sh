@@ -5,7 +5,7 @@ import com.ldz.dao.biz.mapper.ClDzwlClMapper;
 import com.ldz.dao.biz.mapper.ClDzwlMapper;
 import com.ldz.dao.biz.mapper.ZdYhMapper;
 import com.ldz.dao.biz.model.*;
-import com.ldz.service.biz.interfaces.ClService;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.ClYhService;
 import com.ldz.service.biz.interfaces.DzwlService;
 import com.ldz.sys.base.BaseServiceImpl;
@@ -37,7 +37,7 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 	@Autowired
 	private JgService jgService;
 	@Autowired
-	private ClService clService;
+	private CbService clService;
 	@Autowired
 	private ClDzwlClMapper dzwlClMapper;
 	@Autowired
@@ -96,7 +96,7 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 	@Override
 	public ApiResponse<String> setCarDzwl(String clId, List<String> wlIds) {
 		RuntimeCheck.ifBlank(clId, "车辆id不能为空");
-		ClCl car = clService.findById(clId);
+		Cb car = clService.findById(clId);
 		RuntimeCheck.ifNull(car, "未找到车辆");
 
 		SimpleCondition condition = new SimpleCondition(ClDzwlCl.class);
@@ -119,8 +119,8 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 		List<String> carIdList = Arrays.asList(carIds.split(","));
 		Date now = new Date();
 		String creator = getOperateUser();
-		List<ClCl> carList = clService.findIn(ClCl.InnerColumn.clId,carIdList);
-		Map<String,ClCl> carMap = carList.stream().collect(Collectors.toMap(ClCl::getClId,p->p));
+		List<Cb> carList = clService.findIn(Cb.InnerColumn.clId,carIdList);
+		Map<String, Cb> carMap = carList.stream().collect(Collectors.toMap(Cb::getClId, p->p));
 
 		// 删除旧数据
 		/*SimpleCondition condition = new SimpleCondition(ClDzwlCl.class);
@@ -134,7 +134,7 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 			dzwlCl.setClId(s);
 			dzwlCl.setWlId(wlid);
 			dzwlCl.setId(genId());
-			ClCl car = carMap.get(s);
+			Cb car = carMap.get(s);
 			if (car != null){
 				dzwlCl.setCph(car.getCph());
 			}
@@ -153,11 +153,11 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
             List<ClZdYh> clZdYhs = zdYhMapper.selectByExample(simpleCondition);
             if(CollectionUtils.isNotEmpty(clZdYhs)){
                 List<String> collect = clZdYhs.stream().map(ClZdYh::getDeviceId).collect(Collectors.toList());
-                SimpleCondition clCondition = new SimpleCondition(ClCl.class);
-                clCondition.in(ClCl.InnerColumn.zdbh,collect);
-                List<ClCl> cls = clService.findByCondition(clCondition);
+                SimpleCondition clCondition = new SimpleCondition(Cb.class);
+                clCondition.in(Cb.InnerColumn.zdbh,collect);
+                List<Cb> cls = clService.findByCondition(clCondition);
                 if(CollectionUtils.isNotEmpty(cls)){
-                    List<String> list = cls.stream().map(ClCl::getClId).collect(Collectors.toList());
+                    List<String> list = cls.stream().map(Cb::getClId).collect(Collectors.toList());
                     SimpleCondition dzwlCon = new SimpleCondition(ClDzwlCl.class);
                     dzwlCon.in(ClDzwlCl.InnerColumn.clId,list);
                     List<ClDzwlCl> dzwlCls = dzwlClMapper.selectByExample(dzwlCon);
@@ -236,9 +236,9 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 			List<ClDzwlCl> cls = dzwlClMapper.selectByExample(simpleCondition);
 			if(CollectionUtils.isNotEmpty(cls)){
 				List<String> ids = cls.stream().map(ClDzwlCl::getClId).collect(Collectors.toList());
-				SimpleCondition clCondition = new SimpleCondition(ClCl.class);
-				clCondition.in(ClCl.InnerColumn.clId,ids);
-				List<ClCl> clCls = clService.findByCondition(clCondition);
+				SimpleCondition clCondition = new SimpleCondition(Cb.class);
+				clCondition.in(Cb.InnerColumn.clId,ids);
+				List<Cb> clCls = clService.findByCondition(clCondition);
 				clDzwl.setCls(clCls);
 			}
 		});
@@ -259,9 +259,9 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 				List<ClDzwlCl> cls = dzwlClMapper.selectByExample(simpleCondition);
 				if(CollectionUtils.isNotEmpty(cls)){
 					List<String> ids = cls.stream().map(ClDzwlCl::getClId).collect(Collectors.toList());
-					SimpleCondition clCondition = new SimpleCondition(ClCl.class);
-					clCondition.in(ClCl.InnerColumn.clId,ids);
-					List<ClCl> clCls = clService.findByCondition(clCondition);
+					SimpleCondition clCondition = new SimpleCondition(Cb.class);
+					clCondition.in(Cb.InnerColumn.clId,ids);
+					List<Cb> clCls = clService.findByCondition(clCondition);
 					clDzwl.setCls(clCls);
 				}
 			});

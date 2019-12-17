@@ -28,7 +28,7 @@ CL_CL t1 LEFT JOIN CL_DZWL_CL t2 ON t1.CL_ID=t2.CL_ID  LEFT JOIN CL_DZWL t3 on t
 </select>
 
 
-<resultMap type="com.ldz.dao.biz.model.ClCl" id="ClClresultMap">
+<resultMap type="com.ldz.dao.biz.model.Cb" id="ClClresultMap">
         <id column="CL_ID" property="clId" />
 		<result column="CPH" property="cph" />
 		<result column="JGDM" property="jgdm" />

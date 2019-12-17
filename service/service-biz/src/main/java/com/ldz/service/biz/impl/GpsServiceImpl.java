@@ -7,7 +7,10 @@ import com.ldz.dao.biz.bean.SendGpsEvent;
 import com.ldz.dao.biz.bean.WebsocketInfo;
 import com.ldz.dao.biz.constant.DeviceStatus;
 import com.ldz.dao.biz.constant.EventType;
-import com.ldz.dao.biz.mapper.*;
+import com.ldz.dao.biz.mapper.ClClMapper;
+import com.ldz.dao.biz.mapper.ClGpsMapper;
+import com.ldz.dao.biz.mapper.ClZdglMapper;
+import com.ldz.dao.biz.mapper.ZdYhMapper;
 import com.ldz.dao.biz.model.*;
 import com.ldz.dao.obd.model.GpsObdMessageBean;
 import com.ldz.service.biz.interfaces.*;
@@ -18,7 +21,6 @@ import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.bean.TrackPoint;
 import com.ldz.util.bean.YingyanResponse;
-import com.ldz.util.commonUtil.DateUtils;
 import com.ldz.util.commonUtil.JsonUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.gps.DistanceUtil;
@@ -36,7 +38,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -48,7 +49,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -67,11 +67,9 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
     @Autowired
     private ClClMapper clclmapper;
     @Autowired
-    private ClService clService;
+    private CbService clService;
     @Autowired
     private ZdglService zdglservice;
-    @Autowired
-    private PbService pbService;
     @Autowired
     private ClyxjlService clyxjlService;
     @Autowired
@@ -82,10 +80,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
     private SimpMessagingTemplate websocket;
     @Autowired
     private SbyxsjjlService sbyxsjjlService;
-    @Autowired
-    private GpsLsService gpsLsService;
-    @Autowired
-    private ClGpsLsMapper clGpsLsMapper;
+
     AsyncEventBus eventBus = new AsyncEventBus(Executors.newFixedThreadPool(1));
 
     private ExecutorService singlePool = Executors.newSingleThreadExecutor();
@@ -119,67 +114,6 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
         if(zd == null){
             return ApiResponse.fail("终端不存在");
         }
-//        errorLog.error("gpsInfo:{}",JsonUtil.toJson(gpsInfo));
-        // 只要上传点位信息 且不为离线事件 则为在线状态
-        // 过期时间
-        String  expireTime = (String)redis.boundValueOps("expire_" + gpsInfo.getDeviceId()).get();
-        String nowTime = DateUtils.getDateStr(new Date(), "yyyy-MM-dd");
-        // 首先查询该设备是否有有效期
-        if(StringUtils.isNotBlank(expireTime)){
-
-            if(StringUtils.equals(zd.getJhzt(), "10")){
-                if(StringUtils.isNotBlank(zd.getFwnx())){
-                    if(StringUtils.equals(zd.getFwnx(),"#")){
-                        // 永久激活
-                        zd.setZdKssj(DateUtils.getDateStr(new Date(),"yyyy-MM-dd"));
-                        zd.setZdJssj("#");
-                    }else{
-                        zd.setZdKssj(DateUtils.getDateStr(new Date(), "yyyy-MM-dd"));
-                        zd.setZdJssj(DateUtils.plusYear(LocalDateTime.now(),Integer.parseInt(zd.getFwnx())));
-                    }
-
-                }else{
-                    return ApiResponse.fail("上传终端没有设置服务年限");
-                }
-                zd.setJhzt("20");
-                expireTime = zd.getZdJssj();
-                zdglservice.update(zd);
-                redis.boundValueOps("expire_" + gpsInfo.getDeviceId()).set(zd.getZdJssj());
-            }
-            if (!expireTime.equals("#") && nowTime.compareTo(expireTime) > 0 ) {
-                return ApiResponse.fail("上传终端不在有效期内");
-            }
-
-        }else{
-            if(!ObjectUtils.isEmpty(zd)){
-                if(StringUtils.equals(zd.getJhzt(),"30")){
-                    redis.boundValueOps("expire_" + gpsInfo.getDeviceId()).set("0");
-                    return ApiResponse.fail(zd.getZdbh()+"-已到期");
-                }
-                // 激活设备
-                if(StringUtils.equals(zd.getJhzt(),"10")){
-                    if(StringUtils.isNotBlank(zd.getFwnx())){
-                        if(StringUtils.equals(zd.getFwnx(),"#")){
-                            // 永久激活
-                            zd.setZdKssj(DateUtils.getDateStr(new Date(),"yyyy-MM-dd"));
-                            zd.setZdJssj("#");
-                        }else{
-                            zd.setZdKssj(DateUtils.getDateStr(new Date(), "yyyy-MM-dd"));
-                            zd.setZdJssj(DateUtils.plusYear(LocalDateTime.now(),Integer.parseInt(zd.getFwnx())));
-                        }
-
-                    }else{
-                        return ApiResponse.fail("上传终端没有设置服务年限");
-                    }
-                    zd.setJhzt("20");
-                    zdglservice.update(zd);
-                }
-                redis.boundValueOps("expire_" + gpsInfo.getDeviceId()).set(zd.getZdJssj());
-                if (!zd.getZdJssj().equals("#") && nowTime.compareTo(zd.getZdJssj()) > 0 ) {
-                    return ApiResponse.fail("上传终端不在有效期内");
-                }
-            }
-        }
         if(!StringUtils.equals(gpsInfo.getEventType(),"80")) {
 
             if (zd.getZdLx().equals("10")){
@@ -200,8 +134,6 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             errorLog.error("["+gpsInfo.getDeviceId()+"]速度值异常:"+gpsInfo.getSpeed()+"KM/H");
             return ApiResponse.success();
         }
-
-
 
         //2018年11月23日。将行程计算提前到GPS点存储之前
 //        clXc(gpsInfo);
@@ -302,8 +234,8 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             }
         }
 
-        ClCl car = null;
-        List<ClCl> carList = clService.findEq(ClCl.InnerColumn.zdbh,gpsInfo.getDeviceId());
+        Cb car = null;
+        List<Cb> carList = clService.findEq(Cb.InnerColumn.zdbh,gpsInfo.getDeviceId());
         if (carList.size() != 0) {
             car = carList.get(0);
         }
@@ -320,17 +252,6 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             singlePool.submit(new XcThread(gpsInfo));
 //            clXc(gpsInfo);
             String xlId = "";
-            if (car != null){
-                SimpleCondition condition = new SimpleCondition(ClPb.class);
-                condition.eq(ClPb.InnerColumn.clId,car.getClId());
-                List<ClPb> pbList = pbService.findByCondition(condition);
-                if (pbList.size() != 0){
-                    ClPb pb = pbList.get(0);
-                    if(pb != null) {
-                        xlId = pb.getXlId();
-                    }
-                }
-            }
             if (newGps.getBdjd() == null){
             	newGps.setBdjd(new BigDecimal(-1));
             }
@@ -416,7 +337,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
 
 
     @Override
-    public ClDzwl JudgePoint(ClGps gps, ClCl clcl) {
+    public ClDzwl JudgePoint(ClGps gps, Cb clcl) {
 
 
         List<ClDzwl> seleByZdbh = clcl.getClDzwl();
@@ -510,7 +431,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
     }
 
     @Override
-    public ClSbyxsjjl saveClSbyxsjjl(GpsInfo entity, ClGps clgps, ClCl clcl) {
+    public ClSbyxsjjl saveClSbyxsjjl(GpsInfo entity, ClGps clgps, Cb clcl) {
         // 封装设备事件记录表表
         ClSbyxsjjl clsbyxsjjl = new ClSbyxsjjl();
         clsbyxsjjl.setJd(clgps.getBdjd());
@@ -608,12 +529,12 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
     public WebsocketInfo changeSocketNew(GpsInfo gpsinfo, ClGps clpgs, String xlId) {
         errorLog.error("changeSocketNew gpsinfo:"+gpsinfo.toString());
         ClZdgl zdgl = zdglservice.findById(gpsinfo.getDeviceId());
-        List<ClCl> cars = clService.findEq(ClCl.InnerColumn.zdbh,gpsinfo.getDeviceId());
+        List<Cb> cars = clService.findEq(Cb.InnerColumn.zdbh,gpsinfo.getDeviceId());
         if (cars.size() == 0){
             return null;
         }
 
-        ClCl seleByZdbh = cars.get(0);
+        Cb seleByZdbh = cars.get(0);
         // 通过终端id获取车辆信息
         WebsocketInfo info = new WebsocketInfo();
         if(zdgl != null ){
@@ -695,12 +616,12 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
         ApiResponse<List<WebsocketInfo>> apiResponse = new ApiResponse<>();
         List<WebsocketInfo> list = new ArrayList<>();
 
-        SimpleCondition carCondition = new SimpleCondition(ClCl.class);
+        SimpleCondition carCondition = new SimpleCondition(Cb.class);
         SimpleCondition deviceCondition = new SimpleCondition(ClZdgl.class);
 
         String cphLike = getRequestParamterAsString("cphLike");
         if (StringUtils.isNotEmpty(cphLike)) {
-            carCondition.like(ClCl.InnerColumn.cph, cphLike);
+            carCondition.like(Cb.InnerColumn.cph, cphLike);
         }
         HttpServletRequest request = getRequset();
         List<String> filterDeviceIds = null;
@@ -713,21 +634,21 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                 return apiResponse;
             }
             filterDeviceIds = zdYhs.stream().map(ClZdYh::getDeviceId).collect(Collectors.toList());
-            carCondition.in(ClCl.InnerColumn.zdbh,filterDeviceIds);
+            carCondition.in(Cb.InnerColumn.zdbh,filterDeviceIds);
         }else{ // pc端用户
             SysYh currentUser = getCurrentUser();
             String jgdmLike = currentUser.getJgdm()+"%";
-            carCondition.and().andLike(ClCl.InnerColumn.jgdm.name(),jgdmLike);
+            carCondition.and().andLike(Cb.InnerColumn.jgdm.name(),jgdmLike);
             deviceCondition.and().andLike(ClZdgl.InnerColumn.jgdm.name(),jgdmLike);
         }
 
         // 将终端编号,车辆信息缓存
-        List<ClCl> carList = clclmapper.selectByExample(carCondition);
-        Map<String, ClCl> zdbhClMap = carList.stream().filter(s -> StringUtils.isNotEmpty(s.getZdbh()))
-                .collect(Collectors.toMap(ClCl::getZdbh, p->p));
+        List<Cb> carList = clclmapper.selectByExample(carCondition);
+        Map<String, Cb> zdbhClMap = carList.stream().filter(s -> StringUtils.isNotEmpty(s.getZdbh()))
+                .collect(Collectors.toMap(Cb::getZdbh, p->p));
 
         if (StringUtils.isNotEmpty(cphLike)) {
-            List<String> zdbhs = carList.stream().map(ClCl::getZdbh).collect(Collectors.toList());
+            List<String> zdbhs = carList.stream().map(Cb::getZdbh).collect(Collectors.toList());
             if (filterDeviceIds == null){
                 filterDeviceIds = zdbhs;
             }else{
@@ -863,7 +784,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                 websocketInfo.setDurartion(0L);
             }
 
-            ClCl car = zdbhClMap.get(device.getZdbh());
+            Cb car = zdbhClMap.get(device.getZdbh());
             if (car != null){
                 websocketInfo.setClid(car.getClId());
                 websocketInfo.setCph(car.getCph());
@@ -981,11 +902,11 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
         ApiResponse<List<WebsocketInfo>> apiResponse = new ApiResponse<>();
         List<WebsocketInfo> list = new ArrayList<>();
 //        SysYh currentUser = getCurrentUser();
-        SimpleCondition condition = new SimpleCondition(ClCl.class);
+        SimpleCondition condition = new SimpleCondition(Cb.class);
         String cphLike = getRequestParamterAsString("cphLike");
         String type = getRequestParamterAsString("type");
         if (StringUtils.isNotEmpty(cphLike)) {
-            condition.like(ClCl.InnerColumn.cph, cphLike);
+            condition.like(Cb.InnerColumn.cph, cphLike);
         }
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -998,13 +919,13 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                 return apiResponse;
             }
             List<String> zdbhs = zdYhs.stream().map(ClZdYh::getDeviceId).collect(Collectors.toList());
-            condition.in(ClCl.InnerColumn.zdbh,zdbhs);
+            condition.in(Cb.InnerColumn.zdbh,zdbhs);
         }
 
         // 将终端编号,车辆信息缓存
-        List<ClCl> selectAll = clclmapper.selectByExample(condition);
-        Map<String, ClCl> zdbhClMap = selectAll.stream().filter(s -> StringUtils.isNotEmpty(s.getZdbh()))
-                .collect(Collectors.toMap(ClCl::getZdbh, ClCl -> ClCl));
+        List<Cb> selectAll = clclmapper.selectByExample(condition);
+        Map<String, Cb> zdbhClMap = selectAll.stream().filter(s -> StringUtils.isNotEmpty(s.getZdbh()))
+                .collect(Collectors.toMap(Cb::getZdbh, ClCl -> ClCl));
 
 
         // 获取终端状态
@@ -1051,7 +972,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
         if (CollectionUtils.isNotEmpty(gpsInit)) {
             for (ClGps clgps : gpsInit) {
                 if (StringUtils.isNotEmpty(clgps.getZdbh())) {
-                    ClCl clCl = zdbhClMap.get(clgps.getZdbh());
+                    Cb clCl = zdbhClMap.get(clgps.getZdbh());
                     if (clCl != null) {
                         WebsocketInfo websocketInfo = new WebsocketInfo();
                         websocketInfo.setBdjd(clgps.getBdjd().toString());

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ldz.dao.biz.mapper.ClClMapper;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.job.service.ClService;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.util.bean.ApiResponse;
@@ -22,20 +22,20 @@ import com.ldz.util.bean.ApiResponse;
 import tk.mybatis.mapper.common.Mapper;
 
 @Service
-public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClService {
+public class ClServiceImpl extends BaseServiceImpl<Cb, String> implements ClService {
 	@Autowired
 	private ClClMapper entityMapper;
 
 	@Override
-	protected Mapper<ClCl> getBaseMapper() {
+	protected Mapper<Cb> getBaseMapper() {
 		return entityMapper;
 	}
 
 	@Override
 	public ApiResponse<String> updateNianshen() {
 
-		List<ClCl> allcl = entityMapper.selectAll();
-		for (ClCl clCl : allcl) {
+		List<Cb> allcl = entityMapper.selectAll();
+		for (Cb clCl : allcl) {
 			Date ccdjrq = clCl.getCcdjrq();
 			if (ccdjrq!=null) {
 				if (clCl.getZkl() < 7) {

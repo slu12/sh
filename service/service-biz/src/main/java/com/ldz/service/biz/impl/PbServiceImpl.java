@@ -26,9 +26,9 @@ import com.ldz.dao.biz.bean.clpbInfo;
 import com.ldz.dao.biz.mapper.ClClMapper;
 import com.ldz.dao.biz.mapper.ClPbMapper;
 import com.ldz.dao.biz.mapper.PbInfoMapper;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClPb;
-import com.ldz.service.biz.interfaces.ClService;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.PbService;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.sys.model.SysJg;
@@ -47,7 +47,7 @@ public class PbServiceImpl extends BaseServiceImpl<ClPb, String> implements PbSe
 	@Autowired
 	private JgService jgService;
 	@Autowired
-	private ClService clService;
+	private CbService clService;
 	@Autowired
 	private PbInfoMapper pbinfomapper;
 	@Autowired
@@ -85,7 +85,7 @@ public class PbServiceImpl extends BaseServiceImpl<ClPb, String> implements PbSe
 		clpbInfo.setDate(pbDate);
 		clpbInfo.setClid(entity.getClId());
 
-		ClCl clCl = clService.findByOrgCode(entity.getClId());
+		Cb clCl = clService.findByOrgCode(entity.getClId());
 		RuntimeCheck.ifNull(clCl, "车辆信息有误，请核实！");
 		String sjId = clCl.getSjId();
 		RuntimeCheck.ifBlank(sjId, "该车辆未绑定司机，无法进行排班");
@@ -172,10 +172,10 @@ public class PbServiceImpl extends BaseServiceImpl<ClPb, String> implements PbSe
 			if (StringUtils.isNotEmpty(xbXlPb.getClidlist())) {
 				// 获取车辆id集合
 				List<String> clidlist = Arrays.asList(xbXlPb.getClidlist().split(","));
-				List<ClCl> allClInfo = clclmapper.getAllClInfo(clidlist);
+				List<Cb> allClInfo = clclmapper.getAllClInfo(clidlist);
 				if (StringUtils.isNotEmpty(pbclxlmodel.getClcx())) {
 					// 过滤指定车型的车辆信息
-					List<ClCl> collect = allClInfo.stream().filter(s -> s.getCx().equals(pbclxlmodel.getClcx()))
+					List<Cb> collect = allClInfo.stream().filter(s -> s.getCx().equals(pbclxlmodel.getClcx()))
 							.collect(Collectors.toList());
 					xbXlPb.setClList(collect);
 				} else {
@@ -328,7 +328,7 @@ public class PbServiceImpl extends BaseServiceImpl<ClPb, String> implements PbSe
 
 
 
-		ClCl clCl = clService.findByOrgCode(entity.getClId());
+		Cb clCl = clService.findByOrgCode(entity.getClId());
 		RuntimeCheck.ifNull(clCl, "车辆信息有误，请核实！");
 		String sjId = clCl.getSjId();
 		RuntimeCheck.ifBlank(sjId, "该车辆未绑定司机，无法进行排班");
@@ -413,7 +413,7 @@ public class PbServiceImpl extends BaseServiceImpl<ClPb, String> implements PbSe
 			PbInfo pbInfo = new PbInfo();
 			pbInfo.setClXl(xlService.findById(clPb.getXlId()));
 			pbInfo.setXlId(clPb.getXlId());
-			ClCl clCl = clService.findById(clPb.getClId());
+			Cb clCl = clService.findById(clPb.getClId());
 			pbInfo.setClcl(clCl);
 			pbInfo.setClId(clPb.getClId());
 			pbInfo.setPbsj(clPb.getPbsj());

@@ -1,26 +1,25 @@
 package com.ldz.dao.biz.mapper;
 
 import com.ldz.dao.biz.bean.ClClModel;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
-import java.util.Date;
 import java.util.List;
 
 //@CacheNamespace(implementation=MybatisRedisCache.class, eviction=FifoCache.class)
-public interface ClClMapper extends Mapper<ClCl> {
+public interface ClClMapper extends Mapper<Cb> {
 	/*
 	 * 通过车辆终端id找到对应的电子围栏
 	 */
-	ClCl seleByZdbh(String deviceId);
+	Cb seleByZdbh(String deviceId);
 
 	/*
 	 * 通过车辆id集合获取车俩信息
 	 *
 	 */
-	List<ClCl> getAllClInfo(List<String> list);
+	List<Cb> getAllClInfo(List<String> list);
 
 	@Select("SELECT GPS.BDJD,GPS.BDWD,CL.*,CL.CL_ID AS CLID,CL.SJ_ID AS SJID ,CL.OBD_CODE AS OBDCODE " +
 			"  , IFNULL((SELECT XM.ZDMC FROM SYS_ZDXM XM WHERE XM.ZDLMDM='ZDCLK0019' AND  XM.ZDDM=CL.CX limit 1),'') AS CXZTMC " +

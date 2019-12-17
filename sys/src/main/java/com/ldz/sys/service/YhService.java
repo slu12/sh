@@ -33,4 +33,8 @@ public interface YhService extends BaseService<SysYh, String> {
 	 * @return
 	 */
 	ApiResponse<String> resetPassword(String userId);
+
+    ApiResponse<String> sendSms(String phone);
+
+	ApiResponse<String> findPwd(String phone, String code, String pwd, String pwd1);
 }

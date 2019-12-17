@@ -1,21 +1,26 @@
 package com.ldz.service.biz.interfaces;
 
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
+import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.sys.base.BaseService;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.gps.Gps;
 
 import java.util.List;
 import java.util.Map;
 
-public interface ClService extends BaseService<ClCl,String>{
-    ClCl findByOrgCode(String code);
-    List<ClCl> getOrgCarList(String orgCode);
-    ApiResponse<String> saveEntity(ClCl entity);
-    ApiResponse<String> updateEntity(ClCl entity);
+public interface CbService extends BaseService<Cb,String>{
+    Cb findByOrgCode(String code);
+
+    List<Cb> getOrgCarList(String orgCode);
+
+    ApiResponse<String> saveEntity(Cb entity);
+
+    ApiResponse<String> updateEntity(Cb entity);
 
     ApiResponse<List<Map<String,Object>>> getVehicleTypeStatistics(String zxzt);
 
-	ApiResponse<List<ClCl>> nianshen(ClCl car);
+	ApiResponse<List<Cb>> nianshen(Cb car);
 
     ApiResponse<Map<String,Object>> carAccStatistics(Integer days,String type);
 
@@ -23,9 +28,17 @@ public interface ClService extends BaseService<ClCl,String>{
 	ApiResponse<Map<String, Integer>> getnianshen();
 
     ApiResponse<String> unbindDevice(String carId);
+
     ApiResponse<String> unbindDriver(String carId);
 
     ApiResponse<String> bindDriver(String carId, String driverId);
 
     ApiResponse<String> bindDevice(String carId, String devcieId);
+
+    ApiResponse<String> bindWebcam(String mmsi, String sbh);
+
+    ApiResponse<String> getXc(String mmsi, String start, String end, int pageNum, int pageSize);
+
+    ApiResponse<List<ClGpsLs>> getXcGpsByMMSI(String mmsi, String start, String end);
+
 }

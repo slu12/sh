@@ -110,7 +110,7 @@ public class ClDzwl implements Serializable {
     private String yhId;
 
     @Transient
-    private List<ClCl> cls;
+    private List<Cb> cls;
 
     private static final long serialVersionUID = 1L;
 

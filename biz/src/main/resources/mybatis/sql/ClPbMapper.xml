@@ -80,7 +80,7 @@ SELECT T1.CL_ID,T1.XL_ID,T2.SJXM,t3.xlmc,T3.YXKSSJ,T3.YXJSSJ FROM CL_PB t1   LEF
 		<result column="CJR" property="cjr" />
 		<result column="XGJ" property="xgj" />
 		<result column="XGR" property="xgr" />
-		<association property="clcl" javaType="com.ldz.dao.biz.model.ClCl">
+		<association property="clcl" javaType="com.ldz.dao.biz.model.Cb">
 			<id column="CL_ID" property="clId" />
 			<result column="CPH" property="cph" />
 			<result column="JGDM" property="jgdm" />

@@ -15,6 +15,7 @@ import com.ldz.sys.service.JgService;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.DateUtils;
+import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.gps.Gps;
@@ -24,6 +25,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	private GpsLsService gpsLsService;
 	@Autowired
 	private SxtService sxtService;
+	@Value("${shipApi.ip}")
+	private String shipip;
 
 	@Override
 	protected Mapper<Cb> getBaseMapper() {
@@ -545,6 +549,11 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     @Override
     public ApiResponse<String> shipInfo(String mmsi) {
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		String url = shipip + "/v1/GetShipInfo";
+		Map<String,String> params = new HashMap<>();
+		params.put("shipid", mmsi);
+		String res = HttpUtil.get(url, params);
+
 		return null;
     }
 

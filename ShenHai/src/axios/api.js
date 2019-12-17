@@ -1,4 +1,6 @@
-let ajaxUrl = 'http://mt.xxpt123.com:81';
+// let ajaxUrl = 'http://192.168.0.115:8081';
+// let ajaxUrl = 'http://2uwezv.natappfree.cc';
+let ajaxUrl = 'http://223.240.68.90:8083';
 // let ajaxUrl = 'http://http://119.23.242.234:8080';
 export default {
   NETWORK_ERR_STR: '网络加载异常!',
@@ -11,273 +13,317 @@ export default {
     getUKeyPwd:'/getUKeyPwd',
     getUserLoginType:'/getUserLoginType',
   },
+  UPLOAD:ajaxUrl+'/biz/upload',
+  STATIC_PATH:'http://223.240.68.90:'+'9092/',//地图icon地址前缀
+  VIDEO_PATH:ajaxUrl+'9091/test/',
+  TXT:'/api/clsbyxsjjl/pager',
+  fileDR:'/api/zdgl/excel',
   USERROOT:{
-    MODIFY_PSD: '/api/yh/mdfPwd'
+    GET_MENU_LIST:'/api/gn/getUserFunctions',
+    GET_MENU_TREE:'/api/gn/getMenuTree',
+    INIT_MENU:'/api/gn/initMenu',
+    MODIFY_PSD:'/api/yh/mdfPwd'
   },
-  DATASTA: {
-    // （统计收费或缴费的人数）   参数 chargeCode 收费代码，字典可见 0000 为报名 ， 0001 为体检,9996 （科目三初考）,9997（科目二初考）,9998（科目一初考）等   startTime 开始时间 例：2018-09-09 ，endTime 结束时间 ， 例：2018-09-09  （开始结束时间可不填，不填默认为当天时间）
-    // /api/chargemanagement/countType
-    //（统计报名人数） 参数  startTime 开始时间 例：2018-09-09 ，endTime 结束时间 ， 例：2018-09-09  （开始结束时间可不填，不填默认为当天时间
-    BM: '/api/traineeinformation/countReg',
-    //（统计科目考试人数）  参数 sub （科目一：10 ， 科目二 ：20  科目三： 30） startTime 开始时间 例：2018-09-09 ，endTime 结束时间 ， 例：2018-09-09  （开始结束时间可不填，不填默认为当天时间）
-    KS: '/api/traineeinformation/countTest',
-    //
-    dateO: '/api/traineeinformation/countStu',
-    //
-    dateP: '/api/traineeinformation/countTest'
+  CHART_DATA:{
+    SAFE_DRIVING:'/api/cl/carAccStatistics',
+    WEEK:'/api/dd/ddzTj',
+    PD:'/api/dd/ccTTj',
+    nianshenbt:'/api/cl/nianshenbt',
+    xbkb:'/api/pb/xbkb',//今日校巴开班条形图
+    csxxtj:'/api/clsbyxsjjl/csxxtj',//获取时间段内超数值
+    zdcx:'/api/zdgl/zdcx',//获取设备状况展示
+  },
+  USER:{
+    QUERY:'/api/yh/pager',//用户管理
+    ADD:'/api/yh/save',
+    CHANGE:'/api/yh/update',
+    GIVE:'/api/js/modifyUserRoles',
+    DELE:'/api/yh/removeIds'
+  },
+  BXJZ:{
+    QUERY:'/api/bxjz/pager',//报销记账管理
+    ADD:'/api/bxjz/save',
+    CHANGE:'/api/bxjz/update',
+    DELE:'/api/bxjz/removeIds'
+  },
+  TEMP_UNIT:{
+    QUERY:'/api/lsdw/pager',//临时单位管理
+    ADD:'/api/lsdw/save',
+    CHANGE:'/api/lsdw/update',
+    DELE:'/api/lsdw/removeIds'
+  },
+  TEMP_CAR:{
+    QUERY:'/api/lsc/pager',//临时车管理
+    ADD:'/api/lsc/save',
+    CHANGE:'/api/lsc/update',
+    DELE:'/api/lsc/removeIds'
+  },
+  ORDER:{
+    QUERY:'/api/dd/pager',//订单管理
+    ADD:'/api/dd/save',
+    CHANGE:'/api/dd/update',
+    DELE:'/api/dd/removeIds',
+    AUDIT:'/api/dd/orderAuditing',
+    //订单分派
+    PDTJ:'/api/dd/dtddtj',
+    SJLB:'/api/dd/pdsjlb',//司机列表
+    DFP:'/api/dd/dfp',//待分派订单
+    QXPD:'/api/dd/qxpd',//取消派单
+    CONFIRM:'/api/dd/ddqr',//订单确认
+    DRIVER_CONFIRM:'/api/dd/driverConfirm',//队长确认
+    orderDetails:'/api/dd/orderDetails',//订单详情
+    FP:'/api/dd/pd',//订单分派
+    TJ:'/api/dd/ddtj',//订单统计
+    skgl:'/api/dd/skgl',//收款管理
+    cctj:'/api/dd/cctj', // 出车统计
+    fktj:'/api/dd/fktj', // 付款统计
+    sktj:'/api/dd/sktj', // 收款统计
+    collectingList:'/api/dd/collectingList', // 收款列表
+    paymentList:'/api/dd/paymentList', // 付款列表
+    cwupdate:'/api/dd/cwupdate', // 财务编辑
+    collectingConfirm:'/api/dd/collectingConfirm', // 收款确认
+    paymentConfirm:'/api/dd/paymentConfirm', // 付款确认
+    DRZT:'/api/jsy/jsytype ',//司机状态修改
+  },
+  ROLE:{
+    QUERY:'/api/js/pager',//角色管理
+    ALL:'/api/js/getAll',//角色管理
+    ADD:'/api/js/save',
+    CHANGE:'/api/js/update',
+    GIVE:'/api/js/modifyUserRoles',
+    DELE:'/api/js/removeIds',
+    MODIFY_USER_ROLES:'/api/js/modifyUserRoles',
+    GET_USER_ROLES:'/api/js/getUserRoles'
+  },
+  FRAMEWORK:{
+    QUERY:'api/jg/pager',//机构管理
+    ADD:'/api/jg/save',
+    CHANGE:'/api/jg/update',
+    DELE:'/api/jg/removeIds',
+    GET_TREE:'/api/jg/getOrgTree',
+    GET_TREE_Node:'/api/jg/getTree',
+    getSubOrgList:'/api/jg/getSubOrgList',
+    getCurrentUserOrgTree:'/api/jg/getCurrentUserOrgTree',
+    getCurrentOrgTree:'/api/jg/getCurrentOrgTree',
+    getOrgPath:'/api/jg/getOrgPath'
+  },
+  DICTIONARY:{
+    QUERY:'/api/zd/pager',// 查询字典
+    ADD:'/api/zd/save',// 新增字典
+    CHANGE:'/api/zd/update',// 编辑字典
+    DELE:'/api/zd/removeIds' // 删除字典
+  },
+  DICTIONARY_LIST:{
+    QUERY:'/api/zdxm/pager',//查询字典项
+    ADD:'/api/zdxm/save',// 新增字典项
+    CHANGE:'/api/zdxm/update',// 编辑字典项
+    DELE:'/api/zdxm/removeIds',// 删除字典项
+    GET_BY_CONDITION:'/api/zdxm/getCondition', // 删除字典
+  },
+  ITMS:{
+    QUERY:'api/fw/pager',//服务管理
+    ADD:'/api/fw/save',
+    CHANGE:'/api/fw/update',
+    DELE:'/api/fw/removeIds'
+  },
+  HSGS:{
+    QUERY:'api/hsgs/pager',//核算公式
+    ADD:'/api/hsgs/save',
+    CHANGE:'/api/hsgs/update',
+    DELE:'/api/hsgs/removeIds'
+  },
+  AQJS:{
+    QUERY:'/api/clsbyxsjjl/Safedriving',
 
   },
+  FUNCTION:{
+    QUERY:'api/gn/pager',//功能管理
+    ADD:'/api/gn/save',
+    CHANGE:'/api/gn/update',
+    DELE:'/api/gn/removeIds',
+    GET_ORG_PERMISSION_TREE:'/api/gn/getOrgPermissionTree',
+    GET_ALL_PERMISSION_TREE:'/api/gn/getAllPermissionTree',
+    GET_ROLE_PERMISSION_TREE:'/api/gn/getRolePermissionTree',
+    GET_USER_PERMISSION_TREE:'/api/gn/getUserPermissionTree',
+    getPermissionTreeWithChecked:'/api/gn/getPermissionTreeWithChecked',
+    SET_ROLE_FUNCTIONS:'/api/gn/setRoleFunctions',
+    SET_ORG_FUNCTIONS:'/api/gn/setOrgFunctions',
+    GET_ORG_FUNCTIONS:'/api/gn/getOrgFunctions',
+    GET_ROLE_FUNCTIONS:'/api/gn/getRoleFunctions',
+  },
+  DAILY:{
+    QUERY:'api/rz/pager',//日志管理
+    ADD:'/api/rz/save',
+    CHANGE:'/api/rz/update',
+    DELE:'/api/rz/removeIds'
+  },
+  CLSBYXJL:{
+    QUERY:'api/clsbyxsjjl/pager',//异常事件管理
+    ADD:'/api/clsbyxsjjl/save',
+    CHANGE:'/api/clsbyxsjjl/update',
+    DELE:'/api/clsbyxsjjl/removeIds'
+  },
+  SUGGES:{
+    QUERY:'api/yj/pager',//意见管理
+    CHANGE:'/api/yj/update',
+  },
+  ADVERTISING:{
+    QUERY:'api/hd/pager',//活动管理
+    ADD:'/api/hd/save',
+    CHANGE:'/api/hd/update',
+    DELE:'/api/hd/removeIds'
+  },
+  ACCIDENT:{
+    QUERY:'api/sg/pager',//事故管理
+    ADD:'/api/sg/save',
+    CHANGE:'/api/sg/update',
+    DELE:'/api/sg/removeIds'
+  },
+  //******************车辆管理******************
+  CLOUD:{//云视频库
+    QUERY:'/api/spk/pager',
+    DELE:'/api/spk/remove'
+  },
+  CLGL:{
+    QUERY: '/api/cl/pager',
+    ADD:   '/api/cl/save',
+    CHANGE:'/api/cl/update',
+    DELE:  '/api/cl/removeIds',
+    GET_ORG_CAR_LIST:'/api/cl/getOrgCarList',
+    GPS_HITSOR:'/api/xc/history',
+    GPS_HITSOR_GPS:'/api/clsbyxsjjl/historygps',
+    GPS_HITSOR_GPS_BD:'/api/clsbyxsjjl/yyguiji',
+    nianshen:'/api/cl/nianshen',
+    unbindDevice:'/api/cl/unbindDevice',
+    unbindDriver:'/api/cl/unbindDriver',
+    bindDriver:'/api/cl/bindDriver',
+    bindDevice:'/api/cl/bindDevice',
+  },
+  XL:{
+    QUERY: '/api/xl/pager',
+    ADD:   '/api/xl/save',
+    CHANGE:'/api/xl/update',
+    DELE:  '/api/xl/removeIds'
+  },
+  LSDW:{
+    QUERY: '/api/lsdw/pager',
+    ADD:   '/api/lsdw/save',
+    CHANGE:'/api/lsdw/update',
+    DELE:  '/api/lsdw/removeIds'
+  },
+  LSC:{
+    QUERY: '/api/lsc/pager',
+    ADD:   '/api/lsc/save',
+    CHANGE:'/api/lsc/update',
+    DELE:  '/api/lsc/removeIds'
+  },
+  JSY:{
+    QUERY:  '/api/jsy/pager',
+    ADD:    '/api/jsy/save',
+    CHANGE: '/api/jsy/update',
+    DELE:   '/api/jsy/removeIds',
+    NOT_BIND_LIST:   '/api/jsy/notBindList',
+    jsytype:   '/api/jsy/jsytype',
+  },
+  CD:{
+    QUERY:  '/api/cd/pager',
+    ADD:    '/api/cd/save',
+    CHANGE: '/api/cd/update',
+    DELE:   '/api/cd/removeIds',
+    GET_CONDITION:'/api/cd/getCondition',
+    notBindCarList:'/api/cd/notBindCarList',
+    notBindDriverList:'/api/cd/notBindDriverList',
+  },
+  SG:{
+    QUERY:  '/api/sg/pager',
+    ADD:    '/api/sg/save',
+    CHANGE: '/api/sg/update',
+    DELE:   '/api/sg/removeIds'
+  },
+  ZD:{
+    QUERY:  '/api/clzd/pager',
+    ADD:    '/api/clzd/save',
+    CHANGE: '/api/clzd/update',
+    DELE:   '/api/clzd/removeIds',
+    GET_ALL:'/api/clzd/getAll',
+    getByCondition:'/api/clzd/getCondition',
+    GET_BY_ROUTE_ID:'/api/clzd/getByXlId',
+    getNotBindList:'/api/clzd/getNotBindList',
+  },
+  PB:{//校巴排版
+    QUERY:  '/api/pb/xbpb/',
+    banchetj :  '/api/pb/banchetj',
+  },
+  XLPBXX:{//车辆排班信息
+    QUERY: '/api/pb/xbbjpb/',
+    ADD:    '/api/pb/savepb',
+    PLADD:'/api/pb/pbList',
+    YZ:'/api/pb/checkPbCl',
+    PLDELE:'/api/pb/delPbList',
+    DELE:   '/api/pb/deleteByXlAndCl',
+    CARLIST:'api/pb/getcllist',//其余车辆
+    deleteByXlAndCl:   '/api/pb/deleteByXlAndCl',
 
-  SFX: {//收费项
-    PAGER: '/api/chargeitemmanagement/pager',//inOutType 00收  10 支出
-    SAVE: '/api/chargeitemmanagement/save',
-    DELE: '/api/chargeitemmanagement/remove/',
-    UPDATE: '/api/chargeitemmanagement/update'//GET
   },
-  TGTHX: {//团购、优惠项
-    PAGER: '/api/reducemanagement/pager ',//查询参数传入 group = 1 为单个优惠项  group = 2 为团购优惠项
-    UPDATE: '/api/reducemanagement/update',
-    DELE: '/api/reducemanagement/remove/',
-    SAVEY: '/api/reducemanagement/save',//新增优惠项
-    SAVET: '/api/reducemanagement/saveGroup',//新增团购项
-    JLMESS: '/api/reducemanagement/getValueLabel',//职位人员 级联数据
+  XBDT:{//校巴实时动态
+    QUERY: '/api/clzd/getzdcl/',
   },
-  DAK: {//档案库
-    ADD: 'api/recordmanagement/save',//新增档案库
-    PAGER: '/api/recordmanagement/pager',//档案库列表
-    DELE: '/api/recordmanagement/remove/',//删除
-    TAB: 'api/archivesrecord/getdymx'//档案柜信息
+  CS:{//超速
+    QUERY:  '/api/cssd/pager',
+//		ADD:    '/api/cssd/save',
+    ADD:	'api/cssd/setCssds',
+    CHANGE: '/api/cssd/update',
+    DELE:   '/api/cssd/removeIds'
   },
-  JL: {//教练
-    PAGER: '/api/coachmanagement/pager',//列表
-    UPDATE: '/api/coachmanagement/update',//修改
-    DELE: '/api/coachmanagement/remove/',//删除
-    SAVE: '/api/coachmanagement/save',//新增教员
+  ZNZP:{//智能站牌
+    QUERY:  '/api/znzp/pager',
+    ADD:    '/api/znzp/save',
+    CHANGE: '/api/znzp/update',
+    DELE:   '/api/znzp/removeIds',
+    getXlIds:   '/api/znzp/getXlIds',
   },
-  USER: {
-    QUERY: '/api/yh/pager',//用户管理
-    ADD: '/api/yh/save',
-    CHANGE: '/api/yh/update',
-    GIVE: '/api/js/modifyUserRoles',
-    DELE: '/api/yh/removeIds',
-    bindUKey: '/api/yh/bindUKey',
-    unBindUKey: '/api/yh/unBindUKey',
-    updateLoginType: '/api/yh/updateLoginType',
+  ZDGL:{//终端管理
+    QUERY:  '/api/zdgl/pager',//终端数据列表
+    SXQUERY:'/api/zdgl/getunboundlist',//状态 正常 未绑定的终端
+    ADD:    '/api/zdgl/save',
+    CHANGE: '/api/zdgl/update',
+    DELE:   '/api/zdgl/removeIds',
+    GET_BY_ID:'/api/zdgl/',
+    getWebsocketInfo:'/api/zdgl/getWebsocketInfo'
   },
-  CAR: {
-    QUERY: '/api/car/pager',//车辆
-    ADD: '/api/car/save',
-    CHANGE: '/api/car/update',
-    // CHANGE: '/api/carbx/updates',
-    DELE: '/api/car/removeIds',
+  DZWL:{//电子围栏
+    QUERY:  '/api/dzwl/pager',
+    ADD:    '/api/dzwl/save',
+    CHANGE: '/api/dzwl/update',
+    DELE:   '/api/dzwl/removeIds',
+    GET_BY_CAR_ID:'/api/dzwl/getByCarId',
+    setCarsDzwl:'/api/dzwl/setCarsDzwl'
   },
-  carns: {
-    // QUERY:'/api/carns/getPage',
-    QUERY: '/api/carns/pager',//年审管理
-    ADD: '/api/carns/save',
-    CHANGE: '/api/carns/update',
-    DELE: '/api/carns/removeIds',
+  DZWL_CL:{//电子围栏车辆
+    QUERY:  '/api/dzwlCl/pager',
+    ADD:    '/api/dzwlCl/save',
+    CHANGE: '/api/dzwlCl/update',
+    DELE:   '/api/dzwlCl/removeIds',
   },
-  carcq: {
-    cqbg: '/api/carcq/cqbg',//车辆产权内部变更
-    cphbg: '/api/carcq/cphbg',// 学牌车变为非学牌车
-    clbf: '/api/carcq/clbf',// 车辆报废
-    clcs: '/api/carcq/clcs',// 车辆变卖
+  clyxjl:{//车辆运行记录
+    QUERY:  '/api/clyxjl/pager',
+    ADD:    '/api/clyxjl/save',
+    CHANGE: '/api/clyxjl/update',
+    DELE:   '/api/clyxjl/removeIds',
   },
-  ROLE: {
-    QUERY: '/api/js/pager',//角色管理
-    ALL: '/api/js/getAll',//角色管理
-    ADD: '/api/js/save',
-    CHANGE: '/api/js/update',
-    GIVE: '/api/js/modifyUserRoles',
-    DELE: '/api/js/removeIds',
-    MODIFY_USER_ROLES: '/api/js/modifyUserRoles',
-    GET_USER_ROLES: '/api/js/getUserRoles'
+  CLJK:{
+    QUERY:'/api/cl/InitClGps',
+    GET_CAR_INFO:'/api/cl/getCarInfo',
+    GET_OBD_INFO:'/obd/getObdInfo',
+    getObdTimely:'/obd/getObdTimely',
+    SEND_CONTROLL:'/pub/intstruction/send'
   },
-  FRAMEWORK: {
-    QUERY: 'api/jg/pager',//机构管理
-    ADD: '/api/jg/save',
-    CHANGE: '/api/jg/update',
-    DELE: '/api/jg/removeIds',
-    GET_TREE: '/api/jg/getOrgTree',
-    GET_TREE_Node: '/api/jg/getTree',
-    getSubOrgList: '/api/jg/getSubOrgList',
-    getCurrentUserOrgTree: '/api/jg/getCurrentUserOrgTree',
-    getCurrentOrgTree: '/api/jg/getCurrentOrgTree',
-    getOrgPath: '/api/jg/getOrgPath'
+  CARTREE:{//车辆列表
+    QUERY:'/api/cl/getcltj'
   },
-  DICTIONARY: {
-    QUERY: '/api/zd/pager',// 查询字典
-    ADD: '/api/zd/save',// 新增字典
-    CHANGE: '/api/zd/update',// 编辑字典
-    DELE: '/api/zd/removeIds' // 删除字典
-  },
-  DICTIONARY_LIST: {
-    QUERY: '/api/zdxm/pager',//查询字典项
-    list: '/api/zdxm/query',//查询字典项
-    ADD: '/api/zdxm/save',// 新增字典项
-    CHANGE: '/api/zdxm/update',// 编辑字典项
-    DELE: '/api/zdxm/removeIds',// 删除字典项
-    GET_BY_CONDITION: '/api/zdxm/getCondition', // 删除字典
-  },
-  FUNCTION: {
-    QUERY: 'api/gn/pager',//功能管理
-    ADD: '/api/gn/save',
-    CHANGE: '/api/gn/update',
-    DELE: '/api/gn/removeIds',
-    GET_ORG_PERMISSION_TREE: '/api/gn/getOrgPermissionTree',
-    GET_ALL_PERMISSION_TREE: '/api/gn/getAllPermissionTree',
-    GET_ROLE_PERMISSION_TREE: '/api/gn/getRolePermissionTree',
-    GET_USER_PERMISSION_TREE: '/api/gn/getUserPermissionTree',
-    getPermissionTreeWithChecked: '/api/gn/getPermissionTreeWithChecked',
-    SET_ROLE_FUNCTIONS: '/api/gn/setRoleFunctions',
-    SET_ORG_FUNCTIONS: '/api/gn/setOrgFunctions',
-    GET_ORG_FUNCTIONS: '/api/gn/getOrgFunctions',
-    GET_ROLE_FUNCTIONS: '/api/gn/getRoleFunctions',
-  },
-  DAILY: {
-    QUERY: 'api/rz/pager',//日志管理
-    ADD: '/api/rz/save',
-    CHANGE: '/api/rz/update',
-    DELE: '/api/rz/removeIds'
-  },
-  SUGGES: {
-    QUERY: 'api/yj/pager',//意见管理
-    CHANGE: '/api/yj/update',
-  },
-  //招生报名接口管理
-  TRAINEE: {
-    GETREDUCE: '/api/traineeinformation/getjgreduce',
-    PAGER: '/api/traineeinformation/pager',
-    QUERY: '/api/traineeinformation/getCondition',
-    //基本信息审核
-    AUDIT_PAGER: '/api/traineeinformation/baseAuditingPager',
-    AUDIT: '/api/traineeinformation/usersh',
-    //受理确认
-    ACCEPT_PAGER: '/api/traineeinformation/traineeAcceptancePager',
-    ACCEPT: '/api/traineeinformation/traineeAcceptanceAuditing',
-    ACCEPT_FILE: '/api/traineeinformation/impAcceptanceExcel',
-    //更新培训状态
-    UPDATETRAINTYPE: '/api/traineeinformation/updateTrainType',
-    SAVE: '/api/traineeinformation/save',
-    //分配教练员
-    ALLOC_COACH: '/api/coachmanagement/traineefp',
-    //报名审核回退
-    REVOKEINFO: '/api/traineeinformation/revokeInfo',
-    XXWH: '/api/traineeinformation/remove/',
-  },
-  //学员优惠审核
-  TRAINEEREDUCE: {
-    AUDIT_PAGER: '/api/traineereduceauditing/pager',
-    AUDIT: '/api/traineereduceauditing/userAuditing',
-  },
-  //学员约考导入
-  TRAINETEST: {
-    //约考导入处理
-    IMPORT_DESTINE: '/api/traineetestinfo/impDestineExcel',
-    //成绩导入处理
-    IMPORT_RESULT: '/api/traineetestinfo/impResultExcel',
-    EXPORT_URL: '/pub/exportResult/'
-  },
-  //档案柜入库&出库
-  ARCHIVES: {
-    RECORD: '/api/recordmanagement/pager',
-    //档案入库
-    IMPORT: '/api/archivesrecord/addition',
-    //档案出库
-    EXPORT: '/api/archivesrecord/ck'
-  },
-  //收费管理
-
-  //收费
-  //参数sign = 1 报名费待缴学员
-  //    sign = 4 报名费已缴学员
-
-  //    sign = 7 科目一待缴费学员
-  //    sign = 8 科目一已缴费学员
-
-  //    sign = 2 科目二待缴费学员
-  //    sign = 5 科目二已缴费学员
-
-  //    sign = 3 科目三待缴费学员
-  //    sign = 6 科目三已缴费学员
-
-  //    sign = 9  全部待缴费学员
-  //    sign = 10 全部已缴费学员
-  CMONEY: '/api/traineeinformation/pager',
-  //报名收费
-  BMSF: {
-    //参数 traineeId 学员id，chargeType 收款方式 00现金支付 10在线支付
-    OKPAY: '/api/traineeinformation/confirmSignUp',
-    //撤回 参数 traineeId 学员id  撤回
-    RETRACT: '/api/traineeinformation/revokeSignUp'
-  },
-  KSSF: {//考试缴费
-    // 参数traineeId 学员id remark
-    //确认
-    OKPAY: '/api/traineeinformation/confirmTest',
-    //撤回
-    RETRACT: '/api/traineeinformation/revokeTest',
-    CHECK: '/pub/paycheck/check',
-  },
-
-  TJSDF: {//体检收费
-    ADD: '/api/chargemanagement/saveInspect',
-    //------------------------------------
-    //参数 inspect = 1 ， 查询今日收入体检费
-    PAGER: '/api/chargemanagement/pager',
-    // 删除体检费用
-    DELE: '/api/chargemanagement/remove/'
-  },
-  SFSH: {//收费审核 inOutType 支付状态
-    // verify 1 待审核 verify 2 今日已审核
-    PAGER: '/api/chargemanagement/pager',
-    // confirmCharge  chargeIds[]  对象 数组
-    OK: '/api/chargemanagement/confirmCharge',
-    // 撤回审核  chargeIds[] 对象数组
-    RETRACT: '/api/chargemanagement/revokeCharge'
-  },
-  OTHER: {// 其他收费
-    ADD: '/api/chargemanagement/otherCharge',
-    NAME: '/api/chargeitemmanagement/getChargeName',// 获取其他收费项
-  },
-  EXCEL: { // excel导出
-    CHARGE: '/pub/chargemanagement/exportResult',  // 收费导出
-    STUDENT: '/pub/traineeinformation/exportResult' // 学员导出
-  },
-  COUNT: { // 统计接口
-    ZHTJ: '/api/data/countAllIn',// startTim : 开始时间 endTime : 结束时间 lx :  类型 (数组) carType :  车辆类型 jgdm:  机构代码
-    ZSTJ: '/api/data/getAllStudentCount',  //  招生统计 startTime   (String )  , endTime  (String) ,  jgdm  (String 可不填), lx   (String[ ] 暂时可不填)
-    NSR: '/api/chargemanagement/countIn',//（年收入） 不传参数
-    NZC: '/api/chargemanagement/countOut ',//（年支出） 不传参数
-    DTXY: '/api/data/getStudentCount', // 查询某一天的学员数量' startTime: 开始时间 endTime: 结束时间  jgdm: 机构代码
-    BMSF: '/api/data/countBranchSignUp', //  统计报名收费  lx  ： 类型数组  （10：直属队 , 20: 挂靠队 ，30 ： 承包队）startTime: 开始时间endTime： 结束时间 jgdm: 机构代码carType： 车型
-  },
-  CLWH: { //车辆维护
-    CLADD: '/api/lccl/save', // 新增车辆
-    CLXX: '/api/lccl/pager', // 车辆查询
-    CLDEL: '/api/lccl/remove/', // 删除车辆
-    CLGX: '/api/lccl/update' // 更新车辆
-  },
-    lcjl: { //练车历史
-        QUERY: 'api/lcjl/pager',//功能管理
-        statistics: 'api/lcjl/statistics',//功能管理
-        ADD: '/api/lcjl/save',
-        CHANGE: '/api/lcjl/update',
-        DELE: '/api/lcjl/removeIds',
-        GET: '/api/lcjl/',
-        updateFdZt: '/api/lcjl/updateFdZt',
-        getFdZt: '/api/lcjl/getFdZt',
-        getOneLog: '/api/lcjl/getOneLog',
-        jlTj: '/api/lcjl/jlTj',
-        jxtj: '/api/lcjl/jxtj',
-        getAllLog: '/api/lcjl/getAllLog',
-  },
-zgjbxx: { //练车历史
-        QUERY: 'api/zgjbxx/pager',//功能管理
-        ADD: '/api/zgjbxx/save',
-        CHANGE: '/api/zgjbxx/update',
-        DELE: '/api/zgjbxx/removeIds',
-    setaqrqd: '/api/zgjbxx/setaqrqd',
+  SBZDDZ:{//设备终端接口地址
+    ADD:'/pub/intstruction/send',
+    batchUpdate:'/pub/batchUpdate',
+    getVersionInfo:'/api/zdgl/getVersionInfo'
   }
 }

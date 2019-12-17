@@ -2,15 +2,12 @@ package com.ldz.biz.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ldz.biz.controller.ClSbyxsjjlCtrl;
 import com.ldz.dao.biz.bean.GpsInfo;
 import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.dao.biz.model.ClSbyxsjjl;
 import com.ldz.dao.biz.model.ClXc;
 import com.ldz.dao.biz.model.ClZdgl;
-import com.ldz.service.biz.impl.XcServiceImpl;
 import com.ldz.service.biz.interfaces.*;
 import com.ldz.sys.base.LimitedCondition;
 import com.ldz.sys.constant.Dict;
@@ -21,8 +18,8 @@ import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.DateUtils;
 import com.ldz.util.commonUtil.ExcelUtil;
 import com.ldz.util.commonUtil.JwtUtil;
+import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
-import com.ldz.util.redis.RedisTemplateUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,7 +50,8 @@ public class MessageApi {
 	private SpkService spkservice;
 	@Autowired
 	private InstructionService intstruction;
-
+	@Autowired
+	private StringRedisTemplate redis;
 	@Autowired
 	private YhService yhService;
 	@Autowired
@@ -71,11 +67,6 @@ public class MessageApi {
 	//事件 10急加速，20急刹车，30急转弯 ，40超速，50点火，60熄火,70不在电子围栏范围,80离线
 	@GetMapping("/testExcel")
 	public void testExcel(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-
-
-
-
 			List<Map<Integer, String>> data = new ArrayList<>();
 			Map<Integer, String> map = new HashMap<>();
 			map.put(0, "终端编号");
@@ -266,6 +257,36 @@ public class MessageApi {
 		redisTemplateUtil.delete("1");
 		System.out.println("|||||||||||||||||||||");
 	}*/
+
+	/**
+	 * 摄像头登录测试
+	 * @return
+	 */
+	@GetMapping("/testLogin")
+	public ApiResponse<String> testLogin(){
+		String login = WebcamUtil.login(redis);
+		return ApiResponse.success(login+"");
+	}
+
+	/**
+	 * 摄像头抓拍测试
+	 */
+	@GetMapping("/photo")
+	public ApiResponse<String> photo(){
+		String photo = WebcamUtil.photo(redis, "30895", "3");
+		return ApiResponse.success(photo);
+	}
+
+	/**
+	 * 获取当前账户的所有设备号
+	 * @return
+	 */
+	@GetMapping("/getAllSbh")
+	public ApiResponse<Map<String, String>> getAllSbh(){
+		Map<String, String> sbh = WebcamUtil.getAllSbh(redis);
+		return ApiResponse.success(sbh);
+	}
+
 
 
 }

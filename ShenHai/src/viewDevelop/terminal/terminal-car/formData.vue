@@ -5,7 +5,7 @@
       <div>
             <Modal v-model="showModal" width='900'
                    :closable='false' :mask-closable="mesF"
-                   :title='$t("NEW_TERMINAL_EQUIPMENT")'>
+                   title='$t("NEW_TERMINAL_EQUIPMENT")'>
                   <div style="overflow: auto;height: 300px;">
                         <Form
                                 :model="param"
@@ -15,23 +15,23 @@
                                 :styles="{top: '20px'}">
                               <Row>
                                     <Col span="12">
-                                          <FormItem prop="zdbh" :label='$t("TERMINAL_NUMBER")'>
+                                          <FormItem prop="zdbh" label='$t("TERMINAL_NUMBER")'>
                                                 <Input :readonly="dataRead" type="text" v-model="param.zdbh"
-                                                       :placeholder='$t("TERMINAL_NUM")'>
+                                                       placeholder='$t("TERMINAL_NUM")'>
                                                 </Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="12">
-                                          <FormItem prop="mc" :label='$t("EQUIPMENT_NAME")'>
+                                          <FormItem prop="mc" label='$t("EQUIPMENT_NAME")'>
                                                 <Input :readonly="dataRead" type="text" v-model="param.mc"
-                                                       :placeholder='$t("TERMINAL_NAME")'>
+                                                       placeholder='$t("TERMINAL_NAME")'>
                                                 </Input>
                                           </FormItem>
                                     </Col>
                               </Row>
                               <Row>
                                     <Col span="12">
-                                          <FormItem :label='$t("EQUIPMENT_STATE")'>
+                                          <FormItem label='$t("EQUIPMENT_STATE")'>
                                                 <Select filterable :readonly="dataRead" filterable clearable
                                                         v-model="param.zt">
                                                       <Option v-for="item in ztDictionary" :value="item.key">
@@ -43,21 +43,21 @@
                               </Row>
                               <Row>
                                     <Col span="12">
-                                          <FormItem :label='$t("MODEL")'>
+                                          <FormItem label='$t("MODEL")'>
                                                 <Input :readonly="dataRead" type="text" v-model="param.xh"
-                                                       :placeholder='$t("EQUIPMENT_MODEL")'></Input>
+                                                       placeholder='$t("EQUIPMENT_MODEL")'></Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="12" v-show="dataRead">
                                           <FormItem label='$t("INTERFACE_ADDRESS_TAB")'>
                                                 <Input type="text" v-model="param.cmd"
-                                                       :placeholder='$t("TERMINAL_INTERFACE_ADDRESS")'></Input>
+                                                       placeholder='$t("TERMINAL_INTERFACE_ADDRESS")'></Input>
                                           </FormItem>
                                     </Col>
                               </Row>
                         </Form>
                   </div>
-                  </Form>
+
                   <div v-show="!dataRead" slot='footer'>
                         <Button type="default" @click="close" style="color: #949494">{{$t("CANCEL")}}</Button>
                         <Button type="primary" @click="save('addmess')">{{$t("DETERMINE")}}</Button>
@@ -72,9 +72,12 @@
 
 <script>
     import treelist from '@/data/list.js'
+    import i18nTabTit from '@/mixins/i18nTabTit'
+    import mixins from '@/mixins'
 
     export default {
         name: '',
+        mixin:[i18nTabTit,mixins],
         data() {
             return {
                 dataRead: false,

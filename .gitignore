@@ -3,3 +3,9 @@
 /tic-dwq/target
 /.idea/
 /ShenHai/node_modules/
+/dao/dao-biz/target/classes/com/ldz/dao/biz/model/
+/dao/dao-biz/target/
+/dao/dao-biz/target/maven-status/maven-compiler-plugin/compile/default-compile/
+/dao/dao-biz/target/classes/com/ldz/dao/biz/model/
+/dao/dao-biz/target/dao-biz-0.0.1.jar
+/dao/dao-device/target/

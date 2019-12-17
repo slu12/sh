@@ -66,9 +66,12 @@
         mounted(){
             var v = this
             // 百度地图API功能
+          this.$nextTick(()=>{
             this.map = new BMap.Map("allmap"); // 创建Map实例
             this.mapCenter()
             this.bkDot(this.carNumber)
+          })
+
 
         },
         methods:{
@@ -76,7 +79,7 @@
             bkDot(id){
                 var v = this
                 this.$http.get(this.apis.DZWL.GET_BY_CAR_ID + "?clId=" + id).then((res) => {
-                    log('电子围栏点',res)
+                    console.log('电子围栏点',res)
                     if (res.code === 200 && res.result) {
                         let ditMess  = res.result.dlxxzb.split(';');
                         let dotLength = res.result.dlxxzb.split(';').length;

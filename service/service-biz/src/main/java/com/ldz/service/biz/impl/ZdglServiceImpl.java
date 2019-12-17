@@ -17,7 +17,6 @@ import com.ldz.sys.model.SysYh;
 import com.ldz.sys.service.JgService;
 import com.ldz.util.bean.*;
 import com.ldz.util.commonUtil.DateUtils;
-import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.JsonUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.redis.RedisTemplateUtil;
@@ -59,7 +58,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
     @Autowired
     private ClZdglMapper entityMapper;
     @Autowired
-    private ClService clService;
+    private CbService clService;
     @Autowired
     private CssdService cssdService;
     @Autowired
@@ -124,7 +123,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
             gpsMapper.insertSelective(gps);
         }
 
-        List<ClCl> cars = clService.findEq(ClCl.InnerColumn.zdbh,deviceId);
+        List<Cb> cars = clService.findEq(Cb.InnerColumn.zdbh,deviceId);
         ApiResponse<String> res = ApiResponse.success();
         if (cars.size() == 0){
             res.setResult("notBind");
@@ -258,11 +257,11 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
         }
         String cphLike = getRequestParamterAsString("cphLike");
         if (StringUtils.isNotEmpty(cphLike)){
-            List<ClCl> carList = clService.findLike(ClCl.InnerColumn.cph,cphLike);
+            List<Cb> carList = clService.findLike(Cb.InnerColumn.cph,cphLike);
             if (CollectionUtils.isEmpty(carList)){
                 return false;
             }
-            List<String> zdbhs = carList.stream().map(ClCl::getZdbh).collect(Collectors.toList());
+            List<String> zdbhs = carList.stream().map(Cb::getZdbh).collect(Collectors.toList());
             condition.in(ClZdgl.InnerColumn.zdbh,zdbhs);
         }
         return true;
@@ -276,11 +275,11 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
             List<ClZdgl> list=resultPage.getList();
             if(list!=null&&list.size()>0){
                 List<String> listIds = list.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
-                List<ClCl> clList=clService.findIn(ClCl.InnerColumn.zdbh,listIds);
+                List<Cb> clList=clService.findIn(Cb.InnerColumn.zdbh,listIds);
                 Map<String,ClZdgl> zdbhMap = list.stream().collect(Collectors.toMap(ClZdgl::getZdbh, p->p));
 
                 if(clList!=null&&clList.size()>0){
-                    for(ClCl cl:clList){
+                    for(Cb cl:clList){
                         ClZdgl zdbh=zdbhMap.get(cl.getZdbh());
                         if (zdbh == null){
                             continue;
@@ -532,8 +531,6 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
             }
             redisTemplateUtil.boundValueOps(DEVICEID+clZdgl.getZdbh()).set("");
         }
-
-
         entityMapper.insertList(clZdgls);
     }
 
@@ -541,7 +538,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
     public ApiResponse<String> saveList(String zdbhs, ClZdgl entity) {
 //        SysYh user = getCurrentUser();
         RuntimeCheck.ifBlank(entity.getZdLx(), "终端类型不能为空");
-        RuntimeCheck.ifBlank(entity.getFwnx(),"终端的服务年限不能为空");
+//        RuntimeCheck.ifBlank(entity.getFwnx(),"终端的服务年限不能为空");
         SimpleCondition condition = new SimpleCondition(ClZdgl.class);
         condition.eq(ClZdgl.InnerColumn.jgdm,entity.getJgdm());
         Integer count = countByCondition(condition);
@@ -557,7 +554,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
         //默认设备的心跳
         entity.setGpsxt("10");
         // 默认设置激活状态为 未激活
-        entity.setJhzt("10");
+//        entity.setJhzt("10");
         if(StringUtils.isBlank(entity.getCmd())){
             entity.setCmd(apiurl);
         }
@@ -567,16 +564,14 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
         entity.setCjsj(new Date());
         String[] split = zdbhs.split(",");
         if(split !=null){
-            RuntimeCheck.ifTrue(split.length + count > (jg.getZdsl()==null?0:jg.getZdsl()) ,"当前新增终端数量大于当前机构的剩余数量" );
+//            RuntimeCheck.ifTrue(split.length + count > (jg.getZdsl()==null?0:jg.getZdsl()) ,"当前新增终端数量大于当前机构的剩余数量" );
             for (String zdbh : split) {
                 ClZdgl zdgl = new ClZdgl();
                 BeanUtils.copyProperties(entity,zdgl,"zdbh");
                 zdgl.setZdbh(zdbh);
                 ClZdgl findById = findById(zdgl.getZdbh());
                 if (findById!=null) {
-
-                    return ApiResponse.fail("终端编号:" + zdgl.getZdbh() + "已存在, 如要续费,请前往续费界面 ");
-
+                    continue;
                 }
                 // 上传至百度鹰眼
                 YyEntity yyEntity = new YyEntity();
@@ -600,8 +595,6 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
         }else {
             return ApiResponse.fail("请输入终端编号");
         }
-
-
         return ApiResponse.success();
     }
 
@@ -787,7 +780,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
         List<ClZdgl> zdgls = findEq(ClZdgl.InnerColumn.zdbh, zdbh);
         RuntimeCheck.ifEmpty(zdgls, "未找到终端");
         ClZdgl clZdgl = zdgls.get(0);
-        List<ClCl> cls = clService.findEq(ClCl.InnerColumn.zdbh, clZdgl.getZdbh());
+        List<Cb> cls = clService.findEq(Cb.InnerColumn.zdbh, clZdgl.getZdbh());
         if(CollectionUtils.isNotEmpty(cls)){
             clZdgl.setCl(cls.get(0));
         }

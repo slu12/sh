@@ -96,13 +96,16 @@ export default [
         },
         component: () => import('@/viewDevelop/system/system-role')
       },
-      // {
-      //   path: 'system-framework',
-      //   icon: 'android-clipboard',
-      //   name: 'system-framework',
-      //   title: '组织机构',
-      //   component: () => import('@/viewDevelop/system/system-framework')
-      // },
+      {
+        path: 'system-framework',
+        name: 'system-framework',
+        meta: {
+          icon: 'md-contacts',
+          title: '厂商管理',
+        },
+
+        component: () => import('@/viewDevelop/system/system-framework')
+      },
       {
         path: 'system-dictionary',
         name: 'system-dictionary',
@@ -185,24 +188,24 @@ export default [
         },
         component: () => import('@/viewDevelop/terminal/terminal-car')
       },
-      {
-        path: 'terminal_OBD',
-        name: 'terminal_OBD',
-        meta: {
-          icon: 'ios-cog',
-          title: '终端拔出管理',
-        },
-        component: () => import('@/viewDevelop/terminal/terminal_OBD')
-      },
-      {
-        path: 'terminal_GPS',
-        name: 'terminal_GPS',
-        meta: {
-          icon: 'ios-cog',
-          title: '终端数据库对接',
-        },
-        component: () => import('@/viewDevelop/terminal/terminal_GPS')
-      },
+      // {
+      //   path: 'terminal_OBD',
+      //   name: 'terminal_OBD',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '终端拔出管理',
+      //   },
+      //   component: () => import('@/viewDevelop/terminal/terminal_OBD')
+      // },
+      // {
+      //   path: 'terminal_GPS',
+      //   name: 'terminal_GPS',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '终端数据库对接',
+      //   },
+      //   component: () => import('@/viewDevelop/terminal/terminal_GPS')
+      // },
       // {
       //   path: 'terminal-station',
       //   icon: 'android-clipboard',
@@ -352,6 +355,27 @@ export default [
           title: '规则管理',
         },
         component: () => import('@/viewDevelop/security/rule')
+      },
+    ]
+
+  },
+  {
+    path: '/VehicleMonitoring',
+    name: 'VehicleMonitoring',
+    meta: {
+      icon: 'ios-cog',
+      title: '船舶监控',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/jk',
+        name: 'jk',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶监控',
+        },
+        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
       },
     ]
 
@@ -787,5 +811,10 @@ export default [
       title:'404'
     },
     component: () => import('@/view/error-page/404.vue')
-  }
+  },
+// 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
+
+    // { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/views/whdx/historyTarck') },
+    // { path: 'historyPath', title: '历史轨迹', name: 'historypath', component: () => import('@/views/whdx/OperationMonitoring/VehicleMonitoring/HistoryPath') },
+
 ]

@@ -2,7 +2,7 @@ package com.ldz.dao.biz.bean;
 
 import java.util.Date;
 
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClXl;
 
 import lombok.Getter;
@@ -83,7 +83,7 @@ public class PbInfo {
     /**
      * 车辆
      */
-	private ClCl clcl;
+	private Cb clcl;
 	  /**
      * 线路
      */

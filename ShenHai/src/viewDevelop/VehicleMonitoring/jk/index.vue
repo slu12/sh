@@ -10,7 +10,7 @@
   <div class="box-row">
     <div style="position:absolute;width:430px;top:145px;left:330px;z-index:8888">
       <Col span="24">
-        <Input placeholder='终端' size="large" v-model="searchKey">
+        <Input placeholder='输入终端号' size="large" v-model="searchKey">
           <Button slot="append" type="primary" icon="md-search" @click="filter"></Button>
         </Input>
         <Tabs v-show="showTabs" ref="tabRef" style="background-color:white;" size="small"
@@ -51,7 +51,7 @@
                             $t("NONE_DATE")</h3>
                           <Row v-if="gpsObdMessage != null">
                             <Col span="8">
-                              $t("UPDATE_DATE")
+                              更新日期
                             </Col>
                             <Col span="16"><span>{{formatDate(gpsObdMessage.creatorDate)}} {{formatTime(gpsObdMessage.creatortime)}}</span>
                             </Col>
@@ -125,7 +125,7 @@
                     </Col>
                     <Col span="8">
                       <Icon type="md-person"></Icon>
-                      {{item.sjxm ? item.sjxm : '$t("NONE_BOUND")'}}
+                      {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
                       <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
@@ -214,7 +214,7 @@
                     </Col>
                     <Col span="8">
                       <Icon type="md-person"></Icon>
-                      {{item.sjxm ? item.sjxm : '$t("NONE_BOUND")'}}
+                      {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
                       <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
@@ -355,7 +355,7 @@
         </Tabs>
       </Col>
     </div>
-    <div style="position:absolute;width:300px;top:20px;right:-10px;z-index:9990;padding-top:30px;padding-right:30px;float: right"
+    <div style="position:absolute;width:300px;top:20px;right:-10px;z-index:9990;padding-top:140px;padding-right:50px;float: right"
          type="flex" justify="end">
       <car-info @close="closeItem" ref="carInfoRef" @switchGJ="switchGJ"></car-info>
     </div>
@@ -386,7 +386,7 @@
     watch: {
       local: function (n, o) {
         if (n == 'en-US') {
-          this.compName = 'G_myMap'
+          this.compName = 'B_myMap'
         } else {
           this.compName = 'B_myMap'
         }
@@ -395,7 +395,7 @@
     },
     data() {
       return {
-        compName: this.local == 'en-US' ? 'G_myMap' : 'B_myMap',
+        compName: this.local == 'en-US' ? 'B_myMap' : 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
         SpinShow: false,
@@ -417,7 +417,7 @@
         changeBtnIcon: 'ios-arrow-down',
         qblabel: (h) => {
           return h('div', [
-            h('span', ''),
+            h('span', '全部'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -430,7 +430,7 @@
         },
         dhlabel: (h) => {
           return h('div', [
-            h('span', 'this.$t("IGNITE")'),
+            h('span', '在线'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -443,7 +443,7 @@
         },
         xhlabel: (h) => {
           return h('div', [
-            h('span',' this.$t("FLAMEOUT")'),
+            h('span','熄火'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -456,7 +456,7 @@
         },
         lxlabel: (h) => {
           return h('div', [
-            h('span', 'this.$t("OFFLINE")'),
+            h('span', '离线'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -470,7 +470,7 @@
       };
     },
     created() {
-      this.compName = this.local == 'en-US' ? 'G_myMap' : 'B_myMap'
+      this.compName = this.local == 'en-US' ? 'B_myMap' : 'B_myMap'
       this.$store.commit('setCurrentPath', [{
         title: '首页',
       }, {

@@ -7,7 +7,12 @@ package config
 type AllConfig struct {
 	Mysql Mysql
 	Log   Log
+	Base  Base
 	Cron  Cron
+}
+type Base struct {
+	Shipids  string `ini:"shipids"`
+	HttpAddr string `ini:"httpAddr"`
 }
 type Mysql struct {
 	Conn string `ini:"conn"`

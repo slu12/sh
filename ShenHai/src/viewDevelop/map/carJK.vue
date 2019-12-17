@@ -205,6 +205,7 @@
                 var v = this
                 var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32)});
                 var marker = new BMap.Marker(point, {icon: myIcon});
+                marker.setRotation(item.fxj + 90)
                 marker.addEventListener("click",(code)=>{
                     // console.log('店事件',code);
                     // console.log('item',item);
@@ -219,9 +220,9 @@
             getIcon(car) {
                 switch (car.status) {
                     case 1:
-                        return this.apis.STATIC_PATH+'icon/running.png';
+                      return this.apis.STATIC_PATH+'icon/ic_car.png';
                     case 2:
-                        return this.apis.STATIC_PATH+'icon/ic_car.png';
+                      return this.apis.STATIC_PATH+'icon/running.png';
                     default:
                         return this.apis.STATIC_PATH+'icon/ic_car_offline.png'
                 }

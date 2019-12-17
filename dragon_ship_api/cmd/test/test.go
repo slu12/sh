@@ -38,7 +38,7 @@ func main() {
 
 	switch operation {
 	case "HistoryTrack":
-		list, err := shipapis.GetShipHistoryTrack(ids, st, et)
+		shipapis.GetShipHistoryTrack(ids, st, et)
 
 	case "HistoryVoyage":
 		shipapis.GetShipHistoryVoyage(ids, st, et, "")
@@ -55,11 +55,11 @@ func main() {
 	<-quit
 }
 func testGetShipHistoryTrack() {
-	list, err := shipapis.GetShipHistoryTrack(ids, st, et)
+	//list, err := shipapis.GetShipHistoryTrack(ids, st, et)
 
 }
 func testGetShipPosition(ids string) {
-	jobs.TestUpdateShipPosition(ids)
+	jobs.UpdateShipPosition(ids)
 }
 func startTk() {
 	for {

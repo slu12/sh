@@ -5,13 +5,10 @@
 package api
 
 import (
-	"context"
+	"dragon_ship_api/component/config"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"time"
 )
 
 func Start() {
@@ -19,33 +16,16 @@ func Start() {
 	router := gin.Default()
 	router.Use(Cors())
 
-	router.POST("/api-wechat/auth", handler.ProcSignature)
-	//router.GET("/api-wechat/GetUserInfo", handler.GetUserInfo)
 	g := router.Group("v1")
+	g.GET("/GetShipInfo", GetShipInfo)
+	g.GET("/GetHistoryVoyage", GetHistoryVoyage)
+	g.GET("/GetCurrentVoyage", GetCurrentVoyage)
+	g.POST("/SyncShipLatestInfo", SyncShipLatestInfo)
 
-	verifyHandler := new(handler.VerifyHandler).InitHandler(g)
-	userInfoHandler := new(handler.WechatUserInfoHandler).InitHandler(g)
-	awardHandler := new(handler.AwardHandler).InitHandler(g)
-	imgHandler := new(handler.PopularImgHandler).InitHandler(g)
-	moudleMap := make(map[string]handler.BaseHandler)
-	moudleMap["/verify"] = verifyHandler.BH
-	moudleMap["/userInfo"] = userInfoHandler.BH
-	moudleMap["/award"] = awardHandler.BH
-	moudleMap["/popularImg"] = imgHandler.BH
-	for k := range moudleMap {
-		v := moudleMap[k]
-		g.GET(k, v.GetAll)
-		g.GET(k+"/:id", v.GetOne)
-		g.POST(k, v.Add)
-		g.PUT(k+"/:id", v.Update)
-		g.DELETE(k+"/:id", v.Delete)
-	}
-
-	serverAddr := iniUtil.GetString("serverAddr")
-	log.Println(" serverAddr : ", serverAddr)
+	log.Println(" serverAddr : ", config.Config.Base.HttpAddr)
 
 	server := &http.Server{
-		Addr:    serverAddr,
+		Addr:    config.Config.Base.HttpAddr,
 		Handler: router,
 	}
 	go func() {
@@ -53,23 +33,6 @@ func Start() {
 			log.Fatal("start server error,", err)
 		}
 	}()
-
-	handler.Init()
-
-	// gracefully shutdown
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	log.Println("Shutdown Server...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal("shuntdown server error", err)
-	}
-	log.Println("Server exiting")
-
 }
 
 func Cors() gin.HandlerFunc {

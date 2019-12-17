@@ -16,15 +16,6 @@
               <img :src="it" style="width: 100%;height: 100%" alt="">
             </div>
           </CarouselItem>
-<!--          <CarouselItem>-->
-<!--            <div class="" :style="{width:domeEH.w+'px',height:domeEH.h+'px'}">2</div>-->
-<!--          </CarouselItem>-->
-<!--          <CarouselItem>-->
-<!--            <div class="" :style="{width:domeEH.w+'px',height:domeEH.h+'px'}">3</div>-->
-<!--          </CarouselItem>-->
-<!--          <CarouselItem>-->
-<!--            <div class="" :style="{width:domeEH.w+'px',height:domeEH.h+'px'}">4</div>-->
-<!--          </CarouselItem>-->
         </Carousel>
       </div>
     </div>
@@ -32,8 +23,8 @@
 </template>
 
 <script>
-  import login1 from './login1.png'
-  import login2 from './login2.png'
+  import login1 from '../file/login1.png'
+  import login2 from '../file/login2.png'
 
   export default {
     name: "index",

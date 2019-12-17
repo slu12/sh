@@ -5,6 +5,7 @@ import com.ldz.sys.base.LimitedCondition;
 import com.ldz.sys.constant.Dict;
 import com.ldz.sys.service.GnService;
 import com.ldz.util.commonUtil.DateUtils;
+import com.ldz.util.commonUtil.SMSUtils;
 import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.sys.mapper.*;
 import com.ldz.sys.model.*;
@@ -20,6 +21,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.session.SessionProperties;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -28,6 +31,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +51,8 @@ public class YhServiceImpl extends BaseServiceImpl<SysYh, String> implements YhS
 	private SysJsGnMapper jsGnMapper;
 	@Autowired
 	private SysYhJsMapper yhJsMapper;
+	@Autowired
+	private StringRedisTemplate reids;
 
 	@Override
 	protected Class<SysYh> getEntityCls(){
@@ -238,6 +244,37 @@ public class YhServiceImpl extends BaseServiceImpl<SysYh, String> implements YhS
 
 		user.setMm(newEncrypt);
 		baseMapper.updateByPrimaryKeySelective(user);
+		return ApiResponse.success();
+	}
+
+	@Override
+	public ApiResponse<String> sendSms(String phone) {
+		RuntimeCheck.ifBlank(phone , "请输入手机号码");
+		List<SysYh> yhs = findEq(SysYh.InnerColumn.sjh, phone);
+		RuntimeCheck.ifEmpty(yhs, "未找到用户信息");
+		// todo 短信发送
+		// 短信验证码五分钟失效
+		reids.boundValueOps(phone+ "_find_pwd").set("123456", 5 , TimeUnit.MINUTES);
+		return ApiResponse.success("短信发送成功");
+	}
+
+	@Override
+	public ApiResponse<String> findPwd(String phone, String code, String pwd, String pwd1) {
+		RuntimeCheck.ifBlank(phone, "请填写手机号");
+		RuntimeCheck.ifBlank(code, "请填写验证码");
+		RuntimeCheck.ifBlank(pwd, "请填写新密码");
+		RuntimeCheck.ifBlank(pwd1, "请确认密码");
+		RuntimeCheck.ifFalse( StringUtils.equals(pwd, pwd1), "两次密码不一致");
+		String pwdCode = reids.boundValueOps(phone + "_find_pwd").get();
+		RuntimeCheck.ifBlank(pwdCode, "请先发送验证码");
+		RuntimeCheck.ifFalse(StringUtils.equals(code, pwdCode), "验证码错误");
+		List<SysYh> yhs = findEq(SysYh.InnerColumn.sjh, phone);
+		RuntimeCheck.ifEmpty(yhs, "未找到用户信息");
+		SysYh yh = yhs.get(0);
+		String userPwd = EncryptUtil.encryptUserPwd(pwd);
+		yh.setMm(userPwd);
+		yh.setXgsj(new Date());
+		update(yh);
 		return ApiResponse.success();
 	}
 }

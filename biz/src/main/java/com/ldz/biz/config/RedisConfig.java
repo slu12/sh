@@ -100,7 +100,7 @@ public class RedisConfig {
 		SbyxsjjlService sbyxsjjlService = SpringContextUtil.getBean(SbyxsjjlService.class);
 		ObdFaultCodeMapper obdFaultCodeMapper = SpringContextUtil.getBean(ObdFaultCodeMapper.class);
 		ZdxmService zdxmService = SpringContextUtil.getBean(ZdxmService.class);
-		ClService clService = SpringContextUtil.getBean(ClService.class);
+		CbService clService = SpringContextUtil.getBean(CbService.class);
 		MileDwqMapper dwqMapper = SpringContextUtil.getBean(MileDwqMapper.class);
 		CheckMessageReceiver checkMessageReceiver = new CheckMessageReceiver(redisTemplateUtil,websocket,idWorker,obdFaultCodeMapper,zdxmService,sbyxsjjlService,clService,dwqMapper);
 

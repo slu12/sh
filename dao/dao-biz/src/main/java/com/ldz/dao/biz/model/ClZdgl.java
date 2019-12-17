@@ -168,7 +168,7 @@ public class ClZdgl implements Serializable {
     private String zdLx;
 
     @Transient
-    private ClCl cl;
+    private Cb cl;
 
     @Transient
     private short cssd;
@@ -351,11 +351,11 @@ public class ClZdgl implements Serializable {
         this.cph = cph;
     }
 
-    public ClCl getCl() {
+    public Cb getCl() {
         return cl;
     }
 
-    public void setCl(ClCl cl) {
+    public void setCl(Cb cl) {
         this.cl = cl;
     }
 

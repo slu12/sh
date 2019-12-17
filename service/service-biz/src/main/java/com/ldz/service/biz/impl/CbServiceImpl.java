@@ -1,28 +1,30 @@
 package com.ldz.service.biz.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ldz.dao.biz.bean.ClClModel;
 import com.ldz.dao.biz.bean.SafedrivingModel;
 import com.ldz.dao.biz.mapper.ClClMapper;
 import com.ldz.dao.biz.model.*;
-import com.ldz.service.biz.interfaces.ClService;
-import com.ldz.service.biz.interfaces.ClyxjlService;
-import com.ldz.service.biz.interfaces.JsyService;
-import com.ldz.service.biz.interfaces.ZdglService;
+import com.ldz.service.biz.interfaces.*;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.sys.base.LimitedCondition;
 import com.ldz.sys.model.SysJg;
 import com.ldz.sys.model.SysYh;
-import com.ldz.sys.model.SysZdxm;
 import com.ldz.sys.service.JgService;
-import com.ldz.sys.service.ZdxmService;
-import com.ldz.sys.util.RedisUtil;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.SimpleCondition;
+import com.ldz.util.commonUtil.DateUtils;
+import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
+import com.ldz.util.gps.Gps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
@@ -33,33 +35,38 @@ import java.util.stream.Collectors;
 
 
 @Service
-public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClService {
+public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbService {
 	@Autowired
 	private ClClMapper entityMapper;
 	@Autowired
 	private JgService jgService;
 	@Autowired
-	private ClService clService;
+	private CbService clService;
 	@Autowired
 	private JsyService jsyService;
-	@Autowired
-	private ZdxmService zdxmService;
 	@Autowired
 	private ZdglService zdglService;
 	@Autowired
 	private ClyxjlService clyxjlService;
 	@Autowired
-	private RedisUtil redisUtil;
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	@Autowired
+	private StringRedisTemplate reids;
+	@Autowired
+	private XcService xcService;
+	@Autowired
+	private GpsLsService gpsLsService;
+	@Autowired
+	private SxtService sxtService;
+
 	@Override
-	protected Mapper<ClCl> getBaseMapper() {
+	protected Mapper<Cb> getBaseMapper() {
 		return entityMapper;
 	}
 
 	@Override
 	protected Class<?> getEntityCls() {
-		return ClCl.class;
+		return Cb.class;
 	}
 //车辆删除后，同步移除
 	@Override
@@ -74,7 +81,7 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 	}
 
 	@Override
-	public void remove(ClCl entity) {
+	public void remove(Cb entity) {
 		int i=getBaseMapper().delete(entity);
 		if(i==1){
 //			移除 CL_CLYXJL
@@ -99,21 +106,21 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 	}
 
 	@Override
-	public ClCl findByOrgCode(String code) {
-		List<ClCl> jgs = findEq(ClCl.InnerColumn.clId, code);
+	public Cb findByOrgCode(String code) {
+		List<Cb> jgs = findEq(Cb.InnerColumn.clId, code);
 		if (jgs.size() == 0)
 			return null;
 		return jgs.get(0);
 	}
 
 	@Override
-	public List<ClCl> getOrgCarList(String orgCode) {
-		List<ClCl> carList = clService.findEq(ClCl.InnerColumn.jgdm, orgCode);
+	public List<Cb> getOrgCarList(String orgCode) {
+		List<Cb> carList = clService.findEq(Cb.InnerColumn.jgdm, orgCode);
 		return carList;
 	}
 
 	@Override
-	public ApiResponse<String> saveEntity(ClCl entity) {
+	public ApiResponse<String> saveEntity(Cb entity) {
 		SysYh user = getCurrentUser();
 		SysJg org = jgService.findByOrgCode(user.getJgdm());
 		Date now = new Date();
@@ -122,32 +129,13 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 		entity.setCjsj(now);
 		entity.setJgdm(user.getJgdm());
 		entity.setJgmc(org.getJgmc());
-		if (StringUtils.isNotBlank(entity.getSjId())) {
-			ClJsy jsy = jsyService.findById(entity.getSjId());
-			entity.setSjxm(jsy.getXm());
-		}
-
-		SimpleCondition condition = new SimpleCondition(SysZdxm.class);
-		condition.eq(SysZdxm.InnerColumn.zdlmdm, "ZDCLK0041");
-		condition.eq(SysZdxm.InnerColumn.zddm, entity.getZkl());
-		List<SysZdxm> zdxms = zdxmService.findByCondition(condition);
-		if (CollectionUtils.isEmpty(zdxms)) {
-			Short zkl = entity.getZkl();
-			String zdCode = "ZDCLK0041";// 默认为载客量
-			SysZdxm sysZdxm = new SysZdxm();
-			sysZdxm.setZddm(zkl + "");// 字典代码不能为空
-			sysZdxm.setZdlmdm(zdCode);// 字典类目代码不能为空
-			sysZdxm.setZdmc(zkl + "");// 字典名称不能为空
-			zdxmService.add(sysZdxm);
-		}
-
 		save(entity);
 		return ApiResponse.saveSuccess();
 	}
 
 	@Override
-	public ApiResponse<String> updateEntity(ClCl entity) {
-		ClCl findById = findById(entity.getClId());
+	public ApiResponse<String> updateEntity(Cb entity) {
+		Cb findById = findById(entity.getClId());
 		RuntimeCheck.ifNull(findById, "未找到记录");
 		entity.setXgr(getOperateUser());
 		entity.setXgsj(new Date());
@@ -218,21 +206,21 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 	}
 
 	@Override
-	public ApiResponse<List<ClCl>> nianshen(ClCl car) {
-		ApiResponse<List<ClCl>> apiResponse = new ApiResponse<>();
+	public ApiResponse<List<Cb>> nianshen(Cb car) {
+		ApiResponse<List<Cb>> apiResponse = new ApiResponse<>();
 		long now = new Date().getTime();
 
-		LimitedCondition condition = new LimitedCondition(ClCl.class);
+		LimitedCondition condition = new LimitedCondition(Cb.class);
 		if (StringUtils.isNotEmpty(car.getCph())){
-			condition.like(ClCl.InnerColumn.cph,car.getCph());
+			condition.like(Cb.InnerColumn.cph,car.getCph());
 		}
-		List<ClCl> cllist = entityMapper.selectByExample(condition);
-		List<ClCl> cls= new ArrayList<>();
+		List<Cb> cllist = entityMapper.selectByExample(condition);
+		List<Cb> cls= new ArrayList<>();
 		/*cllist.stream().filter(s -> s.getNssj() != null).filter(s -> (now-s.getNssj().getTime()) < a);*/
 		// 年审时间正序
 		cllist = cllist.stream().filter(p->p.getNssj() != null).collect(Collectors.toList());
-		cllist.sort(Comparator.comparing(ClCl::getNssj));
-		for (ClCl clCl : cllist) {
+		cllist.sort(Comparator.comparing(Cb::getNssj));
+		for (Cb clCl : cllist) {
 			if (clCl.getNssj()!=null) {
 				long nianshen= clCl.getNssj().getTime();
 				long time = (nianshen-now)/(24 * 60 * 60 * 1000);
@@ -378,17 +366,17 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 	public ApiResponse<Map<String, Integer>> getnianshen() {
 		//获取当前登陆用户
 		SysYh user = getCurrentUser();
-		ClCl clCl= new ClCl();
+		Cb clCl= new Cb();
 		clCl.setJgdm(user.getJgdm());
 
-		List<ClCl> cllist = entityMapper.select(clCl);
+		List<Cb> cllist = entityMapper.select(clCl);
 
 
 		int thirty=0;
 		int sixty=0;
 		int ninety=0;
 		Date now = new Date();
-		for (ClCl cl : cllist) {
+		for (Cb cl : cllist) {
 			if (cl.getNssj()==null) {
 				continue;
 			}
@@ -416,9 +404,9 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 
 	@Override
 	public ApiResponse<String> unbindDevice(String carId) {
-		RuntimeCheck.ifBlank(carId,"请选择车辆");
-		ClCl car = entityMapper.selectByPrimaryKey(carId);
-		RuntimeCheck.ifNull(car,"未找到车辆");
+		RuntimeCheck.ifBlank(carId,"请选择船舶");
+		Cb car = entityMapper.selectByPrimaryKey(carId);
+		RuntimeCheck.ifNull(car,"未找到船舶信息");
 		car.setZdbh(null);
 		entityMapper.updateByPrimaryKey(car);
 		return ApiResponse.success();
@@ -427,7 +415,7 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 	@Override
 	public ApiResponse<String> unbindDriver(String carId) {
 		RuntimeCheck.ifBlank(carId,"请选择车辆");
-		ClCl car = entityMapper.selectByPrimaryKey(carId);
+		Cb car = entityMapper.selectByPrimaryKey(carId);
 		RuntimeCheck.ifNull(car,"未找到车辆");
 		car.setSjxm(null);
 		car.setSjId(null);
@@ -439,7 +427,7 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 	public ApiResponse<String> bindDriver(String carId, String driverId) {
 		RuntimeCheck.ifBlank(carId,"请选择车辆");
 		RuntimeCheck.ifBlank(driverId,"请选择驾驶员");
-		ClCl car = entityMapper.selectByPrimaryKey(carId);
+		Cb car = entityMapper.selectByPrimaryKey(carId);
 		RuntimeCheck.ifNull(car,"未找到车辆");
 		ClJsy driver = jsyService.findById(driverId);
 		RuntimeCheck.ifNull(driver,"未找到驾驶员");
@@ -452,18 +440,106 @@ public class ClServiceImpl extends BaseServiceImpl<ClCl, String> implements ClSe
 
 	@Override
 	public ApiResponse<String> bindDevice(String carId, String devcieId) {
-		RuntimeCheck.ifBlank(carId,"请选择车辆");
+		RuntimeCheck.ifBlank(carId,"请选择船舶");
 		RuntimeCheck.ifBlank(devcieId,"请选择终端");
-		ClCl car = entityMapper.selectByPrimaryKey(carId);
-		RuntimeCheck.ifNull(car,"未找到车辆");
+		Cb car = entityMapper.selectByPrimaryKey(carId);
+		RuntimeCheck.ifNull(car,"未找到船舶信息");
 		ClZdgl device = zdglService.findById(devcieId);
-		RuntimeCheck.ifNull(device,"未找到终端");
+		RuntimeCheck.ifNull(device,"未找到终端信息");
 
-		List<ClCl> clCls = clService.findEq(ClCl.InnerColumn.zdbh, devcieId);
-		RuntimeCheck.ifTrue(CollectionUtils.isNotEmpty(clCls), "此终端已经绑定其他车辆, 请勿重复绑定");
+		List<Cb> clCls = clService.findEq(Cb.InnerColumn.zdbh, devcieId);
+		RuntimeCheck.ifTrue(CollectionUtils.isNotEmpty(clCls), "此终端已经绑定其他船舶, 请勿重复绑定");
 		car.setZdbh(devcieId);
 		entityMapper.updateByPrimaryKeySelective(car);
 		return ApiResponse.success();
+	}
+
+	@Override
+	public ApiResponse<String> bindWebcam(String mmsi, String sbh) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		RuntimeCheck.ifBlank(sbh, "请填写绑定设备");
+		List<Cb> cbs = clService.findEq(Cb.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		Map<String, String> allSbh = WebcamUtil.getAllSbh(reids);
+		RuntimeCheck.ifFalse(allSbh.containsKey(sbh), "当前设备号没有添加 , 请先添加当前设备号");
+		Cb cb = cbs.get(0);
+		cb.setSbh(sbh);
+		SysYh user = getCurrentUser();
+		Sxt sxt = new Sxt();
+		sxt.setChn(allSbh.get(sbh));
+		sxt.setCjsj(DateUtils.getNowTime());
+		sxt.setCjr(user.getZh() + "-" + user.getXm());
+		sxt.setId(genId());
+		sxt.setMmsi(mmsi);
+		sxt.setSbh(sbh);
+		sxtService.save(sxt);
+		update(cb);
+		return ApiResponse.success();
+	}
+
+	@Override
+	public ApiResponse<String> getXc(String mmsi, String start, String end, int pageNum, int pageSize) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		if(StringUtils.isBlank(start)){
+			start = DateTime.now().toString("yyyy-MM-dd") + " 00:00:00";
+		}else {
+			start += " 00:00:00";
+		}
+		if(StringUtils.isBlank(end)){
+			end =  DateTime.now().toString("yyyy-MM-dd") + " 23:59:59";
+		}else{
+			end += " 23:59:59";
+		}
+		// 查询船舶在这个时间段的航次
+		SimpleCondition condition = new SimpleCondition(ClXc.class);
+		condition.eq(ClXc.InnerColumn.clZdbh, mmsi);
+		condition.gte(ClXc.InnerColumn.xcKssj, start);
+		condition.lte(ClXc.InnerColumn.xcJssj, end);
+		PageInfo<ClXc> info = PageHelper.startPage(pageNum, pageSize).doSelectPageInfo(() -> xcService.findByCondition(condition));
+		ApiResponse<String> res = new ApiResponse<>();
+		res.setPage(info);
+
+		return ApiResponse.success();
+	}
+
+    @Override
+	public ApiResponse<List<ClGpsLs>> getXcGpsByMMSI(String mmsi, String start, String end) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		RuntimeCheck.ifBlank(start, "请选择行程开始时间");
+		RuntimeCheck.ifBlank(end, "请选择行程结束时间");
+		SimpleCondition condition = new SimpleCondition(ClGpsLs.class);
+		DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+		DateTime startTime = DateTime.parse(start, pattern);
+		DateTime endTime = DateTime.parse(end, pattern);
+		condition.eq(ClGpsLs.InnerColumn.zdbh, mmsi);
+		condition.gte(ClGpsLs.InnerColumn.cjsj, startTime);
+		condition.lte(ClGpsLs.InnerColumn.cjsj , endTime);
+		condition.setOrderByClause(" id asc");
+		List<ClGpsLs> gpsLs = gpsLsService.findByCondition(condition);
+		return ApiResponse.success(gpsLs);
+	}
+
+	@Override
+	public ApiResponse<String> photo(String mmsi, String chn) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		RuntimeCheck.ifBlank(chn, "请选择拍摄通道");
+		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(sxts, "未找到设备信息 , 请稍后再试");
+		String photo = WebcamUtil.photo(reids, sxts.get(0).getSbh(), chn);
+		return ApiResponse.success(photo);
+	}
+
+	@Override
+	public ApiResponse<String> getHcByApi(String mmsi, String start, String end) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		if(StringUtils.isBlank(start)){
+			start = DateTime.now().toString("yyyy-MM-dd") + " 00:00:00";
+		}else{
+			start += " 00:00:00";
+		}
+
+
+		return null;
 	}
 
 	public static int differentDaysByMillisecond(Date date1,Date date2)

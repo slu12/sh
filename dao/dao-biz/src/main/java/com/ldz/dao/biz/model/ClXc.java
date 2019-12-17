@@ -104,6 +104,23 @@ public class ClXc implements Serializable {
     @Column(name = "pljs")
     private String pljs;
 
+    /**
+     * 实际到港时间
+     */
+    private String eta;
+
+    /**
+     * 离港时间
+     */
+    private String departtime;
+
+    /**
+     * 总里程
+     */
+    private String totalvoyage;
+
+
+
     private static final long serialVersionUID = 1L;
 
     public enum InnerColumn {
@@ -122,7 +139,10 @@ public class ClXc implements Serializable {
         xcCscs("XC_CSCS"),
         pljs("pljs"),
         xcJsccs("XC_JSCCS"),
-        xcJzwcs("XC_JZWCS");
+        xcJzwcs("XC_JZWCS"),
+        eta("ETA"),
+        departtime("DEPARTTIME"),
+        totalvoyage("TOTALVOYAGE");
 
         private final String column;
 

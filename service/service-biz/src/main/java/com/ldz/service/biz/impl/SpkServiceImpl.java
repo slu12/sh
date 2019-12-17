@@ -3,8 +3,6 @@ package com.ldz.service.biz.impl;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.github.pagehelper.Page;
 import com.ldz.service.biz.interfaces.XcService;
@@ -14,7 +12,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,7 +22,7 @@ import com.github.pagehelper.PageInfo;
 import com.ldz.dao.biz.bean.GpsInfo;
 import com.ldz.dao.biz.mapper.ClClMapper;
 import com.ldz.dao.biz.mapper.ClSpkMapper;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClSpk;
 import com.ldz.service.biz.interfaces.SpkService;
 import com.ldz.sys.base.BaseServiceImpl;
@@ -149,10 +146,10 @@ public class SpkServiceImpl extends BaseServiceImpl<ClSpk, String> implements Sp
 
 
         ClSpk clSpk = new ClSpk();
-        ClCl selectOne = new ClCl();
+        Cb selectOne = new Cb();
         selectOne.setZdbh(entity.getDeviceId());
         //通过终端编号找到对应车辆信息
-        ClCl clinfo = clclmapper.selectOne(selectOne);
+        Cb clinfo = clclmapper.selectOne(selectOne);
         clSpk.setDz(entity.getFileLocalPath());//本地地址 必传
         clSpk.setUrl(entity.getFilePath());//url   必传
         clSpk.setWjm(entity.getFileRealName());//文件名称  必传

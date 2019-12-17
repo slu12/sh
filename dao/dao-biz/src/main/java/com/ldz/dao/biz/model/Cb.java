@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 车辆表
+ * 船舶信息表
  * @author Lee
  *
  */
@@ -23,7 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "CL_CL")
-public class ClCl implements Serializable {
+public class Cb implements Serializable {
     /**
      * 车辆id
      */
@@ -35,7 +35,6 @@ public class ClCl implements Serializable {
      * 车牌号
      */
     @Column(name = "CPH")
-    @NotNull(message="车牌号不为空")
     private String cph;
 
     /**
@@ -64,14 +63,12 @@ public class ClCl implements Serializable {
      * 车型
      */
     @Column(name = "CX")
-    @NotNull(message="车型不为空")
     private String cx;
 
     /**
      * 载客量
      */
     @Column(name = "ZKL")
-    @NotNull(message="载客量不为空")
     private Short zkl;
 
     /**
@@ -120,7 +117,6 @@ public class ClCl implements Serializable {
      * 状态
      */
     @Column(name = "ZT")
-    @NotNull(message="状态不为空")
     private String zt;
 
     /**
@@ -192,7 +188,126 @@ public class ClCl implements Serializable {
     @Column(name = "OBD_CODE")
     private String obdCode;
 
-     /*
+    /**
+     * MMSI
+     */
+    @NotNull(message = "MMSI不能为空")
+    private String mmsi;
+
+    /**
+     * 船名
+     */
+    @NotNull(message = "船舶名称不能为空")
+    private String shipname;
+
+    /**
+     * 呼号
+     */
+    private String callsign;
+
+    /**
+     * IMO
+     */
+    private String imo;
+
+    /**
+     * 船类型
+     */
+    @NotNull(message = "船类型不能为空")
+    private String shiptype;
+
+    /**
+     * 船类型名称
+     */
+    @NotNull(message = "船类型名称不能为空")
+    private String shiptypename;
+
+    /**
+     * 长度
+     */
+    @NotNull(message = "长度不能为空")
+    private String length;
+
+    /**
+     * 宽度
+     */
+    @NotNull(message = "宽度不能为空")
+    private String breadth;
+
+    /**
+     * 预到时间
+     */
+    private String eta;
+
+    /**
+     * 目的地
+     */
+    private String dest_port;
+
+    /**
+     * 吃水
+     */
+    private String draught;
+
+    /**
+     * 船籍
+     */
+    @NotNull(message = "船籍不能为空")
+    private String nationality;
+
+    /**
+     * 型深
+     */
+    private String xs;
+
+    /**
+     * 船舶识别号
+     */
+    private String cbsbh;
+
+    /**
+     * 登记号码
+     */
+    private String djhm;
+
+    /**
+     * 总吨位
+     */
+    private String zdw;
+
+    /**
+     * 净吨
+     */
+    private String jd;
+
+    /**
+     * 主机种类
+     */
+    private String zjzl;
+
+    /**
+     * 主机数量
+     */
+    private String zjsl;
+
+    /**
+     * 主机总功率
+     */
+    private  String zjgl;
+
+    /**
+     * 造船厂
+     */
+    private String zcc;
+
+    /**
+     * 建成日期
+     */
+    private String jcrq;
+
+    private String sbh;
+
+    /*
       * 车辆电子围栏中间关联表
      */
      @Transient
@@ -228,7 +343,20 @@ public class ClCl implements Serializable {
         cdbh("CDBH"),
         bxgsmc("BXGSMC"),
         bxsj("BXSJ"),
-        nssj("NSSJ");
+        nssj("NSSJ"),
+        mmsi("MMSI"),
+        shipname("SHIPNAME"),
+        callsign("CALLSIGN"),
+        imo("IMO"),
+        shiptype("SHIPTYPE"),
+        shiptypename("SHIPTYPENAME"),
+        length("LENGTH"),
+        breadth("BREADTH"),
+        eta("ETA"),
+        dest_port("DEST_PORT"),
+        draught("DRAUGHT"),
+        nationality("NATIONALITY"),
+        sbh("SBH");
 
         private final String column;
 

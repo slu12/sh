@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ldz.dao.biz.mapper.ClJsyMapper;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClJsy;
-import com.ldz.service.biz.interfaces.ClService;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.JsyService;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.sys.model.SysYh;
@@ -28,7 +28,7 @@ public class JsyServiceImpl extends BaseServiceImpl<ClJsy,String> implements Jsy
     @Autowired
     private ClJsyMapper entityMapper;
     @Autowired
-    private ClService clService;
+    private CbService clService;
     @Autowired
     private DdService ddService;
 
@@ -71,14 +71,14 @@ public class JsyServiceImpl extends BaseServiceImpl<ClJsy,String> implements Jsy
     @Override
     public ApiResponse<List<ClJsy>> notBindList(SysYh user) {
         // 查找已绑定的驾驶员
-        SimpleCondition condition = new SimpleCondition(ClCl.class);
-        condition.eq(ClCl.InnerColumn.jgdm,user.getJgdm());
-        List<ClCl> cars = clService.findByCondition(condition);
+        SimpleCondition condition = new SimpleCondition(Cb.class);
+        condition.eq(Cb.InnerColumn.jgdm,user.getJgdm());
+        List<Cb> cars = clService.findByCondition(condition);
         condition = new SimpleCondition(ClJsy.class);
         condition.eq(ClJsy.InnerColumn.jgdm,user.getJgdm());
         List<ClJsy> drivers = entityMapper.selectByExample(condition);
         if (cars.size() != 0){
-            List<String> bindDriverIds = cars.stream().filter(p->p.getSjId() != null).map(ClCl::getSjId).collect(Collectors.toList());
+            List<String> bindDriverIds = cars.stream().filter(p->p.getSjId() != null).map(Cb::getSjId).collect(Collectors.toList());
             if (bindDriverIds.size() != 0){
                 drivers.removeIf(jsy -> bindDriverIds.contains(jsy.getSfzhm()));
             }

@@ -790,5 +790,10 @@ export default [
       title:'404'
     },
     component: () => import('@/view/error-page/404.vue')
-  }
+  },
+// 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
+
+    // { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/views/whdx/historyTarck') },
+    // { path: 'historyPath', title: '历史轨迹', name: 'historypath', component: () => import('@/views/whdx/OperationMonitoring/VehicleMonitoring/HistoryPath') },
+
 ]

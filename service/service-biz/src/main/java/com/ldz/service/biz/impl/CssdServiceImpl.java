@@ -3,7 +3,7 @@ package com.ldz.service.biz.impl;
 import com.ldz.dao.biz.bean.GpsInfo;
 import com.ldz.dao.biz.mapper.ClClMapper;
 import com.ldz.dao.biz.mapper.ClCssdMapper;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClCssd;
 import com.ldz.service.biz.interfaces.CssdService;
 import com.ldz.sys.base.BaseServiceImpl;
@@ -87,16 +87,16 @@ public class CssdServiceImpl extends BaseServiceImpl<ClCssd, String> implements 
 		SysYh user = getCurrentUser();
 		SysJg org = jgService.findByOrgCode(user.getJgdm());
 		// 将车牌号,车辆信息缓存
-		List<ClCl> selectAll = clclmapper.selectAll();
-		Map<String, ClCl> clmap = selectAll.stream().filter(s -> StringUtils.isNotEmpty(s.getCph()))
-				.collect(Collectors.toMap(ClCl::getCph, ClCl -> ClCl));
+		List<Cb> selectAll = clclmapper.selectAll();
+		Map<String, Cb> clmap = selectAll.stream().filter(s -> StringUtils.isNotEmpty(s.getCph()))
+				.collect(Collectors.toMap(Cb::getCph, ClCl -> ClCl));
 
 		List<String> cphss = Arrays.asList(cphs.split(","));
 		for (String cph : cphss) {
 			GpsInfo gpsInfo = new GpsInfo();
 			ClCssd cssd = new ClCssd();
 
-			ClCl clCl = clmap.get(cph);
+			Cb clCl = clmap.get(cph);
 			gpsInfo.setDeviceId(clCl.getZdbh());
 			gpsInfo.setCmdType("01");
 			gpsInfo.setCmd(csz);

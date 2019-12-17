@@ -1,38 +1,42 @@
 package com.ldz.biz.controller;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.ldz.dao.biz.bean.WebsocketInfo;
-import com.ldz.dao.biz.model.ClCl;
-import com.ldz.service.biz.interfaces.ClService;
+import com.ldz.dao.biz.model.Cb;
+import com.ldz.dao.biz.model.ClGpsLs;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.GpsService;
 import com.ldz.sys.base.BaseController;
 import com.ldz.sys.base.BaseService;
 import com.ldz.sys.model.SysYh;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.commonUtil.WebcamUtil;
+import com.ldz.util.gps.Gps;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 车辆设定
+ * 船舶设定
  */
 @RestController
 @RequestMapping("api/cl")
-public class ClCtrl extends BaseController<ClCl, String> {
+public class CbCtrl extends BaseController<Cb, String> {
 	@Autowired
-	private ClService clservice;
+	private CbService clservice;
 	@Autowired
 	private GpsService gpsservice;
+	@Autowired
+	private StringRedisTemplate redis;
 
 	@RequestMapping("getOrgCarList")
-	public ApiResponse<List<ClCl>> getOrgCarList() {
+	public ApiResponse<List<Cb>> getOrgCarList() {
 		SysYh yh = getCurrentUser();
-		List<ClCl> carList = clservice.getOrgCarList(yh.getJgdm());
+		List<Cb> carList = clservice.getOrgCarList(yh.getJgdm());
 		return ApiResponse.success(carList);
 	}
 
@@ -55,25 +59,23 @@ public class ClCtrl extends BaseController<ClCl, String> {
 		return clservice.unbindDriver(carId);
 	}
 	@Override
-	protected BaseService<ClCl, String> getBaseService() {
+	protected BaseService<Cb, String> getBaseService() {
 		return clservice;
 	}
 
 	@RequestMapping(value = "/update", method = { RequestMethod.POST })
-	public ApiResponse<String> update(@Valid ClCl entity) {
+	public ApiResponse<String> update(@Valid Cb entity) {
 		return clservice.updateEntity(entity);
 	}
 
 	@RequestMapping(value = "/save", method = { RequestMethod.POST })
-	public ApiResponse<String> save(@Valid ClCl entity) {
+	public ApiResponse<String> save(@Valid Cb entity) {
 		return clservice.saveEntity(entity);
 	}
 
 	@GetMapping("/InitClGps")
 	public ApiResponse<List<WebsocketInfo>> inintGps() {
-
 		return gpsservice.inintGps();
-
 	}
 
 	/**
@@ -93,7 +95,7 @@ public class ClCtrl extends BaseController<ClCl, String> {
 	}
 
 	@GetMapping("/nianshen")
-	public ApiResponse<List<ClCl>> nianshen(ClCl car){
+	public ApiResponse<List<Cb>> nianshen(Cb car){
 
 		return clservice.nianshen(car);
 
@@ -117,5 +119,57 @@ public class ClCtrl extends BaseController<ClCl, String> {
 
 		return clservice.getnianshen();
 	}
+
+	/**
+	 * 绑定摄像头设备
+	 */
+	@PostMapping("/bindWebcam")
+	public ApiResponse<String> bindWebcam(String mmsi, String sbh){
+		 return clservice.bindWebcam(mmsi, sbh);
+	}
+
+	/**
+	 * 获取船的航次信息
+	 */
+	@PostMapping("/getXc")
+	public ApiResponse<String> getXc(String mmsi, String start, String end, @RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "8") int pageSize){
+		return clservice.getXc(mmsi,start,end,pageNum, pageSize);
+	}
+
+	/**
+	 * 根据航次信息 , 查询航班的GPS 点 (传终端编号 或 mmsi)
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	@PostMapping("/getXcGps")
+	public ApiResponse<List<ClGpsLs>> getXcGpsByMMSI(String zdbh, String start, String end){
+		return clservice.getXcGpsByMMSI(zdbh,start,end);
+	}
+
+	/**
+	 * 船舶实时抓拍显示
+	 */
+	@PostMapping("/photo")
+	public ApiResponse<String> photo(String mmsi, String chn){
+		return clservice.photo(mmsi,chn);
+	}
+
+	/**
+	 * 获取会话
+	 */
+	@PostMapping("/getSession")
+	public ApiResponse<String> getSession(){
+		return  ApiResponse.success(WebcamUtil.login(redis));
+	}
+
+	/**
+	 * 通过api获取轮船的 航次信息
+	 * @return
+	 */
+	public ApiResponse<String> getHcByApi(String mmsi, String start, String end){
+		return clservice.getHcByApi(mmsi, start, end);
+	}
+
 
 }

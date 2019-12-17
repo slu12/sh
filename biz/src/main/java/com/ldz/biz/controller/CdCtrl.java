@@ -1,7 +1,7 @@
 package com.ldz.biz.controller;
 
 import com.ldz.dao.biz.model.ClCd;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClJsy;
 import com.ldz.service.biz.interfaces.CdService;
 import com.ldz.sys.base.BaseController;
@@ -40,7 +40,7 @@ public class CdCtrl extends BaseController<ClCd, String> {
 	}
 
 	@GetMapping("notBindCarList")
-	public ApiResponse<List<ClCl>> notBindCarList(){
+	public ApiResponse<List<Cb>> notBindCarList(){
 		return cdservice.notBindCarList();
 	}
 	@GetMapping("notBindDriverList")

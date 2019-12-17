@@ -1,4 +1,4 @@
-spring:
+9spring:
   profiles: 
     active: test  #合并 application-test.yml 中的配置参数
   #线程池配置信息

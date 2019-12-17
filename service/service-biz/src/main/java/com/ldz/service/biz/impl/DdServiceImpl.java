@@ -396,13 +396,13 @@ public class DdServiceImpl extends BaseServiceImpl<ClDd, String> implements DdSe
 
 			// 3-3、查询车辆表，检查出该司机对应的车辆的信息
 
-			SimpleCondition condition = new SimpleCondition(ClCl.class);
-			condition.eq(ClCl.InnerColumn.sjId, entity.getSj());
+			SimpleCondition condition = new SimpleCondition(Cb.class);
+			condition.eq(Cb.InnerColumn.sjId, entity.getSj());
 
-			List<ClCl> cl = clClMapper.selectByExample(condition);
+			List<Cb> cl = clClMapper.selectByExample(condition);
 			RuntimeCheck.ifEmpty(cl, "该司机未关联车辆，不能进行派单操作");
 
-			ClCl clCl = cl.get(0);
+			Cb clCl = cl.get(0);
 			RuntimeCheck.ifNull(clCl, "该司机未关联车辆，不能进行派单操作");
 
 			Short zkl = clCl.getZkl();//

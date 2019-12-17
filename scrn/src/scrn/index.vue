@@ -7,7 +7,7 @@
         <div class="box_col_100 itemTop">
           <component :is="rightTop"></component>
         </div>
-        <div class="box_col_100 itemCenter">
+        <div class="box_col_100 itemCenter" style="margin: 10px 0">
           <component :is="rightCenter"></component>
         </div>
         <div class="box_col_100 itemBottom">

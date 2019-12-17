@@ -3,43 +3,45 @@
 
 -->
 <style type="text/css">
-    #allmap {
-        height: 100%;
-        width: 100%;
-    }
-    #tcBtn{
-        bottom: auto!important;
-        top: 8px!important;
-        left: 23px!important;
-        right: auto!important;
-        z-index: 9999;
-    }
-    #tcWrap{
-        display: none;
-        bottom: auto!important;
-        top: 435px!important;
-        left: 20px!important;
-        right: auto!important;
-        z-index: 9999;
-    }
+      #allmap {
+            height: 100%;
+            width: 100%;
+      }
+
+      #tcBtn {
+            bottom: auto !important;
+            top: 8px !important;
+            left: 23px !important;
+            right: auto !important;
+            z-index: 9999;
+      }
+
+      #tcWrap {
+            display: none;
+            bottom: auto !important;
+            top: 435px !important;
+            left: 20px !important;
+            right: auto !important;
+            z-index: 9999;
+      }
 </style>
 <!--地图选点-->
 <template>
-    <div style="height: 100%;background-color: #00FFFF;">
-        <!--<car-info ref="carInfoButton"></car-info>-->
-        <div id="allmap"></div>
-    </div>
+      <div style="height: 100%">
+            <!--<car-info ref="carInfoButton"></car-info>-->
+            <div id="allmap"></div>
+      </div>
 </template>
 
 <script>
 
-    import carInfo from '../VehicleMonitoring/carInfo'
+    // import carInfo from '../OperationMonitoring/VehicleMonitoring/carInfo'
 
     export default {
         name: 'getmapdot',
-        components: {
-            carInfo
-        },
+        // components: {
+        //     carInfo
+        // },
         data() {
             return {
                 componentName: '',
@@ -51,24 +53,21 @@
                 },
                 zoom: 16,
                 carList: [],
-                zoomDot:[],
+                zoomDot: [],
                 fancePoints: [
                     {lng: 114.27226, lat: 30.608123},
                     {lng: 114.157277, lat: 30.544446},
                     {lng: 114.418288, lat: 30.526529},
-                ]
+                ],
+
+                MarkerList: []
             }
         },
         created() {
         },
         mounted() {
-          setTimeout(()=>{
-            this.$nextTick(()=>{
-              this.Buildmap()
-              this.init();
-            })
-          },2000)
-
+            this.Buildmap()
+            this.init();
         },
         methods: {
             showFance(carId) {
@@ -95,66 +94,56 @@
                 v.moveMap();
                 v.showCarPosition();
             },
-            moveMap(){
-                if (this.carList.length == 0)return;
+            moveMap() {
+                if (this.carList.length == 0) return;
                 var v = this
-                if (this.carList.length == 1){
-                    this.map.centerAndZoom(new BMap.Point(this.carList[0].lng, this.carList[0].lat), this.map.getZoom());  // 初始化地图,设置中心点坐标和地图级别
+                if (this.carList.length == 1) {
+                    this.map.setCenter({lat: parseFloat(this.carList[0].lat), lng: parseFloat(this.carList[0].lng)});
+                    this.map.setZoom(this.map.getZoom());
                 }
             },
             init() {
                 this.carList = this.$parent.mapCarList;
-                if (this.carList.length === 1){
+                if (this.carList.length === 1) {
                     this.car = this.carList[0];
                     this.chooseCar(this.car);
-                }else if (this.carList.length > 0) {
+                } else if (this.carList.length > 0) {
                     this.car = null;
-                    this.map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
-                }else {
+                    this.map.setCenter({lat: parseFloat(this.mapcenter.lat), lng: parseFloat(this.mapcenter.lng)});
+                    this.map.setZoom(this.map.getZoom());
+                } else {
                     this.car = null;
                 }
                 this.moveMap();
                 this.showCarPosition();
             },
             Buildmap() {
-                var v = this
-                // 百度地图API功能
-                this.map = new BMap.Map("allmap");    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
-
-                var ctrl = new BMapLib.TrafficControl({
-                    showPanel: true //是否显示路况提示面板
+                // Google地图API功能
+                const v = this
+                this.map = new google.maps.Map(document.getElementById('allmap'), {
+                    // center: {lat: -34.397, lng: 150.644},
+                    center: {lat: v.mapcenter.lat, lng: v.mapcenter.lng},
+                    zoom: v.zoom,
+                    zoomControl: false,
+                    streetViewControl: false,//街景小人
+                    fullscreenControl: false,//全屏控件
+                    mapTypeControl: false,//地图类型控件
                 });
-                this.map.addControl(ctrl);
-                ctrl.setAnchor(BMAP_ANCHOR_BOTTOM_RIGHT);
-
-                // //添加地图类型控件
-                // this.map.addControl(new BMap.MapTypeControl({
-                //         mapTypes: [
-                //             BMAP_NORMAL_MAP
-                //         ]
-                //     })
-                // );
-                this.map.setCurrentCity("武汉");          // 设置地图显示的城市 此项是必须设置的
-                this.map.enableScrollWheelZoom(true);     					     //开启鼠标滚轮缩放
-                // this.map.addControl(new BMap.ScaleControl()); 					 // 添加比例尺控件
-                // this.map.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
-                // this.map.addControl(new BMap.NavigationControl());               // 添加平移缩放控件
             },
             //撒点
             showCarPosition() {
                 this.clear()
                 var v = this
                 for (let r of this.carList) {
-                    var point = new BMap.Point(r.lng, r.lat);
+                    var point = {lat: r.lat, lng: r.lng};
                     this.addMarker(r, point);
                     // this.addLabel(r, point);
                 }
             },
-            addLabel(item,point) {
+            addLabel(item, point) {
                 let html = '<div style="width: 160px;height: 28px;padding:4px;">' +
-                        '<span>['+item.cph+']</span> ' +
-                        '<span style="float: right">'+item.speed+' km/h</span>' +
+                    '<span>[' + item.cph + ']</span> ' +
+                    '<span style="float: right">' + item.speed + ' km/h</span>' +
                     '</div>'
                 var myLabel = new BMap.Label(html,     //为lable填写内容
                     {
@@ -163,7 +152,7 @@
                     });                                //label的位置
                 myLabel.setStyle({                                   //给label设置样式，任意的CSS都是可以的
                     // color:"red",                   //颜色
-                    fontSize:"16px",               //字号
+                    fontSize: "16px",               //字号
                     // opacity:0.5,
                     'background-color': 'rgba(255,255,255,0.6)',
                     // border:"none",                    //边
@@ -182,7 +171,7 @@
                 let ps = [];
                 // console.log("百度经纬度 : " , points);
                 for (let r of points) {
-                    ps.push(new BMap.Point(r.bdjd ,r.bdwd ))
+                    ps.push(new BMap.Point(r.bdjd, r.bdwd))
                 }
                 // console.log("ps " , ps);
                 var polygon = new BMap.Polyline(ps, {strokeColor: "red", strokeWeight: 5, strokeOpacity: 0.5});  //创建多边形
@@ -199,39 +188,60 @@
             },
             addMarker(item, point) {
                 var v = this
-                var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32)});
-                var marker = new BMap.Marker(point, {icon: myIcon});
-                marker.addEventListener("click",(code)=>{
-                    // console.log('店事件',code);
-                    // console.log('item',item);
-                    // console.log('point',point);
-                    // v.$parent.$refs.carInfoRef.init(item);
-                    v.$emit('codeEvent',item)
-                    v.addLabel(item, point);
+
+                var image = {
+                    // url: 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png',
+                    url: this.getIcon(item),
+                    size: new google.maps.Size(32, 32),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(16, 32)
+                };
+                var marker = new google.maps.Marker({
+                    position: {lat: parseFloat(point.lat), lng: parseFloat(point.lng)},
+                    map: this.map,
+                    label:{
+                        text:"[" + item.cph + "]"
+                    },
+                    icon: image
                 });
-                this.map.addOverlay(marker);
+
+                this.MarkerList.push(marker)
+
+                // console.log('MarkerList',this.MarkerList.length);
+
+
+                marker.addListener("click",(code)=>{
+                    v.$emit('codeEvent',item)
+                    // v.addLabel(item, point);
+                });
+                // this.map.addOverlay(marker);
                 this.addClickHandler(item, marker);
             },
             getIcon(car) {
                 switch (car.status) {
                     case 1:
-                        return this.apis.STATIC_PATH+'icon/running.png';
+                        return this.apis.STATIC_PATH + 'icon/running.png';
                     case 2:
-                        return this.apis.STATIC_PATH+'icon/ic_car.png';
+                        return this.apis.STATIC_PATH + 'icon/ic_car.png';
                     default:
-                        return this.apis.STATIC_PATH+'icon/ic_car_offline.png'
+                        return this.apis.STATIC_PATH + 'icon/ic_car_offline.png'
                 }
             },
             addClickHandler(item, marker) {
                 var v = this
-                marker.addEventListener("click", function (e) {
+                marker.addListener("click", function (e) {
                     v.choosedItem = item;
                 })
             },
-            chooseCar(item){
+            chooseCar(item) {
             },
             clear() {
-                this.map.clearOverlays();//清除数据点
+                this.MarkerList.forEach((it, index) => {
+                    it.setMap(null)
+                })
+                this.MarkerList = []
+                // this.map.clearOverlays();//清楚数据点
+                // this.map.historicalOverlay.setMap(null);
             }
         }
     }

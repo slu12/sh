@@ -5,13 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <!--map-->
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css"/>
+    <link href="http://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css" rel="stylesheet"
+          type="text/css"/>
     <title></title>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but iview-admin doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
+    <div id="app">
+      <script type="text/javascript"
+              src="http://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.js"></script>
+      <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=evDHwrRoILvlkrvaZEFiGp30"></script>
+
+    </div>
   </body>
-</html>
+  </html>

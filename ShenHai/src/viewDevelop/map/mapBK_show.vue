@@ -66,9 +66,12 @@
         mounted(){
             var v = this
             // 百度地图API功能
+          this.$nextTick(()=>{
             this.map = new BMap.Map("allmap"); // 创建Map实例
             this.mapCenter()
             this.bkDot(this.carNumber)
+          })
+
 
         },
         methods:{

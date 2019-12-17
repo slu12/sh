@@ -20,48 +20,48 @@
                 <Icon type="md-close" @click.native="close"></Icon>
             </a>
             <Row>
-              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
                名称: {{car.shipname}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               所属机构: {{car.jgmc}}
             </Row>
-              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
                 类型: {{car.shiptypename}}
               </Row>
-              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
                 型深: {{car.xs}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               呼号: {{car.callsign}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               IMO: {{car.imo}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               长度: {{car.length}}
               </Row>
-              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
                 宽度: {{car.breadth}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               船籍: {{car.nationality}}
               </Row>
-              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
                 识别号: {{car.cbsbh}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               MMSI: {{car.mmsi}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               总吨位: {{car.zdw}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               净吨: {{car.jd}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               主机种类: {{car.zjzl}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               主机数量: {{car.zjsl}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               主机总功率: {{car.zjgl}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               造船厂: {{car.zcc}}
-              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
               建成日期: {{car.jcrq}}
               </Row>
-              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 15px">
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
                 登记号码: {{car.djhm}}
               </Row>
 

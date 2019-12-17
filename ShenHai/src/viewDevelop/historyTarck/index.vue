@@ -595,7 +595,7 @@
                 this.map.addOverlay(marker1);
 
                 //初始化动画marker对象
-                var moveIcon = new BMap.Icon("http://119.23.242.234:9092/icon/ic_car_online.png", new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32),});
+                var moveIcon = new BMap.Icon("http://223.240.68.90:9092/icon/running.png", new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32),});
                 this.movingMarker = new BMap.Marker(pt1, {icon: moveIcon});
                 this.map.addOverlay(this.movingMarker);
 
@@ -651,7 +651,7 @@
                 //初始化动画marker对象
 
                 var moveIcon = {
-                    url: "http://119.23.242.234:9092/icon/ic_car_online.png",
+                    url: "http://223.240.68.90:9092/icon/running.png",
                     size: new google.maps.Size(32, 32),
                     origin: new google.maps.Point(0, 0),
                     anchor: new google.maps.Point(16, 32)

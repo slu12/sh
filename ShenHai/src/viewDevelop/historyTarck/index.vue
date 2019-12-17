@@ -489,7 +489,7 @@
                             this.speeds[date.getTime()] = speed;
                         }
                         if (this.local == 'en-US') {
-                            v.Build_G_Map()
+                            v.Buildmap()
                         } else {
                             v.Buildmap()
                         }
@@ -518,7 +518,7 @@
                             r.latitude = r.bdwd;
                         }
                         if (this.local == 'en-US') {
-                            v.Build_G_Map()
+                          v.Buildmap()
                         } else {
                             v.Buildmap()
                         }

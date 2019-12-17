@@ -110,16 +110,13 @@
 </template>
 
 <script>
-    import mixins from '@/mixins'
-
-
     import addmess from './comp/addmess.vue'
     import addmessList from './comp/addmessList.vue'
     import mess from './comp/mess.vue'
 
     export default {
         name: 'char',
-        mixins: [mixins],
+        mixins: [],
         components: {
             addmessList,
             addmess,

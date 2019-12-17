@@ -80,7 +80,6 @@
 </template>
 
 <script>
-    import mixins from '@/mixins'
     import formData from './formData'
     import change from './change'
     import jkdz from './jkdz'
@@ -93,7 +92,7 @@
 
     export default {
         name: 'char',
-        mixins: [mixins,i18nTabTit],
+        mixins: [i18nTabTit],
         components: {
             zdxq,
             formData, change, jkdz, setting, update, plmess

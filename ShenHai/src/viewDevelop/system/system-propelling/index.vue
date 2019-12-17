@@ -48,12 +48,10 @@
 </template>
 
 <script>
-	import mixins from '@/mixins'
-
 	import formData from './formData'
 	export default {
     	name:'char',
-    	mixins:[mixins],
+    	mixins:[],
 		components:{
             formData
 		},

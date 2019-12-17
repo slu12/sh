@@ -76,7 +76,6 @@
 </template>
 
 <script>
-	import mixins from '@/mixins'
 	import formData from './formData'
 	import change from './change'
 	import jkdz from './jkdz'
@@ -85,7 +84,7 @@
 	import plmess from './plMess'
 	export default {
     	name:'char',
-    	mixins:[mixins],
+    	mixins:[],
 		components:{
             formData,change,jkdz,setting,update,plmess
 		},

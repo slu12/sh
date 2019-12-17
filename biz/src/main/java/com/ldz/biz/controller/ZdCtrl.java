@@ -100,13 +100,7 @@ public class ZdCtrl extends BaseController<ClZdgl,String> {
         return service.getAllZd(page);
     }
 
-    /**
-     * 检测接口
-     */
-    @PostMapping("/check")
-    public ApiResponse<String> check(String zdbh){
-        return service.check(zdbh);
-    }
+
 
     /**
      * 终端设备延期接口

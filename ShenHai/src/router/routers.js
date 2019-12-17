@@ -69,15 +69,15 @@ export default [
       //   },
       //   component: () => import('@/viewDevelop/system/systemUser')
       // },
-      // {
-      //   path: 'organization',
-      //   name: 'ORGANIZATION',
-      //   meta: {
-      //     icon: 'md-arrow-dropdown-circle',
-      //     title: '组织架构'
-      //   },
-      //   component: () => import('@/viewDevelop/system/organization')
-      // },
+      {
+        path: 'organization',
+        name: 'ORGANIZATION',
+        meta: {
+          icon: 'md-arrow-dropdown-circle',
+          title: '组织架构'
+        },
+        component: () => import('@/viewDevelop/system/organization')
+      },
       {
         path: 'system-user',
         name: 'system-user',
@@ -212,6 +212,151 @@ export default [
       // },
     ]
   },
+  {
+    path: '/Shipmanagement',
+    name: 'Shipmanagement',
+    meta: {
+      icon: 'ios-cog',
+      title: '船舶管理',
+    },
+    component: Main,
+    children:[
+      {
+        path: 'ship-mess',
+        name: 'ship-mess',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶详情',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-mess')
+      },
+      {
+        path: 'ship-Track',
+        name: 'ship-Track',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶跟踪',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
+      },
+      {
+        path: 'ship-trajectory',
+        name: 'ship-trajectory',
+        meta: {
+          icon: 'ios-cog',
+          title: '轨迹管理',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-trajectory')
+      },
+      {
+        path: 'ship-Video',
+        name: 'ship-Video',
+        meta: {
+          icon: 'ios-cog',
+          title: '视频监控',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Video')
+      },
+      {
+        path: 'ship-team',
+        name: 'ship-team',
+        meta: {
+          icon: 'ios-cog',
+          title: '船队管理',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-team')
+      },
+      {
+        path: 'ship-certificate',
+        name: 'ship-certificate',
+        meta: {
+          icon: 'ios-cog',
+          title: '证书管理',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-certificate')
+      },
+      {
+        path: 'ElectronicFence',
+        name: 'ElectronicFence',
+        meta: {
+          icon: 'ios-cog',
+          title: '电子围栏',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ElectronicFence')
+      },
+      {
+        path: 'ship-Up',
+        name: 'ship-Up',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶数据上传',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Up')
+      }
+
+    ]
+  },
+  {
+    path: '/Personnel',
+    name: 'Personnel',
+    meta: {
+      icon: 'ios-cog',
+      title: '人事管理',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/boatman',
+        name: 'boatman',
+        meta: {
+          icon: 'ios-cog',
+          title: '船员管理',
+        },
+        component: () => import('@/viewDevelop/Personnel/boatman')
+      },
+      {
+        path: '/Ship-Manning',
+        name: 'Ship-Manning',
+        meta: {
+          icon: 'ios-cog',
+          title: '船舶配员',
+        },
+        component: () => import('@/viewDevelop/Personnel/Ship-Manning')
+      },
+      {
+        path: '/certificate',
+        name: 'certificate',
+        meta: {
+          icon: 'ios-cog',
+          title: '船员证书',
+        },
+        component: () => import('@/viewDevelop/Personnel/certificate')
+      },
+    ]
+
+  },
+  {
+    path: '/security',
+    name: 'security',
+    meta: {
+      icon: 'ios-cog',
+      title: '安全管理',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/rule',
+        name: 'rule',
+        meta: {
+          icon: 'ios-cog',
+          title: '规则管理',
+        },
+        component: () => import('@/viewDevelop/security/rule')
+      },
+    ]
+
+  },
+
 
 
 

@@ -99,14 +99,12 @@
 </template>
 
 <script>
-	import mixins from '@/mixins'
-
 	import addlistfileImg from './addlistfileImg.vue'
 	import addlistfileVideo from './addlistfileVideo.vue'
 
 	export default {
 		name: '',
-		mixins: [mixins],
+		mixins: [],
 		components: {
         	addlistfileImg,
         	addlistfileVideo

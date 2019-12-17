@@ -56,6 +56,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	private XcService xcService;
 	@Autowired
 	private GpsLsService gpsLsService;
+	@Autowired
+	private SxtService sxtService;
 
 	@Override
 	protected Mapper<Cb> getBaseMapper() {
@@ -459,9 +461,9 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		List<Cb> cbs = clService.findEq(Cb.InnerColumn.mmsi, mmsi);
 		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
 		Map<String, String> allSbh = WebcamUtil.getAllSbh(reids);
-//		List<String> list = allSbh.stream().map(stringStringMap -> stringStringMap.get("id")).collect(Collectors.toList());
 		RuntimeCheck.ifFalse(allSbh.containsKey(sbh), "当前设备号没有添加 , 请先添加当前设备号");
-
+		Cb cb = cbs.get(0);
+		cb.setSbh(sbh);
 		SysYh user = getCurrentUser();
 		Sxt sxt = new Sxt();
 		sxt.setChn(allSbh.get(sbh));
@@ -470,7 +472,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		sxt.setId(genId());
 		sxt.setMmsi(mmsi);
 		sxt.setSbh(sbh);
-
+		sxtService.save(sxt);
+		update(cb);
 		return ApiResponse.success();
 	}
 
@@ -514,6 +517,29 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		condition.setOrderByClause(" id asc");
 		List<ClGpsLs> gpsLs = gpsLsService.findByCondition(condition);
 		return ApiResponse.success(gpsLs);
+	}
+
+	@Override
+	public ApiResponse<String> photo(String mmsi, String chn) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		RuntimeCheck.ifBlank(chn, "请选择拍摄通道");
+		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(sxts, "未找到设备信息 , 请稍后再试");
+		String photo = WebcamUtil.photo(reids, sxts.get(0).getSbh(), chn);
+		return ApiResponse.success(photo);
+	}
+
+	@Override
+	public ApiResponse<String> getHcByApi(String mmsi, String start, String end) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		if(StringUtils.isBlank(start)){
+			start = DateTime.now().toString("yyyy-MM-dd") + " 00:00:00";
+		}else{
+			start += " 00:00:00";
+		}
+
+
+		return null;
 	}
 
 	public static int differentDaysByMillisecond(Date date1,Date date2)

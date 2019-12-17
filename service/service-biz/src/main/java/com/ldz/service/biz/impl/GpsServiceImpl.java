@@ -619,9 +619,9 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
         SimpleCondition carCondition = new SimpleCondition(Cb.class);
         SimpleCondition deviceCondition = new SimpleCondition(ClZdgl.class);
 
-        String cphLike = getRequestParamterAsString("cphLike");
-        if (StringUtils.isNotEmpty(cphLike)) {
-            carCondition.like(Cb.InnerColumn.cph, cphLike);
+        String shipnameLike = getRequestParamterAsString("shipnameLike");
+        if (StringUtils.isNotEmpty(shipnameLike)) {
+            carCondition.like(Cb.InnerColumn.shipname, shipnameLike);
         }
         HttpServletRequest request = getRequset();
         List<String> filterDeviceIds = null;
@@ -647,7 +647,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
         Map<String, Cb> zdbhClMap = carList.stream().filter(s -> StringUtils.isNotEmpty(s.getZdbh()))
                 .collect(Collectors.toMap(Cb::getZdbh, p->p));
 
-        if (StringUtils.isNotEmpty(cphLike)) {
+        if (StringUtils.isNotEmpty(shipnameLike)) {
             List<String> zdbhs = carList.stream().map(Cb::getZdbh).collect(Collectors.toList());
             if (filterDeviceIds == null){
                 filterDeviceIds = zdbhs;

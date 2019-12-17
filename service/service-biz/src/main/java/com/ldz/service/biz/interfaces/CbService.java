@@ -41,4 +41,7 @@ public interface CbService extends BaseService<Cb,String>{
 
     ApiResponse<List<ClGpsLs>> getXcGpsByMMSI(String mmsi, String start, String end);
 
+    ApiResponse<String> photo(String mmsi, String chn);
+
+    ApiResponse<String> getHcByApi(String mmsi, String start, String end);
 }

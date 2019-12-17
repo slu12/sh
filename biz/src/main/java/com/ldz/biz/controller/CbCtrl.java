@@ -1,5 +1,6 @@
 package com.ldz.biz.controller;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.ldz.dao.biz.bean.WebsocketInfo;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
@@ -9,8 +10,10 @@ import com.ldz.sys.base.BaseController;
 import com.ldz.sys.base.BaseService;
 import com.ldz.sys.model.SysYh;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.gps.Gps;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,6 +30,8 @@ public class CbCtrl extends BaseController<Cb, String> {
 	private CbService clservice;
 	@Autowired
 	private GpsService gpsservice;
+	@Autowired
+	private StringRedisTemplate redis;
 
 	@RequestMapping("getOrgCarList")
 	public ApiResponse<List<Cb>> getOrgCarList() {
@@ -70,9 +75,7 @@ public class CbCtrl extends BaseController<Cb, String> {
 
 	@GetMapping("/InitClGps")
 	public ApiResponse<List<WebsocketInfo>> inintGps() {
-
 		return gpsservice.inintGps();
-
 	}
 
 	/**
@@ -133,11 +136,8 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.getXc(mmsi,start,end,pageNum, pageSize);
 	}
 
-
-
 	/**
-	 * 根据航次信息 , 查询航班的GPS 点 (通过 MMSI查询)
-	 * @param mmsi
+	 * 根据航次信息 , 查询航班的GPS 点 (传终端编号 或 mmsi)
 	 * @param start
 	 * @param end
 	 * @return
@@ -147,6 +147,29 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.getXcGpsByMMSI(zdbh,start,end);
 	}
 
+	/**
+	 * 船舶实时抓拍显示
+	 */
+	@PostMapping("/photo")
+	public ApiResponse<String> photo(String mmsi, String chn){
+		return clservice.photo(mmsi,chn);
+	}
+
+	/**
+	 * 获取会话
+	 */
+	@PostMapping("/getSession")
+	public ApiResponse<String> getSession(){
+		return  ApiResponse.success(WebcamUtil.login(redis));
+	}
+
+	/**
+	 * 通过api获取轮船的 航次信息
+	 * @return
+	 */
+	public ApiResponse<String> getHcByApi(String mmsi, String start, String end){
+		return clservice.getHcByApi(mmsi, start, end);
+	}
 
 
 }

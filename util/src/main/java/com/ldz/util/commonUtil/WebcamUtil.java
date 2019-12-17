@@ -194,7 +194,4 @@ public class WebcamUtil {
         return map;
     }
 
-
-
-
 }

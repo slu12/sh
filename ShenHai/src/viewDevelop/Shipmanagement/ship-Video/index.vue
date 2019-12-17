@@ -114,7 +114,7 @@
     components: {htmlpanel},
     data() {
       return {
-        url1:'http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno=30895&jsession=b678293e-66f1-45d3-a571-662765d8c0b5&channel=2',
+        url1:'',
         vadeoShow: true,
         videoPath: '',
         activeName: 0,

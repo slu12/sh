@@ -1,6 +1,5 @@
 <!--
 车辆监控
-
 -->
 <style type="text/css">
     #allmap {
@@ -33,12 +32,12 @@
 
 <script>
 
-    import carInfo from '../VehicleMonitoring/carInfo'
+
 
     export default {
         name: 'getmapdot',
         components: {
-            carInfo
+
         },
         data() {
             return {
@@ -62,8 +61,14 @@
         created() {
         },
         mounted() {
-              this.Buildmap()
+          this.$nextTick(()=>{
+            this.Buildmap();
+            setTimeout(()=>{
+
               this.init();
+            },2000)
+          })
+
         },
         methods: {
             showFance(carId) {
@@ -98,6 +103,7 @@
                 }
             },
             init() {
+              console.log('获取中心店')
                 this.carList = this.$parent.mapCarList;
                 if (this.carList.length === 1){
                     this.car = this.carList[0];
@@ -112,6 +118,7 @@
                 this.showCarPosition();
             },
             Buildmap() {
+                console.log('创建地图')
                 var v = this
                 // 百度地图API功能
                 this.map = new BMap.Map("allmap");    // 创建Map实例
@@ -138,6 +145,7 @@
             },
             //撒点
             showCarPosition() {
+              console.log('撒点')
                 this.clear()
                 var v = this
                 for (let r of this.carList) {
@@ -147,6 +155,7 @@
                 }
             },
             addLabel(item,point) {
+              console.log('添加标注')
                 let html = '<div style="width: 160px;height: 28px;padding:4px;">' +
                         '<span>['+item.cph+']</span> ' +
                         '<span style="float: right">'+item.speed+' km/h</span>' +

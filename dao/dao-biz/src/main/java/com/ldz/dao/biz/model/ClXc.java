@@ -1,5 +1,6 @@
 package com.ldz.dao.biz.model;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -9,8 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
-@Getter
-@Setter
+@Data
 @Table(name = "CL_XC")
 public class ClXc implements Serializable {
     @Id

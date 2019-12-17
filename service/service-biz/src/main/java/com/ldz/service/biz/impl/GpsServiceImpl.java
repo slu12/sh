@@ -710,15 +710,6 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                 String json = (String) redis.boundValueOps(key).get();
                 WebsocketInfo websocketInfo = JsonUtil.toBean(json, WebsocketInfo.class);
 
-                /*if(t != null){
-                    *//*SimpleCondition condition1 = new SimpleCondition(ClGpsLs.class);
-                    condition1.eq(ClGpsLs.InnerColumn.zdbh , device.getZdbh());
-                    condition1.gte(ClGpsLs.InnerColumn.cjsj , t);
-                    condition1.setOrderByClause(" cjsj asc");*//*
-                    // 从最近的点火时间 到现在
-                    List<Map<String,BigDecimal>> ls = gpsLsService.getJdAndWd(device.getZdbh(),t);
-                    websocketInfo.setGpsList(ls);
-                }*/
                 if(zdbhClMap.containsKey(device.getZdbh())){
                     list.add(websocketInfo);
                     continue;
@@ -732,16 +723,6 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             websocketInfo.setZdbh(device.getZdbh());
             ClGps gps = gpsMap.get(device.getZdbh());
 
-
-            /*if(t != null){
-               *//* SimpleCondition condition1 = new SimpleCondition(ClGpsLs.class);
-                condition1.eq(ClGpsLs.InnerColumn.zdbh , device.getZdbh());
-                condition1.gte(ClGpsLs.InnerColumn.cjsj , t);
-                condition1.setOrderByClause(" cjsj asc");*//*
-                // 从最近的点火时间 到现在
-                List<Map<String,BigDecimal>> ls = gpsLsService.getJdAndWd(device.getZdbh(),t);
-                websocketInfo.setGpsList(ls);
-            }*/
 
             if (gps != null){
                 websocketInfo.setBdjd(gps.getBdjd().toString());
@@ -786,8 +767,10 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
 
             Cb car = zdbhClMap.get(device.getZdbh());
             if (car != null){
+                websocketInfo.setMmsi(car.getMmsi());
+                websocketInfo.setShipname(car.getShipname());
                 websocketInfo.setClid(car.getClId());
-                websocketInfo.setCph(car.getCph());
+                websocketInfo.setCph(car.getShipname());
                 websocketInfo.setCx(car.getCx());
                 websocketInfo.setSjxm(car.getSjxm());
                 if (StringUtils.isNotEmpty(car.getObdCode())) {
@@ -799,7 +782,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                 websocketInfo.setZxzt("10");
                 if (gps != null){
                     websocketInfo.setLxsc(nowTime(gps.getCjsj()));
-                }
+            }
             }else {
                 websocketInfo.setZxzt(device.getZxzt());
             }

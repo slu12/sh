@@ -95,17 +95,17 @@ func NewLoggo(option *LoggerOption) *Logger {
 	return &l
 }
 func (p *Logger) Print(m ...string) {
-	p.printWithColor(30, m...)
+	p.printWithColor(32, m...)
 }
 func (p *Logger) Info(m ...string) {
-	p.printWithColor(30, m...)
+	p.printWithColor(32, m...)
 }
 func (p *Logger) Error(m ...string) {
 	p.printWithColor(31, m...)
 }
 func (p *Logger) Infof(format string, args ...interface{}) {
 	f1 := fmt.Sprintf(format, args...)
-	p.printWithColor(30, []string{f1}...)
+	p.printWithColor(32, []string{f1}...)
 }
 func (p *Logger) Errorf(format string, args ...interface{}) {
 	f1 := fmt.Sprintf(format, args...)

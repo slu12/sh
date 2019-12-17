@@ -7,11 +7,13 @@ package logs
 import (
 	"dragon_ship_api/component/config"
 	"dragon_ship_api/component/logger"
+	"fmt"
 )
 
 var RunLog *logger.Logger
 
 func Init() {
+	fmt.Println("fileName:", config.Config.Log.FileName)
 	RunLog = logger.NewLoggo(&logger.LoggerOption{
 		RotateCron: config.Config.Log.RotateCron,
 		FileName:   config.Config.Log.FileName,

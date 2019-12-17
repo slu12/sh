@@ -5,11 +5,11 @@
 package shipapis
 
 type ApiResult struct {
-	Status int
+	Status string
 	Result string
 }
 type ListResult struct {
-	Result []string
-	Status int
+	Result []map[string]interface{}
+	Status string
 	Total  int
 }

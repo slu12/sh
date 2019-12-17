@@ -8,5 +8,6 @@ require (
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/robfig/cron v1.2.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
+	github.com/zheng-ji/goSnowFlake v0.0.0-20180906112711-fc763800eec9
 	gopkg.in/ini.v1 v1.51.0
 )

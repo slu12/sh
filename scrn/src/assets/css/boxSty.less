@@ -16,34 +16,6 @@
   background: rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.5);
 }
-
-.input {
-  display: inline-block;
-  width: 100%;
-  height: 32px;
-  line-height: 1.5;
-  padding: 4px 7px;
-  font-size: 12px;
-  border: none;
-  border-bottom: 1px solid #dddee1;
-  border-radius: 4px;
-  outline: none;
-  color: #495060;
-  background-color: #fff;
-  background-image: none;
-  position: relative;
-  cursor: text;
-  transition: border .2s ease-in-out, background .2s ease-in-out, box-shadow .2s ease-in-out;
-}
-
-.input::-webkit-input-placeholder {
-  color: #dddee1;
-}
-
-.input::-moz-placeholder {
-  color: #dddee1;
-}
-
 .swal2-container {
   z-index: 9999 !important;
 }
@@ -75,68 +47,37 @@ a {
 
 //容器属性 横向布局 垂直对齐方式 用于弹性布局的 容器
 //横向布局 上 中 下  文本居中
-.colItemTop {
-  align-items: flex-start;
-}
+.colTop {align-items: flex-start;}
 
-.colItemBottom {
-  align-items: flex-end;
-}
+.colBottom {align-items: flex-end;}
 
-.colItemCenter {
-  align-items: center;
-}
+.colCenter {align-items: center;}
 
-.colItemText {
-  align-items: stretch;
-}
+.colText {align-items: stretch;}
 
 //容器属性 横向 模块的分布
-.rowleft {
-  justify-content: flex-start;
-}
+.rowleft {justify-content: flex-start;}
 
-.rowRight {
-  justify-content: flex-end;
-}
+.rowRight {justify-content: flex-end;}
 
-.rowCenter {
-  justify-content: center;
-}
+.rowCenter {justify-content: center;}
 
-.rowBetween {
-  justify-content: space-between;
+.rowBetween {justify-content: space-between;}
 
-}
-
-.rowAuto { //模块平分
-  justify-content: space-around;
-}
+.rowAuto {justify-content: space-around;}//模块平分
 
 //项目属性
-.flexItemA {
-  align-self: auto;
-}
+.flexItemA {align-self: auto;}
 
-.flexItemF {
-  align-self: flex-start;
-}
+.flexItemF {align-self: flex-start;}
 
-.flexItemE {
-  align-self: flex-end;
-}
+.flexItemE {align-self: flex-end;}
 
-.flexItemC {
-  align-self: center;
-}
+.flexItemC {align-self: center;}
 
-.flexItemB {
-  align-self: baseline;
-}
+.flexItemB {align-self: baseline;}
 
-.flexItemS {
-  align-self: stretch;
-}
+.flexItemS {align-self: stretch;}
 
 .box_col { //纵向
   height: 100%;

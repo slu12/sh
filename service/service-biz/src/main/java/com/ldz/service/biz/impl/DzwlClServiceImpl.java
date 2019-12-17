@@ -3,7 +3,7 @@ package com.ldz.service.biz.impl;
 import com.github.pagehelper.PageInfo;
 import com.ldz.dao.biz.mapper.ClClMapper;
 import com.ldz.dao.biz.mapper.ClDzwlClMapper;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClDzwl;
 import com.ldz.dao.biz.model.ClDzwlCl;
 import com.ldz.service.biz.interfaces.DzwlClService;
@@ -45,11 +45,11 @@ public class DzwlClServiceImpl extends BaseServiceImpl<ClDzwlCl,String> implemen
     @Override
     public boolean fillPagerCondition(LimitedCondition condition){
         SysYh user = getCurrentUser();
-        SimpleCondition carCondition = new SimpleCondition(ClCl.class);
-        carCondition.eq(ClCl.InnerColumn.jgdm,user.getJgdm());
-        List<ClCl> cars = clClMapper.selectByExample(carCondition);
+        SimpleCondition carCondition = new SimpleCondition(Cb.class);
+        carCondition.eq(Cb.InnerColumn.jgdm,user.getJgdm());
+        List<Cb> cars = clClMapper.selectByExample(carCondition);
         if (cars.size() == 0)return false;
-        List<String> carIds = cars.stream().map(ClCl::getClId).collect(Collectors.toList());
+        List<String> carIds = cars.stream().map(Cb::getClId).collect(Collectors.toList());
         condition.in(ClDzwlCl.InnerColumn.clId,carIds);
         return true;
     }

@@ -7,7 +7,7 @@ import com.ldz.dao.dwq.model.MileDwq;
 import com.ldz.dao.obd.mapper.ObdFaultCodeMapper;
 import com.ldz.dao.obd.model.GpsObdMessageBean;
 import com.ldz.dao.obd.model.ObdFaultCodeBean;
-import com.ldz.service.biz.interfaces.ClService;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.SbyxsjjlService;
 import com.ldz.sys.model.SysZdxm;
 import com.ldz.sys.service.ZdxmService;
@@ -46,12 +46,12 @@ public class CheckMessageReceiver implements MessageListener {
     private ZdxmService zdxmService;
 
     private SbyxsjjlService sbyxsjjlService;
-    private ClService clService;
+    private CbService clService;
 
     private MileDwqMapper dwqMapper;
 
 
-    public CheckMessageReceiver(RedisTemplateUtil redisTemplate, SimpMessagingTemplate websocket,SnowflakeIdWorker idWorker,ObdFaultCodeMapper obdFaultCodeMapper,ZdxmService zdxmService,SbyxsjjlService sbyxsjjlService,ClService clService,MileDwqMapper dwqMapper) {
+    public CheckMessageReceiver(RedisTemplateUtil redisTemplate, SimpMessagingTemplate websocket, SnowflakeIdWorker idWorker, ObdFaultCodeMapper obdFaultCodeMapper, ZdxmService zdxmService, SbyxsjjlService sbyxsjjlService, CbService clService, MileDwqMapper dwqMapper) {
         this.redisTemplate = redisTemplate;
         this.websocket = websocket;
         this.idWorker = idWorker;

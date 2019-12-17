@@ -2,10 +2,10 @@ package com.ldz.service.biz.impl;
 
 import com.ldz.dao.biz.mapper.ClCdMapper;
 import com.ldz.dao.biz.model.ClCd;
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClJsy;
 import com.ldz.service.biz.interfaces.CdService;
-import com.ldz.service.biz.interfaces.ClService;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.JsyService;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.sys.model.SysJg;
@@ -30,7 +30,7 @@ public class CdServiceImpl extends BaseServiceImpl<ClCd, String> implements CdSe
     @Autowired
     private JgService jgService;
     @Autowired
-    private ClService clService;
+    private CbService clService;
     @Autowired
     private JsyService jsyService;
 
@@ -144,8 +144,8 @@ public class CdServiceImpl extends BaseServiceImpl<ClCd, String> implements CdSe
 //        if (hasIds != null&&hasIds.size()>0){
 //            carIdList.retainAll(hasIds);
 //        }
-        List<ClCl> modifyCarList = clService.findIn(ClCl.InnerColumn.clId, carIdList);
-        for (ClCl cl : modifyCarList) {
+        List<Cb> modifyCarList = clService.findIn(Cb.InnerColumn.clId, carIdList);
+        for (Cb cl : modifyCarList) {
             cl.setCdbh(cdbh);
             clService.updateEntity(cl);
         }
@@ -217,17 +217,17 @@ public class CdServiceImpl extends BaseServiceImpl<ClCd, String> implements CdSe
     }
 
     @Override
-    public ApiResponse<List<ClCl>> notBindCarList() {
-        SimpleCondition condition = new SimpleCondition(ClCl.class);
-        condition.and().andIsNull(ClCl.InnerColumn.cdbh.name()).orEqualTo(ClCl.InnerColumn.cdbh.name(),"");
-        List<ClCl> carList = clService.findByCondition(condition);
+    public ApiResponse<List<Cb>> notBindCarList() {
+        SimpleCondition condition = new SimpleCondition(Cb.class);
+        condition.and().andIsNull(Cb.InnerColumn.cdbh.name()).orEqualTo(Cb.InnerColumn.cdbh.name(),"");
+        List<Cb> carList = clService.findByCondition(condition);
         return ApiResponse.success(carList);
     }
 
     @Override
     public ApiResponse<List<ClJsy>> notBindDriverList() {
         SimpleCondition condition = new SimpleCondition(ClJsy.class);
-        condition.and().andIsNull(ClJsy.InnerColumn.cdbh.name()).orEqualTo(ClCl.InnerColumn.cdbh.name(),"");
+        condition.and().andIsNull(ClJsy.InnerColumn.cdbh.name()).orEqualTo(Cb.InnerColumn.cdbh.name(),"");
         List<ClJsy> carList = jsyService.findByCondition(condition);
         return ApiResponse.success(carList);
     }

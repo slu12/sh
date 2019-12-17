@@ -2,7 +2,7 @@ package com.ldz.dao.biz.bean;
 
 import java.util.List;
 
-import com.ldz.dao.biz.model.ClCl;
+import com.ldz.dao.biz.model.Cb;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +42,7 @@ public class XbXlPb {
 	/**
 	 * 车辆对象集合
 	 */
-	private List<ClCl> clList;
+	private List<Cb> clList;
 	/**
 	 * 司机姓名
 	 */

@@ -10,10 +10,7 @@ import com.ldz.sys.service.YhService;
 import com.ldz.util.bean.ApiResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -69,4 +66,18 @@ public class YhController extends BaseController<SysYh, String> {
 		RuntimeCheck.ifTrue(StringUtils.isEmpty(userId) ,"请选择需要重置用户");
 		return userService.resetPassword(userId);
 	}
+
+	/**
+	 * 找回密码功能(短信发送)
+	 */
+	@PostMapping("/sendSms")
+	public ApiResponse<String> sendSms(String phone){
+		return userService.sendSms(phone);
+	}
+
+	@PostMapping("/findPwd")
+	public ApiResponse<String> findPwd(String phone, String code, String pwd, String pwd1){
+		return userService.findPwd(phone,code,pwd,pwd1);
+	}
+
 }

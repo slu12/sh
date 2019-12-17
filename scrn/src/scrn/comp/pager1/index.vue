@@ -1,7 +1,7 @@
 <template>
   <div class="box_col pager1Sty">
     <div class="box_row pagerTop">
-      <div class="pager1Tit">系统功能</div>
+      <div class="pager1Tit" @click="sysEvent">系统功能</div>
     </div>
     <div id="carouselBox" class="box_col_100">
       <div v-if="domeEH.w>0&&domeEH.h>0"
@@ -49,6 +49,11 @@
         v.domeEH.h = v.AF.getDom_H('carouselBox')
         v.domeEH.w = v.AF.getDom_W('carouselBox')
       })
+    },
+    methods:{
+      sysEvent(){
+        this.$emit('sysEvent',1)
+      }
     }
   }
 </script>

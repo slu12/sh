@@ -96,13 +96,16 @@ export default [
         },
         component: () => import('@/viewDevelop/system/system-role')
       },
-      // {
-      //   path: 'system-framework',
-      //   icon: 'android-clipboard',
-      //   name: 'system-framework',
-      //   title: '组织机构',
-      //   component: () => import('@/viewDevelop/system/system-framework')
-      // },
+      {
+        path: 'system-framework',
+        name: 'system-framework',
+        meta: {
+          icon: 'md-contacts',
+          title: '厂商管理',
+        },
+
+        component: () => import('@/viewDevelop/system/system-framework')
+      },
       {
         path: 'system-dictionary',
         name: 'system-dictionary',
@@ -185,24 +188,24 @@ export default [
         },
         component: () => import('@/viewDevelop/terminal/terminal-car')
       },
-      {
-        path: 'terminal_OBD',
-        name: 'terminal_OBD',
-        meta: {
-          icon: 'ios-cog',
-          title: '终端拔出管理',
-        },
-        component: () => import('@/viewDevelop/terminal/terminal_OBD')
-      },
-      {
-        path: 'terminal_GPS',
-        name: 'terminal_GPS',
-        meta: {
-          icon: 'ios-cog',
-          title: '终端数据库对接',
-        },
-        component: () => import('@/viewDevelop/terminal/terminal_GPS')
-      },
+      // {
+      //   path: 'terminal_OBD',
+      //   name: 'terminal_OBD',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '终端拔出管理',
+      //   },
+      //   component: () => import('@/viewDevelop/terminal/terminal_OBD')
+      // },
+      // {
+      //   path: 'terminal_GPS',
+      //   name: 'terminal_GPS',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '终端数据库对接',
+      //   },
+      //   component: () => import('@/viewDevelop/terminal/terminal_GPS')
+      // },
       // {
       //   path: 'terminal-station',
       //   icon: 'android-clipboard',

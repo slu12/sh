@@ -175,7 +175,7 @@
             findMessList(mess) {
                 var v = this
                 this.$http.post(this.apis.DICTIONARY.QUERY, this.param).then((res) => {
-                    log('字典数据', res)
+                    console.log('字典数据', res)
                     v.dictionary = res.page.list
                 })
             },
@@ -195,7 +195,7 @@
                     'zdlmdm': item.lmdm,
                     'zdmcLike': mess
                 }).then((res) => {
-                    log('字典数据', res)
+                    console.log('字典数据', res)
                     if (res.code === 200) {
                         v.dictionary[index].zdxmList = res.page.list
                     }

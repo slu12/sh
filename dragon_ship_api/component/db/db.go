@@ -10,7 +10,7 @@ import (
 
 var Db *gorm.DB
 
-func init() {
+func Init() {
 	log.Println("init db")
 	var err error
 	mysqlConn := config.Config.Mysql.Conn
@@ -21,6 +21,6 @@ func init() {
 	}
 	// 使用单数表名
 	Db.SingularTable(true)
-	Db.AutoMigrate(&model.ShipInfo{})
+	Db.AutoMigrate(&model.ClGpsLs{})
 	Db.LogMode(true)
 }

@@ -7,7 +7,6 @@ package main
 import (
 	"dragon_ship_api/component/config"
 	"flag"
-	"log"
 )
 
 var env string
@@ -16,5 +15,4 @@ func main() {
 	flag.StringVar(&env, "e", "test", "environment")
 	flag.Parse()
 	config.Load(env)
-	log.Println(config.Config.User)
 }

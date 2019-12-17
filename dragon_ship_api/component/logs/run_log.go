@@ -17,6 +17,6 @@ func Init() {
 		FileName:   config.Config.Log.FileName,
 		MaxSize:    config.Config.Log.MaxSize,
 		Compress:   true,
-		Console:    false,
+		Console:    true,
 	})
 }

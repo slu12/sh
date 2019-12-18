@@ -1,6 +1,9 @@
 package com.ldz.service.biz.impl;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.mapper.ClXcMapper;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClXc;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -53,9 +57,16 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
         return i==1 ? ApiResponse.success():ApiResponse.fail();
     }
 
+    private String convertTime(String timestamp){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(Long.parseLong(timestamp));
+        return format.format(date);
+    }
+
     @Override
     public ApiResponse<List<Map<String, Object>>> history(String zdbh, String startTime, String endTime) {
         RuntimeCheck.ifBlank(zdbh,"请选择车辆");
+
         SimpleCondition condition = new SimpleCondition(ClXc.class);
         condition.eq(ClXc.InnerColumn.clZdbh,zdbh);
         condition.lte(ClXc.InnerColumn.xcJssj,endTime);
@@ -63,12 +74,11 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
         condition.setOrderByClause( " XC_KSSJ ASC,XC_JSSJ ASC");
         List<ClXc> xcList = findByCondition(condition);
         List<Map<String,Object>> list = new ArrayList<>(xcList.size());
-
+        List<Cb> cbs = cbService.findEq(Cb.InnerColumn.mmsi, zdbh);
+        if(CollectionUtils.isEmpty(cbs)){
+            return ApiResponse.success(list);
+        }
         if (xcList.size() == 0){
-            List<Cb> cbs = cbService.findEq(Cb.InnerColumn.zdbh, zdbh);
-            if(CollectionUtils.isEmpty(cbs)){
-                return ApiResponse.success(list);
-            }
             String mmsi = cbs.get(0).getMmsi();
             condition = new SimpleCondition(ClXc.class);
             condition.eq(ClXc.InnerColumn.clZdbh,mmsi);
@@ -77,12 +87,28 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
             condition.setOrderByClause( " XC_KSSJ ASC,XC_JSSJ ASC");
             xcList = findByCondition(condition);
             if(CollectionUtils.isEmpty(xcList)){
-//                String url = "http://223.240.68.90:8091/v1/GetHistoryVoyage";
-//                Map<String,String> params = new HashMap<>();
-//                params.put("shipid",mmsi);
-//                params.put("startUtcTime", DateTime.parse(startTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDateTime(DateTimeZone.UTC).toString("yyyy-MM-dd HH:mm:ss"));
-//                params.put("endUtcTime",DateTime.parse(endTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDateTime(DateTimeZone.UTC).toString("yyyy-MM-dd HH:mm:ss"));
-//                String res = HttpUtil.get(url, params);
+                String url = "http://223.240.68.90:8091/v1/GetHistoryVoyage";
+                Map<String,String> params = new HashMap<>();
+                params.put("shipid",mmsi);
+                params.put("startUtcTime", DateTime.parse(startTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000+"");
+                params.put("endUtcTime",DateTime.parse(endTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+                String res = HttpUtil.get(url, params);
+                JSONObject jsonObject = JSON.parseObject(res);
+                String status = jsonObject.getString("Status");
+                if(StringUtils.equals(status, "0")){
+                    JSONArray result = jsonObject.getJSONArray("Result");
+                    for (int i = 0; i < result.size(); i++) {
+                        JSONObject object = result.getJSONObject(i);
+                        ClXc xc = new ClXc();
+                        xc.setClZdbh(mmsi);
+                        xc.setXcJssj(convertTime(object.getString("departtime")));
+                        xc.setEndAddress(object.getString("arrivedportname"));
+                        xc.setStartAddress(object.getString("departportname"));
+                        xc.setXcKssj(convertTime(object.getString("ata")));
+                        xc.setXcLc(object.getString("totalvoyage"));
+                        xc.setXcSc((Long.parseLong(object.getString("departtime")) - Long.parseLong(object.getString("ata")))/60 + "");
+                    }
+                }
                 return ApiResponse.success(list);
             }
         }
@@ -185,6 +211,17 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
             }
         }
         return s;
+    }
+
+    public static void main(String[] args) {
+
+        String url = "http://223.240.68.90:8091/v1/GetHistoryVoyage";
+        Map<String,String> params = new HashMap<>();
+        params.put("shipid","413472680");
+        params.put("startUtcTime", DateTime.parse("2019-12-01 00:00:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000+"");
+        params.put("endUtcTime",DateTime.parse("2019-12-18 10:20:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+        String res = HttpUtil.get(url, params);
+        System.out.println(res);
     }
 
 }

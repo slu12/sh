@@ -20,6 +20,7 @@ func Start() {
 	g.GET("/GetShipInfo", GetShipInfo)
 	g.GET("/GetHistoryVoyage", GetHistoryVoyage)
 	g.GET("/GetCurrentVoyage", GetCurrentVoyage)
+	g.GET("/GetHistoryTrack", GetHistoryTrack)
 	g.POST("/SyncShipLatestInfo", SyncShipLatestInfo)
 
 	log.Println(" serverAddr : ", config.Config.Base.HttpAddr)

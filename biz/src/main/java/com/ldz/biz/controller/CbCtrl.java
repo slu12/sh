@@ -1,6 +1,7 @@
 package com.ldz.biz.controller;
 
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.bean.WebsocketInfo;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
@@ -11,7 +12,6 @@ import com.ldz.sys.base.BaseService;
 import com.ldz.sys.model.SysYh;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.commonUtil.WebcamUtil;
-import com.ldz.util.gps.Gps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -172,12 +172,51 @@ public class CbCtrl extends BaseController<Cb, String> {
 	}
 
 	/**
-	 * 实时Gps 点
+	 * 实时GPS点：船舶基本信息及最新船位查询服务
 	 */
 	@GetMapping("/shipInfo")
 	public ApiResponse<String> shipInfo(String mmsi){
 		return clservice.shipInfo(mmsi);
 	}
+
+	/**
+	 *  历史航次信息：船舶历史航次查询服务
+	 * @return
+	 */
+	@GetMapping("/getHistoryVoyage")
+	public ApiResponse<JSONArray> getHistoryVoyage(String mmsi, String start, String end){
+		return clservice.getHistoryVoyage(mmsi, start, end);
+	}
+
+	/**
+	 * 历史轨迹：船舶历史轨迹查询服务
+	 */
+	@GetMapping("/getHistoryTrack")
+	public ApiResponse<JSONArray> getHistoryTrack(String mmsi, String start, String end){
+		return clservice.getHistoryTrack(mmsi,start,end);
+	}
+
+	/**
+	 * 查询最新的航次信息：船舶当前航次查询服务
+	 */
+	@GetMapping("/getCurrentVoyage")
+	public ApiResponse<JSONObject> getCurrentVoyage(String mmsi){
+		return clservice.getCurrentVoyage(mmsi);
+	}
+
+
+	/**
+	 * 获取船舶下的所有摄像头通道
+	 * @return
+	 */
+	@PostMapping("/getAllChn")
+	public ApiResponse<String[]> getAllChn(String mmsi){
+		return clservice.getAllChn(mmsi);
+	}
+
+
+
+
 
 
 }

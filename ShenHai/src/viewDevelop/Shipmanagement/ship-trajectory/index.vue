@@ -1,13 +1,140 @@
 <template>
-
+  <div class="tabWrap">
+    <div class="tabNav">
+<span class="iconClass">
+<Icon type="chevron-up" @click.native="upTab"></Icon>
+</span>
+      <div id="tabBar">
+        <ul id="tabUl">
+          <li :class="[{activeTab:index === tabIndex},'tabLi']" v-for="(item,index) in tabList" :key="index"
+              @click="changeTab(index)">{{item.label}}</li>
+        </ul>
+      </div>
+      <span class="iconClass">
+<Icon type="chevron-down" @click.native="downTab"></Icon>
+</span>
+    </div>
+    <div class="tabContent">
+      <div v-if="tabIndex === 0" >content内容</div>
+    </div>
+  </div>
 </template>
 
 <script>
     export default {
-        name: "index"
+        name: "index",
+      watch: {
+        tabIndex: function (newVal) {
+          this.imgShow = 0
+          let scrollNav = document.getElementById('tabUl')
+          let tabBar = document.getElementById('tabBar')
+          let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
+          if (Number(newVal) >= 3) {
+            this.$nextTick(function () {
+              scrollNav.style.transform = `translateY(-${transformHeight}px)`
+            })
+          } else {
+            this.$nextTick(function () {
+              scrollNav.style.transform = 'translateY(0px)'
+            })
+          }
+        }
+      },
+      data () {
+        return {
+          tabIndex: 0,
+          tabList: [
+            {label: 'tab1'},
+          ],
+
+        }
+      },
+      methods: {
+// 更改tab页签
+        changeTab (index) {
+          this.tabIndex = index
+          this.$store.state.proofActiveName = this.tabIndex
+          this.imgShow = 0
+        },
+// 调整Tab滚动
+        upTab () {
+          let scrollNav = document.getElementById('tabUl')
+          this.$nextTick(function () {
+            scrollNav.style.transform = 'translateY(0px)'
+          })
+        },
+        downTab () {
+          let scrollNav = document.getElementById('tabUl')
+          let tabBar = document.getElementById('tabBar')
+          let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
+          this.$nextTick(function () {
+            scrollNav.style.transform = `translateY(-${transformHeight}px)`
+          })
+        }
+      }
+
     }
 </script>
 
-<style scoped>
-
+<style lang="less">
+  .tabWrap{
+    width:100%;
+    height: 100%;
+  .tabNav{
+    width:40px;
+    height: 100%;
+    float: left;
+  #tabBar{
+    height:e("calc(100% - 60px)");
+    overflow: hidden;
+    z-index: -1;
+  #tabUl{
+    width: 34px;
+    margin-left: 6px;
+    border-right: 1px solid #dddee1;
+    transition: -webkit-transform .5s ease-in-out;
+    transition: transform .5s ease-in-out;
+  .tabLi{
+    width:100%;
+    font-size: 14px;
+    writing-mode: vertical-lr;
+    padding: 14px 0 14px 5px;
+    cursor: pointer;
+    border: 1px solid #dddee1;
+    border-right: 0;
+    margin-bottom: 5px;
+    border-radius: 5px 0 0 6px;
+    text-align: center;
+    vertical-align: middle;
+    background: #f8f8f9;
+  }
+  .tabLi:hover{
+    color:#2d8cf0;
+  }
+  .activeTab{
+    color:#2d8cf0;
+    background: #ffffff;
+    width: 36px;
+    z-index: 100;
+  }
+  }
+  }
+  .iconClass{
+    display: inline-block;
+    height: 30px;
+    margin-left: 8px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 30px;
+    width:e("calc(100% - 10px)");
+  }
+  }
+  .tabContent{
+    float:left;
+    background: #fff;
+    width:e("calc(100% - 41px)");
+    height: 100%;
+    overflow: auto;
+  }
+  }
 </style>

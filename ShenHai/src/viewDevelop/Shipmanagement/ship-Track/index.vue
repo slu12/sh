@@ -7,7 +7,7 @@
   }
 </style>
 <template>
-  <div class="box-col">
+  <div class="box-row">
     <div style="position:absolute;width:430px;top:145px;left:330px;z-index:8888">
       <Col span="24">
         <Input placeholder="查设备" size="large" v-model="searchKey">
@@ -398,7 +398,7 @@
       };
     },
     created() {
-      this.compName = this.local == 'en-US' ? 'G_myMap' : 'B_myMap'
+      this.compName =  'B_myMap'
       this.$store.commit('setCurrentPath', [{
         title: '首页',
       }, {

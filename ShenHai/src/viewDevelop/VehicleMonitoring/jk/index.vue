@@ -7,8 +7,8 @@
   }
 </style>
 <template>
-  <div class="box-row">
-    <div style="position:absolute;width:430px;top:145px;left:330px;z-index:8888">
+  <div class="box-row" style="z-index: 1">
+    <div style="position:absolute;width:430px;top:145px;left:330px;z-index:888">
       <Col span="24">
         <Input placeholder='输入终端号' size="large" v-model="searchKey">
           <Button slot="append" type="primary" icon="md-search" @click="filter"></Button>
@@ -32,73 +32,17 @@
                   <Row type="flex" justify="start">
                     <Col span="8">
                       <Icon type="model-s"></Icon>
-                      {{item.cph}}
+                      {{item.shipname}}
                     </Col>
                     <Col span="8">
                       <Icon type="md-person"></Icon>
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.clid != ''" title='船舶信息'
-                              placement="left" width="300"
-                              style="float: right">
-                        <Button size="small" @click="getObdInfo(item)"
-                                style="font-weight: 700;color: black">
-                          船舶信息
-                        </Button>
-                        <div slot="content">
-                          <h3 v-if="gpsObdMessage == null">
-                            暂无数据</h3>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              更新日期
-                            </Col>
-                            <Col span="16"><span>{{formatDate(gpsObdMessage.xgsj)}} {{formatTime(gpsObdMessage.xgsj)}}</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              识别号
-                            </Col>
-                            <Col span="16"><span>{{gpsObdMessage.cbsbh}}</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">登记号码</Col>
-                            <Col span="16"><span>{{gpsObdMessage.djhm}}</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              呼号
-                            </Col>
-                            <Col span="16"><span>{{gpsObdMessage.callsign}} L</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              IMO
-                            </Col>
-                            <Col span="16"><span>{{gpsObdMessage.imo}} L</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="obdFaultCode && obdFaultCode.length != 0">
-                            <Col style="border-bottom: 1px solid #cccccc"></Col>
-                            <Col span="8">
-                              $t("ERROR_REPORT")
-                            </Col>
-                            <Col span="16">
-                              <div v-for="item in obdFaultCode"
-                                   style="border-bottom: 1px solid #cccccc">
-                                <span>{{item.faultCode}}</span>
-                                <!--<span :class="{obdFaultStatus:item.faultType != null,obdFaultHandled:item.faultType == '10',obdFaultNotHandle:item.faultType != '10'}">{{item.faultType == '10' ? '已解决' : '未解决'}}</span>-->
-                                <br>
-                                <span>{{item.creationTime}}</span>
-                              </div>
-                            </Col>
-                          </Row>
-                        </div>
-                      </Poptip>
+                      <Button  size="small" @click="getObdInfo(item)"
+                              style="font-weight: 700;color: black;float: right">
+                        船舶信息
+                      </Button>
                     </Col>
                   </Row>
                 </Card>
@@ -361,7 +305,7 @@
     </div>
     <div class="body-F" style="height:100%;">
       <!--<my-map ref="map" @codeEvent="codeEvent"></my-map>-->
-      <component ref="map" :is="compName"></component>
+      <component ref="map" :is="compName" @md-close="mdclose"></component>
     </div>
   </div>
 </template>
@@ -615,6 +559,9 @@
       },
       closeItem() {
         this.choosedCar = null;
+      },
+      mdclose(){
+
       },
       checkWebsocket() {
         this.websocketUtil.onConnected(() => this.subscribe())

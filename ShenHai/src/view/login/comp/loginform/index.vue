@@ -1,54 +1,83 @@
 <template>
-  <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
-    <FormItem prop="username">
-      <Input v-model="form.username" placeholder="请输入用户名">
-      <span slot="prepend">
+  <div>
+  <div v-if="islogin">
+    <div class="tit">登录</div>
+    <div class="ftit">Login</div>
+    <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
+      <FormItem prop="username">
+        <Input class="inputsty" style="height: 100%" v-model="form.username" placeholder="请输入用户名">
+        <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
-      </Input>
-    </FormItem>
-    <FormItem prop="password">
-      <Input type="password" v-model="form.password" placeholder="请输入密码">
+        </Input>
+      </FormItem>
+      <FormItem prop="password">
+        <Input class="inputsty" style="height: 100%" type="password" v-model="form.password" placeholder="请输入密码">
       <span slot="prepend">
           <Icon :size="14" type="md-lock"></Icon>
         </span>
-      </Input>
-    </FormItem>
-    <Row class="wjmima">
-      <Col align="right"><div>忘记密码?</div></Col>
-    </Row>
-<!--    <Row>-->
-<!--      <Col span="14">-->
-<!--        <FormItem prop="captcha">-->
-<!--          <Input v-model="form.captcha" placeholder="请输入验证码">-->
-<!--            <span slot="prepend">-->
-<!--              <Icon :size="14" type="md-key"></Icon>-->
-<!--            </span>-->
-<!--          </Input>-->
-<!--        </FormItem>-->
-<!--      </Col>-->
-<!--      <Col span="10">-->
-<!--        <img :src="YzUrl" width="100%" alt="验证码" style="margin-left: 8px;cursor: pointer" @click="getUrl">-->
-<!--      </Col>-->
-<!--    </Row>-->
-    <FormItem>
-      <Button @click="handleSubmit" type="primary" style="background-color: #363E4F" long>登录</Button>
-    </FormItem>
-  </Form>
+        </Input>
+      </FormItem>
+      <Row class="wjmima">
+        <Col align="right" style="cursor:pointer;" @click="xgpassword"><div>忘记密码?</div></Col>
+      </Row>
+      <FormItem>
+        <Button @click="handleSubmit" type="primary" class="botton" long>登录</Button>
+      </FormItem>
+    </Form>
+  </div>
+  <div v-if="!islogin">
+    <div class="tit">重置密码</div>
+    <div class="ftit">Reset Password</div>
+    <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
+      <FormItem prop="username">
+        <Input class="inputsty" style="height: 100%" v-model="form.username" placeholder="请输入用户名">
+        <span slot="prepend">
+          <Icon :size="16" type="ios-person"></Icon>
+        </span>
+        </Input>
+      </FormItem>
+      <FormItem prop="password">
+        <Input class="inputsty" style="height: 100%" type="password" v-model="form.password" placeholder="请输入密码">
+      <span slot="prepend">
+          <Icon :size="14" type="md-lock"></Icon>
+        </span>
+        </Input>
+      </FormItem>
+      <Row class="wjmima">
+        <Col span="12"></Col>
+        <Col align="right" style="height: 14px">
+          <div style="height: 14px;width: 65px;z-index: 666" @click="xgpassword">忘记密码?</div>
+        </Col>
+      </Row>
+      <FormItem>
+        <Button @click="handleSubmit" type="primary" class="botton" long>登录</Button>
+      </FormItem>
+    </Form>
+  </div>
+  </div>
 </template>
 <script>
   import {mapMutations} from 'vuex'
   import Cookies from 'js-cookie';
+  import passworld from "../../../../components/main/components/user/passworld";
   export default {
     name: 'LoginForm',
     data() {
       return {
+        islogin :true,
         YzUrl:'',
         form: {
           username: 'admini',
           password: '123456',
           captcha:'',
           codeID:''
+        },
+        formpass:{
+          sjh:'',
+          yzm:'',
+          pwd:'',
+          newpwd:''
         },
         rules: {
           username: [
@@ -67,6 +96,10 @@
       ...mapMutations([
         'setPermissionMenuList'
       ]),
+      xgpassword(){
+        console.log('passworld');
+        this.islogin = false
+      },
       getUrl() {
         let codeId =this.AF.getRandom(8)
         this.YzUrl = this.apis.url + this.apis.LOGIN.YZ + codeId
@@ -117,12 +150,42 @@
   }
 </script>
 <style lang="less">
+  .botton{
+    height:40px;
+    background:rgba(54,62,79,1);
+    font-size:14px;
+    font-family:Microsoft YaHei;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height:9px;
+  }
+  .inputsty{
+    width:370px;
+    height:40px;
+    border:1px solid rgba(204,204,204,1);
+  }
    .wjmima{
-     padding: 20px 0 ;
+     padding: 10px 0 ;
      font-size:14px;
      font-family:Microsoft YaHei;
      font-weight:400;
      color:rgba(54,62,79,1);
-     line-height:9px;
+     line-height:14px;
    }
+   .tit{
+     text-align: center;
+     font-size:24px;
+     font-family:Microsoft YaHei;
+     font-weight:300;
+     color:rgba(54,62,79,1);
+     line-height:42px;
+   }
+  .ftit{
+    text-align: center;
+    font-size:14px;
+    font-family:Microsoft YaHei;
+    font-weight:300;
+    color:rgba(54,62,79,1);
+    line-height:42px;
+  }
 </style>

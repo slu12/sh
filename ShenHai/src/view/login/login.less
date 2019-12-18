@@ -1,16 +1,34 @@
 .login{
     width: 100%;
     height: 100%;
-    background-image: url('../../assets/images/login-bg.jpg');
+    background-image: url('../../assets/images/login1.png');
     background-size: cover;
     background-position: center;
     position: relative;
+    &-font{
+      position: absolute;
+      left: 214px;
+      top: 50%;
+      transform: translateY(-60%);
+      .cn{
+        font-size:72px;
+        font-family:Microsoft YaHei;
+        font-weight:300;
+        color:rgba(255,255,255,1);
+      }
+      .en{
+        font-size:24px;
+        font-family:Microsoft YaHei;
+        font-weight:300;
+        color:rgba(255,255,255,1);
+      }
+    }
     &-con{
         position: absolute;
-        right: 360px;
+        right: 250px;
         top: 50%;
         transform: translateY(-60%);
-        width: 300px;
+        width: 400px;
         &-header{
             font-size: 16px;
             font-weight: 300;

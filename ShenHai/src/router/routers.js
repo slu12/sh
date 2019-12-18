@@ -45,8 +45,8 @@ export default [
   },
   {
     path: '/',
-    name: 'VehicleMonitoring',
-    redirect: '/VehicleMonitoring',
+    name: 'jk',
+    redirect: '/jk',
       meta: {
         hideInMenu: !true,
         notCache: true

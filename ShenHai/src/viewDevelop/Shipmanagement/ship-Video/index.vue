@@ -1,33 +1,7 @@
 <template>
     <div class="box_col">
-       <div class="box_row rowBetween colItemCenter boxMar_B">
-         <pager-tit></pager-tit>
-         <div class="box_row rowRight">
-           <div class="body-r-1 inputSty">
-             <DatePicker v-model="cjsjInRange"
-                         format="yyyy-MM-dd"
-                         type="daterange"
-                         placement="bottom-end"
-                         placeholder='请选择时间'
-                         @on-keyup.enter="findMessList()"
-                         style="width: 220px"></DatePicker>
-           </div>
-           <div class="body-r-1 inputSty">
-             <Input type="text" v-model="param.cphLike" placeholder='船舶号'></Input>
-           </div>
-           <div class="body-r-1 inputSty">
-             <Input type="text" v-model="param.zdbhLike" placeholder='终端号'></Input>
-           </div>
-           <div class="butevent">
-             <Button type="primary" @click="findMessList()">
-               <Icon type="md-search"></Icon>
-               <!--查询-->
-             </Button>
-           </div>
-         </div>
-       </div>
       <div class="box_col_auto">
-<!--        <htmlpanel :url.asyc="url1"></htmlpanel>-->
+
         <Row style="padding: 0 290px">
            <Col span="8" style="padding-top: 5px"  v-for="(item,index) in 9">
              <Card style="width:550px;height: 360px">

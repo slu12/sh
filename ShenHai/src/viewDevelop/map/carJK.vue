@@ -66,7 +66,7 @@
             setTimeout(()=>{
 
               this.init();
-            },2000)
+            },1000)
           })
 
         },
@@ -96,14 +96,16 @@
                 v.showCarPosition();
             },
             moveMap(){
-                if (this.carList.length == 0)return;
+              console.log(this.carList,'this.carList');
+              if (this.carList.length == 0)return;
                 var v = this
-                if (this.carList.length == 1){
-                    this.map.centerAndZoom(new BMap.Point(this.carList[0].lng, this.carList[0].lat), this.map.getZoom());  // 初始化地图,设置中心点坐标和地图级别
+                if (this.carList && this.carList.length == 1){
+                  console.log(this.carList[0],'this.carList[0]');
+                  v.map.centerAndZoom(new BMap.Point(this.carList[0].lng, this.carList[0].lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
                 }
             },
             init() {
-              console.log('获取中心店')
+              console.log('this.$parent.mapCarList',this.$parent.mapCarList)
                 this.carList = this.$parent.mapCarList;
                 if (this.carList.length === 1){
                     this.car = this.carList[0];
@@ -118,26 +120,29 @@
                 this.showCarPosition();
             },
             Buildmap() {
+              // 百度地图API功能
+
+              // map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);
+              //
+
                 console.log('创建地图')
                 var v = this
                 // 百度地图API功能
-                this.map = new BMap.Map("allmap");    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
-                this.map.addControl(ctrl);         //添加缩略地图控件
-                ctrl.setAnchor(BMAP_ANCHOR_BOTTOM_RIGHT);
-                //添加地图类型控件
-                this.map.setCurrentCity("武汉");          // 设置地图显示的城市 此项是必须设置的
-                this.map.enableScrollWheelZoom(true);
-                v.map.enableScrollWheelZoom();
-                this.map.addControl(new BMap.ScaleControl());
-                this.map.addEventListener("load",function(){
-                myDis.open();  //开启鼠标测距
-                //myDis.close();  //关闭鼠标测距
-              });
-                // 添加比例尺控件
-              // 百度地图API功能
-              this.map.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
-              // 添加平移缩放控件
+              var map = new BMap.Map("allmap");
+              // v.map = new BMap.Map("allmap");    // 创建Map实例
+              map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
+              var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
+              var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
+              var top_right_navigation = new BMap.NavigationControl({
+                anchor: BMAP_ANCHOR_TOP_RIGHT,
+                type: BMAP_NAVIGATION_CONTROL_SMALL
+              }); //右上角，仅包含平移和缩放按钮
+              map.enableScrollWheelZoom();
+              map.addControl(top_left_control);
+              map.addControl(top_left_navigation);
+              // map.addControl(top_right_navigation);
+
+              v.map = map
             },
             //撒点
             showCarPosition() {

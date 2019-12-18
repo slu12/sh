@@ -32,7 +32,7 @@
                   <Row type="flex" justify="start">
                     <Col span="8">
                       <Icon type="model-s"></Icon>
-                      {{item.shipname}}
+                      {{item.cph}}
                     </Col>
                     <Col span="8">
                       <Icon type="md-person"></Icon>
@@ -303,9 +303,9 @@
          type="flex" justify="end">
       <car-info @close="closeItem" ref="carInfoRef" @switchGJ="switchGJ"></car-info>
     </div>
-    <div class="body-F" style="height:100%;">
+    <div class="body-F" style="height:100%">
       <!--<my-map ref="map" @codeEvent="codeEvent"></my-map>-->
-      <component ref="map" :is="compName" @md-close="mdclose"></component>
+      <component ref="map" :is="compName"></component>
     </div>
   </div>
 </template>

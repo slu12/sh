@@ -46,7 +46,7 @@ func getToken() string {
 	}
 	return token
 }
-func getNewToken() string {
+func GetNewToken() string {
 	token = ""
 	return getToken()
 }

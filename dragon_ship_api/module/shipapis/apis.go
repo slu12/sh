@@ -36,7 +36,7 @@ func getApiResult(getUrl string) (*ApiResult, error) {
 	}
 	if res.Status == "1" {
 		logs.RunLog.Error("token invalid,try to get a new token")
-		getNewToken()
+		GetNewToken()
 		return getApiResult(getUrl)
 	}
 	return &res, nil
@@ -53,11 +53,11 @@ func getListResult(getUrl string) (*ListResult, error) {
 		logs.RunLog.Error("Unmarshal:", err.Error())
 		return nil, err
 	}
-	if res.Status == "1" {
-		logs.RunLog.Error("token invalid,try to get a new token")
-		getNewToken()
-		return getListResult(getUrl)
-	}
+	//if res.Status == "1" {
+	//	logs.RunLog.Error("token invalid,try to get a new token")
+	//	GetNewToken()
+	//	return getListResult(getUrl)
+	//}
 	return &res, nil
 }
 func QueryShip(term string) (*ApiResult, error) {

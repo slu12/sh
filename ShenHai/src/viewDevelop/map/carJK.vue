@@ -206,7 +206,7 @@
                 var v = this
                 var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32)});
                 var marker = new BMap.Marker(point, {icon: myIcon});
-                marker.setRotation(item.fxj + 90)
+                marker.setRotation(-45)
                 marker.addEventListener("click",(code)=>{
                     // console.log('店事件',code);
                     // console.log('item',item);

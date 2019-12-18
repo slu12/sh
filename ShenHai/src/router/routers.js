@@ -45,27 +45,51 @@ export default [
   },
   {
     path: '/',
-    name: '_home',
-    redirect: '/home',
+    name: 'VehicleMonitoring',
+    redirect: '/VehicleMonitoring',
+      meta: {
+        hideInMenu: !true,
+        notCache: true
+      },
     component: Main,
-    meta: {
-      hideInMenu: !true,
-      notCache: true
-    },
-    children: [
+    children:[
       {
-        path: '/',
-        name: 'home',
+        path: '/jk',
+        name: 'jk',
         meta: {
           hideInMenu: !true,
-          title: '首页',
+          icon: 'ios-cog',
+          title: '船舶监控',
           notCache: true,
-          icon: 'md-home'
         },
-        component: () => import('@/view/single-page/home')
-      }
+        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
+      },
     ]
+
   },
+  // {
+  //   path: '/home',
+  //   name: '_home',
+  //   redirect: '/home',
+  //   component: Main,
+  //   meta: {
+  //     hideInMenu: !true,
+  //     notCache: true
+  //   },
+  //   children: [
+  //     {
+  //       path: '/home',
+  //       name: 'home',
+  //       meta: {
+  //         hideInMenu: !true,
+  //         title: '首页',
+  //         notCache: true,
+  //         icon: 'md-home'
+  //       },
+  //       component: () => import('@/view/single-page/home')
+  //     }
+  //   ]
+  // },
 
   {
     path: '/system',
@@ -375,27 +399,7 @@ export default [
     ]
 
   },
-  {
-    path: '/VehicleMonitoring',
-    name: 'VehicleMonitoring',
-    meta: {
-      icon: 'ios-cog',
-      title: '船舶监控',
-    },
-    component: Main,
-    children:[
-      {
-        path: '/jk',
-        name: 'jk',
-        meta: {
-          icon: 'ios-cog',
-          title: '船舶监控',
-        },
-        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
-      },
-    ]
 
-  },
 
 
 

@@ -37,7 +37,6 @@ public class ClSbyxsjjlCtrl extends BaseController<ClSbyxsjjl, String> {
 	 */
 	@RequestMapping("/history")
 	public ApiResponse<List<ClLsGjInfo>> historyTrajectory(gpsSJInfo gpssjinfo) {
-
 		return service.historyTrajectory(gpssjinfo);
 	}
 
@@ -48,7 +47,6 @@ public class ClSbyxsjjlCtrl extends BaseController<ClSbyxsjjl, String> {
 	 */
 	@PostMapping("/historygps")
 	public ApiResponse<List<ClGpsLs>>  getGuiJiGps(gpsSJInfo gpssjinfo) {
-
 		return service.getGuiJiGps(gpssjinfo);
 	}
 
@@ -61,7 +59,6 @@ public class ClSbyxsjjlCtrl extends BaseController<ClSbyxsjjl, String> {
 
 	@RequestMapping("/Safedriving")
 	public ApiResponse<List<SafedrivingModel>> getSafeDrivig(){
-
 		return service.getSafeDrivig();
 	}
 

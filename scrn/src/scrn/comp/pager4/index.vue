@@ -1,7 +1,7 @@
 <template>
   <div class="box_col pager1Sty">
     <div class="box_row pagerTop">
-      <div class="pager1Tit">摄像头视频</div>
+      <div class="pager1Tit" @click="sysEvent">摄像头视频</div>
     </div>
     <div id="carouselBox4" class="box_col_100">
       <div v-if="domeEH.w>0&&domeEH.h>0"
@@ -51,6 +51,9 @@
       })
     },
     methods:{
+      sysEvent(){
+        this.$emit('sysEvent',4)
+      },
       buildMap() {
         // 百度地图API功能
         var map = new BMap.Map("allmap");

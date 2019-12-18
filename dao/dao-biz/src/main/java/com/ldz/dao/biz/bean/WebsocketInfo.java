@@ -55,5 +55,9 @@ public class WebsocketInfo {
 
 	private boolean defaultGps;
 
+	private String shipname;
+
+	private String mmsi;
+
 	private List<Map<String,BigDecimal>> gpsList;
 }

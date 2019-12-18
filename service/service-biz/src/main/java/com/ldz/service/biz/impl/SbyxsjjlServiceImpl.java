@@ -30,17 +30,17 @@ import com.ldz.util.gps.Gps;
 import com.ldz.util.gps.PositionUtil;
 import com.ldz.util.yingyan.GuiJIApi;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.support.RequestContextUtils;
-
 import tk.mybatis.mapper.common.Mapper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -63,9 +63,6 @@ public class SbyxsjjlServiceImpl extends BaseServiceImpl<ClSbyxsjjl, String> imp
 	@Value("${biz.scTime}")
 	private String scTime;
 
-	/*
-	 * @Autowired private ClClMapper clclmapper;
-	 */
 
 	@Override
 	protected Mapper<ClSbyxsjjl> getBaseMapper() {
@@ -377,6 +374,24 @@ public class SbyxsjjlServiceImpl extends BaseServiceImpl<ClSbyxsjjl, String> imp
 		condition.setOrderByClause(" id ASC,loctime asc");
 
 		List<Clyy> clyys = clYyService.findByCondition(condition);
+		if(CollectionUtils.isEmpty(clyys)){
+			condition = new SimpleCondition(ClGpsLs.class);
+			condition.eq(ClGpsLs.InnerColumn.zdbh, gpssjinfo.getZdbh());
+			condition.and().andBetween(ClGpsLs.InnerColumn.cjsj.name() , gpssjinfo.getStartTime() , gpssjinfo.getEndTime());
+			condition.setOrderByClause(" id asc, cjsj asc");
+			List<ClGpsLs> gpsLs = clGpsLsMapper.selectByExample(condition);
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			gpsLs.forEach(clGpsLs -> {
+				Clyy yy = new Clyy();
+				yy.setZdbh(clGpsLs.getZdbh());
+				yy.setDirection(clGpsLs.getFxj().doubleValue() + "");
+				yy.setLatitude(clGpsLs.getBdwd());
+				yy.setLongitude(clGpsLs.getBdjd());
+				yy.setLoc_time(format.format(clGpsLs.getCjsj()));
+				yy.setSpeed(new BigDecimal(clGpsLs.getYxsd()));
+				clyys.add(yy);
+			});
+		}
 		boolean isBreak = true;
 		try{
 			//查看登录来源是app还是PC，如果是app，则自动计算一下地图缩放级别
@@ -501,8 +516,6 @@ public class SbyxsjjlServiceImpl extends BaseServiceImpl<ClSbyxsjjl, String> imp
 			apiResponse.setResult(points);
 			apiResponse.setMessage("10");
 		}
-		
-		
 		return apiResponse;
 	}
 

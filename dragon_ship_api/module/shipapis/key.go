@@ -5,6 +5,7 @@
 package shipapis
 
 import (
+	"dragon_ship_api/component/logs"
 	"dragon_ship_api/component/tool"
 	"encoding/json"
 	"log"
@@ -41,6 +42,7 @@ func getToken() string {
 	if token == "" {
 		sd := getSeed()
 		token = tool.Md5(sd + KEY)
+		logs.RunLog.Print("get token")
 	}
 	return token
 }

@@ -1,8 +1,0 @@
-com\ldz\dao\dwq\model\GpsBean.class
-com\ldz\dao\dwq\model\MileDwq.class
-com\ldz\dao\dwq\mapper\MileDwqMapper.class
-com\ldz\dao\dwq\model\TravelData.class
-com\ldz\dao\dwq\model\GpsInfo.class
-com\ldz\dao\dwq\mapper\TravelDataMapper.class
-com\ldz\dao\dwq\mapper\DwqGpsMapper.class
-com\ldz\dao\dwq\model\GpsBeanNew.class

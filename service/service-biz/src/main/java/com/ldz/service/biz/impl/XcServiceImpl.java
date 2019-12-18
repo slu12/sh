@@ -2,7 +2,9 @@ package com.ldz.service.biz.impl;
 
 
 import com.ldz.dao.biz.mapper.ClXcMapper;
+import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClXc;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.XcService;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.util.bean.ApiResponse;
@@ -10,7 +12,12 @@ import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.DateUtils;
 import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.exception.RuntimeCheck;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +31,9 @@ import java.util.*;
 public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcService {
     @Autowired
     private ClXcMapper entityMapper;
+    @Autowired
+     private CbService cbService;
+
 
     Logger error = LoggerFactory.getLogger("error_info");
     @Override
@@ -53,8 +63,28 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
         condition.setOrderByClause( " XC_KSSJ ASC,XC_JSSJ ASC");
         List<ClXc> xcList = findByCondition(condition);
         List<Map<String,Object>> list = new ArrayList<>(xcList.size());
+
         if (xcList.size() == 0){
-            return ApiResponse.success(list);
+            List<Cb> cbs = cbService.findEq(Cb.InnerColumn.zdbh, zdbh);
+            if(CollectionUtils.isEmpty(cbs)){
+                return ApiResponse.success(list);
+            }
+            String mmsi = cbs.get(0).getMmsi();
+            condition = new SimpleCondition(ClXc.class);
+            condition.eq(ClXc.InnerColumn.clZdbh,mmsi);
+            condition.lte(ClXc.InnerColumn.xcJssj,endTime);
+            condition.gte(ClXc.InnerColumn.xcKssj,startTime);
+            condition.setOrderByClause( " XC_KSSJ ASC,XC_JSSJ ASC");
+            xcList = findByCondition(condition);
+            if(CollectionUtils.isEmpty(xcList)){
+//                String url = "http://223.240.68.90:8091/v1/GetHistoryVoyage";
+//                Map<String,String> params = new HashMap<>();
+//                params.put("shipid",mmsi);
+//                params.put("startUtcTime", DateTime.parse(startTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDateTime(DateTimeZone.UTC).toString("yyyy-MM-dd HH:mm:ss"));
+//                params.put("endUtcTime",DateTime.parse(endTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDateTime(DateTimeZone.UTC).toString("yyyy-MM-dd HH:mm:ss"));
+//                String res = HttpUtil.get(url, params);
+                return ApiResponse.success(list);
+            }
         }
         for (ClXc xc : xcList) {
             if (StringUtils.isEmpty(xc.getXcStartEnd())){
@@ -155,12 +185,6 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
             }
         }
         return s;
-    }
-
-    public static void main(String[] args) {
-        String s = "浙江省杭州市滨江区";
-        String r = filterAddress(s);
-        System.out.println(r);
     }
 
 }

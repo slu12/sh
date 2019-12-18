@@ -16,8 +16,24 @@ import parentView from '@/components/parent-view'
  *  beforeCloseName: (-) 设置该字段，则在关闭当前tab页时会去'@/router/before-close.js'里寻找该字段名对应的方法，作为关闭前的钩子函数
  * }
  */
-
+export const otherRouter = {
+  path: '/',
+  name: 'otherRouter',
+  redirect: '/home',
+  component: Main,
+  children: [
+    { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/viewDevelop/historyTarck') },
+  ]
+};
 export default [
+  { path: 'historyTarck',
+    name: 'historyTarck_new',
+    meta: {
+      title: '历史轨迹',
+      hideInMenu: true
+    },
+    component: () => import('@/viewDevelop/historyTarck') },
+
   {
     path: '/login',
     name: 'login',
@@ -29,27 +45,51 @@ export default [
   },
   {
     path: '/',
-    name: '_home',
-    redirect: '/home',
+    name: 'jk',
+    redirect: '/jk',
+      meta: {
+        hideInMenu: !true,
+        notCache: true
+      },
     component: Main,
-    meta: {
-      hideInMenu: !true,
-      notCache: true
-    },
-    children: [
+    children:[
       {
-        path: '/',
-        name: 'home',
+        path: '/jk',
+        name: 'jk',
         meta: {
           hideInMenu: !true,
-          title: '首页',
+          icon: 'ios-cog',
+          title: '船舶监控',
           notCache: true,
-          icon: 'md-home'
         },
-        component: () => import('@/view/single-page/home')
-      }
+        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
+      },
     ]
+
   },
+  // {
+  //   path: '/home',
+  //   name: '_home',
+  //   redirect: '/home',
+  //   component: Main,
+  //   meta: {
+  //     hideInMenu: !true,
+  //     notCache: true
+  //   },
+  //   children: [
+  //     {
+  //       path: '/home',
+  //       name: 'home',
+  //       meta: {
+  //         hideInMenu: !true,
+  //         title: '首页',
+  //         notCache: true,
+  //         icon: 'md-home'
+  //       },
+  //       component: () => import('@/view/single-page/home')
+  //     }
+  //   ]
+  // },
 
   {
     path: '/system',
@@ -359,27 +399,7 @@ export default [
     ]
 
   },
-  {
-    path: '/VehicleMonitoring',
-    name: 'VehicleMonitoring',
-    meta: {
-      icon: 'ios-cog',
-      title: '船舶监控',
-    },
-    component: Main,
-    children:[
-      {
-        path: '/jk',
-        name: 'jk',
-        meta: {
-          icon: 'ios-cog',
-          title: '船舶监控',
-        },
-        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
-      },
-    ]
 
-  },
 
 
 
@@ -813,8 +833,8 @@ export default [
     component: () => import('@/view/error-page/404.vue')
   },
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
-
-    // { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/views/whdx/historyTarck') },
+    // { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/viewDevelop/historyTarck') },
     // { path: 'historyPath', title: '历史轨迹', name: 'historypath', component: () => import('@/views/whdx/OperationMonitoring/VehicleMonitoring/HistoryPath') },
 
 ]
+

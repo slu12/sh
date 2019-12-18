@@ -260,6 +260,17 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             }
             WebsocketInfo websocketInfo = changeSocketNew(gpsInfo, newGps, xlId);
             if (websocketInfo != null){
+                if(car != null ){
+                    websocketInfo.setMmsi(car.getMmsi());
+                    websocketInfo.setShipname(car.getShipname());
+                    websocketInfo.setClid(car.getClId());
+                    websocketInfo.setCph(car.getShipname());
+                    websocketInfo.setCx(car.getCx());
+                    websocketInfo.setSjxm(car.getSjxm());
+                    if (StringUtils.isNotEmpty(car.getObdCode())) {
+                        websocketInfo.setObdId(car.getObdCode());
+                    }
+                }
                 redis.boundValueOps(WebsocketInfo.class.getSimpleName() + deviceId).set(JsonUtil.toJson(websocketInfo));
                 sendWebsocket(websocketInfo);
             }
@@ -465,7 +476,8 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             if (StringUtils.equals(entity.getSczt(), "10")) {
                 if(!StringUtils.equals(zdgl.getZt(),"00") || !StringUtils.equals(zdgl.getZxzt(),"00")){
                     zdgl.setZt("00");
-                    zdgl.setZxzt("00");
+                    // todo 记得改回 00
+                    zdgl.setZxzt("10");
                     zdglservice.update(zdgl);
                 }
             }else if (StringUtils.equals(entity.getSczt(), "20")) {
@@ -709,7 +721,18 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
 
                 String json = (String) redis.boundValueOps(key).get();
                 WebsocketInfo websocketInfo = JsonUtil.toBean(json, WebsocketInfo.class);
-
+                Cb car = zdbhClMap.get(device.getZdbh());
+                if (car != null){
+                    websocketInfo.setMmsi(car.getMmsi());
+                    websocketInfo.setShipname(car.getShipname());
+                    websocketInfo.setClid(car.getClId());
+                    websocketInfo.setCph(car.getShipname());
+                    websocketInfo.setCx(car.getCx());
+                    websocketInfo.setSjxm(car.getSjxm());
+                    if (StringUtils.isNotEmpty(car.getObdCode())) {
+                        websocketInfo.setObdId(car.getObdCode());
+                    }
+                }
                 if(zdbhClMap.containsKey(device.getZdbh())){
                     list.add(websocketInfo);
                     continue;
@@ -822,6 +845,11 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             }
             String json = (String) redis.boundValueOps(key).get();
             WebsocketInfo info = JsonUtil.toBean(json, WebsocketInfo.class);
+           /* String clid = info.getClid();
+            Cb cb = clService.findById(clid);
+            info.setMmsi(cb.getMmsi());
+            info.setCph(cb.getShipname());
+            info.setShipname(cb.getShipname());*/
             /*ClZdgl clZdgl = collect.get(deviceId);
             List<Map<String,BigDecimal>> list = new ArrayList<>();
             List<ClGpsLs> list1 = new ArrayList<>();

@@ -1,8 +1,14 @@
 package com.ldz.service.biz.impl;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.mapper.ClXcMapper;
+import com.ldz.dao.biz.model.Cb;
+import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.dao.biz.model.ClXc;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.XcService;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.util.bean.ApiResponse;
@@ -10,7 +16,12 @@ import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.DateUtils;
 import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.exception.RuntimeCheck;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +29,16 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
 public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcService {
     @Autowired
     private ClXcMapper entityMapper;
+    @Autowired
+     private CbService cbService;
+
 
     Logger error = LoggerFactory.getLogger("error_info");
     @Override
@@ -43,9 +58,16 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
         return i==1 ? ApiResponse.success():ApiResponse.fail();
     }
 
+    private String convertTime(String timestamp){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(Long.parseLong(timestamp));
+        return format.format(date);
+    }
+
     @Override
     public ApiResponse<List<Map<String, Object>>> history(String zdbh, String startTime, String endTime) {
         RuntimeCheck.ifBlank(zdbh,"请选择车辆");
+
         SimpleCondition condition = new SimpleCondition(ClXc.class);
         condition.eq(ClXc.InnerColumn.clZdbh,zdbh);
         condition.lte(ClXc.InnerColumn.xcJssj,endTime);
@@ -53,8 +75,52 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
         condition.setOrderByClause( " XC_KSSJ ASC,XC_JSSJ ASC");
         List<ClXc> xcList = findByCondition(condition);
         List<Map<String,Object>> list = new ArrayList<>(xcList.size());
-        if (xcList.size() == 0){
+        List<Cb> cbs = cbService.findEq(Cb.InnerColumn.mmsi, zdbh);
+        if(CollectionUtils.isEmpty(cbs)){
             return ApiResponse.success(list);
+        }
+        if (xcList.size() == 0){
+            String mmsi = cbs.get(0).getMmsi();
+            condition = new SimpleCondition(ClXc.class);
+            condition.eq(ClXc.InnerColumn.clZdbh,mmsi);
+            condition.lte(ClXc.InnerColumn.xcJssj,endTime);
+            condition.gte(ClXc.InnerColumn.xcKssj,startTime);
+            condition.setOrderByClause( " XC_KSSJ ASC,XC_JSSJ ASC");
+            xcList = findByCondition(condition);
+            if(CollectionUtils.isEmpty(xcList)){
+                String url = "http://223.240.68.90:8091/v1/GetHistoryVoyage";
+                Map<String,String> params = new HashMap<>();
+                params.put("shipid",mmsi);
+                params.put("startUtcTime", DateTime.parse(startTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000+"");
+                params.put("endUtcTime",DateTime.parse(endTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+                String res = HttpUtil.get(url, params);
+                JSONObject jsonObject = JSON.parseObject(res);
+                String status = jsonObject.getString("Status");
+                if(StringUtils.equals(status, "0")){
+                    JSONArray result = jsonObject.getJSONArray("Result");
+                    if(CollectionUtils.isEmpty(result)){
+                        return ApiResponse.success(list);
+                    }
+                    for (int i = 0; i < result.size(); i++) {
+                        JSONObject object = result.getJSONObject(i);
+                        ClXc xc = new ClXc();
+                        xc.setClZdbh(mmsi);
+                        xc.setXcJssj(convertTime(object.getString("departtime")));
+                        xc.setEndAddress(object.getString("arrivedportname"));
+                        xc.setStartAddress(object.getString("departportname"));
+                        xc.setXcKssj(convertTime(object.getString("ata")));
+                        xc.setXcLc(object.getString("totalvoyage"));
+                        xc.setXcSc((Long.parseLong(object.getString("departtime")) - Long.parseLong(object.getString("ata")))/60 + "");
+                        ClGpsLs gpsLs = entityMapper.getStart(mmsi, startTime);
+                        ClGpsLs end = entityMapper.getEnd(mmsi, endTime);
+                        String start_end = gpsLs.getJd() + "-" + gpsLs.getWd() + "," + end.getJd() + "-" + end.getWd();
+                        xc.setXcStartEnd(start_end);
+                        xcList.add(xc);
+                    }
+                }else{
+                    return ApiResponse.success(list);
+                }
+            }
         }
         for (ClXc xc : xcList) {
             if (StringUtils.isEmpty(xc.getXcStartEnd())){
@@ -158,9 +224,14 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
     }
 
     public static void main(String[] args) {
-        String s = "浙江省杭州市滨江区";
-        String r = filterAddress(s);
-        System.out.println(r);
+
+        String url = "http://223.240.68.90:8091/v1/GetHistoryVoyage";
+        Map<String,String> params = new HashMap<>();
+        params.put("shipid","413472680");
+        params.put("startUtcTime", DateTime.parse("2019-12-01 00:00:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000+"");
+        params.put("endUtcTime",DateTime.parse("2019-12-18 10:20:00", DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+        String res = HttpUtil.get(url, params);
+        System.out.println(res);
     }
 
 }

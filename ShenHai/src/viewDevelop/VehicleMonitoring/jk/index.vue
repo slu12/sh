@@ -7,10 +7,10 @@
   }
 </style>
 <template>
-  <div class="box-row">
-    <div style="position:absolute;width:430px;top:145px;left:330px;z-index:8888">
+  <div class="box-row" style="z-index: 1">
+    <div style="position:absolute;width:430px;top:145px;left:330px;z-index:888">
       <Col span="24">
-        <Input placeholder='终端' size="large" v-model="searchKey">
+        <Input placeholder='输入终端号' size="large" v-model="searchKey">
           <Button slot="append" type="primary" icon="md-search" @click="filter"></Button>
         </Input>
         <Tabs v-show="showTabs" ref="tabRef" style="background-color:white;" size="small"
@@ -39,66 +39,10 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
-                              placement="left" width="300"
-                              style="float: right">
-                        <Button size="small" @click="getObdInfo(item)"
-                                style="font-weight: 700;color: black">
-                          OBD
-                        </Button>
-                        <div slot="content">
-                          <h3 v-if="gpsObdMessage == null">
-                            $t("NONE_DATE")</h3>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              $t("UPDATE_DATE")
-                            </Col>
-                            <Col span="16"><span>{{formatDate(gpsObdMessage.creatorDate)}} {{formatTime(gpsObdMessage.creatortime)}}</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              $t("ENGINE_REVOLUTION")
-                            </Col>
-                            <Col span="16"><span>{{gpsObdMessage.engineSpeed}} r/min</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">$t("SPEED")</Col>
-                            <Col span="16"><span>{{gpsObdMessage.obdSpeed}} KM/h</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              $t("RESIDUAL_OIL")
-                            </Col>
-                            <Col span="16"><span>{{gpsObdMessage.syyl}} L</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="gpsObdMessage != null">
-                            <Col span="8">
-                              $t("OIL_CONSUMPTION")
-                            </Col>
-                            <Col span="16"><span>{{gpsObdMessage.hyl}} L</span>
-                            </Col>
-                          </Row>
-                          <Row v-if="obdFaultCode && obdFaultCode.length != 0">
-                            <Col style="border-bottom: 1px solid #cccccc"></Col>
-                            <Col span="8">
-                              $t("ERROR_REPORT")
-                            </Col>
-                            <Col span="16">
-                              <div v-for="item in obdFaultCode"
-                                   style="border-bottom: 1px solid #cccccc">
-                                <span>{{item.faultCode}}</span>
-                                <!--<span :class="{obdFaultStatus:item.faultType != null,obdFaultHandled:item.faultType == '10',obdFaultNotHandle:item.faultType != '10'}">{{item.faultType == '10' ? '已解决' : '未解决'}}</span>-->
-                                <br>
-                                <span>{{item.creationTime}}</span>
-                              </div>
-                            </Col>
-                          </Row>
-                        </div>
-                      </Poptip>
+                      <Button  size="small" @click="getObdInfo(item)"
+                              style="font-weight: 700;color: black;float: right">
+                        船舶信息
+                      </Button>
                     </Col>
                   </Row>
                 </Card>
@@ -125,10 +69,10 @@
                     </Col>
                     <Col span="8">
                       <Icon type="md-person"></Icon>
-                      {{item.sjxm ? item.sjxm : '$t("NONE_BOUND")'}}
+                      {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
+                      <Poptip v-if="item.obdId != ''" title='船舶信息'
                               placement="left" width="300"
                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
@@ -214,7 +158,7 @@
                     </Col>
                     <Col span="8">
                       <Icon type="md-person"></Icon>
-                      {{item.sjxm ? item.sjxm : '$t("NONE_BOUND")'}}
+                      {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
                       <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
@@ -295,7 +239,7 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title="OBD信息"
+                      <Poptip  title="船舶信息"
                               placement="left" width="300"
                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
@@ -355,11 +299,11 @@
         </Tabs>
       </Col>
     </div>
-    <div style="position:absolute;width:300px;top:20px;right:-10px;z-index:9990;padding-top:30px;padding-right:30px;float: right"
+    <div style="position:absolute;width:300px;top:20px;right:-10px;z-index:9990;padding-top:140px;padding-right:50px;float: right"
          type="flex" justify="end">
       <car-info @close="closeItem" ref="carInfoRef" @switchGJ="switchGJ"></car-info>
     </div>
-    <div class="body-F" style="height:100%;">
+    <div class="body-F" style="height:100%">
       <!--<my-map ref="map" @codeEvent="codeEvent"></my-map>-->
       <component ref="map" :is="compName"></component>
     </div>
@@ -386,7 +330,7 @@
     watch: {
       local: function (n, o) {
         if (n == 'en-US') {
-          this.compName = 'G_myMap'
+          this.compName = 'B_myMap'
         } else {
           this.compName = 'B_myMap'
         }
@@ -395,7 +339,7 @@
     },
     data() {
       return {
-        compName: this.local == 'en-US' ? 'G_myMap' : 'B_myMap',
+        compName: this.local == 'en-US' ? 'B_myMap' : 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
         SpinShow: false,
@@ -417,7 +361,7 @@
         changeBtnIcon: 'ios-arrow-down',
         qblabel: (h) => {
           return h('div', [
-            h('span', ''),
+            h('span', '全部'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -430,7 +374,7 @@
         },
         dhlabel: (h) => {
           return h('div', [
-            h('span', 'this.$t("IGNITE")'),
+            h('span', '在航'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -443,7 +387,7 @@
         },
         xhlabel: (h) => {
           return h('div', [
-            h('span',' this.$t("FLAMEOUT")'),
+            h('span','锚泊'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -456,7 +400,7 @@
         },
         lxlabel: (h) => {
           return h('div', [
-            h('span', 'this.$t("OFFLINE")'),
+            h('span', '离线'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -470,7 +414,7 @@
       };
     },
     created() {
-      this.compName = this.local == 'en-US' ? 'G_myMap' : 'B_myMap'
+      this.compName = this.local == 'en-US' ? 'B_myMap' : 'B_myMap'
       this.$store.commit('setCurrentPath', [{
         title: '首页',
       }, {
@@ -616,6 +560,9 @@
       closeItem() {
         this.choosedCar = null;
       },
+      mdclose(){
+
+      },
       checkWebsocket() {
         this.websocketUtil.onConnected(() => this.subscribe())
       },
@@ -659,12 +606,12 @@
         var v = this
         this.gpsObdMessage = null;
         this.obdFaultCode = [];
-        this.$http.post(this.apis.CLJK.getObdTimely, {obdId: item.obdId}).then((res) => {
+        this.$http.get('/api/cl/query', {params:{clId: item.clId}}).then((res) => {
           if (res.code === 200) {
-            if (res.result.gpsObdMessage) {
-              this.gpsObdMessage = res.result.gpsObdMessage;
+            if (res.result) {
+              this.gpsObdMessage = res.result[0];
             }
-            if (res.result.obdFaultCode) {
+            if (res.result[0].obdFaultCode) {
               this.obdFaultCode = res.result.obdFaultCode;
             }
           }
@@ -837,7 +784,6 @@
             r.status = 1;
             r.text = '更新时间';
         }
-        log(r);
         return r;
       },
       handleItem(item) {

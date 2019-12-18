@@ -62,3 +62,7 @@ apiurl: http://119.23.242.234:9095/api
 biz_url: http://119.23.242.234:8080
 distance: 100
 lowSpeed: 25
+
+shipApi:
+  ip: http://223.240.68.90:8091
+

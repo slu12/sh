@@ -1,5 +1,8 @@
 package com.ldz.service.biz.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ldz.dao.biz.bean.ClClModel;
@@ -15,15 +18,16 @@ import com.ldz.sys.service.JgService;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.DateUtils;
+import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
-import com.ldz.util.gps.Gps;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -58,6 +62,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	private GpsLsService gpsLsService;
 	@Autowired
 	private SxtService sxtService;
+	@Value("${shipApi.ip}")
+	private String shipip;
 
 	@Override
 	protected Mapper<Cb> getBaseMapper() {
@@ -540,6 +546,91 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 
 
 		return null;
+	}
+
+    @Override
+    public ApiResponse<String> shipInfo(String mmsi) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		String url = shipip + "/v1/GetShipInfo";
+		Map<String,String> params = new HashMap<>();
+		params.put("shipid", mmsi);
+		String res = HttpUtil.get(url, params);
+		JSONObject object = JSON.parseObject(res);
+		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "查询异常，请稍后再试");
+		return ApiResponse.success(object.getString("Result"));
+    }
+
+    @Override
+    public ApiResponse<String[]> getAllChn(String mmsi) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
+		Sxt sxt = sxts.get(0);
+		Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
+		RuntimeCheck.ifFalse(sbh.containsKey(sxt.getSbh()), "此船舶绑定的设备未在平台添加");
+		String s = sbh.get(sxt.getSbh());
+		String ch = s.replaceAll("CH", "");
+		String [] urls = new String[9];
+		List<String> split = Arrays.asList(ch.split(","));
+		for (int i = 0; i < 9; i++) {
+			if(split.contains((i+1) +"")){
+				String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno="+sxt.getSbh()+"&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
+				urls[i] = url;
+			}else{
+				urls[i] = "";
+			}
+		}
+		return ApiResponse.success(urls);
+    }
+
+	@Override
+	public ApiResponse<JSONArray> getHistoryVoyage(String mmsi, String start, String end) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		RuntimeCheck.ifBlank(start, "请选择轨迹时间");
+		RuntimeCheck.ifBlank(end, "请选择轨迹时间");
+		String url = shipip + "/v1/GetHistoryVoyage";
+		Map<String,String> params = new HashMap<>();
+		params.put("shipid", mmsi);
+		params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+		params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+		String res = HttpUtil.get(url, params);
+		JSONObject object = JSON.parseObject(res);
+		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+		JSONArray array = object.getJSONArray("Result");
+
+		return ApiResponse.success(array);
+	}
+
+	@Override
+	public ApiResponse<JSONArray> getHistoryTrack(String mmsi, String start, String end) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		RuntimeCheck.ifBlank(start, "请选择轨迹时间");
+		RuntimeCheck.ifBlank(end, "请选择轨迹时间");
+		String url = shipip + "/v1/GetHistoryTrack";
+		Map<String,String> params = new HashMap<>();
+		params.put("shipid", mmsi);
+		params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+		params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+		String res = HttpUtil.get(url, params);
+		JSONObject object = JSON.parseObject(res);
+		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+		JSONArray array = object.getJSONArray("Result");
+		return ApiResponse.success(array);
+	}
+
+	@Override
+	public ApiResponse<JSONObject> getCurrentVoyage(String mmsi) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		String url = shipip + "/v1/GetCurrentVoyage";
+		Map<String,String> params = new HashMap<>();
+		params.put("shipid", mmsi);
+		String res = HttpUtil.get(url, params);
+		JSONObject object = JSON.parseObject(res);
+		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+		JSONObject result = object.getJSONObject("Result");
+		return ApiResponse.success(result);
 	}
 
 	public static int differentDaysByMillisecond(Date date1,Date date2)

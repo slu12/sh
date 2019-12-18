@@ -48,7 +48,7 @@
                     lng: 114.3712668464,
                     lat: 30.5440310131
                 },
-                zoom: 16,
+                zoom: 14,
                 carList: [],
                 zoomDot:[],
                 fancePoints: [
@@ -66,7 +66,7 @@
             setTimeout(()=>{
 
               this.init();
-            },2000)
+            },1000)
           })
 
         },
@@ -96,14 +96,16 @@
                 v.showCarPosition();
             },
             moveMap(){
-                if (this.carList.length == 0)return;
+              console.log(this.carList,'this.carList');
+              if (this.carList.length == 0)return;
                 var v = this
-                if (this.carList.length == 1){
-                    this.map.centerAndZoom(new BMap.Point(this.carList[0].lng, this.carList[0].lat), this.map.getZoom());  // 初始化地图,设置中心点坐标和地图级别
+                if (this.carList && this.carList.length == 1){
+                  console.log(this.carList[0],'this.carList[0]');
+                  v.map.centerAndZoom(new BMap.Point(this.carList[0].lng, this.carList[0].lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
                 }
             },
             init() {
-              console.log('获取中心店')
+              console.log('this.$parent.mapCarList',this.$parent.mapCarList)
                 this.carList = this.$parent.mapCarList;
                 if (this.carList.length === 1){
                     this.car = this.carList[0];
@@ -118,30 +120,29 @@
                 this.showCarPosition();
             },
             Buildmap() {
+              // 百度地图API功能
+
+              // map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);
+              //
+
                 console.log('创建地图')
                 var v = this
                 // 百度地图API功能
-                this.map = new BMap.Map("allmap");    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
+              var map = new BMap.Map("allmap");
+              // v.map = new BMap.Map("allmap");    // 创建Map实例
+              map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
+              var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
+              var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
+              var top_right_navigation = new BMap.NavigationControl({
+                anchor: BMAP_ANCHOR_TOP_RIGHT,
+                type: BMAP_NAVIGATION_CONTROL_SMALL
+              }); //右上角，仅包含平移和缩放按钮
+              map.enableScrollWheelZoom();
+              map.addControl(top_left_control);
+              map.addControl(top_left_navigation);
+              // map.addControl(top_right_navigation);
 
-                var ctrl = new BMapLib.TrafficControl({
-                    showPanel: true //是否显示路况提示面板
-                });
-                this.map.addControl(ctrl);
-                ctrl.setAnchor(BMAP_ANCHOR_BOTTOM_RIGHT);
-
-                // //添加地图类型控件
-                // this.map.addControl(new BMap.MapTypeControl({
-                //         mapTypes: [
-                //             BMAP_NORMAL_MAP
-                //         ]
-                //     })
-                // );
-                this.map.setCurrentCity("武汉");          // 设置地图显示的城市 此项是必须设置的
-                this.map.enableScrollWheelZoom(true);     					     //开启鼠标滚轮缩放
-                // this.map.addControl(new BMap.ScaleControl()); 					 // 添加比例尺控件
-                // this.map.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
-                // this.map.addControl(new BMap.NavigationControl());               // 添加平移缩放控件
+              v.map = map
             },
             //撒点
             showCarPosition() {
@@ -205,6 +206,7 @@
                 var v = this
                 var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32)});
                 var marker = new BMap.Marker(point, {icon: myIcon});
+                marker.setRotation(-45)
                 marker.addEventListener("click",(code)=>{
                     // console.log('店事件',code);
                     // console.log('item',item);
@@ -219,9 +221,9 @@
             getIcon(car) {
                 switch (car.status) {
                     case 1:
-                        return this.apis.STATIC_PATH+'icon/running.png';
+                      return this.apis.STATIC_PATH+'icon/ic_car.png';
                     case 2:
-                        return this.apis.STATIC_PATH+'icon/ic_car.png';
+                      return this.apis.STATIC_PATH+'icon/running.png';
                     default:
                         return this.apis.STATIC_PATH+'icon/ic_car_offline.png'
                 }

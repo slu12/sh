@@ -13,54 +13,101 @@
         <Card>
             <p slot="title">
                 <Icon type="soup-can-outline"></Icon>
-                {{car.cph}}
+                {{car.shipname}}
                 <i-switch v-model="switchTyp" @on-change="switchG" v-if="car.zxzt=='00'"></i-switch>
             </p>
             <a href="#" slot="extra">
                 <Icon type="md-close" @click.native="close"></Icon>
             </a>
             <Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+               名称: {{car.shipname}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              所属机构: {{car.jgmc}}
+            </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+                类型: {{car.shiptypename}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+                型深: {{car.xs}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              呼号: {{car.callsign}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              IMO: {{car.imo}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              长度: {{car.length}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+                宽度: {{car.breadth}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              船籍: {{car.nationality}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+                识别号: {{car.cbsbh}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              MMSI: {{car.mmsi}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              总吨位: {{car.zdw}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              净吨: {{car.jd}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              主机种类: {{car.zjzl}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              主机数量: {{car.zjsl}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              主机总功率: {{car.zjgl}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              造船厂: {{car.zcc}}
+              </Row><Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+              建成日期: {{car.jcrq}}
+              </Row>
+              <Row style="font-size: 16px;font-weight: 500;padding-bottom: 5px">
+                登记号码: {{car.djhm}}
+              </Row>
+
                 <Row style="z-index: 1000000;" class="buttons" v-if="car != null">
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="setControl('12','1-10')" icon="md-camera"></Button><br>
-                        <span class="label">{{$t("FRONT_CAMERA_")}}</span>
-                    </Col>
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="setControl('12','2-10')" icon="ios-camera"></Button><br>
-                        <span class="label">{{$t("REAR_CAMERA_")}}</span>
-                    </Col>
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="setControl('12','0-10')" icon="logo-instagram"></Button><br>
-                        <span class="label">{{$t("ALL_CAMERA")}}</span>
-                    </Col>
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="setControl('11','1-10')" icon="ios-videocam"></Button><br>
-                        <span class="label">{{$t("FRONT_VIDEO")}}</span>
-                    </Col>
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="setControl('11','2-10')" icon="ios-videocam-outline"></Button><br>
-                        <span class="label">{{$t("REAR_VIDEO")}}</span>
-                    </Col>
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="setControl('11','0-10')" icon="ios-videocam-outline"></Button><br>
-                        <span class="label">{{$t("ALL_VIDEO")}}</span>
-                    </Col>
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="setControl('12','1-10')" icon="md-camera"></Button><br>-->
+<!--                        <span class="label">$t("FRONT_CAMERA_")</span>-->
+<!--                    </Col>-->
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="setControl('12','2-10')" icon="ios-camera"></Button><br>-->
+<!--                        <span class="label">$t("REAR_CAMERA_")</span>-->
+<!--                    </Col>-->
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="setControl('12','0-10')" icon="logo-instagram"></Button><br>-->
+<!--                        <span class="label">$t("ALL_CAMERA")</span>-->
+<!--                    </Col>-->
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="setControl('11','1-10')" icon="ios-videocam"></Button><br>-->
+<!--                        <span class="label">$t("FRONT_VIDEO")</span>-->
+<!--                    </Col>-->
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="setControl('11','2-10')" icon="ios-videocam-outline"></Button><br>-->
+<!--                        <span class="label">$t("REAR_VIDEO")</span>-->
+<!--                    </Col>-->
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="setControl('11','0-10')" icon="ios-videocam-outline"></Button><br>-->
+<!--                        <span class="label">$t("ALL_VIDEO")</span>-->
+<!--                    </Col>-->
                     <Col span="12" style="text-align: center">
                         <Button shape="circle"  type="success" @click="showFance" icon="md-qr-scanner"></Button><br>
-                        <span class="label">{{$t("ELECTRONIC_FENCE")}}</span>
+<!--                        <span class="label">$t("ELECTRONIC_FENCE")</span>-->
+                        <span class="label">电子围栏</span>
                     </Col>
                     <Col span="12" style="text-align: center">
                         <Button shape="circle"  type="success" @click="showPathHistory" icon="md-git-pull-request"></Button><br>
-                        <span class="label">{{$t("HISTORICAL_ROUTE")}}</span>
+                        <span class="label">历史轨迹</span>
+<!--                        <span class="label">$t("HISTORICAL_ROUTE")</span>-->
                     </Col>
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="gotoPhotoList" icon="md-camera"></Button><br>
-                        <span class="label">{{$t("PHOTO_DATABASE")}}</span>
-                    </Col>
-                    <Col span="12" style="text-align: center">
-                        <Button shape="circle"  type="success" @click="gotoVideoList" icon="ios-videocam"></Button><br>
-                        <span class="label">{{$t("VIDEO_DATABASE")}}</span>
-                    </Col>
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="gotoPhotoList" icon="md-camera"></Button><br>-->
+<!--                        <span class="label">$t("PHOTO_DATABASE")</span>-->
+<!--                    </Col>-->
+<!--                    <Col span="12" style="text-align: center">-->
+<!--                        <Button shape="circle"  type="success" @click="gotoVideoList" icon="ios-videocam"></Button><br>-->
+<!--                        <span class="label">$t("VIDEO_DATABASE")</span>-->
+<!--                    </Col>-->
                 </Row>
                 <Row  v-if="photo.showModal">
                     <div style="width:100%;height: 100%;text-align: center;">
@@ -320,7 +367,20 @@
                 this.stopVideoCount();
             },
             init(item){
-                this.car = item;
+              console.log(item,'item');
+              this.car = item
+              if (item.clid!=''){
+                this.$http.get('/api/cl/query'+'?clId='+item.clid).then((res) => {
+                  if (res.code === 200) {
+                    if (res.result) {
+                      this.car = res.result[0];
+                    }else {
+                      this.car = {}
+                    }
+                  }
+                })
+              }
+
                 // this.$refs.carInfo.init(item);
                 this.resetPhotoCount();
                 this.resetVideoCount();

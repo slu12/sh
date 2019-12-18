@@ -1,7 +1,7 @@
 <template>
   <div class="box_col pager1Sty">
     <div class="box_row pagerTop">
-      <div class="pager1Tit" @click="sysEvent">摄像头视频</div>
+      <div class="pager4Tit" @click="sysEvent">摄像头视频</div>
     </div>
     <div id="carouselBox4" class="box_col_100">
       <div v-if="domeEH.w>0&&domeEH.h>0"
@@ -19,6 +19,15 @@
         </Carousel>
       </div>
     </div>
+    <div class="pager4footer box_row rowBetween">
+      <div>
+        GNS-WERPS1243235
+      </div>
+      <div class="iconItem">
+        <Icon type="md-camera" size="22" @click.native="photo"/>
+        <Icon type="ios-pause-outline" size="23" @click.native="stopEvent"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,7 +42,7 @@
         CarouselConfig:{
           val:3,
           loop:true,
-          autoplay:true,
+          autoplay:false,
           autoplaySpeed:5000,
           fileUrl:[login1,login2,login1,login2]
         },
@@ -54,24 +63,14 @@
       sysEvent(){
         this.$emit('sysEvent',4)
       },
-      buildMap() {
-        // 百度地图API功能
-        var map = new BMap.Map("allmap");
-        map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+      photo(){
+        this.$Message.success('照片抓拍成功');
+        // this.swal({
+        //   title:"照片抓拍成功"
+        // })
+      },
+      stopEvent(){
 
-        var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
-        var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
-        var top_right_navigation = new BMap.NavigationControl({
-          anchor: BMAP_ANCHOR_TOP_RIGHT,
-          type: BMAP_NAVIGATION_CONTROL_SMALL
-        }); //右上角，仅包含平移和缩放按钮
-        /*缩放控件type有四种类型:
-        BMAP_NAVIGATION_CONTROL_SMALL：仅包含平移和缩放按钮；BMAP_NAVIGATION_CONTROL_PAN:仅包含平移按钮；BMAP_NAVIGATION_CONTROL_ZOOM：仅包含缩放按钮*/
-
-        //添加控件和比例尺
-        map.addControl(top_left_control);
-        map.addControl(top_left_navigation);
-        map.addControl(top_right_navigation);
       }
     }
   }
@@ -80,11 +79,9 @@
 <style lang="less">
   .pager1Sty {
     background-color: #5E687D;
-
     .pagerTop {
       height: 40px;
-
-      .pager1Tit {
+      .pager4Tit {
         width: 120px;
         background: rgba(54, 62, 79, 1);
         text-align: center;
@@ -95,8 +92,23 @@
         line-height: 40px;
       }
     }
-    #carouselBox{
-      background-color: #FFFFFF;
+
+    .pager4footer{
+      padding: 0 14px;
+      height:40px;
+      background:rgba(0,0,0,1);
+      border-top:1px solid rgba(94,104,125,1);
+      height: 40px;
+      line-height: 40px;
+
+      font-size:14px;
+      font-family:Microsoft YaHei;
+      font-weight:400;
+      color:rgba(255,255,255,1);
+    }
+
+    .iconItem{
+      cursor:pointer;
     }
   }
 

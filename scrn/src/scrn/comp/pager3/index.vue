@@ -26,7 +26,9 @@
     mounted() {
       var v = this
       this.$nextTick(()=>{
-        v.buildMap()
+        setTimeout(()=>{
+          v.buildMap()
+        },100)
       })
     },
     methods:{

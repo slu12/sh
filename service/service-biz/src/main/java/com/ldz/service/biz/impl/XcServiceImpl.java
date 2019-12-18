@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.mapper.ClXcMapper;
 import com.ldz.dao.biz.model.Cb;
+import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.dao.biz.model.ClXc;
 import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.XcService;
@@ -97,6 +98,9 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
                 String status = jsonObject.getString("Status");
                 if(StringUtils.equals(status, "0")){
                     JSONArray result = jsonObject.getJSONArray("Result");
+                    if(CollectionUtils.isEmpty(result)){
+                        return ApiResponse.success(list);
+                    }
                     for (int i = 0; i < result.size(); i++) {
                         JSONObject object = result.getJSONObject(i);
                         ClXc xc = new ClXc();
@@ -107,9 +111,15 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
                         xc.setXcKssj(convertTime(object.getString("ata")));
                         xc.setXcLc(object.getString("totalvoyage"));
                         xc.setXcSc((Long.parseLong(object.getString("departtime")) - Long.parseLong(object.getString("ata")))/60 + "");
+                        ClGpsLs gpsLs = entityMapper.getStart(mmsi, startTime);
+                        ClGpsLs end = entityMapper.getEnd(mmsi, endTime);
+                        String start_end = gpsLs.getJd() + "-" + gpsLs.getWd() + "," + end.getJd() + "-" + end.getWd();
+                        xc.setXcStartEnd(start_end);
+                        xcList.add(xc);
                     }
+                }else{
+                    return ApiResponse.success(list);
                 }
-                return ApiResponse.success(list);
             }
         }
         for (ClXc xc : xcList) {

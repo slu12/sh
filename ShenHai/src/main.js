@@ -22,7 +22,7 @@ import '@/assets/css/boxSty.less'
 import '@/assets/css/boxGauge.less'
 //iview组件替换样式引入
 import '@/assets/css/iviewSty.less'
-
+import 'video.js/dist/video-js.css'
 /**
  *自定义全局组件
  */

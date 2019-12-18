@@ -11,9 +11,10 @@
         <component :is="rightCenter" @sysEvent="sysEvent"></component>
       </div>
       <div class="box_col_100 itemBottom">
-        <component :is="rightBottom" @sysEvent="sysEvent"></component>
+        <component :is="rightBottom" @videoEvent="compName='viderModal'"></component>
       </div>
     </div>
+    <component :is="compName" @close="compName=''"></component>
   </div>
 </template>
 
@@ -23,17 +24,19 @@
   import pager3 from './comp/pager3'
   import pager4 from './comp/pager4'
 
+  import viderModal from './comp/videoModal'
   export default {
     name: 'scnr',
     components: {
-      pager1, pager2, pager3, pager4
+      pager1, pager2, pager3, pager4,viderModal
     },
     data() {
       return {
         pagetMax: "pager1",
         rightTop: "pager2",
         rightCenter: "pager3",
-        rightBottom: "pager4"
+        rightBottom: "pager4",
+        compName:""
       }
     },
     methods: {

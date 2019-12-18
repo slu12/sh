@@ -1,7 +1,7 @@
 <template>
   <div class="box_col pager1Sty">
     <div class="box_row pagerTop">
-      <div class="pager1Tit" @click="sysEvent">摄像头视频</div>
+      <div class="pager4Tit" @click="sysEvent">摄像头视频</div>
     </div>
     <div id="carouselBox4" class="box_col_100">
       <div v-if="domeEH.w>0&&domeEH.h>0"
@@ -19,6 +19,15 @@
         </Carousel>
       </div>
     </div>
+    <div class="pager4footer box_row rowBetween">
+      <div>
+        GNS-WERPS1243235
+      </div>
+      <div class="iconItem">
+        <Icon type="md-camera" size="22" @click.native="photo"/>
+        <Icon type="ios-pause-outline" size="23" @click.native="stopEvent"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,7 +42,7 @@
         CarouselConfig:{
           val:3,
           loop:true,
-          autoplay:true,
+          autoplay:false,
           autoplaySpeed:5000,
           fileUrl:[login1,login2,login1,login2]
         },
@@ -53,6 +62,15 @@
     methods:{
       sysEvent(){
         this.$emit('sysEvent',4)
+      },
+      photo(){
+        this.$Message.success('照片抓拍成功');
+        // this.swal({
+        //   title:"照片抓拍成功"
+        // })
+      },
+      stopEvent(){
+
       }
     }
   }
@@ -61,11 +79,9 @@
 <style lang="less">
   .pager1Sty {
     background-color: #5E687D;
-
     .pagerTop {
       height: 40px;
-
-      .pager1Tit {
+      .pager4Tit {
         width: 120px;
         background: rgba(54, 62, 79, 1);
         text-align: center;
@@ -76,8 +92,23 @@
         line-height: 40px;
       }
     }
-    #carouselBox{
-      background-color: #FFFFFF;
+
+    .pager4footer{
+      padding: 0 14px;
+      height:40px;
+      background:rgba(0,0,0,1);
+      border-top:1px solid rgba(94,104,125,1);
+      height: 40px;
+      line-height: 40px;
+
+      font-size:14px;
+      font-family:Microsoft YaHei;
+      font-weight:400;
+      color:rgba(255,255,255,1);
+    }
+
+    .iconItem{
+      cursor:pointer;
     }
   }
 

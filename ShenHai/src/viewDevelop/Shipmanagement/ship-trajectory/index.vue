@@ -60,6 +60,38 @@
               <div>航向 : {{ship.hx}}</div>
               <div>设备编号 : {{ship.hs}}</div>
            </div>
+          <div class="hcmess">
+            <Row>
+              <Col span="8">出发港</Col>
+              <Col span="8">状态</Col>
+              <Col span="8">目的港</Col>
+            </Row>
+            <Row>
+              <Col span="8" style="font-size: 24px">芜湖县</Col>
+              <Col span="8">>> 停泊 >></Col>
+              <Col span="8" style="font-size: 24px">wuhan</Col>
+            </Row>
+            <Row>
+              <Col span="8">出发时间</Col>
+              <Col span="8"> &nbsp; </Col>
+              <Col span="8">预计到达时间</Col>
+            </Row>
+            <Row class="did">
+              <Col span="8">2019-12-32</Col>
+              <Col span="8"> &nbsp; </Col>
+              <Col span="8">2019-12-32</Col>
+            </Row>
+            <Row class="did">
+              <Col span="8">2019-12-32</Col>
+              <Col span="8"> &nbsp; </Col>
+              <Col span="8">2019-12-32</Col>
+            </Row>
+          </div>
+          <div>
+            <Row>
+              <Col></Col>
+            </Row>
+          </div>
         </div>
       </div>
       <div v-if="tabIndex === 2">
@@ -76,6 +108,7 @@
             <div>航向 : {{ship.hx}}</div>
             <div>设备编号 : {{ship.zdbh}}</div>
           </div>
+
         </div>
       </div>
       <div v-if="tabIndex === 3">
@@ -93,12 +126,13 @@
       <div v-if="tabIndex === 4">
           <div style="text-align: center;overflow: scroll;height: 800px">
             <video v-for="(item,index) in videoList"
+                   data-setup='{"fluid":true,"aspectRatio":"16:9"}'
                    :poster="videoimageList[index]"
                    :id="'my-video' + index "
                    class="video-js vjs-default-skin"
                    controls preload="auto"
                    @click="playVideo('my-video' + index)"
-                   style="margin: 20px auto" >
+                   style="object-fit: fill;height: 200px;width: 100%" >
               <source :src="item" type="application/x-mpegURL">
             </video>
           </div>
@@ -120,7 +154,6 @@
     components:{carJK},
     watch: {
       tabIndex: function (newVal) {
-        console.log(newVal);
         this.showModal = true
         let scrollNav = document.getElementById('tabUl')
         let tabBar = document.getElementById('tabBar')
@@ -170,21 +203,13 @@
       this.getshipMess()
     },
     beforeDestroy: function () {
-
       player.dispose();
-
     },
     methods: {
       playVideo(id){  //播放视频
         console.log(id);
         videojs(id, {
-          bigPlayButton: true,
-          textTrackDisplay: false,
-          posterImage: true,
-          errorDisplay: false,
-          controlBar: true,
-          width: 220,
-          height:180,
+
         }, function (val) {
           console.log(val, "--------")
           this.play();
@@ -196,7 +221,15 @@
         this.tabIndex = 1
         this.getvideoImg(item.sbh)
         this.getvideo(item.mmsi)
+        this.gethcMess(item.mmsi)
 
+      },
+      gethcMess(mmsi){
+        this.$http.get('/api/cl/getCurrentVoyage',{params:{mmsi:mmsi}}).then((res)=>{
+          if (res.code == 200){
+
+          }
+        })
       },
       //点击收起
       unShow(){
@@ -208,6 +241,11 @@
       },
 // 更改tab页签
       changeTab(index) {
+        console.log(this.ship.mmsi,index);
+        if ((!this.ship.mmsi || this.ship.mmsi =='') && index!=0){
+          this.$Message.error('请先选择船舶')
+          return
+        }
         this.tabIndex = index
         this.$store.state.proofActiveName = this.tabIndex
       },
@@ -247,6 +285,9 @@
               this.$Message.error(res.message)
             }
           })
+        setTimeout(()=>{
+          this.getvideoImg(sbh)
+        },1000*60)
       },
       // 获取船舶
       getshipMess(){
@@ -403,6 +444,18 @@
           font-family:Microsoft YaHei;
           font-weight:400;
           color:rgba(102,102,102,1);
+        }
+        .hcmess{
+          text-align: center;
+          font-size:14px;
+          font-family:Microsoft YaHei;
+          font-weight:bold;
+          color:rgba(255,255,255,1);
+          line-height:36px;
+          border: 1px solid #dddee1;
+          .did{
+            line-height:18px;
+          }
         }
       }
 

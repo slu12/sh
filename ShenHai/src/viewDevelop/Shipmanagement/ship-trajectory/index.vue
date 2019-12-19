@@ -62,8 +62,34 @@
            </div>
         </div>
       </div>
-      <div v-if="tabIndex === 2"></div>
-      <div v-if="tabIndex === 3"></div>
+      <div v-if="tabIndex === 2">
+        <div class="shipxq">
+          <div class="shipname">设备编号 : {{ship.cbsbh}}</div>
+          <div class="shipmess">
+            <div>运行状态 : {{ship.zxzt}}</div>
+            <div>安装船舶 : {{ship.cbsbh}}</div>
+            <div>北斗设备编号 : {{ship.zdbh}}</div>
+            <div>所属机构 : {{ship.jgmc}}</div>
+            <div>定位时间 : {{ship.dwsj}}</div>
+            <div>定位坐标 : {{ship.dwzb}}</div>
+            <div>航速 : {{ship.hs}}</div>
+            <div>航向 : {{ship.hx}}</div>
+            <div>设备编号 : {{ship.zdbh}}</div>
+          </div>
+        </div>
+      </div>
+      <div v-if="tabIndex === 3">
+        <Row class="shipycxq">
+          <Row class="shipname">
+            船舶名称
+          </Row>
+          <Row class="shipmess">
+            <Col class="leftyc" span="14" align="left">异常名称</Col>
+            <Col class="rightyc" span="10" align="right">异常时间</Col>
+          </Row>
+        </Row>
+
+      </div>
       <div v-if="tabIndex === 4">
           <div style="text-align: center;overflow: scroll;height: 800px" >
             <video v-for="(item,index) in videoList" :id="index+'video'" class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo(index+'video')" style="margin: 20px auto" >
@@ -129,6 +155,10 @@
     },
     created(){
       this.getshipMess()
+      window.onbeforeunload=function(e){
+        var e = window.event||e;
+        e.returnValue=("确定离开当前页面吗？");
+      }
     },
     methods: {
       playVideo(id){  //播放视频
@@ -302,6 +332,30 @@
             font-weight:400;
             color:rgba(102,102,102,1);
             line-height:24px;
+          }
+        }
+      }
+      .shipycxq{
+        padding: 0 10px;
+        .shipname{
+          font-size:16px;
+          font-family:Microsoft YaHei;
+          font-weight:bold;
+          color:rgba(255,255,255,1);
+          line-height:36px;
+        }
+        .shipmess{
+          background-color: #FFFFFF;
+          line-height: 36px;
+          padding: 0 10px;
+          font-size:14px;
+          font-family:Microsoft YaHei;
+          font-weight:400;
+          .leftyc{
+            color:rgba(0,0,0,1);
+          }
+          .rightyc{
+            color:rgba(102,102,102,1);
           }
         }
       }

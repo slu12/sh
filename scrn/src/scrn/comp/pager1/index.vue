@@ -1,5 +1,6 @@
 <template>
-  <div class="box_col pager1Sty">
+  <!--@contextmenu.prevent-->
+  <div class="box_col pager1Sty" @contextmenu.prevent="sysEvent">
     <div class="box_row pagerTop">
       <div class="pager1Tit" @click="sysEvent">系统功能</div>
     </div>
@@ -53,6 +54,9 @@
     methods:{
       sysEvent(){
         this.$emit('sysEvent',1)
+      },
+      show(){
+        alert(1)
       }
     }
   }

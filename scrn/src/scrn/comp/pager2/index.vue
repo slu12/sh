@@ -1,5 +1,5 @@
 <template>
-  <div class="box_col pager1Sty">
+  <div class="box_col pager1Sty" @contextmenu.prevent="sysEvent">
     <div class="box_row pagerTop">
       <div class="pager2Tit" @click="sysEvent">船舶轨迹</div>
       <div class="box_row_100">

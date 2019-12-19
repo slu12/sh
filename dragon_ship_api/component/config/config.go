@@ -29,4 +29,5 @@ type Log struct {
 
 type Cron struct {
 	ShipPosition string
+	GetToken     string
 }

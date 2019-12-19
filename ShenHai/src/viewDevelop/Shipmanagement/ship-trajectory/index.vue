@@ -91,8 +91,14 @@
 
       </div>
       <div v-if="tabIndex === 4">
-          <div style="text-align: center;overflow: scroll;height: 800px" >
-            <video v-for="(item,index) in videoList" :id="'my-video' + index " class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo('my-video' + index)" style="margin: 20px auto" >
+          <div style="text-align: center;overflow: scroll;height: 800px">
+            <video v-for="(item,index) in videoList"
+                   :poster="videoimageList[index]"
+                   :id="'my-video' + index "
+                   class="video-js vjs-default-skin"
+                   controls preload="auto"
+                   @click="playVideo('my-video' + index)"
+                   style="margin: 20px auto" >
               <source :src="item" type="application/x-mpegURL">
             </video>
           </div>
@@ -101,16 +107,20 @@
     <div class="sq" @click="unShow" v-if="showModal">
       <Icon size="32" type="ios-arrow-forward" />
     </div>
+
   </div>
 </template>
 
 <script>
+  import carJK from "../../map/carJK";
   import videojs from 'video.js'
   import 'videojs-contrib-hls'
   export default {
     name: "index",
+    components:{carJK},
     watch: {
       tabIndex: function (newVal) {
+        console.log(newVal);
         this.showModal = true
         let scrollNav = document.getElementById('tabUl')
         let tabBar = document.getElementById('tabBar')
@@ -124,8 +134,10 @@
             scrollNav.style.transform = 'translateY(0px)'
           })
         }
-        if (Number(newVal) == 4){
-
+        if (newVal != 4){
+          for (let a = 0;a<9;a++){
+            videojs('my-video'+a).dispose();
+          }
         }
       }
     },
@@ -149,16 +161,18 @@
         ],
         shipData:[],
         ship:{},
-        videoList:[]
+        videoList:[],
+        videoimageList:[]
 
       }
     },
     created(){
       this.getshipMess()
-      window.onbeforeunload=function(e){
-        var e = window.event||e;
-        e.returnValue=("确定离开当前页面吗？");
-      }
+    },
+    beforeDestroy: function () {
+
+      player.dispose();
+
     },
     methods: {
       playVideo(id){  //播放视频
@@ -169,7 +183,8 @@
           posterImage: true,
           errorDisplay: false,
           controlBar: true,
-          width: '100%'
+          width: 220,
+          height:180,
         }, function (val) {
           console.log(val, "--------")
           this.play();
@@ -179,7 +194,9 @@
         console.log(item,'点击详情');
         this.ship = item
         this.tabIndex = 1
+        this.getvideoImg(item.sbh)
         this.getvideo(item.mmsi)
+
       },
       //点击收起
       unShow(){
@@ -220,6 +237,16 @@
             this.$Message.error(res.message)
           }
         })
+      },
+      getvideoImg(sbh){
+          this.$http.post('/api/cl/photos',{sbh:sbh}).then((res)=>{
+            if (res.code == 200){
+              this.videoimageList = res.result
+              console.log(this.videoimageList);
+            }else {
+              this.$Message.error(res.message)
+            }
+          })
       },
       // 获取船舶
       getshipMess(){

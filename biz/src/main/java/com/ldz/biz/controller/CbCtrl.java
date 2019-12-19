@@ -96,9 +96,7 @@ public class CbCtrl extends BaseController<Cb, String> {
 
 	@GetMapping("/nianshen")
 	public ApiResponse<List<Cb>> nianshen(Cb car){
-
 		return clservice.nianshen(car);
-
 	}
 
 	/**
@@ -126,6 +124,14 @@ public class CbCtrl extends BaseController<Cb, String> {
 	@PostMapping("/bindWebcam")
 	public ApiResponse<String> bindWebcam(String mmsi, String sbh){
 		 return clservice.bindWebcam(mmsi, sbh);
+	}
+
+	/**
+	 * 解除摄像头设备
+	 */
+	@PostMapping("/unbindWebcam")
+	public ApiResponse<String> unbindWebcam(String mmsi){
+		return clservice.unbindWebcam(mmsi);
 	}
 
 	/**
@@ -167,6 +173,7 @@ public class CbCtrl extends BaseController<Cb, String> {
 	 * 通过api获取轮船的 航次信息
 	 * @return
 	 */
+	@PostMapping("/getHcByApi")
 	public ApiResponse<String> getHcByApi(String mmsi, String start, String end){
 		return clservice.getHcByApi(mmsi, start, end);
 	}
@@ -214,8 +221,6 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.getAllChn(mmsi);
 	}
 
-
-
 	/**
 	 * 获取船舶下的所有摄像头通道实时视频地址 （H5）
 	 * @return
@@ -224,9 +229,5 @@ public class CbCtrl extends BaseController<Cb, String> {
 	public ApiResponse<String[]> getAllChnH5(String mmsi){
 		return clservice.getAllChnH5(mmsi);
 	}
-
-
-
-
 
 }

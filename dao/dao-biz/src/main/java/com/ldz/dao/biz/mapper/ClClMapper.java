@@ -4,6 +4,7 @@ import com.ldz.dao.biz.bean.ClClModel;
 import com.ldz.dao.biz.model.Cb;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
@@ -46,4 +47,7 @@ public interface ClClMapper extends Mapper<Cb> {
 			" ORDER BY CL.CJSJ DESC ,CL.CPH DESC" +
 			"")
 	List<ClClModel> getAllNotPbClList(@Param("xlId")String xlId, @Param("date") String date,@Param("cx")String cx);
+
+	@Update("update cl_cl  set sbh = null where mmsi = #{mmsi}")
+    void unbindWebcam(@Param("mmsi") String mmsi);
 }

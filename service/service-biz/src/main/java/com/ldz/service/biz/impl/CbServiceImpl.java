@@ -479,9 +479,11 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		RuntimeCheck.ifBlank(sbh, "请填写绑定设备");
 		List<Cb> cbs = clService.findEq(Cb.InnerColumn.mmsi, mmsi);
 		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		Cb cb = cbs.get(0);
+		RuntimeCheck.ifTrue(StringUtils.isNotBlank(cb.getSbh()), "当前船舶已绑定设备");
 		Map<String, String> allSbh = WebcamUtil.getAllSbh(reids);
 		RuntimeCheck.ifFalse(allSbh.containsKey(sbh), "当前设备号没有添加 , 请先添加当前设备号");
-		Cb cb = cbs.get(0);
+
 		cb.setSbh(sbh);
 //		SysYh user = getCurrentUser();
 //		Sxt sxt = new Sxt();
@@ -672,6 +674,15 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 			}
 		}
 		return ApiResponse.success(urls);
+	}
+
+	@Override
+	public ApiResponse<String> unbindWebcam(String mmsi) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		entityMapper.unbindWebcam(mmsi);
+		return ApiResponse.success();
 	}
 
 	public static int differentDaysByMillisecond(Date date1,Date date2)

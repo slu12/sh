@@ -92,7 +92,7 @@
       </div>
       <div v-if="tabIndex === 4">
           <div style="text-align: center;overflow: scroll;height: 800px" >
-            <video v-for="(item,index) in videoList" :id="index+'video'" class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo(index+'video')" style="margin: 20px auto" >
+            <video v-for="(item,index) in videoList" :id="'my-video' + index " class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo('my-video' + index)" style="margin: 20px auto" >
               <source :src="item" type="application/x-mpegURL">
             </video>
           </div>

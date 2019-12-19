@@ -57,4 +57,6 @@ public interface CbService extends BaseService<Cb,String>{
     ApiResponse<JSONObject> getCurrentVoyage(String mmsi);
 
     ApiResponse<String[]> getAllChnH5(String mmsi);
+
+    ApiResponse<String> unbindWebcam(String mmsi);
 }

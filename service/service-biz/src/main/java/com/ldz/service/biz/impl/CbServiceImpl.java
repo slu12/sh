@@ -60,14 +60,27 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	private XcService xcService;
 	@Autowired
 	private GpsLsService gpsLsService;
-	@Autowired
-	private SxtService sxtService;
+
+
 	@Value("${shipApi.ip}")
 	private String shipip;
 
 	@Override
 	protected Mapper<Cb> getBaseMapper() {
 		return entityMapper;
+	}
+
+	@Override
+	protected void afterQuery(List<Cb> list) {
+		if(CollectionUtils.isEmpty(list)){
+			return;
+		}
+		for (int i = 0; i < list.size(); i++) {
+			Cb cb = list.get(i);
+		}
+
+
+
 	}
 
 	@Override
@@ -470,15 +483,15 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		RuntimeCheck.ifFalse(allSbh.containsKey(sbh), "当前设备号没有添加 , 请先添加当前设备号");
 		Cb cb = cbs.get(0);
 		cb.setSbh(sbh);
-		SysYh user = getCurrentUser();
-		Sxt sxt = new Sxt();
-		sxt.setChn(allSbh.get(sbh));
-		sxt.setCjsj(DateUtils.getNowTime());
-		sxt.setCjr(user.getZh() + "-" + user.getXm());
-		sxt.setId(genId());
-		sxt.setMmsi(mmsi);
-		sxt.setSbh(sbh);
-		sxtService.save(sxt);
+//		SysYh user = getCurrentUser();
+//		Sxt sxt = new Sxt();
+//		sxt.setChn(allSbh.get(sbh));
+//		sxt.setCjsj(DateUtils.getNowTime());
+//		sxt.setCjr(user.getZh() + "-" + user.getXm());
+//		sxt.setId(genId());
+//		sxt.setMmsi(mmsi);
+//		sxt.setSbh(sbh);
+//		sxtService.save(sxt);
 		update(cb);
 		return ApiResponse.success();
 	}
@@ -529,9 +542,11 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	public ApiResponse<String> photo(String mmsi, String chn) {
 		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
 		RuntimeCheck.ifBlank(chn, "请选择拍摄通道");
-		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(sxts, "未找到设备信息 , 请稍后再试");
-		String photo = WebcamUtil.photo(reids, sxts.get(0).getSbh(), chn);
+		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+//		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找船舶信息");
+		Cb cb = cbs.get(0);
+		String photo = WebcamUtil.photo(reids, cb.getSbh(), chn);
 		return ApiResponse.success(photo);
 	}
 
@@ -565,18 +580,19 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
 		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
 		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
-		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
-		Sxt sxt = sxts.get(0);
+		Cb cb = cbs.get(0);
+//		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+//		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
+//		Sxt sxt = sxts.get(0);
 		Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
-		RuntimeCheck.ifFalse(sbh.containsKey(sxt.getSbh()), "此船舶绑定的设备未在平台添加");
-		String s = sbh.get(sxt.getSbh());
+		RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+		String s = sbh.get(cb.getSbh());
 		String ch = s.replaceAll("CH", "");
 		String [] urls = new String[9];
 		List<String> split = Arrays.asList(ch.split(","));
 		for (int i = 0; i < 9; i++) {
 			if(split.contains((i+1) +"")){
-				String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno="+sxt.getSbh()+"&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
+				String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno="+cb.getSbh()+"&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
 				urls[i] = url;
 			}else{
 				urls[i] = "";
@@ -631,6 +647,31 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
 		JSONObject result = object.getJSONObject("Result");
 		return ApiResponse.success(result);
+	}
+
+	@Override
+	public ApiResponse<String[]> getAllChnH5(String mmsi) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		Cb cb = cbs.get(0);
+//		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+//		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
+		Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
+		RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+		String s = sbh.get(cb.getSbh());
+		String ch = s.replaceAll("CH", "");
+		String [] urls = new String[9];
+		List<String> split = Arrays.asList(ch.split(","));
+		for (int i = 0; i < 9; i++) {
+			if(split.contains((i+1) +"")){
+				String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
+				urls[i] = url;
+			}else{
+				urls[i] = "";
+			}
+		}
+		return ApiResponse.success(urls);
 	}
 
 	public static int differentDaysByMillisecond(Date date1,Date date2)

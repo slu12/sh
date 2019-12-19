@@ -42,6 +42,7 @@ public class WebcamUtil {
         Map<String, String> loginParams = new HashMap<>();
         loginParams.put("account", ZH);
         loginParams.put("password", PWD);
+        loginParams.put("clientLogin", "2");
         String s = HttpUtil.get(url, loginParams);
         log.info("登录返回信息: " + s);
         JSONObject jsonObject = JSON.parseObject(s);

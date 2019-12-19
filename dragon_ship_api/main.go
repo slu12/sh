@@ -25,6 +25,7 @@ func main() {
 	logs.Init()
 	db.Init()
 	jobs.StartShipPotisionJob()
+	jobs.StartGetTokenJob()
 	api.Start()
 
 	quit := make(chan os.Signal)

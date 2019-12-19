@@ -1,7 +1,6 @@
 // let ajaxUrl = 'http://192.168.0.115:8081';
-// let ajaxUrl = 'http://5nhivw.natappfree.cc';
+let ajaxUrl = 'http://xzwyya.natappfree.cc';
 // let ajaxUrl = 'http://127.0.0.1:8081';
-let ajaxUrl = 'http://5nhivw.natappfree.cc';
 // let ajaxUrl = 'http://223.240.68.90:8083';
 // let ajaxUrl = 'http://http://119.23.242.234:8080';
 export default {

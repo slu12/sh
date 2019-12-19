@@ -19,7 +19,7 @@
         </Input>
       </FormItem>
       <Row class="wjmima">
-        <Col align="right" style="cursor:pointer;" @click="xgpassword"><div>忘记密码?</div></Col>
+        <Col align="right" style="cursor:pointer;" @click.native="xgpassword"><div>忘记密码?</div></Col>
       </Row>
       <FormItem>
         <Button @click="handleSubmit" type="primary" class="botton" long>登录</Button>
@@ -29,29 +29,39 @@
   <div v-if="!islogin">
     <div class="tit">重置密码</div>
     <div class="ftit">Reset Password</div>
-    <Form ref="loginForm" :model="form" :rules="rules" @keydown.enter.native="handleSubmit">
-      <FormItem prop="username">
-        <Input class="inputsty" style="height: 100%" v-model="form.username" placeholder="请输入用户名">
+    <Form ref="loginForm" :model="formpass" :rules="rules">
+      <FormItem prop="sjh">
+        <Input class="inputsty" style="height: 100%" v-model="formpass.sjh" placeholder="请输入手机号码">
         <span slot="prepend">
-          <Icon :size="16" type="ios-person"></Icon>
+          <Icon :size="22" type="md-phone-portrait"></Icon>
         </span>
         </Input>
+      </FormItem>
+      <FormItem prop="yzm">
+        <Input class="inputsty" style="height: 100%" v-model="formpass.yzm" placeholder="请输入验证码">
+        <span slot="prepend">
+          <Icon :size="22" type="md-mail"></Icon>
+        </span>
+        </Input>
+        <button v-show="sendAuthCode" class="but" @click="getdxmess">获取验证码</button>
+        <button v-show="!sendAuthCode" class="but">{{auth_time}}s重新获取</button>
       </FormItem>
       <FormItem prop="password">
-        <Input class="inputsty" style="height: 100%" type="password" v-model="form.password" placeholder="请输入密码">
+        <Input class="inputsty" style="height: 100%" type="password" v-model="formpass.pwd" placeholder="请输入新密码">
       <span slot="prepend">
-          <Icon :size="14" type="md-lock"></Icon>
+          <Icon :size="22" type="md-lock"></Icon>
         </span>
         </Input>
       </FormItem>
-      <Row class="wjmima">
-        <Col span="12"></Col>
-        <Col align="right" style="height: 14px">
-          <div style="height: 14px;width: 65px;z-index: 666" @click="xgpassword">忘记密码?</div>
-        </Col>
-      </Row>
+      <FormItem prop="passwordtw">
+        <Input class="inputsty" style="height: 100%" type="password" v-model="formpass.newpwd" placeholder="请再次输入新密码">
+      <span slot="prepend">
+          <Icon :size="22" type="md-lock"></Icon>
+        </span>
+        </Input>
+      </FormItem>
       <FormItem>
-        <Button @click="handleSubmit" type="primary" class="botton" long>登录</Button>
+        <Button @click="changepassword" type="primary" class="botton" long>确认</Button>
       </FormItem>
     </Form>
   </div>
@@ -65,6 +75,8 @@
     name: 'LoginForm',
     data() {
       return {
+        sendAuthCode:true,/*布尔值，通过v-show控制显示‘获取按钮’还是‘倒计时’ */
+        auth_time: 0, /*倒计时 计数器*/
         islogin :true,
         YzUrl:'',
         form: {
@@ -100,6 +112,13 @@
         console.log('passworld');
         this.islogin = false
       },
+      changepassword(){
+        console.log(123);
+        this.swal({
+          title: '修改成功！',
+          type: 'success'
+        })
+      },
       getUrl() {
         let codeId =this.AF.getRandom(8)
         this.YzUrl = this.apis.url + this.apis.LOGIN.YZ + codeId
@@ -121,6 +140,32 @@
         for (let r of dict.zdxmList){
           r.by1 = this.util.parsePY(r.zdmc);
         }
+      },
+      getdxmess(){ // 获取短信验证码
+        if(this.formpass.sjh == ''){
+          this.swal({
+            title:'请先输入手机号码',
+            type:'error'
+          })
+          return
+        }
+        this.$http.post('',{phone:this.form.username}).then((res)=>{
+          if (res.code == 200){
+            this.sfmess = true;
+            this.sendAuthCode = false;
+            this.auth_time = 300;
+            var auth_timetimer =  setInterval(()=>{
+              this.auth_time--;
+              if(this.auth_time<=0){
+                this.sendAuthCode = true;
+                this.sfmess = false;
+                clearInterval(auth_timetimer);
+              }
+            }, 1000);
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
       },
       handleSubmit() {
         var v = this
@@ -163,6 +208,21 @@
     width:370px;
     height:40px;
     border:1px solid rgba(204,204,204,1);
+    position: relative;
+  }
+  .but{
+    width:150px;
+    height:30px;
+    position: absolute;
+    right: 0;
+    top: 3px;
+    z-index: 999;
+    background:rgba(54,62,79,1);
+    font-size:14px;
+    font-family:Microsoft YaHei;
+    font-weight:400;
+    color:rgba(255,255,255,1);
+    line-height:9px;
   }
    .wjmima{
      padding: 10px 0 ;

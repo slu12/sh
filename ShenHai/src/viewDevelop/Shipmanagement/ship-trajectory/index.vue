@@ -54,17 +54,23 @@
               <div>类型 : {{ship.shiptypename}}</div>
               <div>北斗设备编号 : {{ship.zdbh}}</div>
               <div>所属机构 : {{ship.jgmc}}</div>
-              <div>定位时间 : {{ship.jgmc}}</div>
-              <div>定位坐标 : {{ship.jgmc}}</div>
+              <div>定位时间 : {{ship.dwsj}}</div>
+              <div>定位坐标 : {{ship.dwzb}}</div>
               <div>航速 : {{ship.jgmc}}</div>
-              <div>航向 : {{ship.jgmc}}</div>
-              <div>设备编号 : {{ship.jgmc}}</div>
+              <div>航向 : {{ship.hx}}</div>
+              <div>设备编号 : {{ship.hs}}</div>
            </div>
         </div>
       </div>
       <div v-if="tabIndex === 2"></div>
       <div v-if="tabIndex === 3"></div>
-      <div v-if="tabIndex === 4"></div>
+      <div v-if="tabIndex === 4">
+          <div style="text-align: center;overflow: scroll;height: 800px" >
+            <video v-for="(item,index) in videoList" :id="index+'video'" class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo(index+'video')" style="margin: 20px auto" >
+              <source :src="item" type="application/x-mpegURL">
+            </video>
+          </div>
+      </div>
     </div>
     <div class="sq" @click="unShow" v-if="showModal">
       <Icon size="32" type="ios-arrow-forward" />
@@ -73,6 +79,8 @@
 </template>
 
 <script>
+  import videojs from 'video.js'
+  import 'videojs-contrib-hls'
   export default {
     name: "index",
     watch: {
@@ -89,6 +97,9 @@
           this.$nextTick(function () {
             scrollNav.style.transform = 'translateY(0px)'
           })
+        }
+        if (Number(newVal) == 4){
+
         }
       }
     },
@@ -111,7 +122,8 @@
           {label: '视频监控'},
         ],
         shipData:[],
-        ship:{}
+        ship:{},
+        videoList:[]
 
       }
     },
@@ -119,10 +131,25 @@
       this.getshipMess()
     },
     methods: {
+      playVideo(id){  //播放视频
+        console.log(id);
+        videojs(id, {
+          bigPlayButton: true,
+          textTrackDisplay: false,
+          posterImage: true,
+          errorDisplay: false,
+          controlBar: true,
+          width: '100%'
+        }, function (val) {
+          console.log(val, "--------")
+          this.play();
+        })
+      },
       getship(item){
         console.log(item,'点击详情');
         this.ship = item
         this.tabIndex = 1
+        this.getvideo(item.mmsi)
       },
       //点击收起
       unShow(){
@@ -150,6 +177,18 @@
         let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
         this.$nextTick(function () {
           scrollNav.style.transform = `translateY(-${transformHeight}px)`
+        })
+      },
+      getvideo(mmsi){
+        this.$http.post('/api/cl/getAllChnH5',{mmsi:mmsi}).then((res)=>{
+          if (res.code == 200){
+            if (!res.result || res.result.length<1){
+              this.$Message.error('当前暂无视频')
+            }
+             this.videoList = res.result
+          }else {
+            this.$Message.error(res.message)
+          }
         })
       },
       // 获取船舶

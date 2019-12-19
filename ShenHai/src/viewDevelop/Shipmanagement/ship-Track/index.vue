@@ -7,10 +7,10 @@
   }
 </style>
 <template>
-  <div class="box-row">
-    <div style="position:absolute;width:430px;top:145px;left:330px;z-index:8888">
+  <div class="box-row" style="z-index: 1">
+    <div style="position:absolute;width:430px;top:145px;left:330px;z-index:888">
       <Col span="24">
-        <Input placeholder="查设备" size="large" v-model="searchKey">
+        <Input placeholder='输入终端号' size="large" v-model="searchKey">
           <Button slot="append" type="primary" icon="md-search" @click="filter"></Button>
         </Input>
         <Tabs v-show="showTabs" ref="tabRef" style="background-color:white;" size="small"
@@ -19,7 +19,6 @@
                    v-show="tabShowFlag">
             <Row v-for="(item,index) in carArray[0]" v-if="item.show"
                  @click.native="rowClick(item)">
-              {{item.shipname}}
               <Col span="24">
                 <Card style="margin:0 15px 5px 15px;"
                       :class="{'choosed':choosedCar == item}">
@@ -38,6 +37,12 @@
                     <Col span="8">
                       <Icon type="md-person"></Icon>
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
+                    </Col>
+                    <Col span="2" offset="6">
+                      <Button  size="small" @click="getObdInfo(item)"
+                               style="font-weight: 700;color: black;float: right">
+                        船舶信息
+                      </Button>
                     </Col>
                   </Row>
                 </Card>
@@ -67,7 +72,7 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title="OBD信息"
+                      <Poptip v-if="item.obdId != ''" title='船舶信息'
                               placement="left" width="300"
                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
@@ -75,35 +80,46 @@
                           OBD
                         </Button>
                         <div slot="content">
-                          <h3 v-if="gpsObdMessage == null">暂无数据</h3>
+                          <h3 v-if="gpsObdMessage == null">
+                            $t("NONE_DATE")</h3>
                           <Row v-if="gpsObdMessage != null">
-                            <Col span="8">更新日期</Col>
+                            <Col span="8">
+                              $t("UPDATE_DATE")
+                            </Col>
                             <Col span="16"><span>{{formatDate(gpsObdMessage.creatorDate)}} {{formatTime(gpsObdMessage.creatortime)}}</span>
                             </Col>
                           </Row>
                           <Row v-if="gpsObdMessage != null">
-                            <Col span="8">发动机转速</Col>
+                            <Col span="8">
+                              $t("ENGINE_REVOLUTION")
+                            </Col>
                             <Col span="16"><span>{{gpsObdMessage.engineSpeed}} r/min</span>
                             </Col>
                           </Row>
                           <Row v-if="gpsObdMessage != null">
-                            <Col span="8">车速</Col>
+                            <Col span="8">$t("SPEED")</Col>
                             <Col span="16"><span>{{gpsObdMessage.obdSpeed}} KM/h</span>
                             </Col>
                           </Row>
                           <Row v-if="gpsObdMessage != null">
-                            <Col span="8">剩余油量</Col>
+                            <Col span="8">
+                              $t("RESIDUAL_OIL")
+                            </Col>
                             <Col span="16"><span>{{gpsObdMessage.syyl}} L</span>
                             </Col>
                           </Row>
                           <Row v-if="gpsObdMessage != null">
-                            <Col span="8">耗油量</Col>
+                            <Col span="8">
+                              $t("OIL_CONSUMPTION")
+                            </Col>
                             <Col span="16"><span>{{gpsObdMessage.hyl}} L</span>
                             </Col>
                           </Row>
                           <Row v-if="obdFaultCode && obdFaultCode.length != 0">
                             <Col style="border-bottom: 1px solid #cccccc"></Col>
-                            <Col span="8">故障报告</Col>
+                            <Col span="8">
+                              $t("ERROR_REPORT")
+                            </Col>
                             <Col span="16">
                               <div v-for="item in obdFaultCode"
                                    style="border-bottom: 1px solid #cccccc">
@@ -145,7 +161,7 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title="OBD信息"
+                      <Poptip v-if="item.obdId != ''" title='$t("OBD_INF")'
                               placement="left" width="300"
                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
@@ -223,9 +239,9 @@
                       {{item.sjxm ? item.sjxm : '暂无绑定'}}
                     </Col>
                     <Col span="2" offset="6">
-                      <Poptip v-if="item.obdId != ''" title="OBD信息"
-                              placement="left" width="300"
-                              style="float: right">
+                      <Poptip  title="船舶信息"
+                               placement="left" width="300"
+                               style="float: right">
                         <Button size="small" @click="getObdInfo(item)"
                                 style="font-weight: 700;color: black">
                           OBD
@@ -283,11 +299,11 @@
         </Tabs>
       </Col>
     </div>
-    <div style="position:absolute;width:350px;top:20px;right:-10px;z-index:9990;padding-top:30px;padding-right:30px;float: right"
+    <div style="position:absolute;width:300px;top:20px;right:-10px;z-index:9990;padding-top:140px;padding-right:50px;float: right"
          type="flex" justify="end">
       <car-info @close="closeItem" ref="carInfoRef" @switchGJ="switchGJ"></car-info>
     </div>
-    <div class="body-F" style="height:100%;">
+    <div class="body-F" style="height:100%">
       <!--<my-map ref="map" @codeEvent="codeEvent"></my-map>-->
       <component ref="map" :is="compName"></component>
     </div>
@@ -297,8 +313,6 @@
 <script>
 
   import B_myMap from '../../map/carJK.vue';
-  import G_myMap from '../../map_G/carJK.vue';
-
   import carInfo from './carInfo';
 
   export default {
@@ -314,7 +328,7 @@
     watch: {
       local: function (n, o) {
         if (n == 'en-US') {
-          this.compName = 'G_myMap'
+          this.compName = 'B_myMap'
         } else {
           this.compName = 'B_myMap'
         }
@@ -323,7 +337,7 @@
     },
     data() {
       return {
-        compName: this.local == 'en-US' ? 'G_myMap' : 'B_myMap',
+        compName: this.local == 'en-US' ? 'B_myMap' : 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
         SpinShow: false,
@@ -345,7 +359,7 @@
         changeBtnIcon: 'ios-arrow-down',
         qblabel: (h) => {
           return h('div', [
-            h('span', '全部 '),
+            h('span', '全部'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -358,7 +372,7 @@
         },
         dhlabel: (h) => {
           return h('div', [
-            h('span', '点火 '),
+            h('span', '在航'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -371,7 +385,7 @@
         },
         xhlabel: (h) => {
           return h('div', [
-            h('span', '熄火 '),
+            h('span','锚泊'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -384,7 +398,7 @@
         },
         lxlabel: (h) => {
           return h('div', [
-            h('span', '离线 '),
+            h('span', '离线'),
             h('Button', {
               props: {
                 shape: 'circle',
@@ -398,13 +412,13 @@
       };
     },
     created() {
-      this.compName =  'B_myMap'
+      this.compName = this.local == 'en-US' ? 'B_myMap' : 'B_myMap'
       this.$store.commit('setCurrentPath', [{
         title: '首页',
       }, {
         title: '终端监控',
       }, {
-        title: '位置监控',
+        title: '后视镜监控',
       }])
       this.initGps()
     },
@@ -413,13 +427,13 @@
       })
     },
     beforeDestroy() {
-      try {
-        for (let r in this.subscribes) {
-          this.subscribes[r].unsubscribe();
-        }
-      } catch (e) {
-        console.log(e);
-      }
+      // try {
+      //     for (let r in this.subscribes) {
+      //         this.subscribes[r].unsubscribe();
+      //     }
+      // } catch (e) {
+      //     console.log(e);
+      // }
     },
     methods: {
       switchGJ(s) {
@@ -431,6 +445,8 @@
           // console.log("shshsh",this.showGJ)
           this.getCarListCode(this.choosedCar.zdbh);
         } else {
+          // this.$refs.map.clear();
+          // this.$refs.map.update();
           this.mapCarList = [];
           this.carArray[0].forEach((item, index) => {
             if (item.zdbh == this.choosedCar.zdbh) {
@@ -440,16 +456,20 @@
           // console.log('lisr',this.mapCarList);
           // this.mapCarList = this.carArray[0];
           this.$refs.map.update();
+          /* if(this.choosedCar != n
+          ull){
+               this.$refs.carInfoRef.init(this.choosedCar);
+           }*/
         }
       },
       startQuery() {
         clearTimeout();
-        if (this.$route.path != '/Shipmanagement/ship-Track') {
+        if (this.$route.path != '/jk') {
           return;
         }
         let v = this;
         setTimeout(() => {
-          if (v.$route.path != '/Shipmanagement/ship-Track') {
+          if (v.$route.path != '/jk') {
             return;
           }
           v.queryGps()
@@ -467,12 +487,14 @@
           if (res.code != 200) {
             this.$Message.error(res.message);
           } else {
+
             if (res.result && res.result.length > 0) {
-              /* for (let r of res.result){
-                   this.onGpsInfo(JSON.parse(r));
-               }*/
+              // for (let r of res.result){
+              //     this.onGpsInfo(JSON.parse(r));
+              // }
               let li = this.$store.state.app.carCodeList;
-              let newCarList = [];
+              // console.log("li ----> " , li)
+              let newCarList = []
               this.$store.commit('ChcarCodeList', [])
               res.result.forEach((it, index) => {
                 it = JSON.parse(it);
@@ -485,11 +507,12 @@
                 } else {
                   it.gpsList = [];
                 }
+
                 this.onGpsInfo(it);
                 newCarList.push(it)
                 if (index == res.result.length - 1) {
                   // console.log(newCarList);
-                  this.$store.commit('ChcarCodeList', newCarList)
+                  this.$store.commit('ChcarCodeList', newCarList);
                   if (this.choosedCar != null && this.choosedCar.zxzt == '00') {
                     this.getCarListCode(this.choosedCar.zdbh)
                   }
@@ -535,11 +558,14 @@
       closeItem() {
         this.choosedCar = null;
       },
+      mdclose(){
+
+      },
       checkWebsocket() {
         this.websocketUtil.onConnected(() => this.subscribe())
       },
       subscribe() {
-        var v = this;
+        let v = this;
         let activeKey = v.$refs.tabRef.activeKey;
         let showCarList = v.allCarList;
         if (activeKey == 'name0') {
@@ -551,6 +577,7 @@
         } else if (activeKey == 'name3') {
           showCarList = v.carArray[3];
         }
+
         for (let r of showCarList) {
           this.subscribes[r.zdbh] = this.websocketUtil.subscribe('/topic/sendgps-' + r.zdbh, function (data) { //订阅消息
             v.onGpsInfo(JSON.parse(data.body));
@@ -558,12 +585,10 @@
         }
       },
       formateLongDate(long) {
-        log(long);
         if (typeof long == 'string') {
           return long;
         }
         let d = new Date(long);
-        log(d);
         return d.format("yyyy-MM-dd hh:mm:ss");
       },
       formatDate(date) {
@@ -579,12 +604,12 @@
         var v = this
         this.gpsObdMessage = null;
         this.obdFaultCode = [];
-        this.$http.post(this.apis.CLJK.getObdTimely, {obdId: item.obdId}).then((res) => {
+        this.$http.get('/api/cl/query', {params:{clId: item.clId}}).then((res) => {
           if (res.code === 200) {
-            if (res.result.gpsObdMessage) {
-              this.gpsObdMessage = res.result.gpsObdMessage;
+            if (res.result) {
+              this.gpsObdMessage = res.result[0];
             }
-            if (res.result.obdFaultCode) {
+            if (res.result[0].obdFaultCode) {
               this.obdFaultCode = res.result.obdFaultCode;
             }
           }
@@ -592,6 +617,7 @@
         })
       },
       onGpsInfo(m) {
+        // console.log('onGpsInfo',m);
         let has = false;
         let exist = null;
         let newCar = {};
@@ -637,7 +663,6 @@
               return;
             }
 
-            console.log('status', this.status);
             this.mapCarList = this.carArray[this.status];
             this.$refs.map.update();
           } catch (e) {
@@ -655,14 +680,14 @@
       },
       initGps() {
         var v = this
-        this.$http.get('/api/cl/InitClGps', {
+        this.$http.get(this.apis.CLJK.QUERY, {
           params: {
             zdLx: '30',
-            positionType: this.local == 'en-US' ? 'gcj02' : ''
+            positionType: this.local == 'en-US' ? 'gcj02' : '',
           }
         }).then((res) => {
           if (res.code === 200) {
-            this.$store.commit('ChcarCodeList', [])
+            this.$store.commit('ChcarCodeList', []);
             this.initTime = new Date().getTime();
             this.allCarList = res.result;
             if (!this.allCarList) {
@@ -678,7 +703,9 @@
             }
             this.carArray[0] = this.allCarList;
             this.allCarCount = this.allCarList.length;
-            this.$store.commit('ChcarCodeList', res.result)
+            this.$store.commit('ChcarCodeList', res.result);
+            /* let li =   this.$store.state.app.carCodeList;
+             console.log("llllll ," , li)*/
           }
           this.init();
         })
@@ -694,7 +721,6 @@
       },
       filter() {
         this.classify();
-        console.log(this.status, "status");
         this.mapCarList = this.carArray[this.status];
         this.$refs.map.init();
       },
@@ -756,11 +782,9 @@
             r.status = 1;
             r.text = '更新时间';
         }
-        log(r);
         return r;
       },
       handleItem(item) {
-        console.log("item-->" , item)
         item.lng = item.bdjd;
         item.lat = item.bdwd;
         if (item.zxzt) {
@@ -803,21 +827,27 @@
         this.$refs.carInfoRef.init(item);
       },
       rowClick(item) {
+        // console.log('点击',item);
         this.showGJ = false;
-        if (this.choosedCar == item) return;
+        if (this.choosedCar == item) {
+          return;
+        }
         this.choosedCar = item;
         this.mapCarList = [this.choosedCar];
         this.$refs.map.init();
         this.$refs.carInfoRef.init(item);
-        this.getCarListCode(item.zdbh);
         if (item.zxzt == '00') {
           this.getCarListCode(item.zdbh);
         }
+
       },
       getCarListCode(zdbh) {
+        // console.log(this.$store.state.app.carCodeList)
         const carCodeList = this.$store.state.app.carCodeList;
         carCodeList.forEach((it, index) => {
+          // console.log("gpslist ---> " , it.gpsList);
           if (this.showGJ && it.zdbh == zdbh && it.gpsList != '') {
+            console.log("dwq gps ,", it.gpsList);
             this.$refs.map.addLine(it.gpsList);
           }
         })

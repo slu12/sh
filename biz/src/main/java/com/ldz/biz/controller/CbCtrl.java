@@ -1,7 +1,6 @@
 package com.ldz.biz.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.bean.WebsocketInfo;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
@@ -215,9 +214,10 @@ public class CbCtrl extends BaseController<Cb, String> {
 
 	/**
 	 * 查询最新的航次信息：船舶当前航次查询服务
+	 * @return
 	 */
 	@GetMapping("/getCurrentVoyage")
-	public ApiResponse<JSONObject> getCurrentVoyage(String mmsi){
+	public ApiResponse<Map<String, String>> getCurrentVoyage(String mmsi){
 		return clservice.getCurrentVoyage(mmsi);
 	}
 

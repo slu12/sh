@@ -35,7 +35,6 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -649,16 +648,31 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	}
 
 	@Override
-	public ApiResponse<JSONObject> getCurrentVoyage(String mmsi) {
+	public ApiResponse<Map<String, String>> getCurrentVoyage(String mmsi) {
 		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
 		String url = shipip + "/v1/GetCurrentVoyage";
 		Map<String,String> params = new HashMap<>();
 		params.put("shipid", mmsi);
 		String res = HttpUtil.get(url, params);
 		JSONObject object = JSON.parseObject(res);
+		Map<String,String> map = new HashMap<>();
+		if(StringUtils.equals(object.getString("Status"),"7")){
+			return ApiResponse.success(map);
+		}
 		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
 		JSONObject result = object.getJSONObject("Result");
-		return ApiResponse.success(result);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String departtime = result.getString("departtime");
+			String eta = result.getString("eta");
+		String anchortime = result.getString("anchortime");
+		map.put("departtime", format.format(new Date(Long.parseLong(departtime)*1000)));
+			map.put("eta",  format.format(new Date(Long.parseLong(eta)*1000)));
+			map.put("departportname", result.getString("departportname"));
+			map.put("arrivingportname", result.getString("arrivingportname"));
+			map.put("anchorportname",result.getString("anchorportname"));
+			map.put("anchortime", format.format(new Date(Long.parseLong(anchortime)*1000)));
+
+		return ApiResponse.success(map);
 	}
 
 	@Override

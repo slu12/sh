@@ -1,7 +1,6 @@
 package com.ldz.biz.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.bean.WebsocketInfo;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
@@ -17,6 +16,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -96,9 +96,7 @@ public class CbCtrl extends BaseController<Cb, String> {
 
 	@GetMapping("/nianshen")
 	public ApiResponse<List<Cb>> nianshen(Cb car){
-
 		return clservice.nianshen(car);
-
 	}
 
 	/**
@@ -129,6 +127,14 @@ public class CbCtrl extends BaseController<Cb, String> {
 	}
 
 	/**
+	 * 解除摄像头设备
+	 */
+	@PostMapping("/unbindWebcam")
+	public ApiResponse<String> unbindWebcam(String mmsi){
+		return clservice.unbindWebcam(mmsi);
+	}
+
+	/**
 	 * 获取船的航次信息
 	 */
 	@PostMapping("/getXc")
@@ -151,9 +157,18 @@ public class CbCtrl extends BaseController<Cb, String> {
 	 * 船舶实时抓拍显示
 	 */
 	@PostMapping("/photo")
-	public ApiResponse<String> photo(String mmsi, String chn){
+	public ApiResponse<String> photo(String mmsi, String chn) throws IOException {
 		return clservice.photo(mmsi,chn);
 	}
+
+	/**
+	 * 给视频用的
+	 */
+	@PostMapping("/photos")
+	public ApiResponse<String[]> photos(String sbh) throws IOException {
+		return clservice.photos(sbh);
+	}
+
 
 	/**
 	 * 获取会话
@@ -167,6 +182,7 @@ public class CbCtrl extends BaseController<Cb, String> {
 	 * 通过api获取轮船的 航次信息
 	 * @return
 	 */
+	@PostMapping("/getHcByApi")
 	public ApiResponse<String> getHcByApi(String mmsi, String start, String end){
 		return clservice.getHcByApi(mmsi, start, end);
 	}
@@ -198,15 +214,16 @@ public class CbCtrl extends BaseController<Cb, String> {
 
 	/**
 	 * 查询最新的航次信息：船舶当前航次查询服务
+	 * @return
 	 */
 	@GetMapping("/getCurrentVoyage")
-	public ApiResponse<JSONObject> getCurrentVoyage(String mmsi){
+	public ApiResponse<Map<String, String>> getCurrentVoyage(String mmsi){
 		return clservice.getCurrentVoyage(mmsi);
 	}
 
 
 	/**
-	 * 获取船舶下的所有摄像头通道
+	 * 获取船舶下的所有摄像头通道实时视频地址 （html）
 	 * @return
 	 */
 	@PostMapping("/getAllChn")
@@ -214,9 +231,13 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.getAllChn(mmsi);
 	}
 
-
-
-
-
+	/**
+	 * 获取船舶下的所有摄像头通道实时视频地址 （H5）
+	 * @return
+	 */
+	@PostMapping("/getAllChnH5")
+	public ApiResponse<String[]> getAllChnH5(String mmsi){
+		return clservice.getAllChnH5(mmsi);
+	}
 
 }

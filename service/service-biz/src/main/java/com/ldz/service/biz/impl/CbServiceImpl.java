@@ -17,11 +17,11 @@ import com.ldz.sys.model.SysYh;
 import com.ldz.sys.service.JgService;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.SimpleCondition;
-import com.ldz.util.commonUtil.DateUtils;
 import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -33,6 +33,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,14 +63,29 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	private XcService xcService;
 	@Autowired
 	private GpsLsService gpsLsService;
-	@Autowired
-	private SxtService sxtService;
+
+
 	@Value("${shipApi.ip}")
 	private String shipip;
+	@Value("${filePath}")
+	private String path;
 
 	@Override
 	protected Mapper<Cb> getBaseMapper() {
 		return entityMapper;
+	}
+
+	@Override
+	protected void afterQuery(List<Cb> list) {
+		if(CollectionUtils.isEmpty(list)){
+			return;
+		}
+		for (int i = 0; i < list.size(); i++) {
+			Cb cb = list.get(i);
+		}
+
+
+
 	}
 
 	@Override
@@ -466,19 +484,21 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		RuntimeCheck.ifBlank(sbh, "请填写绑定设备");
 		List<Cb> cbs = clService.findEq(Cb.InnerColumn.mmsi, mmsi);
 		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		Cb cb = cbs.get(0);
+		RuntimeCheck.ifTrue(StringUtils.isNotBlank(cb.getSbh()), "当前船舶已绑定设备");
 		Map<String, String> allSbh = WebcamUtil.getAllSbh(reids);
 		RuntimeCheck.ifFalse(allSbh.containsKey(sbh), "当前设备号没有添加 , 请先添加当前设备号");
-		Cb cb = cbs.get(0);
+
 		cb.setSbh(sbh);
-		SysYh user = getCurrentUser();
-		Sxt sxt = new Sxt();
-		sxt.setChn(allSbh.get(sbh));
-		sxt.setCjsj(DateUtils.getNowTime());
-		sxt.setCjr(user.getZh() + "-" + user.getXm());
-		sxt.setId(genId());
-		sxt.setMmsi(mmsi);
-		sxt.setSbh(sbh);
-		sxtService.save(sxt);
+//		SysYh user = getCurrentUser();
+//		Sxt sxt = new Sxt();
+//		sxt.setChn(allSbh.get(sbh));
+//		sxt.setCjsj(DateUtils.getNowTime());
+//		sxt.setCjr(user.getZh() + "-" + user.getXm());
+//		sxt.setId(genId());
+//		sxt.setMmsi(mmsi);
+//		sxt.setSbh(sbh);
+//		sxtService.save(sxt);
 		update(cb);
 		return ApiResponse.success();
 	}
@@ -526,13 +546,19 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	}
 
 	@Override
-	public ApiResponse<String> photo(String mmsi, String chn) {
+	public ApiResponse<String> photo(String mmsi, String chn) throws IOException {
 		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
 		RuntimeCheck.ifBlank(chn, "请选择拍摄通道");
-		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(sxts, "未找到设备信息 , 请稍后再试");
-		String photo = WebcamUtil.photo(reids, sxts.get(0).getSbh(), chn);
-		return ApiResponse.success(photo);
+		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+//		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找船舶信息");
+		Cb cb = cbs.get(0);
+		String photo = WebcamUtil.photo(reids, cb.getSbh(), chn);
+		URL url = new URL(photo);
+		String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn+ ".jpg";
+		FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
+		String file = path + filePath;
+		return ApiResponse.success(file);
 	}
 
 	@Override
@@ -565,18 +591,19 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
 		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
 		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
-		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
-		Sxt sxt = sxts.get(0);
+		Cb cb = cbs.get(0);
+//		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+//		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
+//		Sxt sxt = sxts.get(0);
 		Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
-		RuntimeCheck.ifFalse(sbh.containsKey(sxt.getSbh()), "此船舶绑定的设备未在平台添加");
-		String s = sbh.get(sxt.getSbh());
+		RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+		String s = sbh.get(cb.getSbh());
 		String ch = s.replaceAll("CH", "");
 		String [] urls = new String[9];
 		List<String> split = Arrays.asList(ch.split(","));
 		for (int i = 0; i < 9; i++) {
 			if(split.contains((i+1) +"")){
-				String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno="+sxt.getSbh()+"&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
+				String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno="+cb.getSbh()+"&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
 				urls[i] = url;
 			}else{
 				urls[i] = "";
@@ -621,16 +648,89 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	}
 
 	@Override
-	public ApiResponse<JSONObject> getCurrentVoyage(String mmsi) {
+	public ApiResponse<Map<String, String>> getCurrentVoyage(String mmsi) {
 		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
 		String url = shipip + "/v1/GetCurrentVoyage";
 		Map<String,String> params = new HashMap<>();
 		params.put("shipid", mmsi);
 		String res = HttpUtil.get(url, params);
 		JSONObject object = JSON.parseObject(res);
+		Map<String,String> map = new HashMap<>();
+		if(StringUtils.equals(object.getString("Status"),"7")){
+			return ApiResponse.success(map);
+		}
 		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
 		JSONObject result = object.getJSONObject("Result");
-		return ApiResponse.success(result);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String departtime = result.getString("departtime");
+			String eta = result.getString("eta");
+		String anchortime = result.getString("anchortime");
+		map.put("departtime", format.format(new Date(Long.parseLong(departtime)*1000)));
+			map.put("eta",  format.format(new Date(Long.parseLong(eta)*1000)));
+			map.put("departportname", result.getString("departportname"));
+			map.put("arrivingportname", result.getString("arrivingportname"));
+			map.put("anchorportname",result.getString("anchorportname"));
+			map.put("anchortime", format.format(new Date(Long.parseLong(anchortime)*1000)));
+
+		return ApiResponse.success(map);
+	}
+
+	@Override
+	public ApiResponse<String[]> getAllChnH5(String mmsi) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		Cb cb = cbs.get(0);
+//		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
+//		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
+		Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
+		RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+		String s = sbh.get(cb.getSbh());
+		String ch = s.replaceAll("CH", "");
+		String [] urls = new String[9];
+		List<String> split = Arrays.asList(ch.split(","));
+		for (int i = 0; i < 9; i++) {
+			if(split.contains((i+1) +"")){
+				String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
+				urls[i] = url;
+			}else{
+				urls[i] = "";
+			}
+		}
+		return ApiResponse.success(urls);
+	}
+
+	@Override
+	public ApiResponse<String> unbindWebcam(String mmsi) {
+		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+		entityMapper.unbindWebcam(mmsi);
+		return ApiResponse.success();
+	}
+
+	@Override
+	public ApiResponse<String[]> photos(String sbh) throws IOException {
+		Map<String, String> sbhs = WebcamUtil.getAllSbh(reids);
+		RuntimeCheck.ifFalse(sbhs.containsKey(sbh), "此船舶绑定的设备未在平台添加");
+		String s = sbhs.get(sbh);
+		String ch = s.replaceAll("CH", "");
+		List<String> split = Arrays.asList(ch.split(","));
+		String [] urls = new String[9];
+		for (int i = 0; i < 9; i++) {
+			if(split.contains((i+1) +"")){
+				String photo = WebcamUtil.photo(reids,sbh,i+"");
+				URL url = new URL(photo);
+				String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + i+ ".jpg";
+				FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
+				String file = path + filePath;
+				//String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
+				urls[i] = file;
+			}else{
+				urls[i] = "";
+			}
+		}
+		return ApiResponse.success(urls);
 	}
 
 	public static int differentDaysByMillisecond(Date date1,Date date2)

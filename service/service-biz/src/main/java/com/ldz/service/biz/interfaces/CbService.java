@@ -1,12 +1,12 @@
 package com.ldz.service.biz.interfaces;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.sys.base.BaseService;
 import com.ldz.util.bean.ApiResponse;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public interface CbService extends BaseService<Cb,String>{
 
     ApiResponse<List<ClGpsLs>> getXcGpsByMMSI(String mmsi, String start, String end);
 
-    ApiResponse<String> photo(String mmsi, String chn);
+    ApiResponse<String> photo(String mmsi, String chn) throws IOException;
 
     ApiResponse<String> getHcByApi(String mmsi, String start, String end);
 
@@ -54,5 +54,11 @@ public interface CbService extends BaseService<Cb,String>{
 
     ApiResponse<JSONArray> getHistoryTrack(String mmsi, String start, String end);
 
-    ApiResponse<JSONObject> getCurrentVoyage(String mmsi);
+    ApiResponse<Map<String, String>> getCurrentVoyage(String mmsi);
+
+    ApiResponse<String[]> getAllChnH5(String mmsi);
+
+    ApiResponse<String> unbindWebcam(String mmsi);
+
+    ApiResponse<String[]> photos(String sbh) throws IOException;
 }

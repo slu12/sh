@@ -1,5 +1,5 @@
 <template>
-  <div class="box_col pager1Sty">
+  <div class="box_col pager1Sty" @contextmenu.prevent="sysEvent">
     <div class="box_row rowBetween pagerTop">
       <div class="pager3Tit" @click="sysEvent">电子围栏</div>
       <div class="wlName">

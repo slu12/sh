@@ -25,7 +25,7 @@
       </div>
       <div class="iconItem">
         <Icon type="md-camera" size="22" @click.native="photo"/>
-        <Icon type="ios-pause-outline" size="23" @click.native="stopEvent"/>
+        <Icon type="md-videocam" size="23" @click.native="videoEvent" style="margin-left: 12px"/>
       </div>
     </div>
   </div>
@@ -69,8 +69,8 @@
         //   title:"照片抓拍成功"
         // })
       },
-      stopEvent(){
-
+      videoEvent(){
+        this.$emit('videoEvent')
       }
     }
   }

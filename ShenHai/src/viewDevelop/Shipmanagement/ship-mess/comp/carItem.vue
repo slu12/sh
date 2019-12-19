@@ -8,56 +8,56 @@
         <a href="#" slot="extra" @click.prevent="changeLimit">
             <Tag color="cyan">{{data.shiptypename}}</Tag>
         </a>
-<!--        <Row>-->
-<!--            <Col span="24">-->
-<!--                <Row v-if="data.sjxm">-->
-<!--                    <Col span="2" style="padding-right: 45px;margin-top: -5px;">-->
-<!--                        <Icon type="ios-person" size="28" color="#2d81f0"/>-->
-<!--                    </Col>-->
-<!--                    <Col span="10">-->
-<!--                        <span>{{data.sjxm}}</span>-->
-<!--                    </Col>-->
-<!--                    <Col span="6" offset="4">-->
-<!--                        <Poptip-->
-<!--                                confirm-->
-<!--                                title="确认解除绑定?"-->
-<!--                                @on-ok="unbindDriver"-->
-<!--                                @on-cancel="cancel">-->
-<!--                            <Button type="text" icon="ios-trash" style="color:#ff9900;font-size:24px;margin-top: -16px;" ghost></Button>-->
-<!--                        </Poptip>-->
-<!--                    </Col>-->
-<!--                </Row>-->
-<!--                <Row v-else-if="!data.sjxm">-->
-<!--                    <Col span="2" style="padding-right: 45px;margin-top: -5px;">-->
-<!--                        <Icon type="ios-person" size="28" color="#2d8cf0"/>-->
-<!--                    </Col>-->
-<!--                    <Col span="12">-->
-<!--                        <span  v-if="!bindDriverFlag">暂未绑定</span>-->
-<!--                        <Select v-else-if="bindDriverFlag" v-model="driverId" style="width:100%" filterable clearable>-->
-<!--                            <Option v-for="(item,index) in driverList" :key="item.sfzhm" :value="item.sfzhm">{{item.xm}}</Option>-->
-<!--                        </Select>-->
-<!--                    </Col>-->
-<!--                    <Col span="4" offset="4">-->
-<!--                        <Tooltip content="绑定司机" v-if="!bindDriverFlag">-->
-<!--                            <Button type="text" icon="md-code-working" style="color:#2db7f5;font-size:24px;margin-top: -16px;" ghost @click="chooseDriver"></Button>-->
-<!--                        </Tooltip>-->
-<!--                        <div v-else-if="bindDriverFlag">-->
-<!--                            <Tooltip content="绑定司机">-->
-<!--                                <Button type="success" shape='circle' size="small" icon="md-checkmark" @click="bindDriver"></Button>-->
-<!--                            </Tooltip>-->
-<!--                            <Tooltip content="取消绑定">-->
-<!--                                <Button type="error" shape='circle' size="small" icon="md-close" @click="cancelChooseDriver"></Button>-->
-<!--                            </Tooltip>-->
-<!--                        </div>-->
-<!--                    </Col>-->
-<!--                </Row>-->
-<!--            </Col>-->
-<!--        </Row>-->
+        <Row>
+            <Col span="24">
+                <Row v-if="data.sbh">
+                    <Col span="2" style="padding-right: 45px;margin-top: -5px;">
+                        <Icon type="ios-videocam" size="28" color="#2d81f0"/>
+                    </Col>
+                    <Col span="10">
+                        <span>{{data.sbh}}</span>
+                    </Col>
+                    <Col span="6" offset="4">
+                        <Poptip
+                                confirm
+                                title="确认解除绑定?"
+                                @on-ok="unbindDriver"
+                                @on-cancel="cancel">
+                            <Button type="text" icon="ios-trash" style="color:#ff9900;font-size:24px;margin-top: -16px;" ghost></Button>
+                        </Poptip>
+                    </Col>
+                </Row>
+                <Row v-else-if="!data.sbh">
+                    <Col span="2" style="padding-right: 45px;margin-top: -5px;">
+                        <Icon type="ios-videocam" size="28" color="#2d8cf0"/>
+                    </Col>
+                    <Col span="12">
+                        <span  v-if="!bindDriverFlag">暂未绑定</span>
+                        <Input v-else-if="bindDriverFlag" v-model="sbh" style="width:100%" filterable clearable>
+
+                        </Input>
+                    </Col>
+                    <Col span="4" offset="4">
+                        <Tooltip content="绑定云台" v-if="!bindDriverFlag">
+                            <Button type="text" icon="md-code-working" style="color:#2db7f5;font-size:24px;margin-top: -16px;" ghost @click="chooseDriver"></Button>
+                        </Tooltip>
+                        <div v-else-if="bindDriverFlag">
+                            <Tooltip content="绑定云台">
+                                <Button type="success" shape='circle' size="small" icon="md-checkmark" @click="bindDriver"></Button>
+                            </Tooltip>
+                            <Tooltip content="取消绑定">
+                                <Button type="error" shape='circle' size="small" icon="md-close" @click="cancelChooseDriver"></Button>
+                            </Tooltip>
+                        </div>
+                    </Col>
+                </Row>
+            </Col>
+        </Row>
         <Row style="margin-top: 10px;">
             <Col span="24">
                 <Row v-if="data.zdbh">
                     <Col span="2" style="padding-right: 45px;margin-top: -5px;">
-                        <Icon type="ios-videocam" size="28" color="#2d8cf0"/>
+                        <Icon type="md-locate" size="28" color="#2d8cf0"/>
                     </Col>
                     <Col span="10">
                         <span>{{data.zdbh}}</span>
@@ -74,7 +74,7 @@
                 </Row>
                 <Row v-else-if="!data.zdbh">
                     <Col span="2" style="padding-right: 45px;margin-top: -5px;">
-                        <Icon type="ios-videocam" size="28" color="#2d8cf0"/>
+                        <Icon type="md-locate" size="28" color="#2d8cf0"/>
                     </Col>
                     <Col span="12">
                         <span  v-if="!bindDeviceFlag">暂未绑定</span>
@@ -129,7 +129,7 @@
           return{
               driverList:[],
               deviceList:[],
-              driverId:'',
+              sbh:'',
               deviceId:'',
               cxDict:[],
               cxDictCode:'ZDCLK0019',
@@ -146,7 +146,8 @@
           }
         },
         created(){
-            this.bindDriverFlag = !!this.data.sjxm
+          console.log(this.data.sbh,'this.data.sbh');
+          this.bindDriverFlag = !!this.data.sbh
             this.bindDeviceFlag = !!this.data.zdbh
         },
         mounted(){
@@ -162,7 +163,6 @@
                 this.bindDeviceFlag = false
             },
             chooseDriver(){
-                this.getdriverList();
                 this.bindDriverFlag = true
             },
             chooseDevice(){
@@ -170,14 +170,15 @@
                 this.bindDeviceFlag = true
             },
             bindDriver(){
-                this.postAndReload(this.apis.CLGL.bindDriver,{carId:this.data.clId,driverId:this.driverId})
+                this.postAndReload('/api/cl/bindWebcam',{mmsi:this.data.mmsi,sbh:this.sbh})
+              this.bindDriverFlag = true
             },
             bindDevice(){
                 this.postAndReload(this.apis.CLGL.bindDevice,{carId:this.data.clId,devcieId:this.deviceId})
             },
             unbindDriver(){
                 this.driverId = '';
-                this.postAndReload(this.apis.CLGL.unbindDriver,{carId:this.data.clId})
+                this.postAndReload('/api/cl/unbindWebcam',{mmsi:this.data.mmsi})
             },
             unbindDevice(){
                 this.devcieId = '';
@@ -191,15 +192,6 @@
                         this.$Message.success(res.message);
                     }else{
                         this.$Message.error(res.message);
-                    }
-                })
-            },
-            getdriverList(){
-                let v = this;
-                v.driverList = [];
-                v.$http.get(this.apis.JSY.QUERY,{params:{pageSize:1000}}).then((res) =>{
-                    if(res.code===200){
-                        v.driverList = res.page.list;
                     }
                 })
             },

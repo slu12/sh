@@ -17,11 +17,11 @@ import com.ldz.sys.model.SysYh;
 import com.ldz.sys.service.JgService;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.SimpleCondition;
-import com.ldz.util.commonUtil.DateUtils;
 import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -33,6 +33,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,6 +68,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 
 	@Value("${shipApi.ip}")
 	private String shipip;
+	@Value("${filePath}")
+	private String path;
 
 	@Override
 	protected Mapper<Cb> getBaseMapper() {
@@ -541,7 +547,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	}
 
 	@Override
-	public ApiResponse<String> photo(String mmsi, String chn) {
+	public ApiResponse<String> photo(String mmsi, String chn) throws IOException {
 		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
 		RuntimeCheck.ifBlank(chn, "请选择拍摄通道");
 		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
@@ -549,7 +555,11 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		RuntimeCheck.ifEmpty(cbs, "未找船舶信息");
 		Cb cb = cbs.get(0);
 		String photo = WebcamUtil.photo(reids, cb.getSbh(), chn);
-		return ApiResponse.success(photo);
+		URL url = new URL(photo);
+		String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn+ ".jpg";
+		FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
+		String file = path + filePath;
+		return ApiResponse.success(file);
 	}
 
 	@Override
@@ -683,6 +693,30 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
 		entityMapper.unbindWebcam(mmsi);
 		return ApiResponse.success();
+	}
+
+	@Override
+	public ApiResponse<String[]> photos(String sbh) throws IOException {
+		Map<String, String> sbhs = WebcamUtil.getAllSbh(reids);
+		RuntimeCheck.ifFalse(sbhs.containsKey(sbh), "此船舶绑定的设备未在平台添加");
+		String s = sbhs.get(sbh);
+		String ch = s.replaceAll("CH", "");
+		List<String> split = Arrays.asList(ch.split(","));
+		String [] urls = new String[9];
+		for (int i = 0; i < 9; i++) {
+			if(split.contains((i+1) +"")){
+				String photo = WebcamUtil.photo(reids,sbh,i+"");
+				URL url = new URL(photo);
+				String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + i+ ".jpg";
+				FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
+				String file = path + filePath;
+				//String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
+				urls[i] = file;
+			}else{
+				urls[i] = "";
+			}
+		}
+		return ApiResponse.success(urls);
 	}
 
 	public static int differentDaysByMillisecond(Date date1,Date date2)

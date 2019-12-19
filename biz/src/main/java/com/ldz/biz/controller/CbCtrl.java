@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -157,9 +158,18 @@ public class CbCtrl extends BaseController<Cb, String> {
 	 * 船舶实时抓拍显示
 	 */
 	@PostMapping("/photo")
-	public ApiResponse<String> photo(String mmsi, String chn){
+	public ApiResponse<String> photo(String mmsi, String chn) throws IOException {
 		return clservice.photo(mmsi,chn);
 	}
+
+	/**
+	 * 给视频用的
+	 */
+	@PostMapping("/photos")
+	public ApiResponse<String[]> photos(String sbh) throws IOException {
+		return clservice.photos(sbh);
+	}
+
 
 	/**
 	 * 获取会话

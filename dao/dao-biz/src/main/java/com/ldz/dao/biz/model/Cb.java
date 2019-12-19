@@ -305,7 +305,31 @@ public class Cb implements Serializable {
      */
     private String jcrq;
 
+    /**
+     * 设备号
+     */
     private String sbh;
+
+    /**
+     * 航向
+     */
+    private String hx;
+
+    /**
+     * 航速
+     */
+    private String hs;
+
+    /**
+     * 定位坐标
+     */
+    private String dwzb;
+
+    /**
+     * 定位时间
+     */
+    private String dwsj;
+
 
     /*
       * 车辆电子围栏中间关联表

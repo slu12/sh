@@ -206,7 +206,7 @@ public class CbCtrl extends BaseController<Cb, String> {
 
 
 	/**
-	 * 获取船舶下的所有摄像头通道
+	 * 获取船舶下的所有摄像头通道实时视频地址 （html）
 	 * @return
 	 */
 	@PostMapping("/getAllChn")
@@ -214,6 +214,16 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.getAllChn(mmsi);
 	}
 
+
+
+	/**
+	 * 获取船舶下的所有摄像头通道实时视频地址 （H5）
+	 * @return
+	 */
+	@PostMapping("/getAllChnH5")
+	public ApiResponse<String[]> getAllChnH5(String mmsi){
+		return clservice.getAllChnH5(mmsi);
+	}
 
 
 

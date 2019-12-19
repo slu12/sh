@@ -55,4 +55,6 @@ public interface CbService extends BaseService<Cb,String>{
     ApiResponse<JSONArray> getHistoryTrack(String mmsi, String start, String end);
 
     ApiResponse<JSONObject> getCurrentVoyage(String mmsi);
+
+    ApiResponse<String[]> getAllChnH5(String mmsi);
 }

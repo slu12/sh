@@ -448,11 +448,16 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
         clsbyxsjjl.setJd(clgps.getBdjd());
         clsbyxsjjl.setWd(clgps.getBdwd());
         if (clcl != null){
-            clsbyxsjjl.setCph(clcl.getCph());
+            clsbyxsjjl.setCph(clcl.getShipname());
             clsbyxsjjl.setCx(clcl.getCx());
             if (StringUtils.isNotEmpty(clcl.getSjxm())) {
                 clsbyxsjjl.setSjxm(clcl.getSjxm());
             }
+            clcl.setHs(entity.getSpeed()+"");
+            clcl.setHx(entity.getFxj());
+            clcl.setDwzb(entity.getLatitude() + "," + entity.getLatitude());
+            clcl.setDwsj(entity.getStartTime());
+            clService.update(clcl);
         }else{  // 设备没有绑定车辆时，默认保存终端信息，后续绑定车辆后可根据终端信息替换
             clsbyxsjjl.setCph(entity.getDeviceId());
         }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <Modal
-      title="实时监控"
+      title="监控直播"
       width="70"
       v-model="showModal"
       :mask-closable="false"
@@ -10,7 +10,8 @@
       class-name="vertical-center-modal">
       <div style="height: 600px">
         <!--<video src=""></video>-->
-        <img src="../file/login1.png" style="width: 100%;height: 100%" alt="">
+        <!--<img src="../file/login1.png" style="width: 100%;height: 100%" alt="">-->
+        <iframe :src="videoUrl" width="100%" height="100%" style="border: none;"></iframe>
       </div>
     </Modal>
   </div>
@@ -19,23 +20,37 @@
 <script>
   export default {
     name: "index",
-    components:{
-    },
-    data(){
+    components: {},
+    data() {
       return {
-        showModal:true,
+        showModal: true,
+        videoUrl: ""
       }
     },
-    methods:{
-      visible(val){
-        if(!val){
+    created() {
+      this.getVideo()
+    },
+    methods: {
+      visible(val) {
+        if (!val) {
           this.$emit("close")
         }
+      },
+      getVideo() {
+        this.$http.post('/pub/zb', {sbh: 30895}).then(res => {
+          if (res.code == 200) {
+            this.videoUrl = res.result[0]
+          }
+        }).catch(err => {
+        })
       }
     }
   }
 </script>
 
-<style scoped>
-
+<style lang="less">
+  /*.iframeStyleBox {*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+  /*}*/
 </style>

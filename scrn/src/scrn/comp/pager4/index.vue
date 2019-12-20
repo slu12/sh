@@ -64,6 +64,11 @@
         this.$emit('sysEvent',4)
       },
       photo(){
+        this.$http.post('/pub/zp',{sbh:'30895',chn:'0'}).then(res=>{
+          if(res.code == 200){
+            this.$Message.success('抓拍成功');
+          }
+        })
         this.$Message.success('照片抓拍成功');
         // this.swal({
         //   title:"照片抓拍成功"

@@ -32,3 +32,4 @@ obdCheckUrl: http://119.23.242.234:9082/api/3007
 videoPath: http://www.168car.net:9091/test/
 #updateMediaUrl:
 #deleteZnzpRedisKeyUrl:
+filePath: http://223.240.68.90:9092

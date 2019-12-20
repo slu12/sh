@@ -15,10 +15,11 @@ type Base struct {
 	HttpAddr string `ini:"httpAddr"`
 }
 type Mysql struct {
-	Conn string `ini:"conn"`
-	Host string `ini:"host"`
-	User string `ini:"user"`
-	Pass string `ini:"pass"`
+	Conn    string `ini:"conn"`
+	Host    string `ini:"host"`
+	User    string `ini:"user"`
+	Pass    string `ini:"pass"`
+	LogMode bool   `ini:"logMode"`
 }
 type Log struct {
 	FileName   string

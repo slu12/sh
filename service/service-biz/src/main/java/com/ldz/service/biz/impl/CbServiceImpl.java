@@ -669,7 +669,6 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		JSONObject object = JSON.parseObject(res);
 		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
 		JSONArray array = object.getJSONArray("Result");
-
 		return ApiResponse.success(array);
 	}
 

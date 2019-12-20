@@ -128,56 +128,13 @@
                         minWidth: 180
                     },
                     {
-                        title: '绑定车辆',
-                          tit:"BOUND_VEHICLE",
+                        title: '绑定船舶',
                         align: 'center',
                         key: 'cph',
                         minWidth: 100,
                         render: (h, p) => {
-                            let s = p.row.cph ? p.row.cph : '-';
+                            let s = p.row.cl.shipname+ '-'+p.row.cl.mmsi;
                             return h('div', s);
-                        }
-                    },
-                    {
-                        title: '服务年限',
-                          tit:"SERVICE_YEAR",
-                        align: 'center',
-                        minWidth: 100,
-                        key: 'fwnx',
-                        filterMultiple: false,
-                        filters: [
-                            {
-                                label: '一年',
-                                value: 1
-                            },
-                            {
-                                  label:'两年',
-                                value: 2
-                            },
-                            {
-                                  label: '三年',
-                                value: 3
-                            },
-                            {
-                                  label: '五年',
-                                value: 5
-                            },
-                        ],
-                        filterRemote: (val, k, row) => {
-                            this.param[k] = val[0]
-                            this.param.pageNum = 1;
-                            this.getPageData()
-                            return true
-                        },
-                        render: (h, p) => {
-                            if (p.row.fwnx) {
-                                if (p.row.fwnx == '#') {
-                                    return h('div', '永久');
-                                }
-                                return h('div', p.row.fwnx + '年')
-                            } else {
-                                return h('div', '-')
-                            }
                         }
                     },
                     {
@@ -195,21 +152,7 @@
                             }, val)
                         }
                     },
-                    {
-                        title: '激活状态',
-                          tit:"ACTIVATED_STATE",
-                        align: 'center',
-                        key: 'jgzt',
-                        minWidth: 100,
-                        render: (h, p) => {
-                            let val = this.dictUtil.getValByCode(this, 'ZDCLK1018', p.row.jhzt)
-                            return h('div', {
-                                style: {
-                                    color: p.row.jhzt == "10" ? '#727272' : p.row.jhzt == '20' ? '#279a3b' : 'red'
-                                }
-                            }, val)
-                        }
-                    },
+
                     {
                         title: '注册时间',
                           tit:"REGISTRATION_DATE",
@@ -218,20 +161,6 @@
                         minWidth: 100,
                         render: (h, p) => {
                             return h('div', p.row.cjsj.substring(0, 10))
-                        }
-                    },
-                    {
-                        title: '激活时间',
-                          tit:"ACTIVATED_DATE",
-                        align: 'center',
-                        key: 'zdKssj',
-                        minWidth: 120,
-                        render: (h, p) => {
-                            if (p.row.zdKssj == '') {
-                                return h('div', '-')
-                            } else {
-                                return h('div', p.row.zdKssj.substring(0, 10))
-                            }
                         }
                     },
                     {

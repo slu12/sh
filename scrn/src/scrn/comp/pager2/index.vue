@@ -48,6 +48,16 @@
         this.map.addEventListener('click', function (val) {
           console.log(val);
         })
+
+        this.get_GJ_Code()
+      },
+      get_GJ_Code(){
+        let a = new Date()
+        this.$http.post('/pub/history',{
+          mmsi:"413839203",
+          start:this.moment(a.getTime()-24*60*60*1000).format('YYYY-MM-DD HH:mm:ss'),
+          end:this.moment().format('YYYY-MM-DD HH:mm:ss')
+        })
       },
       sysEvent(){
         this.$emit('sysEvent',2)

@@ -31,14 +31,14 @@
     <div class="ftit">Reset Password</div>
     <Form ref="loginForm" :model="formpass" :rules="rules">
       <FormItem prop="sjh">
-        <Input class="inputsty" style="height: 100%" v-model="formpass.sjh" placeholder="请输入手机号码">
+        <Input class="inputsty" style="height: 100%" v-model="formpass.phone" placeholder="请输入手机号码">
         <span slot="prepend">
           <Icon :size="22" type="md-phone-portrait"></Icon>
         </span>
         </Input>
       </FormItem>
       <FormItem prop="yzm">
-        <Input class="inputsty" style="height: 100%" v-model="formpass.yzm" placeholder="请输入验证码">
+        <Input class="inputsty" style="height: 100%" v-model="formpass.code" placeholder="请输入验证码">
         <span slot="prepend">
           <Icon :size="22" type="md-mail"></Icon>
         </span>
@@ -54,7 +54,7 @@
         </Input>
       </FormItem>
       <FormItem prop="passwordtw">
-        <Input class="inputsty" style="height: 100%" type="password" v-model="formpass.newpwd" placeholder="请再次输入新密码">
+        <Input class="inputsty" style="height: 100%" type="password" v-model="formpass.pwd1" placeholder="请再次输入新密码">
       <span slot="prepend">
           <Icon :size="22" type="md-lock"></Icon>
         </span>
@@ -71,6 +71,7 @@
   import {mapMutations} from 'vuex'
   import Cookies from 'js-cookie';
   import passworld from "../../../../components/main/components/user/passworld";
+  import swal from 'sweetalert2'
   export default {
     name: 'LoginForm',
     data() {
@@ -86,10 +87,10 @@
           codeID:''
         },
         formpass:{
-          sjh:'',
-          yzm:'',
+          phone :'' ,
+          code:''  ,
+          pwd1:'',
           pwd:'',
-          newpwd:''
         },
         rules: {
           username: [
@@ -113,7 +114,7 @@
         this.islogin = false
       },
       changepassword(){
-        console.log(123);
+        this.$http.post('/api/yh/findPwd',)
         this.swal({
           title: '修改成功！',
           type: 'success'
@@ -142,23 +143,21 @@
         }
       },
       getdxmess(){ // 获取短信验证码
-        if(this.formpass.sjh == ''){
+        if(this.formpass.phone == ''){
           this.swal({
             title:'请先输入手机号码',
             type:'error'
           })
           return
         }
-        this.$http.post('',{phone:this.form.username}).then((res)=>{
+        this.$http.post('/api/yh/sendSms',{phone:this.form.phone}).then((res)=>{
           if (res.code == 200){
-            this.sfmess = true;
             this.sendAuthCode = false;
             this.auth_time = 300;
             var auth_timetimer =  setInterval(()=>{
               this.auth_time--;
               if(this.auth_time<=0){
                 this.sendAuthCode = true;
-                this.sfmess = false;
                 clearInterval(auth_timetimer);
               }
             }, 1000);

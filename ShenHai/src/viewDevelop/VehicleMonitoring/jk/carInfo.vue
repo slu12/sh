@@ -443,7 +443,6 @@
             },
             showFance(){
                 this.$parent.showFance(this.car.clid)
-                // this.close();
             }
         }
     }

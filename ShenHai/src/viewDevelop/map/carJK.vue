@@ -45,8 +45,8 @@
                 choosedItem: null,
                 map: '',
                 mapcenter: {
-                    lng: 114.3712668464,
-                    lat: 30.5440310131
+                    lng: 118.439435,
+                    lat: 31.358537
                 },
                 zoom: 7,
                 carList: [],
@@ -158,8 +158,8 @@
             addLabel(item,point) {
               console.log('添加标注')
                 let html = '<div style="width: 160px;height: 28px;padding:4px;">' +
-                        '<span>['+item.cph+']</span> ' +
-                        '<span style="float: right">'+item.speed+' km/h</span>' +
+                        '<span>['+item.shipname+']</span> ' +
+                        '<span style="float: right">'+item.hs+' km/h</span>' +
                     '</div>'
                 var myLabel = new BMap.Label(html,     //为lable填写内容
                     {

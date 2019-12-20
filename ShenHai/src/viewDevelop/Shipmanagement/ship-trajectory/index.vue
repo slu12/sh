@@ -1,493 +1,837 @@
+<style lang="less">
+  @import "../../../styles/common.less";
+
+  .carNumber {
+    .select {
+      text-align: center;
+      .ivu-select-selection {
+        background-color: #262743;
+        color: #fff;
+        .ivu-select-input {
+          color: #fff;
+        }
+      ;
+      }
+    ;
+      .ivu-select-dropdown {
+        background-color: #262743;
+        ul {
+          li {
+            color: #fff;
+            border: solid #fff 1px;
+            border-bottom: none;
+          }
+          li:hover {
+            color: #262743;
+            border: solid #262743 1px;
+          }
+          li:last-child {
+            border-bottom: solid #fff 1px;
+          }
+        }
+        .ivu-select-item-selected, .ivu-select-item-selected:hover {
+          background-color: #8397ace6;
+        }
+      }
+      input {
+        text-align: center;
+      }
+    }
+  }
+
+  .sTime {
+    input {
+      text-align: center;
+      background-color: #262743;
+      color: #fff;
+    }
+  }
+
+  .carMessH {
+    text-align: center;
+    .tit {
+      color: #9b9b9b;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .mess {
+      color: #fff;
+      font-size: 16px;
+    }
+
+  }
+
+  .pageListCarH {
+    background-color: #303250;
+    border: solid 1px #303250;
+    padding: 4px;
+    color: #fff;
+    margin-top: 6px;
+    .pageMessH {
+      font-size: 14px;
+      margin-left: 4px;
+    }
+  }
+
+  .pageListCarH:hover {
+    border: solid 1px #fff;
+  }
+
+  .choosed {
+    border: 1px solid white;
+    background-color: #929292;
+  }
+</style>
 <template>
-  <div class="tabWrap">
-    <div class="tabNav">
-      <span class="iconClass">
-      <Icon type="md-refresh-circle" size="32" @click.native="upTab"></Icon>
-      </span>
-      <div id="tabBar">
-        <ul id="tabUl">
-          <li :class="[{activeTab:index === tabIndex},'tabLi']" v-for="(item,index) in tabList" :key="index"
-              @click="changeTab(index)">{{item.label}}
-          </li>
-        </ul>
-      </div>
-      <span class="iconClass">
-      <Icon type="chevron-down" @click.native="downTab"></Icon>
-      </span>
-    </div>
-    <div class="tabContent" v-if="showModal">
-      <Row style="height: 46px">
-        <Col style="padding: 5px;color: #5c6b77">
-          <Input search enter-button placeholder="请输入船舶号或船舶名称" />
+  <div class="box-row" style="background-color: #fff">
+    <div class="body-F">
+      <Row>
+        <Col span="24">
+          <div v-show="showMap" id="allmap" style="width: 100%;height: 500px;"></div>
+          <div v-show="!showMap"
+               style="width: 100%;height: 500px;text-align: center;padding-top: 30%"><h1>
+            暂无轨迹信息......</h1></div>
         </Col>
       </Row>
-      <div v-if="tabIndex === 0">
-        <Row style="height: 40px">
-          <Row>
-            <Col span="6" v-for="(item,index) in zxztlist">
-              <div :class="[{activezxzt:index === zxztindex},'ztlistClass']"  :key="index"
-                   @click="changezxztindex(index)">{{item.label}}
+      <Row v-if="showMap">
+        <Col span="2">
+          <ButtonGroup vertical style="margin-top: 120px">
+            <Button type="primary" shape="circle" icon="md-play" size="large"
+                    @click="animationDot" v-show="playAndStopBtnGroup.play"></Button>
+            <Button type="error" shape="circle" icon="ios-square" size="large"
+                    @click="stopAnimation" v-show="playAndStopBtnGroup.stop"></Button>
+            <Button type="warning" shape="circle" icon="md-skip-forward" size="large"
+                    @click="playAndStopBtnGroup.timer = 200"></Button>
+            <Button type="warning" shape="circle" icon="md-skip-backward" size="large"
+                    @click="playAndStopBtnGroup.timer = 1000"></Button>
+          </ButtonGroup>
+        </Col>
+        <Col span="22" v-if="showMap">
+          <div id="trackLineChart" style="width: 90%;height: 400px;"></div>
+        </Col>
+      </Row>
+    </div>
+    <div style="width: 310px;background-color: #262743">
+      <div class="box">
+        <div style="padding: 8px">
+          <div class="carNumber">
+            <Select class="select" v-model="formItem.mmsi" filterable>
+              <Option v-for="item in carList" :value="item.mmsi">{{item.shipname}}</Option>
+            </Select>
+          </div>
+          <div class="sTime" style="margin-top: 6px">
+            <DatePicker v-model="timeRange"
+                        format="yyyy-MM-dd"
+                        type="daterange"
+                        placement="bottom-end"
+                        @on-change="setTime"
+                        placeholder="请选择时间段" style="width:100%"></DatePicker>
+          </div>
+          <div style="margin-top: 6px;text-align: center">
+            <Button type="info"
+                    size="small"
+                    style="width: 60px" @click="formItemList">查询
+            </Button>
+          </div>
+          <div class="carMessH" style="margin-top: 6px">
+            <div class="box-row-nh">
+              <div class="body-1" style="margin: 4px;">
+                <div class="tit">
+                  总时长(min)
+                </div>
+                <div class="mess">
+                  {{getMinute(totalTime) | GLmess}}
+                </div>
               </div>
-            </Col>
-          </Row>
-        </Row>
-         <div class="ship">
-           <Row class="shipSty" v-for="(item,index) in shipData" @click.native="getship(item)">
-             <Row class="shipname">
-               {{item.shipname}} - {{item.cbsbh}}
-             </Row>
-             <Row class="shipmess">
-               <Col span="14">MMSI ：{{item.mmsi}}</Col>
-               <Col span="10">类型 ：{{item.shiptypename}}</Col>
-             </Row>
-           </Row>
-         </div>
-
-      </div>
-      <div v-if="tabIndex === 1">
-        <div class="shipxq">
-           <div class="shipname">{{ship.shipname}} - {{ship.cbsbh}}</div>
-           <div class="shipmess">
-              <div>MMSI : {{ship.mmsi}}</div>
-              <div>呼号 : {{ship.callsign}}</div>
-              <div>IMO : {{ship.imo}}</div>
-              <div>类型 : {{ship.shiptypename}}</div>
-              <div>北斗设备编号 : {{ship.zdbh}}</div>
-              <div>所属机构 : {{ship.jgmc}}</div>
-              <div>定位时间 : {{ship.dwsj}}</div>
-              <div>定位坐标 : {{ship.dwzb}}</div>
-              <div>航速 : {{ship.jgmc}}</div>
-              <div>航向 : {{ship.hx}}</div>
-              <div>设备编号 : {{ship.hs}}</div>
-           </div>
-          <div class="hcmess">
-            <Row>
-              <Col span="8">出发港</Col>
-              <Col span="8">状态</Col>
-              <Col span="8">目的港</Col>
-            </Row>
-            <Row>
-              <Col span="8" style="font-size: 24px">芜湖县</Col>
-              <Col span="8">>> 停泊 >></Col>
-              <Col span="8" style="font-size: 24px">wuhan</Col>
-            </Row>
-            <Row>
-              <Col span="8">出发时间</Col>
-              <Col span="8"> &nbsp; </Col>
-              <Col span="8">预计到达时间</Col>
-            </Row>
-            <Row class="did">
-              <Col span="8">2019-12-32</Col>
-              <Col span="8"> &nbsp; </Col>
-              <Col span="8">2019-12-32</Col>
-            </Row>
-            <Row class="did">
-              <Col span="8">2019-12-32</Col>
-              <Col span="8"> &nbsp; </Col>
-              <Col span="8">2019-12-32</Col>
-            </Row>
+              <div class="body-1" style="margin: 4px;">
+                <div class="tit">
+                  总里程(km)
+                </div>
+                <div class="mess">
+                  {{(totalLC/1000).toFixed(2)}}
+                </div>
+              </div>
+              <div class="body-1" style="margin: 4px;">
+                <div class="tit">
+                  驾驶次数
+                </div>
+                <div class="mess">
+                  {{pathList.length | GLmess}}
+                </div>
+              </div>
+              <!--<div class="body-1" style="margin: 4px">-->
+              <!--<div class="tit">-->
+              <!--最高时速(km/h)-->
+              <!--</div>-->
+              <!--<div class="mess">-->
+              <!--150-->
+              <!--</div>-->
+              <!--</div>-->
+            </div>
           </div>
-          <div>
-            <Row>
-              <Col></Col>
-            </Row>
+        </div>
+        <div class="body" style="padding: 8px;margin-top: 8px">
+          <div class="pageListCarH" v-for="(item,index) in pathList" @click="itemClick(item,index)"
+               :class="{'choosed':choosedIndex == index}">
+            <div>
+              <Icon type="ios-location"
+                    color="#00c3c1" size="22"></Icon>
+              <span class="pageMessH">
+								{{item.departportname}}——{{item.arrivedportname}}
+							</span>
+            </div>
+            <div>
+              <Icon type="ios-clock"
+                    color="#2fa2d7" size="20"></Icon>
+              <span class="pageMessH">
+								{{item.departtime}}
+							</span><br>
+              <Icon type="ios-clock"
+                    color="#2fa2d7" size="20"></Icon>
+              <span class="pageMessH">
+								{{item.ata}}
+							</span>
+            </div>
+            <div class="box-row-nh">
+              <!--<div class="body-1" style="margin: 4px;">-->
+              <!--<div class="tit">-->
+              <!--里程-->
+              <!--</div>-->
+              <!--<div class="mess">-->
+              <!--200-->
+              <!--</div>-->
+              <!--</div>-->
+              <div class="body-1" style="margin: 4px;">
+                <div class="tit">
+                  耗时 {{dateFormat(item.sc)}}
+                </div>
+                <!--<div class="mess">-->
+
+                <!--</div>-->
+              </div>
+              <!--<div class="body-1" style="margin: 4px;">-->
+              <!--<div class="tit">-->
+              <!--油耗-->
+              <!--</div>-->
+              <!--<div class="mess">-->
+              <!--200-->
+              <!--</div>-->
+              <!--</div>-->
+              <!--<div class="body-1" style="margin: 4px;">-->
+              <!--<div class="tit">-->
+              <!--最高时速-->
+              <!--</div>-->
+              <!--<div class="mess">-->
+              <!--3600-->
+              <!--</div>-->
+              <!--</div>-->
+            </div>
           </div>
         </div>
       </div>
-      <div v-if="tabIndex === 2">
-        <div class="shipxq">
-          <div class="shipname">设备编号 : {{ship.cbsbh}}</div>
-          <div class="shipmess">
-            <div>运行状态 : {{ship.zxzt}}</div>
-            <div>安装船舶 : {{ship.cbsbh}}</div>
-            <div>北斗设备编号 : {{ship.zdbh}}</div>
-            <div>所属机构 : {{ship.jgmc}}</div>
-            <div>定位时间 : {{ship.dwsj}}</div>
-            <div>定位坐标 : {{ship.dwzb}}</div>
-            <div>航速 : {{ship.hs}}</div>
-            <div>航向 : {{ship.hx}}</div>
-            <div>设备编号 : {{ship.zdbh}}</div>
-          </div>
-
-        </div>
-      </div>
-      <div v-if="tabIndex === 3">
-        <Row class="shipycxq">
-          <Row class="shipname">
-            船舶名称
-          </Row>
-          <Row class="shipmess">
-            <Col class="leftyc" span="14" align="left">异常名称</Col>
-            <Col class="rightyc" span="10" align="right">异常时间</Col>
-          </Row>
-        </Row>
-
-      </div>
-      <div v-if="tabIndex === 4">
-          <div style="text-align: center;overflow: scroll;height: 800px">
-            <video v-for="(item,index) in videoList"
-                   data-setup='{"fluid":true,"aspectRatio":"16:9"}'
-                   :poster="videoimageList[index]"
-                   :id="'my-video' + index "
-                   class="video-js vjs-default-skin"
-                   controls preload="auto"
-                   @click="playVideo('my-video' + index)"
-                   style="object-fit: fill;height: 200px;width: 100%" >
-              <source :src="item" type="application/x-mpegURL">
-            </video>
-          </div>
-      </div>
     </div>
-    <div class="sq" @click="unShow" v-if="showModal">
-      <Icon size="32" type="ios-arrow-forward" />
-    </div>
-
   </div>
 </template>
 
 <script>
-  import carJK from "../../map/carJK";
-  import videojs from 'video.js'
-  import 'videojs-contrib-hls'
+  import bkshow from '../../map/mapBK_show'
+
+  import echarts from 'echarts'
+  import mixins from '@/mixins'
+  import {mapState, mapMutations} from 'vuex'
+
+  Date.prototype.format = function (format) {
+    var o = {
+      "M+": this.getMonth() + 1, //month
+      "d+": this.getDate(),    //day
+      "h+": this.getHours(),   //hour
+      "H+": this.getHours(),   //hour
+      "m+": this.getMinutes(), //minute
+      "s+": this.getSeconds(), //second
+      "q+": Math.floor((this.getMonth() + 3) / 3),  //quarter
+      "S": this.getMilliseconds() //millisecond
+    }
+    if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+      (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o) if (new RegExp("(" + k + ")").test(format))
+      format = format.replace(RegExp.$1,
+        RegExp.$1.length == 1 ? o[k] :
+          ("00" + o[k]).substr(("" + o[k]).length));
+    return format;
+  }
   export default {
-    name: "index",
-    components:{carJK},
+    name: 'historyTarck',
+    mixins: [mixins],
+    filters: {
+      GLmess(val) {
+        if (val) return val
+        return '0'
+      }
+    },
+    components: {
+      bkshow
+    },
     watch: {
-      tabIndex: function (newVal) {
-        this.showModal = true
-        let scrollNav = document.getElementById('tabUl')
-        let tabBar = document.getElementById('tabBar')
-        let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
-        if (Number(newVal) >= 3) {
-          this.$nextTick(function () {
-            scrollNav.style.transform = `translateY(-${transformHeight}px)`
-          })
+      timeRange: function (newQuestion, oldQuestion) {
+        console.log(newQuestion);
+        if (typeof newQuestion[0] === 'string') {
+          return;
+        }
+        if (newQuestion.length > 0 && newQuestion[0] != '') {
+          this.formItem.startTime = this.getdateParaD(newQuestion[0]) + " 00:00:00";
+          this.formItem.endTime = this.getdateParaD(newQuestion[1]) + " 23:59:59";
         } else {
-          this.$nextTick(function () {
-            scrollNav.style.transform = 'translateY(0px)'
-          })
+          this.formItem.startTime = this.getTodayDate() + " 00:00:00";
+          this.formItem.endTime = this.getTodayDate() + " 23:59:59";
         }
-        if (newVal != 4){
-          for (let a = 0;a<9;a++){
-            videojs('my-video'+a).dispose();
-          }
-        }
+      },
+    },
+    computed: {
+      local() {
+        return this.$store.state.app.local;
+      }
+    },
+    watch: {
+      local: function (n, o) {
+        this.formItem.startTime = this.getTodayDate() + " 00:00:00";
+        this.formItem.endTime = this.getTodayDate() + " 23:59:59";
+        this.formItem.zdbh = this.$route.params.zdbh;
+        this.timeRange = [this.formItem.startTime, this.formItem.endTime];
+        this.choosedIndex = 0;
+        this.getCarList();
       }
     },
     data() {
       return {
-        showModal:false,
-        tabIndex: '',
-        zxztindex:0,
-        zxztlist:[
-          {label: '全部',zt:''},
-          {label: '在线',zt:''},
-          {label: '停泊',zt:''},
-          {label: '离线',zt:''},
-        ],
-        tabList: [
-          {label: '船舶列表'},
-          {label: '船舶信息'},
-          {label: '设备运行情况'},
-          {label: '异常情况'},
-          {label: '视频监控'},
-        ],
-        shipData:[],
-        ship:{},
-        videoList:[],
-        videoimageList:[]
-
+        v: this,
+        showMap: false,
+        map: '',
+        //控制动画播放属性
+        playAndStopBtnGroup: {
+          //默认动画间隔时长，单位：秒
+          timer: 1000,
+          //默认动画播放位置和stationList数据对象同步
+          playIndex: 0,
+          //动画对象
+          playTimer: -1,
+          //播放按钮是否显示
+          play: true,
+          //停止按钮是否显示
+          stop: false
+        },
+        //动画marker点
+        movingMarker: null,
+        //动画速度轨迹chart对象
+        movingChart: null,
+        movingChartOptions: null,
+        //动画轨迹线参数对象
+        mapcenter: {
+          lng: 114.357527,
+          lat: 30.550822
+        },
+        zoom: 14,
+        speedList: [],
+        stationList: [],
+        carCode: '',
+        carList: [],
+        timeRange: [],
+        pathList: [],
+        formItem: {
+          startTime: '',
+          endTime: '',
+          mmsi: '',
+          ignition: 50,
+          brennschluss: '60'
+        },
+        item: {},
+        totalTime: 0,
+        totalLC: 0,
+        speeds: {},
+        choosedIndex: 0,
       }
     },
-    created(){
-      this.getshipMess()
-    },
-    beforeDestroy: function () {
-      player.dispose();
+    mounted() {
+      this.formItem.startTime = this.getTodayDate() + " 00:00:00";
+      this.formItem.endTime = this.getTodayDate() + " 23:59:59";
+      this.formItem.mmsi = this.$route.params.mmsi;
+      this.timeRange = [this.formItem.startTime, this.formItem.endTime];
+      this.choosedIndex = 0;
+      this.getCarList();
     },
     methods: {
-      playVideo(id){  //播放视频
-        console.log(id);
-        videojs(id, {
-
-        }, function (val) {
-          console.log(val, "--------")
-          this.play();
-        })
+      setTime(val) {
+        this.formItem.startTime = val[0] + " 00:00:00";
+        this.formItem.endTime = val[1] + " 23:59:59";
       },
-      getship(item){
-        console.log(item,'点击详情');
-        this.ship = item
-        this.tabIndex = 1
-        this.getvideoImg(item.sbh)
-        this.getvideo(item.mmsi)
-        this.gethcMess(item.mmsi)
-
+      itemClick(item, index) {
+        this.item = item;
+        this.choosedIndex = index;
+        this.getBdData();
+        this.stopAnimation();
+        // this.getDbData();
       },
-      gethcMess(mmsi){
-        this.$http.get('/api/cl/getCurrentVoyage',{params:{mmsi:mmsi}}).then((res)=>{
-          if (res.code == 200){
-
-          }
-        })
+      getMinute(longTypeDate) {
+        if (!longTypeDate) return;
+        let min = parseInt(longTypeDate / (1000 * 60));
+        return min;
       },
-      //点击收起
-      unShow(){
-        this.showModal = false
-      },
-      // 更改状态页签
-      changezxztindex(index) {
-        this.zxztindex = index
-      },
-// 更改tab页签
-      changeTab(index) {
-        console.log(this.ship.mmsi,index);
-        if ((!this.ship.mmsi || this.ship.mmsi =='') && index!=0){
-          this.$Message.error('请先选择船舶')
-          return
+      dateFormat(longTypeDate) {
+        if (!longTypeDate) return;
+        let hour = parseInt(longTypeDate / (1000 * 60 * 60));
+        // let min = parseInt((longTypeDate - hour * 1000 * 60 * 60) / (1000 * 60));
+        // let sec = parseInt((longTypeDate - hour * 1000 * 60 * 60 - min * 1000 * 60) / (1000));
+        let s = '';
+        if (hour > 0) {
+          s += hour + '小时';
         }
-        this.tabIndex = index
-        this.$store.state.proofActiveName = this.tabIndex
+        if (min > 0) {
+          s += min + '分';
+        }
+        // if (sec > 0) {
+        //   s += sec + '秒';
+        // }
+        return s;
       },
-// 调整Tab滚动
-      upTab() {
-        let scrollNav = document.getElementById('tabUl')
-        this.$nextTick(function () {
-          scrollNav.style.transform = 'translateY(0px)'
-        })
-      },
-      downTab() {
-        let scrollNav = document.getElementById('tabUl')
-        let tabBar = document.getElementById('tabBar')
-        let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
-        this.$nextTick(function () {
-          scrollNav.style.transform = `translateY(-${transformHeight}px)`
-        })
-      },
-      getvideo(mmsi){
-        this.$http.post('/api/cl/getAllChnH5',{mmsi:mmsi}).then((res)=>{
-          if (res.code == 200){
-            if (!res.result || res.result.length<1){
-              this.$Message.error('当前暂无视频')
+      getCarList() {
+        this.$http.get(this.apis.CLGL.QUERY, {
+          params: {
+            pageSize: 1000,
+            positionType: this.local == 'en-US' ? 'gcj02' : ''
+          }
+        }).then((res) => {
+          if (res.code === 200 && res.page.list) {
+            this.carList = res.page.list;
+            if (this.carList.length != 0) {
+              this.formItemList();
             }
-             this.videoList = res.result
-          }else {
-            this.$Message.error(res.message)
           }
         })
       },
-      getvideoImg(sbh){
-          this.$http.post('/api/cl/photos',{sbh:sbh}).then((res)=>{
-            if (res.code == 200){
-              this.videoimageList = res.result
-              console.log(this.videoimageList);
-            }else {
-              this.$Message.error(res.message)
-            }
-          })
-        setTimeout(()=>{
-          this.getvideoImg(sbh)
-        },1000*60)
+      getTodayDate() {
+        let now = new Date();
+        return now.format("yyyy-MM-dd");
       },
-      // 获取船舶
-      getshipMess(){
-        this.$http.get('/api/cl/query',{params:{}}).then((res)=>{
-           if (res.code == 200){
-             this.shipData = res.result
-           }
+      formItemList() {
+        let startTime = this.formItem.startTime;
+        let endTime = this.formItem.endTime;
+        startTime = startTime.replace(new RegExp('/', 'gm'), '-');
+        endTime = endTime.replace(new RegExp('/', 'gm'), '-');
+        // if (typeof startTime === 'object') {
+        //     startTime = startTime.format('yyyy-MM-dd hh:mm:ss');
+        // }
+        // if (typeof endTime === 'object') {
+        //     endTime = endTime.format('yyyy-MM-dd hh:mm:ss');
+        // }
+        let p = {
+          startTime: startTime,
+          endTime: endTime,
+          zdbh: this.formItem.mmsi,
+          ignition: this.formItem.ignition,
+          brennschluss: this.formItem.brennschluss
+        }
+        this.totalTime = 0;
+        this.totalLC = 0;
+        this.pathList = [];
+        this.item = {};
+        this.showMap = false;
+        this.$http.post(this.apis.CLGL.GPS_HITSOR, p).then((res) => {
+          if (res.code === 200 && res.result) {
+            var geoc = new BMap.Geocoder();
+            for (let r of res.result) {
+              if (!r.ksjps || !r.jsjps) continue
+              let ksgps = r.ksjps.split(',');
+              let jsgps = r.jsjps.split(',');
+              r.kswd = ksgps[1];
+              r.ksjd = ksgps[0];
+              r.jswd = jsgps[1];
+              r.jsjd = jsgps[0];
+              r.ksdz = '出发地';
+              r.jsdz = '目的地';
+              this.totalTime += r.sc;
+              this.totalLC += parseFloat(r.totalvoyage)
+              // console.log(r);
+              //解析开始地址
+              geoc.getLocation(new BMap.Point(r.ksjd, r.kswd), (rs) => {
+                var addComp = rs.addressComponents;
+                r.ksdz = addComp.street;
+              });
+              //解析结束地址
+              geoc.getLocation(new BMap.Point(r.jsjd, r.jswd), (rs) => {
+                var addComp = rs.addressComponents;
+                r.jsdz = addComp.street;
+              });
+            }
+            this.pathList = res.result;
+            if (this.pathList.length > 0) {
+              this.itemClick(this.pathList[0], 0);
+            }
+          }
         })
+      },
+      getBdData() {
+        let p = {
+          zdbh: this.formItem.mmsi,
+          start: this.item.departtime,
+          end: this.item.ata,
+        }
+        this.speedList = [];
+        this.speeds = {};
+        let v = this;
+
+        this.$http.post('/api/clsbyxsjjl/historyTrack', p).then((res) => {
+          if (res.code === 200 && res.result) {
+            this.stationList = res.result;
+            for (let r of this.stationList) {
+              let date = new Date(r.postime);
+              let speed = parseInt(r.speed);
+              this.speedList.push([r.postime, speed]);
+              this.speeds[date.getTime()] = speed;
+            }
+            if (this.local == 'en-US') {
+              v.Buildmap()
+            } else {
+              v.Buildmap()
+            }
+          }
+        })
+      },
+      getDbData() {
+        let p = {
+          zdbh: this.formItem.zdbh,
+          startTime: this.item.kssj,
+          endTime: this.item.jssj,
+        }
+        this.speedList = [];
+        this.speeds = {};
+        let v = this;
+
+        this.$http.post(this.apis.CLGL.GPS_HITSOR_GPS, p).then((res) => {
+          if (res.code === 200 && res.result) {
+            this.stationList = res.result;
+            for (let r of this.stationList) {
+              let date = new Date(r.cjsj);
+              let speed = parseInt(r.yxsd);
+              this.speedList.push([r.cjsj, speed]);
+              this.speeds[date.getTime()] = speed;
+              r.longitude = r.bdjd;
+              r.latitude = r.bdwd;
+            }
+            if (this.local == 'en-US') {
+              v.Buildmap()
+            } else {
+              v.Buildmap()
+            }
+          }
+        })
+      },
+      formatDate(s) {
+        let date = new Date(s);
+        let min = date.getMinutes()
+        let sec = date.getSeconds()
+        if (min < 10) min = '0' + min;
+        if (sec < 10) sec = '0' + sec;
+        var texts = (date.getMonth() + 1) + '-' + date.getDate() + ' ' + min + ':' + sec;
+        return texts;
+      },
+      Buildmap() {
+        let v = this;
+        this.showMap = true;
+        // 百度地图API功能
+        this.map = new BMap.Map("allmap"); // 创建Map实例
+        //添加地图类型控件
+        this.map.addControl(new BMap.MapTypeControl({
+          mapTypes: [
+            BMAP_NORMAL_MAP
+          ]
+        }));
+        this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+        this.map.addControl(new BMap.ScaleControl()); // 添加比例尺控件
+        this.map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件
+        this.map.addControl(new BMap.NavigationControl()); // 添加平移缩放控件
+        this.map.centerAndZoom(new BMap.Point(this.stationList[0].longitude, this.stationList[0].latitude), this.zoom); // 初始化地图,设置中心点坐标和地图级别
+
+        setTimeout(() => {
+          v.line();
+        }, 100)
+      },
+      Build_G_Map() {
+        const v = this
+        this.map = new google.maps.Map(document.getElementById('allmap'), {
+          center: {lat: v.stationList[0].latitude, lng: v.stationList[0].longitude},
+          zoom: v.zoom,
+          zoomControl: false,
+          streetViewControl: false,//街景小人
+          fullscreenControl: false,//全屏控件
+          mapTypeControl: false,//地图类型控件
+        });
+
+        setTimeout(() => {
+          v.GMapLine();
+        }, 100)
+      },
+      line() {
+        this.showMap = true;
+        let v = this;
+        var pois = [];
+        for (let r of v.stationList) {
+          pois.push(new BMap.Point(r.longitude, r.latitude));
+        }
+        v.map.setViewport(pois)
+        var polyline = new BMap.Polyline(pois, {
+          enableEditing: false,//是否启用线编辑，默认为false
+          enableClicking: false,//是否响应点击事件，默认为true
+          // icons:[icons],
+          strokeWeight: '8',//折线的宽度，以像素为单位
+          strokeOpacity: 0.8,//折线的透明度，取值范围0 - 1
+          strokeColor: "#18a45b" //折线颜色
+        });
+        this.map.addOverlay(polyline);          //增加折线
+
+        // 增加起点
+        var pt1 = new BMap.Point(v.stationList[0].longitude, v.stationList[0].latitude);
+        var myIcon1 = new BMap.Icon("http://119.23.242.234:9092/icon/map_line_begin.png", new BMap.Size(37, 62), {anchor: new BMap.Size(19, 62),});
+        var marker1 = new BMap.Marker(pt1, {icon: myIcon1});  // 创建标注
+        this.map.addOverlay(marker1);
+
+        //初始化动画marker对象
+        var moveIcon = new BMap.Icon("http://223.240.68.90:9092/icon/running.png", new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32),});
+        this.movingMarker = new BMap.Marker(pt1, {icon: moveIcon});
+        this.map.addOverlay(this.movingMarker);
+
+        // 增加终点
+        var pt2 = new BMap.Point(v.stationList[v.stationList.length - 1].longitude, v.stationList[v.stationList.length - 1].latitude);
+        var myIcon2 = new BMap.Icon("http://119.23.242.234:9092/icon/map_line_end.png", new BMap.Size(37, 62), {anchor: new BMap.Size(19, 62),});
+        var marker2 = new BMap.Marker(pt2, {icon: myIcon2});  // 创建标注
+        this.map.addOverlay(marker2);
+        //画轨迹线
+        setTimeout(() => {
+          v.drawLineChart();
+        }, 100)
+      },
+      GMapLine() {
+        this.showMap = true;
+        let v = this;
+        var pois = [];
+        const LatLngBounds = new google.maps.LatLngBounds()
+        v.stationList.forEach((r, index) => {
+          pois.push({lat: r.latitude, lng: r.longitude});
+          // LatLngBounds.contains(
+          //     new google.maps.LatLng({lat:r.latitude, lng:r.longitude})
+          // )
+          if (index == v.stationList.length - 1) {
+            // this.map.panToBounds(LatLngBounds,10)
+          }
+        })
+
+        var flightPath = new google.maps.Polyline({
+          path: pois,
+          geodesic: true,
+          strokeColor: '#18a45b',
+          strokeOpacity: 0.8,
+          strokeWeight: 6
+        });
+
+        flightPath.setMap(this.map);
+
+
+        // 增加起点
+        var pt1 = {lng: v.stationList[0].longitude, lat: v.stationList[0].latitude};
+        var myIcon1 = {
+          url: "http://119.23.242.234:9092/icon/map_line_begin.png",
+          size: new google.maps.Size(37, 62),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(19, 62)
+        }
+        var marker1 = new google.maps.Marker({
+          position: pt1,
+          map: this.map,
+          icon: myIcon1
+        });  // 创建标注
+        //初始化动画marker对象
+
+        var moveIcon = {
+          url: "http://223.240.68.90:9092/icon/running.png",
+          size: new google.maps.Size(32, 32),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(16, 32)
+        }
+        this.movingMarker = new google.maps.Marker({
+          position: pt1,
+          map: this.map,
+          icon: moveIcon
+        });
+
+        // 增加终点
+        var pt2 = {
+          lng: v.stationList[v.stationList.length - 1].longitude,
+          lat: v.stationList[v.stationList.length - 1].latitude
+        };
+        var myIcon2 = {
+          url: "http://119.23.242.234:9092/icon/map_line_end.png",
+          size: new google.maps.Size(37, 62),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(19, 62)
+        }
+        var marker2 = new google.maps.Marker({
+          position: pt2,
+          map: this.map,
+          icon: myIcon2
+        });  // 创建标注
+
+
+        //画轨迹线
+        setTimeout(() => {
+          v.drawLineChart();
+        }, 100)
+      },
+      drawLineChart() {
+        let v = this;
+        // 基于准备好的dom，初始化echarts实例
+        this.movingChart = echarts.init(document.getElementById('trackLineChart'));
+        //运行轨迹chart数据集合，格式:['日期时间（格式化成MM-dd HH:mm，分两行显示日期和时间，界面会美观）','速度值']
+        var data2 = this.speedList;
+        // var data2 = [["2016-03-29", 45], ["2016-03-30", 30], ["2016-03-31", 20], ["2016-04-01", 10], ["2016-04-02", 0]];
+        this.movingChartOptions = {
+          animation: true,
+          tooltip: {
+            triggerOn: 'none',
+            position: function (pt) {
+              return [pt[0], 130];
+            }
+          },
+          xAxis: {
+            type: 'time',
+            axisLabel: {
+              // interval:0,//横轴信息全部显示
+              // rotate:-90,//-90度角倾斜显示
+              // 使用函数模板，函数参数分别为刻度数值（类目），刻度的索引
+              formatter: function (value, index) {
+                // 格式化成月/日，只在第一个刻度显示年份
+                var date = new Date(value);
+                let texts = date.format('MM-dd HH:mm');
+                return texts;
+              }
+            },
+            axisPointer: {
+              animation: true,
+              //给出pointer显示的位置点，和数据参数关联
+              // value: '2016-03-29',
+              snap: true,
+              triggerTooltip: false,
+              lineStyle: {
+                color: '#004E52',
+                opacity: 0.5,
+                width: 2
+              },
+              //格式化显示运动展示内容
+              label: {
+                show: true,
+                formatter: function (params) {
+                  let time = params.value;
+                  let speed = v.speeds[time];
+                  var value = speed;
+                  return "车辆瞬时速度：" + value + " Km/h";
+                },
+                backgroundColor: '#004E52'
+              },
+              handle: {
+                show: true,
+                color: '#004E52'
+              }
+            },
+            splitLine: {
+              show: false
+            }
+          },
+          yAxis: {
+            type: 'value',
+            axisTick: {
+              inside: true
+            },
+            splitLine: {
+              show: false
+            },
+            axisLabel: {
+              inside: true,
+              formatter: '{value}\n'
+            },
+            z: 10
+          },
+          grid: {
+            y2: 150,
+            // top: 110,
+            // left: 25,
+            // right: 25,
+            // height: 160
+          },
+          series: [
+            {
+              name: '速度',
+              type: 'line',
+              smooth: true,
+              stack: 'a',
+              symbol: 'circle',
+              symbolSize: 5,
+              sampling: 'average',
+              itemStyle: {
+                normal: {
+                  color: '#d68262'
+                }
+              },
+              data: data2
+            }
+          ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        this.movingChart.setOption(this.movingChartOptions);
+      },
+      animationDot() {
+        this.playAndStopBtnGroup.play = false;
+        this.playAndStopBtnGroup.stop = true;
+        if (this.movingMarker != null) {
+          this.playAndStopBtnGroup.playIndex++;
+          if (this.playAndStopBtnGroup.playIndex == this.stationList.length) {
+            //循环执行完成后，重置播放轨迹点
+            this.playAndStopBtnGroup.playIndex = 0;
+            this.playAndStopBtnGroup.timer = 1000;
+            //重新开始
+            this.stopAnimation();
+            return;
+          }
+          try {
+            //取出下一个动画节点
+            var moveData = this.stationList[this.playAndStopBtnGroup.playIndex];
+            //更新地图移动轨迹
+            var movePoint = new BMap.Point(moveData.longitude, moveData.latitude);
+            this.movingMarker.setPosition(movePoint);
+
+            //给chart补充完数据后，再开启该方法
+            this.movingChartOptions.animation = false;
+            //更新chart移动轨迹
+            this.movingChartOptions.xAxis.axisPointer.value = this.speedList[this.playAndStopBtnGroup.playIndex][0];
+            //重置chart属性来实现自动移动
+            this.movingChart.setOption(this.movingChartOptions);
+
+          } catch (e) {
+            //防止动画执行报错，进行容错控制，防止界面卡死
+          }
+          //循环执行，直到循环完数据
+          this.playAndStopBtnGroup.playTimer = setTimeout(() => {
+            this.animationDot();
+          }, this.playAndStopBtnGroup.timer);
+        }
+      },
+      stopAnimation() {
+        this.playAndStopBtnGroup.play = true;
+        this.playAndStopBtnGroup.stop = false;
+        this.playAndStopBtnGroup.playIndex = 0;
+        if (this.playAndStopBtnGroup.playTimer != -1) {
+          clearTimeout(this.playAndStopBtnGroup.playTimer);
+        }
       }
     }
-
   }
 </script>
-<style scoped>
 
-  .ivu-input-search >>> .ivu-input-search{
-      background-color: #282828 !important;
-    }
-</style>
-<style lang="less">
-  .tabWrap {
-    width: 100%;
-    height: 100%;
-
-    .tabNav {
-      width: 40px;
-      height: 100%;
-      float: right;
-      background-color: #5E687D;
-
-      #tabBar {
-        height: e("calc(100% - 60px)");
-        overflow: hidden;
-        z-index: -1;
-
-        #tabUl {
-          width: 36px;
-          border-right: 1px solid #dddee1;
-          transition: -webkit-transform .5s ease-in-out;
-          transition: transform .5s ease-in-out;
-
-          .tabLi {
-            width: 100%;
-            font-size: 14px;
-            /*writing-mode: vertical-lr;*/
-            padding: 14px 0 14px 0;
-            cursor: pointer;
-            border: 1px solid #dddee1;
-            border-right: 0;
-            margin-bottom: 5px;
-            text-align: center;
-            vertical-align: middle;
-            background:#5E687D;
-            color: #fdfdfd;
-          }
-
-          .tabLi:hover {
-            color: #fdfdfd;
-          }
-
-          .activeTab {
-            color: #FFFFFF;
-            background: #363E4F;
-            width: 36px;
-            z-index: 100;
-          }
-        }
-      }
-
-      .iconClass {
-        display: inline-block;
-        height: 40px;
-        color: #FFFFFF;
-        margin-left: 3px;
-        margin-top: 6px;
-        cursor: pointer;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 30px;
-        width: e("calc(100% - 10px)");
-      }
-    }
-
-    .tabContent {
-      float: right;
-      background: #363E4F;
-      width: e("calc(100% - 75% - 41px)");
-      height: 100%;
-      .ship{
-        height: 700px;
-        width: 100%;
-        overflow: auto;
-        .shipSty{
-          background-color: #FFFFFF;
-          margin-left: 5px;
-          margin-right: 5px;
-          margin-top: 5px;
-          .shipname{
-            padding-left: 15px;
-            font-size:14px;
-            font-family:Microsoft YaHei;
-            font-weight:400;
-            color:rgba(0,0,0,1);
-            line-height:36px;
-          }
-          .shipmess{
-            padding-left: 15px;
-            font-size:12px;
-            font-family:Microsoft YaHei;
-            font-weight:400;
-            color:rgba(102,102,102,1);
-            line-height:24px;
-          }
-        }
-      }
-      .shipycxq{
-        padding: 0 10px;
-        .shipname{
-          font-size:16px;
-          font-family:Microsoft YaHei;
-          font-weight:bold;
-          color:rgba(255,255,255,1);
-          line-height:36px;
-        }
-        .shipmess{
-          background-color: #FFFFFF;
-          line-height: 36px;
-          padding: 0 10px;
-          font-size:14px;
-          font-family:Microsoft YaHei;
-          font-weight:400;
-          .leftyc{
-            color:rgba(0,0,0,1);
-          }
-          .rightyc{
-            color:rgba(102,102,102,1);
-          }
-        }
-      }
-      .shipxq{
-        padding: 0 10px;
-        .shipname{
-          font-size:16px;
-          font-family:Microsoft YaHei;
-          font-weight:bold;
-          color:rgba(255,255,255,1);
-          line-height:36px;
-        }
-        .shipmess{
-          background-color: #FFFFFF;
-          line-height: 24px;
-          padding-left: 10px;
-          font-size:14px;
-          font-family:Microsoft YaHei;
-          font-weight:400;
-          color:rgba(102,102,102,1);
-        }
-        .hcmess{
-          text-align: center;
-          font-size:14px;
-          font-family:Microsoft YaHei;
-          font-weight:bold;
-          color:rgba(255,255,255,1);
-          line-height:36px;
-          border: 1px solid #dddee1;
-          .did{
-            line-height:18px;
-          }
-        }
-      }
-
-      .ztlistClass{
-        width: 100%;
-        font-size: 14px;
-        cursor: pointer;
-        border: 1px solid #dddee1;
-        border-right: 0;
-        margin-bottom: 5px;
-        text-align: center;
-        vertical-align: middle;
-        background:#5E687D;
-        color: #fdfdfd;
-      }
-      .activezxzt {
-        color: #FFFFFF;
-        background: #363E4F;
-        width: 100%;
-        z-index: 100;
-      }
-    }
-    .sq{
-      width: 40px;
-      height: 80px;
-      float: right;
-      background-color: #5E687D;
-      color: #FFFFFF;
-      text-align: center;
-      vertical-align: middle;
-      writing-mode: vertical-lr;
-      font-size: 16px;
-    }
-  }
+<style>
 </style>

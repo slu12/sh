@@ -1,67 +1,86 @@
 <template>
-  <div >
-    <video v-for="(item,index) in videoList" :id="'my-video' + index " class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo('my-video' + index)" style="margin: 20px auto" >
-      <source :src="item" type="application/x-mpegURL">
-    </video>
-    <video id="my-video9" class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo('my-video9')" style="margin-bottom: 50px" >
-      <source src="http://139.196.253.185:6604/hls/1_30895_0_1.m3u8?JSESSIONID=0bc4b602-c037-4a10-97be-5ac9b3faf0e0" type="application/x-mpegURL">
-    </video>
-<!--    <video id="my-video1" class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo('my-video1')" style="margin-bottom: 50px" >-->
-<!--      <source src="http://139.196.253.185:6604/hls/1_30895_1_1.m3u8?JSESSIONID=013ea50b-1078-4bf3-8f23-bf8ad5ebc485" type="application/x-mpegURL">-->
-<!--    </video>-->
-<!--    <video id="my-video2" class="video-js vjs-default-skin" controls preload="auto" poster="" @click="playVideo('my-video2')" >-->
-<!--      <source src="http://139.196.253.185:6604/hls/1_30895_2_1.m3u8?JSESSIONID=013ea50b-1078-4bf3-8f23-bf8ad5ebc485" type="application/x-mpegURL">-->
-<!--    </video>-->
+  <div class="box-col">
+    <div class="box_row rowBetween colItemCenter boxMar_B">
+      <pager-tit></pager-tit>
+      <div class="box_row rowRight">
+        <div class="body-r-1 inputSty">
+          <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
+          <Input  placeholder='请输入引擎名称' style="width: 200px"></Input>
+        </div>
+        <div class="butevent" style="z-index: auto">
+          <Button type="primary">
+            <Icon type="md-search"></Icon>
+            <!--查询-->
+          </Button>
+        </div>
+        <div class="butevent" style="z-index: auto">
+          <Button type="primary">
+            <Icon type="md-add"></Icon>
+            <!--查询-->
+          </Button>
+        </div>
+      </div>
+    </div>
+    <div class="box_col_auto">
+      <Row>
+        <Col span="8">
+          <Card style="width: 400px">
+            <p slot="title">
+              1号规则(激活)
+            </p>
+            <a href="#" slot="extra">
+              <Icon type="ios-loop-strong"></Icon>
+              关闭
+            </a>
+            <p>如果 条件1 则执行 条件2</p>
+            <p>如果 条件3 则执行 条件4</p>
+            <p>如果 条件5 则执行 条件6</p>
+            <div>
+              <Input search enter-button="备注" placeholder="Enter something..." />
+            </div>
+          </Card>
+        </Col>
+        <Col span="8">
+          <Card style="width: 400px">
+            <p slot="title">
+              1号规则(关闭)
+            </p>
+            <a href="#" slot="extra">
+              <Icon type="ios-loop-strong"></Icon>
+              激活
+            </a>
+            <p>如果 条件1 则执行 条件2</p>
+            <p>如果 条件3 则执行 条件4</p>
+            <p>如果 条件5 则执行 条件6</p>
+            <div>
+              <Input search enter-button="备注" placeholder="Enter something..." />
+            </div>
+          </Card>
+        </Col>
+      </Row>
+
+
+    </div>
+
   </div>
 </template>
 
 <script>
-  import videojs from 'video.js'
-  import 'videojs-contrib-hls'
     export default {
         name: "index",
       data(){
           return {
-            ids: ['my-video0','my-video1','my-video2'],
-            videoList:[]
+
           }
       },
       mounted() {
 
       },
       created() {
-        this.getvideo('111')
+
       },
       methods: {
-          playVideo(id){
-            console.log(id)
-            // let player = videojs(id);
-            // console.log(id , player)
-            videojs(id, {
-              bigPlayButton: true,
-              textTrackDisplay: false,
-              posterImage: true,
-              errorDisplay: false,
-              controlBar: true,
-              width: 200
-            }, function (val) {
-              console.log(val, "--------")
-              this.play();
-            })
-            console.log("2222")
-          },
-        getvideo(mmsi){
-          this.$http.post('/api/cl/getAllChnH5',{mmsi:'413839203'}).then((res)=>{
-            if (res.code == 200){
-              if (!res.result || res.result.length<1){
-                this.$Message.error('当前暂无视频')
-              }
-              this.videoList = res.result
-            }else {
-              this.$Message.error(res.message)
-            }
-          })
-        },
+
       }
     }
 </script>

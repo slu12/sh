@@ -2,12 +2,12 @@
   <div class="tabWrap">
     <div class="tabNav">
       <span class="iconClass">
-      <Icon type="ios-arrow-forward" size="32" @click.native="unShow"></Icon>
+      <Icon type="md-refresh-circle" size="32" @click.native="upTab"></Icon>
       </span>
       <div id="tabBar">
         <ul id="tabUl">
-          <li :class="[{activeTab:index === tabIndex},'tabLi']" v-for="(item,index) in tabList" :key="index"
-              @click="changeTab(index)">{{item.label}}
+          <li :class="[{activeTab:indexold === tabIndex},'tabLi']" v-for="(item,index) in tabList" :key="indexold"
+              @click="changeTab(indexold)">{{item.label}}
           </li>
         </ul>
       </div>
@@ -18,47 +18,48 @@
     <div class="tabContent" v-if="showModal">
       <Row style="height: 46px">
         <Col style="padding: 5px;color: #5c6b77">
-          <Input v-model="from.con" @on-search="getshipMess" search enter-button placeholder="请输入MMSI或船舶名称" />
+          <Input search enter-button placeholder="请输入船舶号或船舶名称" />
         </Col>
       </Row>
       <div v-if="tabIndex === 0">
         <Row style="height: 40px">
           <Row>
             <Col span="6" v-for="(item,index) in zxztlist">
-              <div :class="[{activezxzt:index === zxztindex},'ztlistClass']"  :key="index"
-                   @click="changezxztindex(index,item.zt)">{{item.label}}
+              <div :class="[{activezxzt:indexold === zxztindex},'ztlistClass']" :key="indexold"
+                   @click="changezxztindex(indexold)">{{item.label}}
               </div>
             </Col>
           </Row>
         </Row>
-        <div class="ship">
-          <Row class="shipSty" v-for="(item,index) in shipData" @click.native="getship(item)">
-            <Row class="shipname">
-              {{item.shipname}} - {{item.cbsbh}}
-            </Row>
-            <Row class="shipmess">
-              <Col span="14">MMSI ：{{item.mmsi}}</Col>
-              <Col span="10">类型 ：{{item.shiptypename}}</Col>
-            </Row>
-          </Row>
-        </div>
+         <div class="ship">
+           <Row class="shipSty" v-for="(item,index) in shipData" @click.native="getship(item)">
+             <Row class="shipname">
+               {{item.shipname}} - {{item.cbsbh}}
+             </Row>
+             <Row class="shipmess">
+               <Col span="14">MMSI ：{{item.mmsi}}</Col>
+               <Col span="10">类型 ：{{item.shiptypename}}</Col>
+             </Row>
+           </Row>
+         </div>
 
       </div>
       <div v-if="tabIndex === 1">
         <div class="shipxq">
-          <div class="shipname">{{ship.shipname}} - {{ship.cbsbh}}</div>
-          <div class="shipmess">
-            <div>MMSI : {{ship.mmsi}}</div>
-            <div>呼号 : {{ship.callsign}}</div>
-            <div>IMO : {{ship.imo}}</div>
-            <div>类型 : {{ship.shiptypename}}</div>
-            <div>北斗设备编号 : {{ship.zdbh}}</div>
-            <div>所属机构 : {{ship.jgmc}}</div>
-            <div>定位时间 : {{ship.dwsj}}</div>
-            <div>定位坐标 : {{ship.dwzb}}</div>
-            <div>航速 : {{ship.hs}}</div>
-            <div>航向 : {{ship.hx}}</div>
-          </div>
+           <div class="shipname">{{ship.shipname}} - {{ship.cbsbh}}</div>
+           <div class="shipmess">
+              <div>MMSI : {{ship.mmsi}}</div>
+              <div>呼号 : {{ship.callsign}}</div>
+              <div>IMO : {{ship.imo}}</div>
+              <div>类型 : {{ship.shiptypename}}</div>
+              <div>北斗设备编号 : {{ship.zdbh}}</div>
+              <div>所属机构 : {{ship.jgmc}}</div>
+              <div>定位时间 : {{ship.dwsj}}</div>
+              <div>定位坐标 : {{ship.dwzb}}</div>
+              <div>航速 : {{ship.jgmc}}</div>
+              <div>航向 : {{ship.hx}}</div>
+              <div>设备编号 : {{ship.hs}}</div>
+           </div>
           <div class="hcmess">
             <Row>
               <Col span="8">出发港</Col>
@@ -86,18 +87,9 @@
               <Col span="8">2019-12-32</Col>
             </Row>
           </div>
-          <div style="padding-top: 20px">
+          <div>
             <Row>
-              <Col span="12" style="text-align: center" @click.native="showFance">
-                <Icon type="md-qr-scanner" size="32" color="#FFFFFF" />
-                <br>
-                <span style="color: #FFFFFF;font-size: 14px">电子围栏</span>
-              </Col>
-              <Col span="12" style="text-align: center" @click.native="showPathHistory">
-                <Icon type="md-git-pull-request" size="32" color="#FFFFFF" />
-                <br>
-                <span style="color: #FFFFFF;font-size: 14px">历史轨迹</span>
-              </Col>
+              <Col></Col>
             </Row>
           </div>
         </div>
@@ -132,29 +124,29 @@
 
       </div>
       <div v-if="tabIndex === 4">
-        <div style="text-align: center;overflow: scroll;height: 800px">
-          <video v-for="(item,index) in videoList"
-                 data-setup='{"fluid":true,"aspectRatio":"16:9"}'
-                 :poster="videoimageList[index]"
-                 :id="'my-video' + index "
-                 class="video-js vjs-default-skin"
-                 controls preload="auto"
-                 @click="playVideo('my-video' + index)"
-                 style="object-fit: fill;height: 200px;width: 100%" >
-            <source :src="item" type="application/x-mpegURL">
-          </video>
-        </div>
+          <div style="text-align: center;overflow: scroll;height: 800px">
+            <video v-for="(item,index) in videoList"
+                   data-setup='{"fluid":true,"aspectRatio":"16:9"}'
+                   :poster="videoimageList[indexold]"
+                   :id="'my-video' + indexold "
+                   class="video-js vjs-default-skin"
+                   controls preload="auto"
+                   @click="playVideo('my-video' + indexold)"
+                   style="object-fit: fill;height: 200px;width: 100%" >
+              <source :src="item" type="application/x-mpegURL">
+            </video>
+          </div>
       </div>
     </div>
-<!--    <div class="sq" @click="unShow" v-if="showModal">-->
-<!--      <Icon size="32" type="ios-arrow-forward" />-->
-<!--    </div>-->
+    <div class="sq" @click="unShow" v-if="showModal">
+      <Icon size="32" type="ios-arrow-forward" />
+    </div>
 
   </div>
 </template>
 
 <script>
-  import carJK from "../map/carJK";
+  import carJK from "../../map/carJK";
   import videojs from 'video.js'
   import 'videojs-contrib-hls'
   export default {
@@ -189,9 +181,9 @@
         zxztindex:0,
         zxztlist:[
           {label: '全部',zt:''},
-          {label: '在线',zt:'00'},
-          {label: '停泊',zt:'10'},
-          {label: '离线',zt:'20'},
+          {label: '在线',zt:''},
+          {label: '停泊',zt:''},
+          {label: '离线',zt:''},
         ],
         tabList: [
           {label: '船舶列表'},
@@ -203,11 +195,7 @@
         shipData:[],
         ship:{},
         videoList:[],
-        videoimageList:[],
-        from:{
-          zxzt:'',
-          con:''
-        },
+        videoimageList:[]
 
       }
     },
@@ -234,7 +222,7 @@
         this.getvideoImg(item.sbh)
         this.getvideo(item.mmsi)
         this.gethcMess(item.mmsi)
-        this.$emit('reflh',item)
+
       },
       gethcMess(mmsi){
         this.$http.get('/api/cl/getCurrentVoyage',{params:{mmsi:mmsi}}).then((res)=>{
@@ -243,34 +231,23 @@
           }
         })
       },
-      showPathHistory(){
-        this.$router.push({name: 'historyTarck_new',params:{zdbh:this.car.zdbh}});
-      },
-      showFance(){
-        this.$parent.showFance(this.car.clid)
-
-      },
       //点击收起
       unShow(){
         this.showModal = false
       },
       // 更改状态页签
-      changezxztindex(index,zt) {
-        this.zxztindex = index
-        this.from.zxzt = zt
-        this.getshipMess()
+      changezxztindex(index) {
+        this.zxztindex = indexold
       },
 // 更改tab页签
       changeTab(index) {
-        console.log(this.ship.mmsi,index);
-        if ((!this.ship.mmsi || this.ship.mmsi =='') && index!=0){
+        console.log(this.ship.mmsi,indexold);
+        if ((!this.ship.mmsi || this.ship.mmsi =='') && indexold!=0){
           this.$Message.error('请先选择船舶')
           return
         }
-        this.$nextTick(()=>{
-          this.tabIndex = index
-          this.$store.state.proofActiveName = this.tabIndex
-        })
+        this.tabIndex = indexold
+        this.$store.state.proofActiveName = this.tabIndex
       },
 // 调整Tab滚动
       upTab() {
@@ -293,31 +270,31 @@
             if (!res.result || res.result.length<1){
               this.$Message.error('当前暂无视频')
             }
-            this.videoList = res.result
+             this.videoList = res.result
           }else {
             this.$Message.error(res.message)
           }
         })
       },
       getvideoImg(sbh){
-        this.$http.post('/api/cl/photos',{sbh:sbh}).then((res)=>{
-          if (res.code == 200){
-            this.videoimageList = res.result
-            console.log(this.videoimageList);
-          }else {
-            this.$Message.error(res.message)
-          }
-        })
+          this.$http.post('/api/cl/photos',{sbh:sbh}).then((res)=>{
+            if (res.code == 200){
+              this.videoimageList = res.result
+              console.log(this.videoimageList);
+            }else {
+              this.$Message.error(res.message)
+            }
+          })
         setTimeout(()=>{
           this.getvideoImg(sbh)
         },1000*60)
       },
       // 获取船舶
       getshipMess(){
-        this.$http.get('/api/cl/query',{params:{zxzt:this.from.zxzt,con:this.from.con}}).then((res)=>{
-          if (res.code == 200){
-            this.shipData = res.result
-          }
+        this.$http.get('/api/cl/query',{params:{}}).then((res)=>{
+           if (res.code == 200){
+             this.shipData = res.result
+           }
         })
       }
     }
@@ -327,11 +304,12 @@
 <style scoped>
 
   .ivu-input-search >>> .ivu-input-search{
-    background-color: #282828 !important;
-  }
+      background-color: #282828 !important;
+    }
 </style>
 <style lang="less">
   .tabWrap {
+    width: 100%;
     height: 100%;
 
     .tabNav {
@@ -341,12 +319,12 @@
       background-color: #5E687D;
 
       #tabBar {
-        height: e("calc(100% - 40px)");
+        height: e("calc(100% - 60px)");
         overflow: hidden;
         z-index: -1;
 
         #tabUl {
-          width: 40px;
+          width: 36px;
           border-right: 1px solid #dddee1;
           transition: -webkit-transform .5s ease-in-out;
           transition: transform .5s ease-in-out;
@@ -396,7 +374,7 @@
     .tabContent {
       float: right;
       background: #363E4F;
-      width: e("calc(100% - 41px)");
+      width: e("calc(100% - 75% - 41px)");
       height: 100%;
       .ship{
         height: 700px;
@@ -408,7 +386,6 @@
           margin-right: 5px;
           margin-top: 5px;
           .shipname{
-            width: 300px;
             padding-left: 15px;
             font-size:14px;
             font-family:Microsoft YaHei;
@@ -429,7 +406,6 @@
       .shipycxq{
         padding: 0 10px;
         .shipname{
-          width: 300px;
           font-size:16px;
           font-family:Microsoft YaHei;
           font-weight:bold;
@@ -454,7 +430,6 @@
       .shipxq{
         padding: 0 10px;
         .shipname{
-          width: 300px;
           font-size:16px;
           font-family:Microsoft YaHei;
           font-weight:bold;
@@ -507,7 +482,6 @@
       width: 40px;
       height: 80px;
       float: right;
-      z-index: 9999;
       background-color: #5E687D;
       color: #FFFFFF;
       text-align: center;

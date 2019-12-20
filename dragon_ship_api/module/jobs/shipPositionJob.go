@@ -7,27 +7,27 @@ package jobs
 import (
 	"dragon_ship_api/component/config"
 	"dragon_ship_api/component/db"
+	"dragon_ship_api/component/logs"
 	"dragon_ship_api/module/model"
 	"dragon_ship_api/module/shipapis"
 	"github.com/robfig/cron"
-	"log"
 )
 
 var shipPositionRunning = false
 
 func StartShipPotisionJob() {
 	c := cron.New()
-	log.Println("rotate cron:", config.Config.Cron.ShipPosition)
+	logs.RunLog.Info("StartShipPotisionJob cron:", config.Config.Cron.ShipPosition)
 	c.AddFunc(config.Config.Cron.ShipPosition, func() {
-		log.Println("------Start rotate log job")
+		logs.RunLog.Info("------StartShipPotisionJob")
 		if shipPositionRunning {
-			log.Println("job not finish wait...")
+			logs.RunLog.Info("job not finish wait...")
 			return
 		}
 		shipPositionRunning = true
 		shipids := config.Config.Base.Shipids
 		if err := UpdateShipPosition(shipids); err != nil {
-			log.Println("rotate error,", err.Error())
+			logs.RunLog.Error("StartShipPotisionJob error,", err.Error())
 		}
 		shipPositionRunning = false
 	})
@@ -44,7 +44,6 @@ func UpdateShipPosition(shipids string) error {
 
 		gps := model.MapToClGps(v)
 		db.Db.Model("cl_gps").Save(gps)
-
 	}
 	return nil
 }

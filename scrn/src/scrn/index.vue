@@ -11,7 +11,7 @@
         <component :is="rightCenter" @sysEvent="sysEvent"></component>
       </div>
       <div class="box_col_100 itemBottom">
-        <component :is="rightBottom" @videoEvent="compName='viderModal'"></component>
+        <component :is="rightBottom" @sysEvent="sysEvent" @videoEvent="compName='viderModal'"></component>
       </div>
     </div>
     <component :is="compName" @close="compName=''"></component>

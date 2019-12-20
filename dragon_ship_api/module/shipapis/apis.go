@@ -96,7 +96,21 @@ func GetShipHistoryTrack(shipid, startUtcTime, endUtcTime string) (*ListResult, 
 	p.Add("key", token)
 	p.Add("startUtcTime", startUtcTime)
 	p.Add("endUtcTime", endUtcTime)
-	return getListResult(getShipHistoryTrackUrl + p.Encode())
+	list, err := getListResult(getShipHistoryTrackUrl + p.Encode())
+	if err != nil {
+		return nil, err
+	}
+	for k, _ := range list.Result {
+		v := list.Result[k]
+		if v["latitude"] == nil || v["longitude"] == nil {
+			continue
+		}
+		lat := v["latitude"].(float64)
+		lng := v["longitude"].(float64)
+		v["latitude"] = lat / 1e4 / 60
+		v["longitude"] = lng / 1e4 / 60
+	}
+	return list, nil
 }
 func GetShipHistoryVoyage(shipid, startUtcTime, endUtcTime, language string) (*ListResult, error) {
 	token := getToken()

@@ -8,6 +8,7 @@ import (
 	"dragon_ship_api/component/logs"
 	"dragon_ship_api/component/tool"
 	"encoding/json"
+	"errors"
 	"net/url"
 )
 
@@ -23,6 +24,8 @@ const (
 	getShipByNearUrl            = "http://api.shipdt.com/DataApiServer/getShipByNear?"
 )
 
+var getTokenCount = 0
+
 func getApiResult(getUrl string) (*ApiResult, error) {
 	body, err := tool.HttpGet(getUrl)
 	if err != nil {
@@ -35,10 +38,15 @@ func getApiResult(getUrl string) (*ApiResult, error) {
 		return nil, err
 	}
 	if res.Status == "1" {
+		getTokenCount++
+		if getTokenCount > 5 {
+			return nil, errors.New("get token fail too many times")
+		}
 		logs.RunLog.Error("token invalid,try to get a new token")
 		GetNewToken()
 		return getApiResult(getUrl)
 	}
+	getTokenCount = 0
 	return &res, nil
 }
 func getListResult(getUrl string) (*ListResult, error) {
@@ -96,7 +104,21 @@ func GetShipHistoryTrack(shipid, startUtcTime, endUtcTime string) (*ListResult, 
 	p.Add("key", token)
 	p.Add("startUtcTime", startUtcTime)
 	p.Add("endUtcTime", endUtcTime)
-	return getListResult(getShipHistoryTrackUrl + p.Encode())
+	list, err := getListResult(getShipHistoryTrackUrl + p.Encode())
+	if err != nil {
+		return nil, err
+	}
+	for k, _ := range list.Result {
+		v := list.Result[k]
+		if v["latitude"] == nil || v["longitude"] == nil {
+			continue
+		}
+		lat := v["latitude"].(float64)
+		lng := v["longitude"].(float64)
+		v["latitude"] = lat / 1e4 / 60
+		v["longitude"] = lng / 1e4 / 60
+	}
+	return list, nil
 }
 func GetShipHistoryVoyage(shipid, startUtcTime, endUtcTime, language string) (*ListResult, error) {
 	token := getToken()

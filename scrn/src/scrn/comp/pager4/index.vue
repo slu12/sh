@@ -1,22 +1,22 @@
 <template>
-  <div class="box_col pager1Sty">
+  <div class="box_col pager1Sty"@contextmenu.prevent="sysEvent">
     <div class="box_row pagerTop">
       <div class="pager4Tit" @click="sysEvent">摄像头视频</div>
     </div>
     <div id="carouselBox4" class="box_col_100">
       <div v-if="domeEH.w>0&&domeEH.h>0"
            :style="{width:domeEH.w+'px',height:domeEH.h+'px'}">
-        <Carousel v-model="CarouselConfig.val"
-                  :loop="CarouselConfig.loop"
-                  :autoplay="CarouselConfig.autoplay"
-                  :autoplay-speed="CarouselConfig.autoplaySpeed"
-        >
-          <CarouselItem v-for="(it,index) in CarouselConfig.fileUrl" :key="index">
-            <div class="" :style="{width:domeEH.w+'px',height:domeEH.h+'px'}">
-              <img :src="it" style="width: 100%;height: 100%" alt="">
-            </div>
-          </CarouselItem>
-        </Carousel>
+        <!--<Carousel v-model="CarouselConfig.val"-->
+                  <!--:loop="CarouselConfig.loop"-->
+                  <!--:autoplay="CarouselConfig.autoplay"-->
+                  <!--:autoplay-speed="CarouselConfig.autoplaySpeed"-->
+        <!--&gt;-->
+          <!--<CarouselItem v-for="(it,index) in CarouselConfig.fileUrl" :key="index">-->
+            <!--<div class="" :style="{width:domeEH.w+'px',height:domeEH.h+'px'}">-->
+              <img :src="itUrl" style="width: 100%;height: 100%" alt="">
+            <!--</div>-->
+          <!--</CarouselItem>-->
+        <!--</Carousel>-->
       </div>
     </div>
     <div class="pager4footer box_row rowBetween">
@@ -49,7 +49,8 @@
         domeEH:{
           w:0,
           h:0
-        }
+        },
+        itUrl:login1
       }
     },
     mounted() {
@@ -67,12 +68,11 @@
         this.$http.post('/pub/zp',{sbh:'30895',chn:'0'}).then(res=>{
           if(res.code == 200){
             this.$Message.success('抓拍成功');
+            this.itUrl = res.message
+          }else {
+            this.$Message.warning(res.message);
           }
         })
-        this.$Message.success('照片抓拍成功');
-        // this.swal({
-        //   title:"照片抓拍成功"
-        // })
       },
       videoEvent(){
         this.$emit('videoEvent')

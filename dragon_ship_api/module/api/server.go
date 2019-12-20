@@ -6,9 +6,11 @@ package api
 
 import (
 	"dragon_ship_api/component/config"
+	"dragon_ship_api/component/logs"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"time"
 )
 
 func Start() {
@@ -17,12 +19,12 @@ func Start() {
 	router.Use(Cors())
 
 	g := router.Group("v1")
+	g.Use(cost())
 	g.GET("/GetShipInfo", GetShipInfo)
 	g.GET("/GetHistoryVoyage", GetHistoryVoyage)
 	g.GET("/GetCurrentVoyage", GetCurrentVoyage)
 	g.GET("/GetHistoryTrack", GetHistoryTrack)
 	g.POST("/SyncShipLatestInfo", SyncShipLatestInfo)
-
 	log.Println(" serverAddr : ", config.Config.Base.HttpAddr)
 
 	server := &http.Server{
@@ -35,7 +37,13 @@ func Start() {
 		}
 	}()
 }
-
+func cost() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		t0 := time.Now()
+		c.Next()
+		logs.RunLog.Info("cost:", time.Now().Sub(t0).String())
+	}
+}
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method

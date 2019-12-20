@@ -9,14 +9,14 @@
                    @on-keyup.enter="getvideo()"></Input>
           </div>
           <div class="butevent" style="z-index: auto">
-            <Button type="primary" @on-click="getvideo()">
+            <Button type="primary" @click="getvideo()">
               <Icon type="md-search"></Icon>
               <!--查询-->
             </Button>
           </div>
         </div>
       </div>
-      <div class="box_col_auto">
+      <div class="box_col_auto" style="width: 70%">
       <Row v-show="videoList.length>0">
         <Col span="8" v-for="(item,index) in videoList">
           <div style="text-align: center">
@@ -37,8 +37,6 @@
           </div>
           </Col>
       </Row>
-
-
 
 
         <div v-show="videoList.length<=0" class="body" style="border: 1px solid #dddee1;position: relative">
@@ -80,12 +78,13 @@
         })
       },
       getvideo(){
-        this.$http.post('/api/cl/getAllChnH5',{mmsi:param.mmsi}).then((res)=>{
+        this.$http.post('/api/cl/getAllChnH5',{mmsi:this.param.mmsi}).then((res)=>{
           if (res.code == 200){
             if (!res.result || res.result.length<1){
               this.$Message.error('当前暂无视频')
             }
             this.videoList = res.result
+            this.getvideoImg(res.message)
           }else {
             this.$Message.error(res.message)
           }

@@ -59,6 +59,8 @@ public interface GpsService extends BaseService<ClGps,String>{
      */
     ApiResponse<List<WebsocketInfo>>   inintGps();
 
+    ApiResponse<List<WebsocketInfo>> initGps();
+
     ApiResponse<List<String>> getWebsocketInfo(String deviceIds);
     
     ApiResponse<List<WebsocketInfo>> getWebsocketInfoToApp(String deviceIds);

@@ -80,12 +80,55 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		if(CollectionUtils.isEmpty(list)){
 			return;
 		}
-		for (int i = 0; i < list.size(); i++) {
-			Cb cb = list.get(i);
+		String zxzt = getRequestParamterAsString("zxzt");
+		if(StringUtils.isNotBlank(zxzt)){
+			list.forEach(cb -> cb.setZxzt(zxzt));
+		}else{
+			List<String> strings = list.stream().map(Cb::getZdbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+			List<ClZdgl> zdgls = zdglService.findIn(ClZdgl.InnerColumn.zdbh, strings);
+			Map<String, String> map = zdgls.stream().collect(Collectors.toMap(ClZdgl::getZdbh, ClZdgl::getZxzt));
+			for (int i = 0; i < list.size(); i++) {
+				Cb cb = list.get(i);
+				if(StringUtils.isBlank(cb.getZdbh())){
+					cb.setZxzt("20");
+				}else{
+					cb.setZxzt(map.get(cb.getZdbh()));
+				}
+			}
 		}
 
 
+	}
 
+	@Override
+	public boolean fillQueryCondition(LimitedCondition condition) {
+		String zxzt = getRequestParamterAsString("zxzt");
+		if(StringUtils.isNotBlank(zxzt)){
+			SimpleCondition simpleCondition = new SimpleCondition(ClZdgl.class);
+			if(StringUtils.equals(zxzt, "20")){
+				simpleCondition.in(ClZdgl.InnerColumn.zxzt, Arrays.asList("00","10"));
+				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
+				if(CollectionUtils.isNotEmpty(zdgls)){
+					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
+					condition.notIn(Cb.InnerColumn.zdbh, strings);
+				}
+			}else{
+				simpleCondition.eq(ClZdgl.InnerColumn.zxzt, zxzt);
+				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
+				if(CollectionUtils.isNotEmpty(zdgls)){
+					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
+					condition.in(Cb.InnerColumn.zdbh, strings);
+				}else{
+					return false;
+				}
+			}
+
+		}
+		String con = getRequestParamterAsString("con");
+		if(StringUtils.isNotBlank(con)){
+			condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%"+ con + "%'");
+		}
+		return true;
 	}
 
 	@Override
@@ -653,11 +696,16 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		String url = shipip + "/v1/GetCurrentVoyage";
 		Map<String,String> params = new HashMap<>();
 		params.put("shipid", mmsi);
-		String res = HttpUtil.get(url, params);
+		String res = null;
+		try {
+			res = HttpUtil.get(url, params);
+		}catch (Exception e){
+			RuntimeCheck.ifTrue(true, "请求异常 ， 请稍后再试");
+		}
 		JSONObject object = JSON.parseObject(res);
 		Map<String,String> map = new HashMap<>();
 		if(StringUtils.equals(object.getString("Status"),"7")){
-			return ApiResponse.success(map);
+ 			return ApiResponse.success(map);
 		}
 		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
 		JSONObject result = object.getJSONObject("Result");
@@ -697,7 +745,10 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 				urls[i] = "";
 			}
 		}
-		return ApiResponse.success(urls);
+		ApiResponse<String[]> res = new ApiResponse<>();
+		res.setResult(urls);
+		res.setMessage(cb.getSbh());
+		return res;
 	}
 
 	@Override
@@ -712,7 +763,9 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	@Override
 	public ApiResponse<String[]> photos(String sbh) throws IOException {
 		Map<String, String> sbhs = WebcamUtil.getAllSbh(reids);
-		RuntimeCheck.ifFalse(sbhs.containsKey(sbh), "此船舶绑定的设备未在平台添加");
+		if(!sbhs.containsKey(sbh)){
+			return ApiResponse.success(new String[9]);
+		}
 		String s = sbhs.get(sbh);
 		String ch = s.replaceAll("CH", "");
 		List<String> split = Arrays.asList(ch.split(","));

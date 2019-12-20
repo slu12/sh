@@ -75,7 +75,8 @@ public class CbCtrl extends BaseController<Cb, String> {
 
 	@GetMapping("/InitClGps")
 	public ApiResponse<List<WebsocketInfo>> inintGps() {
-		return gpsservice.inintGps();
+//		return gpsservice.inintGps();
+		return gpsservice.initGps();
 	}
 
 	/**

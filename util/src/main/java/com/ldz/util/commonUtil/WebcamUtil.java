@@ -50,7 +50,7 @@ public class WebcamUtil {
         RuntimeCheck.ifFalse(result == 0 , "操作失败,请稍后再试");
         String jsession = jsonObject.getString("jsession");
         // 存储jsession
-        redis.boundValueOps("webcam_jsession").set(jsession, 1  , TimeUnit.DAYS);
+        redis.boundValueOps("webcam_jsession").set(jsession);
         return jsession;
     }
 
@@ -95,17 +95,26 @@ public class WebcamUtil {
      * 抓拍
      */
     public static String photo(StringRedisTemplate redis, String DevIDNO, String Chn) {
-         login(redis);
+        String jsession = login(redis);
         // 拼接抓拍url
         String url = IP + "/StandardApiAction_capturePicture.action";
         Map<String, String> params = new HashMap<>();
-        params.put("jsession", redis.boundValueOps("webcam_jsession").get());
+        params.put("jsession",jsession );
         params.put("DevIDNO", DevIDNO);
         params.put("Chn", Chn);
         params.put("Type", "1");
         String res = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(res);
         Integer result = object.getInteger("result");
+        if(result == 5){
+            redis.delete("webcam_jsession");
+            jsession = login(redis);
+            params.put("jsession",jsession);
+            res = HttpUtil.get(url, params);
+            object = JSON.parseObject(res);
+            RuntimeCheck.ifFalse(StringUtils.equals(object.getString("result"), "0"), "请求异常 ， 请稍后再试");
+        }
+        RuntimeCheck.ifTrue(result == 32, "设备不在线 ,请稍后再试");
         RuntimeCheck.ifFalse(result == 0, "操作失败, 请稍后再试");
 
         String imgurl = IP + ":6611/3/5?Type=3";
@@ -177,8 +186,18 @@ public class WebcamUtil {
 
         String res = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(res);
+
+        if(StringUtils.equals(object.getString("result"), "5")){
+            redis.delete("webcam_jsession");
+            jsession = login(redis);
+            params.put("jsession",jsession);
+            res = HttpUtil.get(url, params);
+            object = JSON.parseObject(res);
+            RuntimeCheck.ifFalse(StringUtils.equals(object.getString("result"), "0"), "请求异常 ， 请稍后再试");
+        }
         List<Map<String,String>> sbhs = new ArrayList<>();
         JSONArray array = object.getJSONArray("vehicles");
+        RuntimeCheck.ifEmpty(array, "账户尚未绑定设备");
         for (int i = 0; i < array.size(); i++) {
             JSONObject arrayJSONObject = array.getJSONObject(i);
             JSONArray dl = arrayJSONObject.getJSONArray("dl");

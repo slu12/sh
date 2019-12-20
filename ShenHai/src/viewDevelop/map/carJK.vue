@@ -48,7 +48,7 @@
                     lng: 114.3712668464,
                     lat: 30.5440310131
                 },
-                zoom: 14,
+                zoom: 7,
                 carList: [],
                 zoomDot:[],
                 fancePoints: [

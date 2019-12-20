@@ -1,194 +1,108 @@
 <template>
     <div class="box_col">
-      <div class="box_col_auto">
-
-        <Row style="padding: 0 290px">
-           <Col span="8" style="padding-top: 5px"  v-for="(item,index) in 9">
-             <Card style="width:550px;height: 360px">
-               <p slot="title">
-                 <Icon type="ios-film-outline"></Icon>
-                 {{index+1}}号
-               </p>
-               <ul>
-                 <iframe  style="width: 100%;height: 280px" :src="url1"></iframe>
-               </ul>
-             </Card>
-           </Col>
-        </Row>
-
-
-
-        <div class="body">
-          <div class="box-row-list">
-            <div class="bodyC videoSty"
-                 style="min-height: 140px;"
-                 v-for="(item,index) in videoList">
-              <div v-if="!item.video">
-                <div class="videoBF" @click="videoS(item.video,item,index)">
-                  <Icon class="icon" type="arrow-right-b"
-                        @click="videoS(item.video,item,index)"
-                        color="#b5b5b5" size='38'></Icon>
-                </div>
-                <img style="width: 100%;height: 200px"
-                     :src="videoPath+item.imgdz"/>
-              </div>
-              <video v-else
-                     style="width: 100%;height: 200px"
-                     :src="videoPath+item.url"
-                     autoplay="autoplay"
-                     controls="controls"></video>
-              <div class="VideoTit">
-                {{item.cph}}
-                <div style="float: right;cursor: pointer;">
-						    	<span v-show="item.video"
-                        @click="videoF(item.video,item,index)">
-						    		<!--<Icon type="close-circled" style="float: right"></Icon>-->
-						    		关闭
-						    	</span>
-                  <span style="color: #ff9900;" @click="videoColse(item,index)">
-						    		移除
-						    	</span>
-                </div>
-              </div>
-              <div>
-                [{{item.cjsj}}]
-              </div>
-              <div>
-                {{item.wz ? item.wz : '……'}}
-              </div>
-            </div>
+      <div class="box_row rowBetween colItemCenter boxMar_B">
+        <pager-tit></pager-tit>
+        <div class="box_row rowRight">
+          <div class="body-r-1 inputSty">
+            <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
+            <Input v-model="param.mmsi" placeholder='请输入mmsi查询' style="width: 200px"
+                   @on-keyup.enter="getvideo()"></Input>
+          </div>
+          <div class="butevent" style="z-index: auto">
+            <Button type="primary" @on-click="getvideo()">
+              <Icon type="md-search"></Icon>
+              <!--查询-->
+            </Button>
           </div>
         </div>
-        <div v-show="!vadeoShow" class="body" style="border: 1px solid #dddee1;position: relative">
-          <h1 style="color: #bdbdbd;position: absolute;top:40%;left: 50%;transform: translate(-50%,-50%)">
-            {{param.cphLike}}暂无视频数据
+      </div>
+      <div class="box_col_auto">
+      <Row v-show="videoList.length>0">
+        <Col span="8" v-for="(item,index) in videoList">
+          <div style="text-align: center">
+            <Card>
+              <h5>{{index+1}}号</h5>
+              <video
+                data-setup='{"fluid":true,"aspectRatio":"16:9"}'
+                :poster="videoimageList[index]"
+                :id="'my-video' + index "
+                class="video-js vjs-default-skin"
+                controls preload="auto"
+                @click="playVideo('my-video' + index)"
+                style="object-fit: fill;height: 200px;width: 100%" >
+                <source :src="item" type="application/x-mpegURL">
+              </video>
+            </Card>
+
+          </div>
+          </Col>
+      </Row>
+
+
+
+
+        <div v-show="videoList.length<=0" class="body" style="border: 1px solid #dddee1;position: relative">
+          <h1 style="color: #bdbdbd;position: absolute;top:40%;left: 50%;transform: translate(-50%,100%)">
+            请先输入船舶mmsi查询
           </h1>
         </div>
-<!--        <div class="margin-top-10 pageSty" style="height: 60px;">-->
-<!--          <Page-->
-<!--            :total=pageTotal-->
-<!--            :current=param.pageNum-->
-<!--            :page-size=param.pageSize :page-size-opts=[8,10,20,30,40,50]-->
-<!--            @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}'-->
-<!--            show-total-->
-<!--            show-elevator show-sizer placement='top'-->
-<!--            @on-change='pageChange'></Page>-->
-<!--        </div>-->
       </div>
     </div>
 </template>
 
 <script>
-  // import mixins from '@/mixins'
-  import htmlpanel from './htmlpanel'
-
+  import videojs from 'video.js'
+  import 'videojs-contrib-hls'
   export default {
     name: '',
     // mixins: [mixins],
-    components: {htmlpanel},
+    components: {},
     data() {
       return {
-        url1:'',
-        vadeoShow: true,
-        videoPath: '',
-        activeName: 0,
-        cjsjInRange: [],
-        carList: [],
-        pageTotal: 1,
-        page: {
-          pageNum: 1,
-          pageSize: 8
-        },
+        videoimageList:[],
         videoList: [],
         param: {
-          cjsjInRange: '',
-          cphLike: '',
-          wjmLike:'F',
-          pageNum: 1,
-          pageSize: 12,
-          zdbhLike: ''
+          mmsi:''
         }
       }
     },
     created() {
-      if (this.$route.params && this.$route.params.zdbh) {
-        this.param.zdbhLike = this.$route.params.zdbh
-      }
-      this.getmess()
-      this.getCarList();
+
     },
     methods: {
-      videoS(type, item, index) {
-        this.videoList[index].video = true
-      },
-      videoF(type, item, index) {
-        this.videoList[index].video = false
-      },
-      videoColse(item, index) {
-        var v = this
-        swal({
-          text: "是否删除数据?",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonText: '确认',
-          cancelButtonText: '取消'
-        }).then((willDelete) => {
-          if (willDelete.value) {
-            this.$http.post('').then((res) => {
-              if (res.code == 200) {
-                v.$Message.success(res.message);
-              } else {
-                v.$Message.error(res.message);
-              }
-              v.getmess()
-            }).catch((error) => {
-              v.$Message.error('出错了！！！');
-            })
-          }
-        });
-      },
-      getmess() {
-        if (this.cjsjInRange.length != 0 && this.cjsjInRange[0] != '' && this.cjsjInRange[1] != '') {
-          this.param.cjsjInRange = this.getdateParaD(this.cjsjInRange[0]) + "," + this.getdateParaD(this.cjsjInRange[1]);
-        } else {
-          this.param.cjsjInRange = '';
-        }
-        var v = this
-        v.param.wjmEndwith = '.mp4';
-        this.$http.get('', {params: v.param}).then((res) => {
-          if (res.code == 200) {
-            v.pageTotal = res.page.total
-            if (res.page.list.length > 0) {
-              for (let r of res.page.list) {
-                if (r.url) {
-                  r.video = false
-                  r.imgdz = r.url.replace('video', 'cache');
-                  r.imgdz = r.imgdz.replace('mp4', 'jpg')
-                }
-              }
-              v.videoList = res.page.list
-              v.vadeoShow = true
-            } else {
-              v.vadeoShow = false
-            }
+      playVideo(id){  //播放视频
+        console.log(id);
+        videojs(id, {
 
+        }, function (val) {
+          console.log(val, "--------")
+          this.play();
+        })
+      },
+      getvideo(){
+        this.$http.post('/api/cl/getAllChnH5',{mmsi:param.mmsi}).then((res)=>{
+          if (res.code == 200){
+            if (!res.result || res.result.length<1){
+              this.$Message.error('当前暂无视频')
+            }
+            this.videoList = res.result
+          }else {
+            this.$Message.error(res.message)
           }
         })
       },
-      getCarList() {
-        var v = this
-        this.$http.get('').then((res) => {
-          this.carList = res.result
-          v.SpinShow = false;
+      getvideoImg(sbh){
+        this.$http.post('/api/cl/photos',{sbh:sbh}).then((res)=>{
+          if (res.code == 200){
+            this.videoimageList = res.result
+            console.log(this.videoimageList);
+          }else {
+            this.$Message.error(res.message)
+          }
         })
-      },
-      findMessList() {
-        this.getmess();
-      },
-      pageChange(event) {
-        var v = this
-        v.param.pageNum = event
-        this.getmess()
+        setTimeout(()=>{
+          this.getvideoImg(sbh)
+        },1000*60)
       },
     }
   }

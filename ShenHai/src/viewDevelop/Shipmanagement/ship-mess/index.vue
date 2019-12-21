@@ -1,13 +1,13 @@
 <!--车辆管理-->
 <template>
   <div class="box_col">
-    <superSearch></superSearch>
+    <superSearch @addEvent="AddDataList"></superSearch>
     <Card class="shipMessBox">
       <div class="boxPadd_B">
-              <span class="">
-                <Icon v-if="showCard== true" type="ios-apps" size='30' @click="showCard = false"></Icon>
-                <Icon v-else type="md-grid" size='30' @click="showCard = true"></Icon>
-              </span>
+        <div class="">
+          <Icon v-if="showCard== true" type="ios-apps" size='30' @click="showCard = false"></Icon>
+          <Icon v-else type="md-grid" size='30' @click="showCard = true"></Icon>
+        </div>
         <div v-if="false" style="height: 45px;line-height: 45px;">
           <div class="margin-top-10 box-row">
 
@@ -88,7 +88,7 @@
         showCard: true,
         //tab高度
         tab_H: 0,
-        tabBox:'tabBox',
+        tabBox: 'tabBox',
         columns1: [
           {
             title: '序号',
@@ -328,14 +328,14 @@
 </script>
 <style lang="less">
   /*@import '../../../styles/common.less';*/
-  .shipMessBox{
+  .shipMessBox {
     flex: 1;
     overflow-y: auto;
-    .ivu-card-body{
+    .ivu-card-body {
       height: 100%;
       display: flex;
       flex-direction: column;
-      .centerBody{
+      .centerBody {
         flex: 1;
         overflow-y: auto;
       }

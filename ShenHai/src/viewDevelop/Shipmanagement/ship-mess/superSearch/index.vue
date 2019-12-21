@@ -1,22 +1,29 @@
 <template>
   <div class="superSearch">
-    <i-switch size="large" v-model="checkbox">
-      <span slot="open">多选</span>
-      <span slot="close">单选</span>
-    </i-switch>
-    <div class="JGline box_row">
+    <!--<i-switch size="large" v-model="checkbox">-->
+      <!--<span slot="open">多选</span>-->
+      <!--<span slot="close">单选</span>-->
+    <!--</i-switch>-->
+    <div class="JGline box_row colItemCenterc">
       <div class="JGlabel">
         选择结果：
       </div>
-      <div class="box_row_100">
-        <div class="box_row_list">
+      <div class="box_row_100" style="line-height: 50px">
+        <div class="box_row_list" style="padding: 10px 0">
           <div class="box_row" v-for="(val,key) in searchList" :key="key">
-            <div v-for="(item,index) in val.selectList" :key="index" v-if="item.sel">
+            <div v-for="(item,index) in val.selectList" :key="index"
+                 class="selOkItemSty" v-if="item.sel">
               {{item.val}}
               <Icon type="md-close" @click.native="remove(val,item)"/>
             </div>
           </div>
         </div>
+      </div>
+      <search-group></search-group>
+      <div class="boxMar_L">
+        <Button type="primary" @click="AddDataList()">
+          <Icon type="md-add"></Icon>
+        </Button>
       </div>
     </div>
 
@@ -41,13 +48,15 @@
 </template>
 
 <script>
+  import searchGroup from './comp/searchGroup'
   export default {
     name: "index",
+    components:{searchGroup},
     props: {
       checkbox: {
         type: Boolean,
         default: () => {
-          return true
+          return false
         }
       },
       searchList: {
@@ -145,12 +154,16 @@
     },
     data() {
       return {
+
         selList: {}
       }
     },
     created() {
     },
     methods: {
+      AddDataList(){
+        this.$emit('addEvent')
+      },
       selItem(line, item) {//选择项操作
         if (this.checkbox) {//每一项单选
           item.sel = true

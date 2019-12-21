@@ -833,7 +833,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 			if(split.contains((i+1) +"")){
 				String photo = WebcamUtil.photo(reids,sbh,i+"");
 				URL url = new URL(photo);
-				String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + i+ ".jpg";
+				String filePath = "/zp/"  + sbh + "-" + i+ ".jpg";
 				excutor.submit( () -> {
 					try {
 						FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath), 100000,100000);

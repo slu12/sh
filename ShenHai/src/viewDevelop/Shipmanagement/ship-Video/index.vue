@@ -23,13 +23,13 @@
                 <Card>
                   <h5>{{index+1}}号</h5>
                   <video
-                    data-setup='{"fluid":true,"aspectRatio":"16:9"}'
+                    data-setup='{"fluid":true}'
                     :poster="videoimageList[index]"
                     :id="'my-video' + index "
-                    class="video-js vjs-default-skin vjs-fluid"
+                    class="video-js vjs-default-skin vjs-big-play-centered"
                     controls preload="auto"
                     @click="playVideo('my-video' + index)"
-                    style="object-fit: fill;height: 200px;width: 100%" >
+                    style="object-fit: fill">
                     <source :src="item" type="application/x-mpegURL">
                   </video>
                 </Card>
@@ -63,7 +63,7 @@
         videoimageList:[],
         videoList: [],
         param: {
-          mmsi:''
+          mmsi:'413839203'
         }
       }
     },
@@ -74,6 +74,7 @@
       playVideo(id){  //播放视频
         console.log(id);
         videojs(id, {
+          height:280
 
         }, function (val) {
           console.log(val, "--------")
@@ -81,6 +82,9 @@
         })
       },
       getvideo(){
+        for (let a = 0;a<9;a++){
+          videojs('my-video'+a).dispose();
+        }
         this.$http.post('/api/cl/getAllChnH5',{mmsi:this.param.mmsi}).then((res)=>{
           if (res.code == 200){
             if (!res.result || res.result.length<1){

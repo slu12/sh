@@ -663,7 +663,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		JSONObject result = object.getJSONObject("Result");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String departtime = result.getString("departtime");
-			String eta = result.getString("eta");
+		String eta = result.getString("eta");
 		String anchortime = result.getString("anchortime");
 		map.put("departtime", format.format(new Date(Long.parseLong(departtime)*1000)));
 			map.put("eta",  format.format(new Date(Long.parseLong(eta)*1000)));

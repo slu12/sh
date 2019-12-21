@@ -72,7 +72,7 @@ export default {
       }
       state.tagNavList = tagList
       //本地缓存的导航页
-      // setTagNavListInLocalstorage([...tagList])
+      setTagNavListInLocalstorage([...tagList])
     },
     closeTag (state, route) {
       let tag = state.tagNavList.filter(item => routeEqual(item, route))

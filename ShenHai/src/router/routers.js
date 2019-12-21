@@ -62,10 +62,9 @@ export default [
           title: '船舶监控',
           notCache: true,
         },
-        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
+        // component: () => import('@/viewDevelop/VehicleMonitoring/jk')
       },
     ]
-
   },
   // {
   //   path: '/home',

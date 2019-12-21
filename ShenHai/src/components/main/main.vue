@@ -147,6 +147,7 @@ export default {
         }
       }
       this.setTagNavList(res)
+      debugger
     },
     handleClick (item) {
       this.turnToPage(item)

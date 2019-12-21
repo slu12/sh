@@ -62,10 +62,9 @@ export default [
           title: '船舶监控',
           notCache: true,
         },
-        component: () => import('@/viewDevelop/VehicleMonitoring/jk')
+        // component: () => import('@/viewDevelop/VehicleMonitoring/jk')
       },
     ]
-
   },
   // {
   //   path: '/home',
@@ -216,6 +215,7 @@ export default [
     meta: {
       icon: 'ios-cog',
       title: '终端管理',
+      showAlways:true
     },
     component: Main,
     children:[

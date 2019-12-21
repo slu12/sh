@@ -37,7 +37,7 @@
         }
       },
       getVideo() {
-        this.$http.post('/pub/zb', {sbh: 30895}).then(res => {
+        this.$http.post('/pub/zb', {sbh: 34286}).then(res => {
           if (res.code == 200) {
             this.videoUrl = res.result[0]
           }

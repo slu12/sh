@@ -2,48 +2,51 @@
     <div class="box_col">
       <div class="box_row rowBetween colItemCenter boxMar_B">
         <pager-tit></pager-tit>
-        <div class="box_row rowRight">
-          <div class="body-r-1 inputSty">
-            <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
-            <Input v-model="param.mmsi" placeholder='请输入mmsi查询' style="width: 200px"
+      </div>
+      <div class="box_col_auto">
+        <Row style="padding: 20px 0">
+          <Col style="text-align:center">
+            <Input v-model="param.mmsi" placeholder='请输入 mmsi/视频id/设备号 查询' style="width: 400px"
                    @on-keyup.enter="getvideo()"></Input>
-          </div>
-          <div class="butevent" style="z-index: auto">
             <Button type="primary" @click="getvideo()">
               <Icon type="md-search"></Icon>
               <!--查询-->
             </Button>
-          </div>
-        </div>
-      </div>
-      <div class="box_col_auto" style="width: 70%">
-      <Row v-show="videoList.length>0">
-        <Col span="8" v-for="(item,index) in videoList">
-          <div style="text-align: center">
-            <Card>
-              <h5>{{index+1}}号</h5>
-              <video
-                data-setup='{"fluid":true,"aspectRatio":"16:9"}'
-                :poster="videoimageList[index]"
-                :id="'my-video' + index "
-                class="video-js vjs-default-skin"
-                controls preload="auto"
-                @click="playVideo('my-video' + index)"
-                style="object-fit: fill;height: 200px;width: 100%" >
-                <source :src="item" type="application/x-mpegURL">
-              </video>
-            </Card>
-
-          </div>
           </Col>
-      </Row>
+        </Row>
 
 
-        <div v-show="videoList.length<=0" class="body" style="border: 1px solid #dddee1;position: relative">
-          <h1 style="color: #bdbdbd;position: absolute;top:40%;left: 50%;transform: translate(-50%,100%)">
-            请先输入船舶mmsi查询
-          </h1>
+        <div style="text-align: center;margin: 0 200px">
+          <Row v-show="videoList.length>0">
+            <Col span="8" v-for="(item,index) in videoList">
+              <div style="text-align: center">
+                <Card>
+                  <h5>{{index+1}}号</h5>
+                  <video
+                    data-setup='{"fluid":true,"aspectRatio":"16:9"}'
+                    :poster="videoimageList[index]"
+                    :id="'my-video' + index "
+                    class="video-js vjs-default-skin vjs-fluid"
+                    controls preload="auto"
+                    @click="playVideo('my-video' + index)"
+                    style="object-fit: fill;height: 200px;width: 100%" >
+                    <source :src="item" type="application/x-mpegURL">
+                  </video>
+                </Card>
+
+              </div>
+            </Col>
+          </Row>
+          <Row v-show="videoList.length<=0" >
+            <Col span="8" v-for="(item,index) in 9" style="padding: 5px">
+                <Card>
+                  <h5>{{index+1}}号通道</h5>
+                  <img src="./comp/jk.png" style="height: 200px;width: 100%" alt="">
+                </Card>
+            </Col>
+          </Row>
         </div>
+
       </div>
     </div>
 </template>

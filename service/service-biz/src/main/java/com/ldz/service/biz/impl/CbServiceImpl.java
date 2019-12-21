@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 
@@ -63,6 +65,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	private XcService xcService;
 	@Autowired
 	private GpsLsService gpsLsService;
+
+	private ExecutorService excutor = Executors.newSingleThreadExecutor();
 
 
 	@Value("${shipApi.ip}")
@@ -134,6 +138,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 
 	@Override
 	protected void afterQuery(List<Cb> list) {
+
 		if(CollectionUtils.isEmpty(list)){
 			return;
 		}
@@ -765,7 +770,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 		JSONObject result = object.getJSONObject("Result");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String departtime = result.getString("departtime");
-			String eta = result.getString("eta");
+		String eta = result.getString("eta");
 		String anchortime = result.getString("anchortime");
 		map.put("departtime", format.format(new Date(Long.parseLong(departtime)*1000)));
 			map.put("eta",  format.format(new Date(Long.parseLong(eta)*1000)));
@@ -829,7 +834,13 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 				String photo = WebcamUtil.photo(reids,sbh,i+"");
 				URL url = new URL(photo);
 				String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + i+ ".jpg";
-				FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
+				excutor.submit( () -> {
+					try {
+						FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath), 100000,100000);
+					} catch (IOException e) {
+					}
+				});
+
 				String file = path + filePath;
 				//String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
 				urls[i] = file;

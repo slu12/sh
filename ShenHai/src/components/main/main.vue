@@ -137,6 +137,8 @@ export default {
       this.collapsed = state
     },
     handleCloseTag (res, type, route) {
+      debugger
+
       if (type !== 'others') {
         if (type === 'all') {
           this.turnToPage(this.$config.homeName)

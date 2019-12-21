@@ -56,9 +56,6 @@ export default {
     setHomeRoute (state, routes) {
       state.homeRoute = getHomeRoute(routes, homeName)
     },
-    clearTagNavList(state){
-      state.tagNavList = []
-    },
     setTagNavList (state, list) {
       let tagList = []
       if (list) {

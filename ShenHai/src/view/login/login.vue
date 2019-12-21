@@ -27,10 +27,16 @@ export default {
   components: {
     LoginForm
   },
+  computed:{
+    tagNavList () {
+      return this.$store.state.app.tagNavList
+    },
+  },
   created(){
+    this.clearTag()
+    console.log(this.tagNavList());
   },
   mounted(){
-    this.clearTagNavList()
   },
   methods: {
     ...mapActions([
@@ -38,8 +44,20 @@ export default {
       'getUserInfo'
     ]),
     ...mapMutations([
-      'clearTagNavList'
+      "setTagNavList"
     ]),
+    clearTag(){
+      let res = this.tagNavList.filter(item => item.name === this.$config.homeName)
+      let tagLocal = localStorage.getItem('tagNaveList')
+      tagLocal = JSON.parse(localStorage.getItem('tagNaveList'))
+      if(tagLocal.length > 1){
+        let setTagLocal = [tagLocal[0]]
+        console.log(setTagLocal);
+        localStorage.setItem('tagNaveList',JSON.stringify(setTagLocal))
+      }
+      this.setTagNavList(res)
+
+    },
     handleSubmit ({ userName, password }) {
           this.$router.push({
             name: this.$config.homeName

@@ -25,6 +25,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -38,6 +39,8 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
     private ClXcMapper entityMapper;
     @Autowired
      private CbService cbService;
+    @Value("${shipApi.ip}")
+     private String shipip;
 
 
     Logger error = LoggerFactory.getLogger("error_info");
@@ -65,6 +68,41 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
     }
 
     @Override
+    public ApiResponse<List<Map<String, Object>>> history(String mmsi, String start, String end){
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(start, "请选择轨迹时间");
+        RuntimeCheck.ifBlank(end, "请选择轨迹时间");
+        String url = shipip + "/v1/GetHistoryVoyage";
+        Map<String,String> params = new HashMap<>();
+        params.put("shipid", mmsi);
+        DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        params.put("startUtcTime", DateTime.parse(start, pattern).toDate().getTime()/1000 + "");
+        params.put("endUtcTime", DateTime.parse(end, pattern).toDate().getTime()/1000 + "");
+        String res = HttpUtil.get(url, params);
+        JSONObject object = JSON.parseObject(res);
+        RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+        JSONArray array = object.getJSONArray("Result");
+        List<Map<String,Object>>  m = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        for (int i = 0; i < array.size(); i++) {
+            Map<String,Object> map = new HashMap<>();
+            JSONObject jsonObject = array.getJSONObject(i);
+            String departtime = jsonObject.getString("departtime");
+            String ata = jsonObject.getString("ata");
+            map.put("departtime", format.format(new Date(Long.parseLong(departtime)*1000)));
+            map.put("ata",  format.format(new Date(Long.parseLong(ata)*1000)));
+            long l = (pattern.parseDateTime((String) map.get("ata")).toDate().getTime() - pattern.parseDateTime((String) map.get("departtime")).toDate().getTime()) / (1000 * 60);
+            map.put("sc", l);
+            map.put("departportname", jsonObject.getString("departportname"));
+            map.put("arrivedportname", jsonObject.getString("arrivedportname"));
+            map.put("totalvoyage", jsonObject.getString("totalvoyage"));
+            m.add(map);
+        }
+        return ApiResponse.success(m);
+    }
+
+
+  /*  @Override
     public ApiResponse<List<Map<String, Object>>> history(String zdbh, String startTime, String endTime) {
         RuntimeCheck.ifBlank(zdbh,"请选择车辆");
 
@@ -158,7 +196,7 @@ public class XcServiceImpl extends BaseServiceImpl<ClXc,String> implements XcSer
             list.add(map);
         }
         return ApiResponse.success(list);
-    }
+    }*/
 
 
 

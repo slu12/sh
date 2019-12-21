@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div>
   <div v-if="islogin">
     <div class="tit">登录</div>
@@ -29,32 +29,32 @@
   <div v-if="!islogin">
     <div class="tit">重置密码</div>
     <div class="ftit">Reset Password</div>
-    <Form ref="loginForm" :model="formpass" :rules="rules">
-      <FormItem prop="sjh">
-        <Input class="inputsty" style="height: 100%" v-model="formpass.sjh" placeholder="请输入手机号码">
+    <Form ref="loginForm" :model="formpass" :rules="rules1">
+      <FormItem prop="phone">
+        <Input class="inputsty" style="height: 100%" v-model="formpass.phone" placeholder="请输入手机号码">
         <span slot="prepend">
           <Icon :size="22" type="md-phone-portrait"></Icon>
         </span>
         </Input>
       </FormItem>
-      <FormItem prop="yzm">
-        <Input class="inputsty" style="height: 100%" v-model="formpass.yzm" placeholder="请输入验证码">
+      <FormItem prop="code">
+        <Input class="inputsty" style="height: 100%" v-model="formpass.code" placeholder="请输入验证码">
         <span slot="prepend">
           <Icon :size="22" type="md-mail"></Icon>
         </span>
         </Input>
-        <button v-show="sendAuthCode" class="but" @click="getdxmess">获取验证码</button>
-        <button v-show="!sendAuthCode" class="but">{{auth_time}}s重新获取</button>
+        <Button v-show="sendAuthCode" class="but" @click="getdxmess">获取验证码</Button>
+        <Button v-show="!sendAuthCode" class="but">{{auth_time}}s重新获取</Button>
       </FormItem>
-      <FormItem prop="password">
+      <FormItem prop="pwd">
         <Input class="inputsty" style="height: 100%" type="password" v-model="formpass.pwd" placeholder="请输入新密码">
       <span slot="prepend">
           <Icon :size="22" type="md-lock"></Icon>
         </span>
         </Input>
       </FormItem>
-      <FormItem prop="passwordtw">
-        <Input class="inputsty" style="height: 100%" type="password" v-model="formpass.newpwd" placeholder="请再次输入新密码">
+      <FormItem prop="pwd1">
+        <Input class="inputsty" style="height: 100%" type="password" v-model="formpass.pwd1" placeholder="请再次输入新密码">
       <span slot="prepend">
           <Icon :size="22" type="md-lock"></Icon>
         </span>
@@ -86,10 +86,24 @@
           codeID:''
         },
         formpass:{
-          sjh:'',
-          yzm:'',
+          phone :'' ,
+          code:''  ,
+          pwd1:'',
           pwd:'',
-          newpwd:''
+        },
+        rules1: {
+          phone: [
+            {required: true, message: '账号不能为空', trigger: 'blur'}
+          ],
+          code: [
+            {required: true, message: '验证码不能为空', trigger: 'blur'}
+          ],
+          pwd: [
+            {required: true, message: '密码不能为空', trigger: 'blur'}
+          ],
+          pwd1: [
+            {required: true, message: '密码不能为空', trigger: 'blur'}
+          ]
         },
         rules: {
           username: [
@@ -113,11 +127,22 @@
         this.islogin = false
       },
       changepassword(){
-        console.log(123);
-        this.swal({
-          title: '修改成功！',
-          type: 'success'
+        this.$http.post('/api/yh/findPwd',this.formpass).then((res)=>{
+          if (res.code == 200){
+            this.swal({
+              title: '修改成功！',
+              type: 'success'
+            })
+            this.formpass = {}
+            this.islogin = true
+          }else {
+            this.swal({
+              title: res.message,
+              type: 'error'
+            })
+          }
         })
+
       },
       getUrl() {
         let codeId =this.AF.getRandom(8)
@@ -142,23 +167,21 @@
         }
       },
       getdxmess(){ // 获取短信验证码
-        if(this.formpass.sjh == ''){
+        if(this.formpass.phone == ''){
           this.swal({
             title:'请先输入手机号码',
             type:'error'
           })
           return
         }
-        this.$http.post('',{phone:this.form.username}).then((res)=>{
+        this.$http.post('/api/yh/sendSms',{phone:this.formpass.phone}).then((res)=>{
           if (res.code == 200){
-            this.sfmess = true;
             this.sendAuthCode = false;
             this.auth_time = 300;
             var auth_timetimer =  setInterval(()=>{
               this.auth_time--;
               if(this.auth_time<=0){
                 this.sendAuthCode = true;
-                this.sfmess = false;
                 clearInterval(auth_timetimer);
               }
             }, 1000);

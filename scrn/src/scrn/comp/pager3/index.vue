@@ -43,6 +43,9 @@
         this.map.addEventListener('click', function (val) {
           console.log(val);
         })
+        this.map.addEventListener('rightclick', function (val) {
+          v.sysEvent()
+        })
         this.buildCircle(pot)
       },
       buildCircle(pot){

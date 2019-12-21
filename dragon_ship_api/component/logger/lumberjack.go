@@ -121,7 +121,7 @@ func (p *Logger) printWithColor(color int, m ...string) {
 		return
 	}
 	content := strings.Join(m, ",")
-	s := fmt.Sprintf("\033[%d;1m[%s] %s \033[0m\n", color, getTime(), content)
+	s := fmt.Sprintf("\033[35;0m[%s]\033[0m \033[%d;1m%s\033[0m\n", getTime(), color, content)
 	if p.option.Console {
 		log.Print(s)
 		return
@@ -165,6 +165,10 @@ func getTime() string {
 func (l *Logger) Write(p []byte) (n int, err error) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
+	if l.option.FileName == "" {
+		fmt.Print(p)
+		return
+	}
 
 	writeLen := int64(len(p))
 	if writeLen > l.max() {
@@ -337,6 +341,8 @@ func (l *Logger) openExistingOrNew(writeLen int) error {
 		return l.openNew()
 	}
 	l.file = file
+	os.Stdout = l.file
+	os.Stderr = l.file
 	l.size = info.Size()
 	return nil
 }

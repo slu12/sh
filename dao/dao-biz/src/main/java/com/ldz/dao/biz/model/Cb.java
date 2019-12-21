@@ -330,6 +330,12 @@ public class Cb implements Serializable {
      */
     private String dwsj;
 
+    /**
+     * 在线状态
+     */
+    @Transient
+    private String zxzt;
+
 
     /*
       * 车辆电子围栏中间关联表

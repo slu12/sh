@@ -30,6 +30,7 @@ import pagerTit from './components/A_components/pagerTit'
 Vue.component('pagerTit',pagerTit)
 import tabPager from './components/A_components/tabPager'
 Vue.component('tabPager',tabPager)
+
 //**********************************************************************************************************************
 /**
  *网络数据请求 参数配置
@@ -46,7 +47,8 @@ Vue.prototype.moment = moment
  */
 import http from './axios/index';
 Vue.prototype.$http = http;
-
+import swal from 'sweetalert2'
+Vue.prototype.swal = swal;
 /**
  *util全局方法
  */

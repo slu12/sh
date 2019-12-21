@@ -48,6 +48,63 @@
         this.map.addEventListener('click', function (val) {
           console.log(val);
         })
+        this.map.addEventListener('rightclick', function (val) {
+         v.sysEvent()
+        })
+
+        this.get_GJ_Code()
+      },
+      get_GJ_Code(){
+        var v = this
+        let a = new Date()
+        this.$http.post('/pub/historyTrack',{
+          mmsi:"413472680",
+          start:this.moment(a.getTime()-24*60*60*1000).format('YYYY-MM-DD HH:mm:ss'),
+          end:this.moment().format('YYYY-MM-DD HH:mm:ss')
+        }).then(res=>{
+          if(res.code == 200){
+            let pois = [
+              // new BMap.Point(116.350658,39.938285),
+              // new BMap.Point(116.386446,39.939281),
+              // new BMap.Point(116.389034,39.913828),
+              // new BMap.Point(116.442501,39.914603),
+              // new BMap.Point(111.0715,21.479398333333332),
+              // new BMap.Point(111.07177,21.479750000000003)
+            ];//new BMap.Point(116.350658,39.938285)
+
+
+            res.result.forEach((it,index)=>{
+              if(index == 0){
+                // v.map.setCenter(new BMap.Point(it.longitude,it.latitude))
+                // v.map.setZoom(22)
+              }
+              pois.push(new BMap.Point(it.longitude,it.latitude))
+              if(index == res.result.length-1){
+                var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+                  scale: 0.6,//图标缩放大小
+                  strokeColor:'#fff',//设置矢量图标的线填充颜色
+                  strokeWeight: '2',//设置线宽
+                });
+                var icons = new BMap.IconSequence(sy, '10', '30');
+                var polyline =new BMap.Polyline(pois, {
+                  enableEditing: false,//是否启用线编辑，默认为false
+                  enableClicking: true,//是否响应点击事件，默认为true
+                  icons:[icons],
+                  strokeWeight:'8',//折线的宽度，以像素为单位
+                  strokeOpacity: 0.8,//折线的透明度，取值范围0 - 1
+                  strokeColor:"#18a45b" //折线颜色
+                });
+
+                v.map.addOverlay(polyline);          //增加折线
+                v.map.setViewport(pois)
+              }
+            })
+
+
+          }
+        }).catch(err=>{
+
+        })
       },
       sysEvent(){
         this.$emit('sysEvent',2)

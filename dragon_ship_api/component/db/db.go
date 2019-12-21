@@ -2,7 +2,6 @@ package db
 
 import (
 	"dragon_ship_api/component/config"
-	"dragon_ship_api/module/model"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
@@ -21,6 +20,6 @@ func Init() {
 	}
 	// 使用单数表名
 	Db.SingularTable(true)
-	Db.AutoMigrate(&model.ClGpsLs{})
-	Db.LogMode(true)
+	//Db.AutoMigrate(&model.ClGpsLs{})
+	Db.LogMode(config.Config.Mysql.LogMode)
 }

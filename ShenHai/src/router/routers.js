@@ -215,6 +215,7 @@ export default [
     meta: {
       icon: 'ios-cog',
       title: '终端管理',
+      showAlways:true
     },
     component: Main,
     children:[

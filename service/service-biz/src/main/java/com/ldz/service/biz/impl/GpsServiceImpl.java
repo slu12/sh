@@ -482,7 +482,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                 if(!StringUtils.equals(zdgl.getZt(),"00") || !StringUtils.equals(zdgl.getZxzt(),"00")){
                     zdgl.setZt("00");
                     // todo 记得改回 00
-                    zdgl.setZxzt("10");
+                    zdgl.setZxzt("00");
                     zdglservice.update(zdgl);
                 }
             }else if (StringUtils.equals(entity.getSczt(), "20")) {
@@ -490,6 +490,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                     zdgl.setZt("00");
                     zdgl.setZxzt("10");
                     zdglservice.update(zdgl);
+
                 }
             }
         }
@@ -819,6 +820,194 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                 GpsObdMessageBean gpsObdMessageBean = JsonUtil.toBean(obdInfo, GpsObdMessageBean.class);
                 device.setObdInfo(gpsObdMessageBean);
             }
+            list.add(websocketInfo);
+        }
+
+        apiResponse.setResult(list);
+        return apiResponse;
+    }
+
+    @Override
+    public ApiResponse<List<WebsocketInfo>> initGps() {
+        ApiResponse<List<WebsocketInfo>> apiResponse = new ApiResponse<>();
+        List<WebsocketInfo> list = new ArrayList<>();
+
+        SimpleCondition carCondition = new SimpleCondition(Cb.class);
+        SimpleCondition deviceCondition = new SimpleCondition(ClZdgl.class);
+
+        String shipnameLike = getRequestParamterAsString("shipnameLike");
+        if (StringUtils.isNotEmpty(shipnameLike)) {
+            carCondition.like(Cb.InnerColumn.shipname, shipnameLike);
+        }
+
+        List<String> filterDeviceIds = null;
+        SysYh currentUser = getCurrentUser();
+        String jgdmLike = currentUser.getJgdm() + "%";
+        carCondition.and().andLike(Cb.InnerColumn.jgdm.name(), jgdmLike);
+
+        deviceCondition.and().andLike(ClZdgl.InnerColumn.jgdm.name(), jgdmLike);
+        String mmsi = getRequestParamterAsString("mmsi");
+        if(StringUtils.isNotBlank(mmsi)){
+            carCondition.like(Cb.InnerColumn.mmsi, mmsi);
+        }
+        if (StringUtils.isNotEmpty(shipnameLike)) {
+            carCondition.like(Cb.InnerColumn.shipname, shipnameLike);
+        }
+        // 将终端编号,车辆信息缓存
+        List<Cb> carList = clclmapper.selectByExample(carCondition);
+        if (CollectionUtils.isEmpty(carList)) {
+            apiResponse.setResult(new ArrayList<>());
+            return apiResponse;
+        }
+        Map<String, String> zdbhClMap = carList.stream().filter(s -> StringUtils.isNotEmpty(s.getZdbh()))
+                .collect(Collectors.toMap(Cb::getMmsi,Cb::getZdbh));
+
+        if (StringUtils.isNotEmpty(shipnameLike)) {
+            List<String> zdbhs = carList.stream().filter(cb -> StringUtils.isNotBlank(cb.getZdbh())).map(Cb::getZdbh).collect(Collectors.toList());
+            if (filterDeviceIds == null) {
+                filterDeviceIds = zdbhs;
+            } else {
+                filterDeviceIds.retainAll(zdbhs);
+            }
+        }
+        if (filterDeviceIds != null) {
+            deviceCondition.in(ClZdgl.InnerColumn.zdbh, filterDeviceIds);
+        }
+
+        // 获取终端状态
+      /*  String zdLx = getRequestParamterAsString("zdLx");
+        if (StringUtils.isNotBlank(zdLx)) {
+            deviceCondition.eq(ClZdgl.InnerColumn.zdLx, zdLx);
+        }
+        String type = getRequestParamterAsString("type");
+        if (StringUtils.isNotEmpty(type)) {
+            deviceCondition.startWith(ClZdgl.InnerColumn.zdbh, type);
+        }
+        */
+
+        List<ClZdgl> deviceList = zdglservice.findByCondition(deviceCondition);
+
+        // 获取实时点位gps信息
+        List<String> deviceIds = deviceList.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
+        SimpleCondition gpsCondition = new SimpleCondition(ClGps.class);
+        gpsCondition.in(ClGps.InnerColumn.zdbh, deviceIds);
+        List<ClGps> gpsList = entityMapper.selectByExample(gpsCondition);
+        Map<String, ClGps> gpsMap = gpsList.stream().collect(Collectors.toMap(ClGps::getZdbh, p -> p));
+        Map<String, ClZdgl> zdglMap = deviceList.stream().collect(Collectors.toMap(ClZdgl::getZdbh, p -> p));
+        for (Cb device : carList) {
+            // 如果redis中有websocketInfo，则优先取redis中的数据
+            String key = WebsocketInfo.class.getSimpleName() + device.getZdbh();
+            Iterator<Object> keys = redis.keys(key).iterator();
+
+            //行程Redis key
+            String clxcKey = "CX," + device.getZdbh();
+            //上一次的GPS点时间
+            Date t = null;
+            try {
+                Set<Object> keyXc = redis.keys(clxcKey + "*");
+                //查询上一次记录的行程
+                if (keyXc.size() > 0) {
+                    String tmpKey = keyXc.iterator().next().toString();
+                    t = DateTime.parse(tmpKey.split(",")[2], DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+                }
+            } catch (Exception e) {
+                ClSbyxsjjl online = sbyxsjjlService.getOneForOnline(device.getZdbh());
+                t = online.getCjsj();
+
+                errorLog.error("redis.keys异常:", e);
+            }
+
+            if (keys.hasNext()) {
+
+                String json = (String) redis.boundValueOps(key).get();
+                WebsocketInfo websocketInfo = JsonUtil.toBean(json, WebsocketInfo.class);
+
+                if (zdbhClMap.containsKey(device.getZdbh())) {
+                    list.add(websocketInfo);
+                    continue;
+                } else {
+                    redis.delete(key);
+                }
+            }
+
+            WebsocketInfo websocketInfo = new WebsocketInfo();
+//            websocketInfo.setZdLx(device.getZdLx());
+            websocketInfo.setZdbh(device.getZdbh());
+            ClGps gps = gpsMap.get(device.getZdbh());
+
+
+            if (gps != null) {
+                websocketInfo.setBdjd(gps.getBdjd().toString());
+                websocketInfo.setBdwd(gps.getBdwd().toString());
+                websocketInfo.setGdjd(gps.getGgjd().toString());
+                websocketInfo.setGdwd(gps.getGgwd().toString());
+                websocketInfo.setFxj(gps.getFxj());
+                websocketInfo.setTime(gps.getCjsj());
+                websocketInfo.setSpeed(gps.getYxsd());
+
+                Set<Object> keysCx = redis.keys("CX," + gps.getZdbh() + "*");
+                //查询上一次记录的行程
+                if (keysCx.size() > 0) {
+                    String tmpKey = keysCx.iterator().next().toString();
+                    String prevTime = tmpKey.split(",")[2];
+                    DateTime startTime = DateTime.parse(prevTime, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+                    Date now = new Date();
+                    long duration = now.getTime() - startTime.toDate().getTime();
+                    websocketInfo.setDurartion(duration);
+                }
+            } else {
+                /**
+                 * 谷歌地图：39.9088596409,116.3975157338
+                 * 百度地图：39.9152108931,116.4039006839
+                 * 腾讯高德：39.9088230000,116.3974700000
+                 * 图吧地图：39.9082647400,116.3867222800
+                 * 谷歌地球：39.9074647400,116.3912822800
+                 * 北纬N39°54′26.87″ 东经E116°23′28.62″
+                 *
+                 * 靠近：中国北京市北京市东城区
+                 */
+                websocketInfo.setDefaultGps(true);
+                websocketInfo.setBdjd("116.4039006839");
+                websocketInfo.setBdwd("39.9152108931");
+                websocketInfo.setGdjd("116.3974700000");
+                websocketInfo.setGdwd("39.9088230000");
+                websocketInfo.setFxj(new BigDecimal(0));
+                websocketInfo.setTime(new Date());
+                websocketInfo.setSpeed("0");
+                websocketInfo.setDurartion(0L);
+            }
+
+
+            websocketInfo.setMmsi(device.getMmsi());
+            websocketInfo.setShipname(device.getShipname());
+            websocketInfo.setClid(device.getClId());
+            websocketInfo.setCph(device.getShipname());
+            websocketInfo.setCx(device.getCx());
+            websocketInfo.setSjxm(device.getSjxm());
+            if (StringUtils.isNotEmpty(device.getObdCode())) {
+                websocketInfo.setObdId(device.getObdCode());
+            }
+            ClZdgl zdgl = zdglMap.get(zdbhClMap.get(device.getMmsi()));
+            if(zdgl != null ){
+                if (StringUtils.equals(zdgl.getZxzt(), "20")) {
+                    websocketInfo.setZxzt("10");
+                    if (gps != null) {
+                        websocketInfo.setLxsc(nowTime(gps.getCjsj()));
+                    }
+                } else {
+                    websocketInfo.setZxzt(zdgl.getZxzt());
+                }
+            }    else{
+                websocketInfo.setZxzt("10");
+                if (gps != null) {
+                    websocketInfo.setLxsc(nowTime(gps.getCjsj()));
+                }
+            }
+            /*String obdInfo = (String) redis.boundValueOps("obdInfo_" + device.getZdbh()).get();
+            if (StringUtils.isNotBlank(obdInfo)) {
+                GpsObdMessageBean gpsObdMessageBean = JsonUtil.toBean(obdInfo, GpsObdMessageBean.class);
+                device.setObdInfo(gpsObdMessageBean);
+            }*/
             list.add(websocketInfo);
         }
 

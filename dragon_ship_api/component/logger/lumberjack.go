@@ -121,7 +121,7 @@ func (p *Logger) printWithColor(color int, m ...string) {
 		return
 	}
 	content := strings.Join(m, ",")
-	s := fmt.Sprintf("\033[%d;1m[%s] %s \033[0m\n", color, getTime(), content)
+	s := fmt.Sprintf("\033[35;0m[%s]\033[0m \033[%d;1m%s\033[0m\n", getTime(), color, content)
 	if p.option.Console {
 		log.Print(s)
 		return

@@ -1,12 +1,23 @@
 package com.ldz.biz.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.bean.ClLsGjInfo;
 import com.ldz.dao.biz.bean.CsTxTj;
 import com.ldz.dao.biz.bean.SafedrivingModel;
 import com.ldz.dao.biz.bean.gpsSJInfo;
+import com.ldz.util.commonUtil.HttpUtil;
+import com.ldz.util.exception.RuntimeCheck;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +35,8 @@ import com.ldz.util.bean.TrackPointsForReturn.Point;
 public class ClSbyxsjjlCtrl extends BaseController<ClSbyxsjjl, String> {
 	@Autowired
 	private SbyxsjjlService service;
+	@Value("${shipApi.ip}")
+	private String shipip;
 
 	@Override
 	protected BaseService<ClSbyxsjjl, String> getBaseService() {
@@ -57,6 +70,8 @@ public class ClSbyxsjjlCtrl extends BaseController<ClSbyxsjjl, String> {
 
 	}
 
+
+
 	@RequestMapping("/Safedriving")
 	public ApiResponse<List<SafedrivingModel>> getSafeDrivig(){
 		return service.getSafeDrivig();
@@ -84,7 +99,21 @@ public class ClSbyxsjjlCtrl extends BaseController<ClSbyxsjjl, String> {
 
 	}
 
-
-
+	@PostMapping("/historyTrack")
+	public ApiResponse<JSONArray> getHistoryTrack(String zdbh, String start, String end) {
+		RuntimeCheck.ifBlank(zdbh, "请选择船舶");
+		RuntimeCheck.ifBlank(start, "请选择轨迹时间");
+		RuntimeCheck.ifBlank(end, "请选择轨迹时间");
+		String url = shipip + "/v1/GetHistoryTrack";
+		Map<String,String> params = new HashMap<>();
+		params.put("shipid", zdbh);
+		params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+		params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+		String res = HttpUtil.get(url, params);
+		JSONObject object = JSON.parseObject(res);
+		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+		JSONArray array = object.getJSONArray("Result");
+		return ApiResponse.success(array);
+	}
 
 }

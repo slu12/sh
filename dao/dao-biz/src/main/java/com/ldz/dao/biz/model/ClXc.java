@@ -107,7 +107,7 @@ public class ClXc implements Serializable {
     /**
      * 实际到港时间
      */
-    private String eta;
+    private String ata;
 
     /**
      * 离港时间

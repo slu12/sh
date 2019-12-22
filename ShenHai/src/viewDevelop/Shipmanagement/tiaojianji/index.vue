@@ -22,21 +22,27 @@
       </div>
       <div class="box_col_auto">
          <Row>
-           <Col span="4">
+           <Col span="4" v-for="(item,index) in tjjList" :key="index">
                <Card>
-                 <p slot="title">条件集名称</p>
+                 <p slot="title">{{item.name}}</p>
                  <a href="#" slot="extra">
-                   公开
+                   {{item.type}}
                  </a>
                  <List border size="small">
-                   <ListItem>船籍</ListItem>
-                   <ListItem>终端状态</ListItem>
-                   <ListItem>船舶类别</ListItem>
+                   <ListItem>船籍 : {{item.json.jg}}</ListItem>
+                   <ListItem>终端状态 : {{item.json.zt}}</ListItem>
+                   <ListItem>船舶类别 : {{item.json.lx}}</ListItem>
                  </List>
                </Card>
            </Col>
          </Row>
       </div>
+      <Row class="boxMar_T box_row rowRight">
+        <Page :total=pageTotal :current=param.pageNum :page-size=param.pageSize
+              :page-size-opts=[8,10,15,20,30,40,50]
+              @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}' show-total show-elevator
+              show-sizer placement='top' @on-change='pageChange'></Page>
+      </Row>
       <component :is="compName"></component>
     </div>
 </template>
@@ -51,15 +57,45 @@
       },
       data(){
         return{
-          CJList:[],
-          compName:''
+          tjjList:[],
+          compName:'',
+          pageTotal:'',
+          param:{
+            pageSize:8,
+            pageNum:1
+          }
         }
       },
       created(){
-
+        this.getPager()
       },
-      method:{
-
+      methods:{
+          getPager(){
+            console.log(1);
+            this.$http.post('/api/cbcd/pager',this.param).then((res)=>{
+              if (res.code == 200){
+                this.pageTotal = res.page.total
+                this.tjjList = res.page.list
+                for (let i = 0;i<=this.tjjList.length;i++){
+                  this.tjjList[i].json =  JSON.parse(this.tjjList[i].json);
+                  this.tjjList[i].type = this.xsType(this.tjjList[i].type)
+                }
+              }
+            })
+          },
+          xsType(a){
+            if (a == 1){
+              return '私有'
+            }else {
+              return '公开'
+            }
+          },
+          //分页点击事件按
+          pageChange(event) {
+            var v = this
+            v.param.pageNum = event
+            this.getPager()
+          }
       }
     }
 </script>

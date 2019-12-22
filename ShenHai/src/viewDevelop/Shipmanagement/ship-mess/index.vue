@@ -1,7 +1,8 @@
 <!--车辆管理-->
 <template>
   <div class="box_col">
-    <superSearch @addEvent="AddDataList"></superSearch>
+    <superSearch @addEvent="AddDataList"
+                 @getParams="setParams"></superSearch>
     <Card class="shipMessBox">
       <div class="boxPadd_B">
         <div class="">
@@ -310,6 +311,11 @@
         v.mess = {}
         v.messType = true
         v.compName = 'newmes'
+      },
+      setParams(pms){
+        for(let it in pms){
+          console.log(it);
+        }
       },
       findMessList() {
         this.getPageData()

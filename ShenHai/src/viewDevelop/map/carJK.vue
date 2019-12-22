@@ -96,11 +96,9 @@
                 v.showCarPosition();
             },
             moveMap(){
-              console.log(this.carList,'this.carList');
               if (this.carList.length == 0)return;
                 var v = this
                 if (this.carList && this.carList.length == 1){
-                  console.log(this.carList[0],'this.carList[0]');
                   v.map.centerAndZoom(new BMap.Point(this.carList[0].lng, this.carList[0].lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
                 }
             },

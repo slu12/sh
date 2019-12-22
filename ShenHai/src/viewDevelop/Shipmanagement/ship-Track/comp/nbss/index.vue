@@ -225,7 +225,9 @@
         videoimageList: [],
         from: {
           zxzt: '',
-          con: ''
+          con: '',
+          pageSize:100,
+          pageNum:1
         },
 
       }
@@ -334,9 +336,9 @@
       },
       // 获取船舶
       getshipMess() {
-        this.$http.get('/api/cl/query', {params: {zxzt: this.from.zxzt, con: this.from.con}}).then((res) => {
+        this.$http.post('/api/cl/pager',this.from).then((res) => {
           if (res.code == 200) {
-            this.shipData = res.result
+            this.shipData = res.page.list
           }
         })
       }

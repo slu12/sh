@@ -12,7 +12,6 @@
 </template>
 
 <script>
-
   import B_myMap from '../../map/carJK.vue';
   import carInfo from './carInfo';
   import nbss from './comp/nbss'
@@ -116,14 +115,7 @@
     },
     created() {
       this.compName = this.local == 'en-US' ? 'B_myMap' : 'B_myMap'
-      this.$store.commit('setCurrentPath', [{
-        title: '首页',
-      }, {
-        title: '终端监控',
-      }, {
-        title: '后视镜监控',
-      }])
-      this.initGps()
+      // this.initGps()
     },
     mounted() {
       this.$nextTick(() => {

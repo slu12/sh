@@ -19,12 +19,24 @@
               <Input v-model="param.name"></Input>
             </FormItem>
             <FormItem label="选项">
-                <div v-for="(item,index) in  searchList" :key="index">
-                   <div>{{item.label}}</div>
-                  <RadioGroup type="button" szie="small" v-model="item.key.key">
-                    <Radio v-for="(it,index) in item.selectList" :key="index" :label="it.key" @click="getname(it.val)">{{it.val}}</Radio>
+              <div>
+                <div>{{searchList.jgdm.label}}</div>
+                <RadioGroup type="button" szie="small" v-model="searchList.jgdm.key">
+                  <Radio v-for="(it,index) in searchList.jgdm.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'jgdm')">{{it.val}}</Radio>
+                </RadioGroup>
+              </div>
+              <div>
+                   <div>{{searchList.zxzt.label}}</div>
+                  <RadioGroup type="button" szie="small" v-model="searchList.zxzt.key">
+                    <Radio v-for="(it,index) in searchList.zxzt.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'zxzt')">{{it.val}}</Radio>
                   </RadioGroup>
-                </div>
+              </div>
+              <div>
+                   <div>{{searchList.shiptype.label}}</div>
+                  <RadioGroup type="button" szie="small" v-model="searchList.shiptype.key">
+                    <Radio v-for="(it,index) in searchList.shiptype.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'shiptype')">{{it.val}}</Radio>
+                  </RadioGroup>
+              </div>
             </FormItem>
           </Form>
 
@@ -43,17 +55,17 @@
           searchList: {
             jgdm: {
               label: "所属机构：",
-              key:{},
+              key:'',
               selectList: []
             },
             zxzt: {
               label: "设备状态：",
-              key:{},
+              key:'',
               selectList: []
             },
             shiptype: {
               label: "船舶类别：",
-              key: {},
+              key: '',
               selectList: []
             }
           },
@@ -61,9 +73,12 @@
             name:'',
             type: '0',// 0 公开  1 私有
             json:{
-              jgdm:{},
-              zxzt:{},
-              shiptype:{}
+              jgdm:'',
+              jgdmname:'',
+              zxzt:'',
+              zxztname:'',
+              shiptype:'',
+              shiptypename:''
             }
           }
         }
@@ -76,9 +91,15 @@
         this.getJGList()
       },
       methods: {
-        getname(val){
-
-         },
+        getname(val,e){
+          if (e == 'shiptype'){
+            this.param.json.shiptypename = val
+          }else if (e == 'jgdm'){
+            this.param.json.jgdmname = val
+          }else {
+            this.param.json.zxztname = val
+          }
+        },
         getJGList() {//机构列表
           this.$http.get('/api/jg/query').then(res => {
             if (res.code == 200) {
@@ -99,18 +120,14 @@
           })
         },
         ok () {
-          this.param.json = {
-            jgdm:{
-              key:this.searchList.jgdm.key,
-              val:this.searchList.jgdm.val,
-            },
-            zxzt:this.searchList.zxzt.key,
-            shiptype:this.searchList.shiptype.key
-          };
+          this.param.json.zxzt = this.searchList.zxzt.key
+          this.param.json.shiptype = this.searchList.shiptype.key
+          this.param.json.jgdm = this.searchList.jgdm.key
           this.param.json = JSON.stringify(this.param.json);
           this.$http.post('/api/cbcd/save',this.param).then((res)=>{
             if (res.code == 200){
               this.$Message.success('添加成功')
+              this.$emit('getPager')
             }else {
               this.$Message.error(res.message)
             }
@@ -118,6 +135,7 @@
         },
         cancel () {
           this.$parent.compName = ''
+          this.$emit('getPager')
         }
       }
     }

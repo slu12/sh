@@ -5,10 +5,10 @@
         <div class="box_row rowRight">
           <div class="body-r-1 inputSty">
             <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
-            <Input  placeholder='请输入条件集名称' style="width: 200px"></Input>
+            <Input v-model="param.nameLike"  placeholder='请输入条件集名称' style="width: 200px"></Input>
           </div>
-          <div  style="z-index: auto">
-            <Button type="primary">
+          <div  style="z-index: auto;padding-left: 5px">
+            <Button type="primary" @click="param.pageNum =1,getPager()">
               <Icon type="md-search"></Icon>
               <!--查询-->
             </Button>
@@ -26,12 +26,13 @@
                <Card>
                  <p slot="title">{{item.name}}</p>
                  <a href="#" slot="extra">
-                   {{item.type}}
+                   <tag>{{item.type}}</tag>
+                   <Icon type="md-close" @click="delTj(item.id)"/>
                  </a>
                  <List border size="small">
-                   <ListItem>船籍 : {{item.json.jg}}</ListItem>
-                   <ListItem>终端状态 : {{item.json.zt}}</ListItem>
-                   <ListItem>船舶类别 : {{item.json.lx}}</ListItem>
+                   <ListItem>船籍 : {{item.json.jgdmname}}</ListItem>
+                   <ListItem>终端状态 : {{item.json.zxztname}}</ListItem>
+                   <ListItem>船舶类别 : {{item.json.shiptypename}}</ListItem>
                  </List>
                </Card>
            </Col>
@@ -43,7 +44,7 @@
               @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}' show-total show-elevator
               show-sizer placement='top' @on-change='pageChange'></Page>
       </Row>
-      <component :is="compName"></component>
+      <component :is="compName" @getPager="getPager"></component>
     </div>
 </template>
 
@@ -61,7 +62,8 @@
           compName:'',
           pageTotal:'',
           param:{
-            pageSize:8,
+            nameLike:'',
+            pageSize:12,
             pageNum:1
           }
         }
@@ -70,8 +72,32 @@
         this.getPager()
       },
       methods:{
+          delTj(id){
+            this.swal({
+              title:'是否确认删除?',
+              text: "Your will not be able to recover this imaginary file!",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonText: "确认",
+              cancelButtonText: "取消",
+            },function (isConfirm) {
+              if (isConfirm) {
+                this.$http.get('/api/cbcd/remove/'+id).then((res)=>{
+                  if (res.code == 200){
+                    this.$Message.success(res.message)
+                    this.getPager()
+                  }else {
+                    this.$Message.success(res.message)
+                  }
+                })
+              } else {
+
+              }
+            });
+
+          },
           getPager(){
-            console.log(1);
+            this.param.pageNum = 1
             this.$http.post('/api/cbcd/pager',this.param).then((res)=>{
               if (res.code == 200){
                 this.pageTotal = res.page.total

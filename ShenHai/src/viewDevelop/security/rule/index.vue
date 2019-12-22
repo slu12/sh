@@ -16,45 +16,18 @@
         <div class="butevent" style="z-index: auto">
           <Button type="primary">
             <Icon type="md-add"></Icon>
-            <!--查询-->
           </Button>
         </div>
       </div>
     </div>
     <div class="box_col_auto">
       <Row>
-        <Col span="8">
-          <Card style="width: 400px">
-            <p slot="title">
-              1号规则(激活)
-            </p>
-            <a href="#" slot="extra">
-              <Icon type="ios-loop-strong"></Icon>
-              关闭
-            </a>
-            <p>如果 条件1 则执行 条件2</p>
-            <p>如果 条件3 则执行 条件4</p>
-            <p>如果 条件5 则执行 条件6</p>
-            <div>
-              <Input search enter-button="备注" placeholder="Enter something..." />
-            </div>
-          </Card>
-        </Col>
-        <Col span="8">
-          <Card style="width: 400px">
-            <p slot="title">
-              1号规则(关闭)
-            </p>
-            <a href="#" slot="extra">
-              <Icon type="ios-loop-strong"></Icon>
-              激活
-            </a>
-            <p>如果 条件1 则执行 条件2</p>
-            <p>如果 条件3 则执行 条件4</p>
-            <p>如果 条件5 则执行 条件6</p>
-            <div>
-              <Input search enter-button="备注" placeholder="Enter something..." />
-            </div>
+        <Col span="6" v-for="(item,index) in data1">
+          <Card style="width: 400px;height:300px;overflow: scroll">
+            <List :header="item.mc" :footer="'输出结果 : '+item.sc" border>
+                <ListItem>{{item.sr}}</ListItem>
+                <ListItem>适用对象: &nbsp;&nbsp; <Tag color="green">{{item.dx}}</Tag></ListItem>
+            </List>
           </Card>
         </Col>
       </Row>
@@ -70,7 +43,12 @@
         name: "index",
       data(){
           return {
-
+              data1:[
+                {mc:'江船入海',sr:'1.船舶类型2.船舶坐标，以二维坐标点表示3.禁入水域范围，以二维坐标点集合表示，构成一封闭区域',sc:'提示消息。如果是江船并且当前位置在禁入水域，有报警消息。',dx:'海事'},
+                {mc:'偏离规定航线',sr:'1.船舶坐标2.航线信息',sc:'提示消息，如果偏离航线，则有报警消息。判断逻辑：根据输入的航线，系统会产生航线对应的合理航行区域，再根据船舶坐标判断该船是否在这航行区域内。',dx:'银行'},
+                {mc:'超时停泊',sr:'1.船舶坐标2.停泊时间3.误差范围',sc:'警示消息判断逻辑：如果船舶长时间在某一固定点附近（静止未动或者小范围运动），系统给出警示消息。',dx:'银行'},
+                {mc:'超速航行',sr:'1.带时间戳的船舶坐标序列2.水流速度、风速',sc:'超速提示消息判断逻辑：根据带时间戳的坐标序列，可计算出船舶一段时间内的平均速度，结合水流速度、风速等因素，判断船舶是否超速。',dx:'船东'},
+              ],
           }
       },
       mounted() {

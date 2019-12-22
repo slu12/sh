@@ -3,38 +3,30 @@
       <div class="box_row rowBetween colItemCenter boxMar_B">
         <pager-tit></pager-tit>
       </div>
-      <div class="box_col_auto">
-        <Row style="padding: 20px 0">
-          <Col style="text-align:center">
-            <Input v-model="param.mmsi" placeholder='请输入 mmsi/视频id/设备号 查询' style="width: 400px"
-                   @on-keyup.enter="getvideo()"></Input>
-            <Button type="primary" @click="getvideo()">
-              <Icon type="md-search"></Icon>
-              <!--查询-->
-            </Button>
-          </Col>
-        </Row>
-
+      <div class="box_col_auto rowCenter">
+          <Row style="padding: 20px 0;text-align:center">
+            <Col style="margin: 0 300px">
+              <Input v-model="param.mmsi" search @on-search="getvideo()"
+                     enter-button="搜索" placeholder="请输入 mmsi/视频id/设备号 查询" />
+            </Col>
+          </Row>
 
         <div style="text-align: center;margin: 0 200px">
           <Row v-show="videoList.length>0">
-            <Col span="8" v-for="(item,index) in videoList">
-              <div style="text-align: center">
+            <Col span="8" v-for="(item,index) in videoList" style="height: 250px;">
                 <Card>
-                  <h5>{{index+1}}号</h5>
+                  <h5>{{index+1}}号通道</h5>
                   <video
-                    data-setup='{"fluid":true}'
+                    data-setup='{"fluid":true,"aspectRatio":"16:9"}'
                     :poster="videoimageList[index]"
                     :id="'my-video' + index "
-                    class="video-js vjs-default-skin vjs-big-play-centered"
+                    class="video-js vjs-default-skin"
                     controls preload="auto"
                     @click="playVideo('my-video' + index)"
-                    style="object-fit: fill">
+                    style="object-fit: fill;height: 200px;width: 100%">
                     <source :src="item" type="application/x-mpegURL">
                   </video>
                 </Card>
-
-              </div>
             </Col>
           </Row>
           <Row v-show="videoList.length<=0" >
@@ -82,9 +74,11 @@
         })
       },
       getvideo(){
-        for (let a = 0;a<9;a++){
-          videojs('my-video'+a).dispose();
-        }
+        // if (this.videoList.length>=0){
+        //   for (let a = 0;a<9;a++){
+        //     videojs('my-video'+a).dispose();
+        //   }
+        // }
         this.$http.post('/api/cl/getAllChnH5',{mmsi:this.param.mmsi}).then((res)=>{
           if (res.code == 200){
             if (!res.result || res.result.length<1){

@@ -163,11 +163,7 @@
       let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
       this.searchList.zxzt.selectList = snztList
       this.getJGList()
-
-      console.log('shuju');
-      console.log('字典数据', cblxList);
-    }
-    ,
+    },
     methods: {
       getJGList() {//机构列表
         this.$http.get('/api/jg/query').then(res => {

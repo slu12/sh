@@ -160,7 +160,9 @@
         data1: [],
         //收索
         param: {
-          cphLike: '',
+          jgdm:'',
+          zxzt:'',
+          shiptype:'',
           pageNum: 1,
           pageSize: 8
         },
@@ -171,6 +173,7 @@
     created() {
       this.SpinShow = false;
       this.getPageData()
+
       this.getCxDict();
       this.getClztDict();
     },
@@ -314,8 +317,13 @@
       },
       setParams(pms){
         for(let it in pms){
-          console.log(it);
+          if(pms[it].length > 0){
+            this.param[it] = pms[it].join(',')
+          }else {
+            this.param[it] = ''
+          }
         }
+        this.getPageData()
       },
       findMessList() {
         this.getPageData()

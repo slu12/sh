@@ -1,7 +1,8 @@
 <!--车辆管理-->
 <template>
   <div class="box_col">
-    <superSearch @addEvent="AddDataList"></superSearch>
+    <superSearch @addEvent="AddDataList"
+                 @getParams="setParams"></superSearch>
     <Card class="shipMessBox">
       <div class="boxPadd_B">
         <div class="">
@@ -159,7 +160,9 @@
         data1: [],
         //收索
         param: {
-          cphLike: '',
+          jgdm:'',
+          zxzt:'',
+          shiptype:'',
           pageNum: 1,
           pageSize: 8
         },
@@ -170,6 +173,7 @@
     created() {
       this.SpinShow = false;
       this.getPageData()
+
       this.getCxDict();
       this.getClztDict();
     },
@@ -310,6 +314,16 @@
         v.mess = {}
         v.messType = true
         v.compName = 'newmes'
+      },
+      setParams(pms){
+        for(let it in pms){
+          if(pms[it].length > 0){
+            this.param[it] = pms[it].join(',')
+          }else {
+            this.param[it] = ''
+          }
+        }
+        this.getPageData()
       },
       findMessList() {
         this.getPageData()

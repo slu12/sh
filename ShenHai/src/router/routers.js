@@ -155,14 +155,23 @@ export default [
         component: () => import('@/viewDevelop/system/system-dictionary')
       },
       {
-        path: 'system-ITSM',
-        name: 'system-ITSM',
+        path: 'terminal-car',
+        name: 'terminal-car',
         meta: {
-          icon: 'md-contacts',
-          title: '服务管理',
+          icon: 'ios-cog',
+          title: '北斗终端管理',
         },
-        component: () => import('@/viewDevelop/system/system-ITSM')
+        component: () => import('@/viewDevelop/terminal/terminal-car')
       },
+      // {
+      //   path: 'system-ITSM',
+      //   name: 'system-ITSM',
+      //   meta: {
+      //     icon: 'md-contacts',
+      //     title: '服务管理',
+      //   },
+      //   component: () => import('@/viewDevelop/system/system-ITSM')
+      // },
       // {
       //   path: 'system-function',
       //   icon: 'android-clipboard',
@@ -170,15 +179,15 @@ export default [
       //   title: '功能管理',
       //   component: () => import('@/viewDevelop/system/system-function')
       // },
-      {
-        path: 'system-daily',
-        name: 'system-daily',
-        meta: {
-          icon: 'md-contacts',
-          title: '日志管理',
-        },
-        component: () => import('@/viewDevelop/system/system-daily')
-      },
+      // {
+      //   path: 'system-daily',
+      //   name: 'system-daily',
+      //   meta: {
+      //     icon: 'md-contacts',
+      //     title: '日志管理',
+      //   },
+      //   component: () => import('@/viewDevelop/system/system-daily')
+      // },
       // {
       //   path: 'system-suggestions',
       //   icon: 'android-clipboard',
@@ -209,52 +218,44 @@ export default [
       // }
     ]
   },
-  {
-    path: '/terminal',
-    name: 'terminal',
-    meta: {
-      icon: 'ios-cog',
-      title: '终端管理',
-      showAlways:true
-    },
-    component: Main,
-    children:[
-      {
-        path: 'terminal-car',
-        name: 'terminal-car',
-        meta: {
-          icon: 'ios-cog',
-          title: '北斗终端管理',
-        },
-        component: () => import('@/viewDevelop/terminal/terminal-car')
-      },
-      // {
-      //   path: 'terminal_OBD',
-      //   name: 'terminal_OBD',
-      //   meta: {
-      //     icon: 'ios-cog',
-      //     title: '终端拔出管理',
-      //   },
-      //   component: () => import('@/viewDevelop/terminal/terminal_OBD')
-      // },
-      // {
-      //   path: 'terminal_GPS',
-      //   name: 'terminal_GPS',
-      //   meta: {
-      //     icon: 'ios-cog',
-      //     title: '终端数据库对接',
-      //   },
-      //   component: () => import('@/viewDevelop/terminal/terminal_GPS')
-      // },
-      // {
-      //   path: 'terminal-station',
-      //   icon: 'android-clipboard',
-      //   name: 'terminal-station',
-      //   title: '智能站牌',
-      //   component: () => import('@/viewDevelop/terminal/terminal-station')
-      // },
-    ]
-  },
+  // {
+  //   path: '/terminal',
+  //   name: 'terminal',
+  //   meta: {
+  //     icon: 'ios-cog',
+  //     title: '终端管理',
+  //     showAlways:true
+  //   },
+  //   component: Main,
+  //   children:[
+  //
+  //     // {
+  //     //   path: 'terminal_OBD',
+  //     //   name: 'terminal_OBD',
+  //     //   meta: {
+  //     //     icon: 'ios-cog',
+  //     //     title: '终端拔出管理',
+  //     //   },
+  //     //   component: () => import('@/viewDevelop/terminal/terminal_OBD')
+  //     // },
+  //     // {
+  //     //   path: 'terminal_GPS',
+  //     //   name: 'terminal_GPS',
+  //     //   meta: {
+  //     //     icon: 'ios-cog',
+  //     //     title: '终端数据库对接',
+  //     //   },
+  //     //   component: () => import('@/viewDevelop/terminal/terminal_GPS')
+  //     // },
+  //     // {
+  //     //   path: 'terminal-station',
+  //     //   icon: 'android-clipboard',
+  //     //   name: 'terminal-station',
+  //     //   title: '智能站牌',
+  //     //   component: () => import('@/viewDevelop/terminal/terminal-station')
+  //     // },
+  //   ]
+  // },
   {
     path: '/Shipmanagement',
     name: 'Shipmanagement',
@@ -283,6 +284,16 @@ export default [
         component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
       },
       {
+        path: 'watch-video',
+        name: 'WATCH_VIDEO',
+        meta: {
+          icon: 'ios-cog',
+          title: '视频查看',
+          hideInMenu:true
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/watchVideo')
+      },
+      {
         path: 'ship-trajectory',
         name: 'ship-trajectory',
         meta: {
@@ -300,24 +311,24 @@ export default [
         },
         component: () => import('@/viewDevelop/Shipmanagement/ship-Video')
       },
-      {
-        path: 'ship-team',
-        name: 'ship-team',
-        meta: {
-          icon: 'ios-cog',
-          title: '船队管理',
-        },
-        component: () => import('@/viewDevelop/Shipmanagement/ship-team')
-      },
-      {
-        path: 'ship-certificate',
-        name: 'ship-certificate',
-        meta: {
-          icon: 'ios-cog',
-          title: '证书管理',
-        },
-        component: () => import('@/viewDevelop/Shipmanagement/ship-certificate')
-      },
+      // {
+      //   path: 'ship-team',
+      //   name: 'ship-team',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '船队管理',
+      //   },
+      //   component: () => import('@/viewDevelop/Shipmanagement/ship-team')
+      // },
+      // {
+      //   path: 'ship-certificate',
+      //   name: 'ship-certificate',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '证书管理',
+      //   },
+      //   component: () => import('@/viewDevelop/Shipmanagement/ship-certificate')
+      // },
       {
         path: 'ElectronicFence',
         name: 'ElectronicFence',
@@ -328,62 +339,72 @@ export default [
         component: () => import('@/viewDevelop/Shipmanagement/ElectronicFence')
       },
       {
-        path: 'ship-Up',
-        name: 'ship-Up',
+        path: 'tiaojianji',
+        name: 'tiaojianji',
         meta: {
           icon: 'ios-cog',
-          title: '船舶数据上传',
+          title: '条件集管理',
         },
-        component: () => import('@/viewDevelop/Shipmanagement/ship-Up')
-      }
+        component: () => import('@/viewDevelop/Shipmanagement/tiaojianji')
+      },
+      // {
+      //   path: 'ship-Up',
+      //   name: 'ship-Up',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '船舶数据上传',
+      //   },
+      //   component: () => import('@/viewDevelop/Shipmanagement/ship-Up')
+      // }
 
     ]
   },
-  {
-    path: '/Personnel',
-    name: 'Personnel',
-    meta: {
-      icon: 'ios-cog',
-      title: '人事管理',
-    },
-    component: Main,
-    children:[
-      {
-        path: '/boatman',
-        name: 'boatman',
-        meta: {
-          icon: 'ios-cog',
-          title: '船员管理',
-        },
-        component: () => import('@/viewDevelop/Personnel/boatman')
-      },
-      {
-        path: '/Ship-Manning',
-        name: 'Ship-Manning',
-        meta: {
-          icon: 'ios-cog',
-          title: '船舶配员',
-        },
-        component: () => import('@/viewDevelop/Personnel/Ship-Manning')
-      },
-      {
-        path: '/certificate',
-        name: 'certificate',
-        meta: {
-          icon: 'ios-cog',
-          title: '船员证书',
-        },
-        component: () => import('@/viewDevelop/Personnel/certificate')
-      },
-    ]
-
-  },
+  // {
+  //   path: '/Personnel',
+  //   name: 'Personnel',
+  //   meta: {
+  //     icon: 'ios-cog',
+  //     title: '人事管理',
+  //   },
+  //   component: Main,
+  //   children:[
+  //     {
+  //       path: '/boatman',
+  //       name: 'boatman',
+  //       meta: {
+  //         icon: 'ios-cog',
+  //         title: '船员管理',
+  //       },
+  //       component: () => import('@/viewDevelop/Personnel/boatman')
+  //     },
+  //     {
+  //       path: '/Ship-Manning',
+  //       name: 'Ship-Manning',
+  //       meta: {
+  //         icon: 'ios-cog',
+  //         title: '船舶配员',
+  //       },
+  //       component: () => import('@/viewDevelop/Personnel/Ship-Manning')
+  //     },
+  //     {
+  //       path: '/certificate',
+  //       name: 'certificate',
+  //       meta: {
+  //         icon: 'ios-cog',
+  //         title: '船员证书',
+  //       },
+  //       component: () => import('@/viewDevelop/Personnel/certificate')
+  //     },
+  //   ]
+  //
+  // },
   {
     path: '/security',
     name: 'security',
     meta: {
       icon: 'ios-cog',
       title: '安全管理',
+      showAlways:true
     },
     component: Main,
     children:[

@@ -1,12 +1,12 @@
 <template>
 	<div>
 		<Modal
-		    v-model="showModal"
+      :v-model="showModal"
 			height="600"
 			width="900"
 		    :closable='false'
 		    :mask-closable="false"
-		    :title='operate+$t("USER")'>
+		    :title='operate+"用户"'>
     		<Form
     			ref="addmess"
     			:model="addmess"
@@ -90,7 +90,7 @@
 		data(){
 			return {
 				showModal:true,
-				operate:this.$t("ADD "),
+				operate:'新增',
 				//新增数据
             	addmess: {
                     zh: '',
@@ -106,13 +106,13 @@
                 showPsd:false,
                 ruleInline: {
                   zh: [
-                      { required: true, message: this.$t("USER_NAME"), trigger: 'blur' }
+                      { required: true, message: '请输入用户账号', trigger: 'blur' }
                   ],
                   xm: [
-                      { required: true, message: this.$t("NAME_TAB"), trigger: 'blur' }
+                      { required: true, message: '请输入姓名', trigger: 'blur' }
                   ],
                   sjh:[
-                      { required: true,message: this.$t("PHONE_NUMBER"), trigger: 'blur' }
+                      { required: true,message: "请输入手机号码", trigger: 'blur' }
                   ],
               	},
                 yhlxDict:[],
@@ -139,7 +139,7 @@
                 this.showPsd = true;
             }else{
                 this.addmess = this.usermes
-                this.operate = this.$t("EDIT")
+                this.operate = '修改'
                 this.getOrgPath(this.addmess.jgdm);
 			}
 			this.yhlxDict = this.$parent.yhlxDict
@@ -174,11 +174,11 @@
                         v.$Message.error(res.message);
                     }
                 }).catch((error) =>{
-                    v.$Message.error(this.$t("ERROR_ALERM"));
+                    v.$Message.error('出错了');
                 })
 			},
 			fullcal(){
-				log(this.$t("INFORMATION"),this.usermes)
+
 			},
 			colse(){
 				var v = this
@@ -193,29 +193,29 @@
                     	if(v.usermesType){
                     		v.$http.post(this.apis.USER.ADD,v.addmess).then((res) =>{
 								if(res.code===200){
-			                    	v.$Message.success(this.$t("ADD_USER_SUCCESS"));
+			                    	v.$Message.success('用户注册成功');
 									v.$emit('listF',res)
 								}else{
                                     v.$Message.error(res.message);
 								}
 							}).catch((error) =>{
-								v.$Message.error(this.$t("ERROR_ALERM"));
+								v.$Message.error('出错了');
 							})
                     	}else{
                     	    delete v.addmess.mm;
                     		v.$http.post(this.apis.USER.CHANGE,v.addmess).then((res) =>{
 								if(res.code===200){
-									v.$Message.success(this.$t("MODIFY_USER_SUCCESS"));
+									v.$Message.success("用户修改成功");
 									v.$emit('listF',res)
 								}else{
                                     v.$Message.error(res.message);
 								}
 							}).catch((error) =>{
-								v.$Message.error(this.$t("ERROR_ALERM"));
+								v.$Message.error('出错了');
 							})
                     	}
                     } else {
-                        v.$Message.error(this.$t("WRITE_INFOR"));
+                        v.$Message.error('请认真填写用户信息');
                     }
                 })
             },

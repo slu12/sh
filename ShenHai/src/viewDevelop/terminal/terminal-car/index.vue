@@ -179,7 +179,6 @@
                     },
                     {
                         title: '到期时间',
-                          tit:"EXPIRATION_DATE",
                         align: 'center',
                         key: 'zdJssj',
                         minWidth: 120,
@@ -209,7 +208,6 @@
                     },
                     {
                         title: '操作',
-                          tit:"OPERATION",
                         align: 'center',
                         type: 'action',
                         minWidth: 180,
@@ -220,7 +218,7 @@
                                     {
                                         props: {
                                             placement: 'top',
-                                            content:this.$t("EQUIPMENT_UPGRADE"),
+                                            content:'设备升级',
                                             transfer: true
                                         },
                                     },
@@ -250,7 +248,7 @@
                                     {
                                         props: {
                                             placement: 'top',
-                                            content: this.$t("INTERFACE_ADDRESS"),
+                                            content: '设置接口地址',
                                             transfer: true
                                         },
                                     },
@@ -274,31 +272,12 @@
                                         }),
                                     ]
                                 ),
-                                h('Tooltip', {
-                                    props: {content: this.$t("SERVICE_RENEWAL"), placement: 'left', transfer: true},
-                                    style: {marginRight: '8px'}
-                                }, [
-                                    h('Button', {
-                                        props: {
-                                            shape: "circle",
-                                            type: 'info',
-                                            size: 'small',
-                                            disabled: params.row.fwnx == '#' ? true : false
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.choosedRow = params.row
-                                                this.componentName = 'zdxq'
-                                            }
-                                        }
-                                    }, '续    ')
-                                ]),
                                 h('Tooltip',
                                     {
                                         props: {
                                             placement: 'top',
                                             transfer: true,
-                                            content: this.$t("TERMINAL_DEL"),
+                                            content: '删除',
                                         },
                                     },
                                     [

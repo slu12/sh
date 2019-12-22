@@ -7,6 +7,7 @@ package genid
 import (
 	"dragon_ship_api/component/logs"
 	"github.com/zheng-ji/goSnowFlake"
+	"strconv"
 )
 
 var worker *goSnowFlake.IdWorker
@@ -21,4 +22,8 @@ func NextId() int64 {
 		return 0
 	}
 	return id
+}
+func NextIdString() string {
+	id := NextId()
+	return strconv.FormatInt(id, 10)
 }

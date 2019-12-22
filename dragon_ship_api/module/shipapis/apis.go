@@ -68,10 +68,12 @@ func getListResult(getUrl string) (*ListResult, error) {
 	//}
 	return &res, nil
 }
-func QueryShip(term string) (*ApiResult, error) {
+func QueryShip(m map[string]string) (*ApiResult, error) {
 	token := getToken()
 	var p = url.Values{}
-	p.Add("term", term)
+	for k, v := range m {
+		p.Add(k, v)
+	}
 	p.Add("key", token)
 	return getApiResult(getShipIdUrl + p.Encode())
 }
@@ -108,6 +110,7 @@ func GetShipHistoryTrack(shipid, startUtcTime, endUtcTime string) (*ListResult, 
 	if err != nil {
 		return nil, err
 	}
+
 	for k, _ := range list.Result {
 		v := list.Result[k]
 		if v["latitude"] == nil || v["longitude"] == nil {

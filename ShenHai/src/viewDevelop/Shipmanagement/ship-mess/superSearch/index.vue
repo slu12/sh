@@ -1,8 +1,8 @@
 <template>
   <div class="superSearch">
     <!--<i-switch size="large" v-model="checkbox">-->
-      <!--<span slot="open">多选</span>-->
-      <!--<span slot="close">单选</span>-->
+    <!--<span slot="open">多选</span>-->
+    <!--<span slot="close">单选</span>-->
     <!--</i-switch>-->
     <div class="JGline box_row colItemCenterc">
       <div class="JGlabel">
@@ -49,9 +49,10 @@
 
 <script>
   import searchGroup from './comp/searchGroup'
+
   export default {
     name: "index",
-    components:{searchGroup},
+    components: {searchGroup},
     props: {
       checkbox: {
         type: Boolean,
@@ -59,111 +60,135 @@
           return false
         }
       },
-      searchList: {
-        type: Object,
-        default: () => {
-          return {
-            type: {
-              label: "品类",
-              selectList: [
-                {
-                  sel: false,
-                  key: '001',
-                  val: '华为'
-                },
-                {
-                  sel: false,
-                  key: '002',
-                  val: 'apple'
-                },
-                {
-                  sel: false,
-                  key: '003',
-                  val: 'vivo'
-                }
-              ]
-            },
-            mem: {
-              label: "内存",
-              key: 'mem',
-              selectList: [
-                {
-                  sel: false,
-                  key: '0001',
-                  val: '64G'
-                },
-                {
-                  sel: false,
-                  key: '0002',
-                  val: '128G'
-                },
-                {
-                  sel: false,
-                  key: '0003',
-                  val: '256G'
-                }
-              ]
-            }
-          }
-          // return [
-          //   {
-          //     label: "品类",
-          //     key:'type',
-          //     selectList: [
-          //       {
-          //         sel:false,
-          //         key: '001',
-          //         val: '华为'
-          //       },
-          //       {
-          //         sel:false,
-          //         key: '002',
-          //         val: 'apple'
-          //       },
-          //       {
-          //         sel:false,
-          //         key: '003',
-          //         val: 'vivo'
-          //       }
-          //     ]
-          //   },
-          //   {
-          //     label: "内存",
-          //     key:'mem',
-          //     selectList: [
-          //       {
-          //         sel:false,
-          //         key: '0001',
-          //         val: '64G'
-          //       },
-          //       {
-          //         sel:false,
-          //         key: '0002',
-          //         val: '128G'
-          //       },
-          //       {
-          //         sel:false,
-          //         key: '0003',
-          //         val: '256G'
-          //       }
-          //     ]
-          //   }
-          // ]
-        }
-      }
+      // searchList: {
+      //   type: Object,
+      //   default: () => {
+      //     return {
+      //       jg: {
+      //         label: "所属机构：",
+      //         selectList: [
+      //           {
+      //             sel: false,
+      //             key: '001',
+      //             val: '华为'
+      //           },
+      //           {
+      //             sel: false,
+      //             key: '002',
+      //             val: 'apple'
+      //           },
+      //           {
+      //             sel: false,
+      //             key: '003',
+      //             val: 'vivo'
+      //           }
+      //         ]
+      //       },
+      //       shzt: {
+      //         label: "设备状态：",
+      //         key: 'mem',
+      //         selectList: [
+      //           {
+      //             sel: false,
+      //             key: '0001',
+      //             val: '64G'
+      //           },
+      //           {
+      //             sel: false,
+      //             key: '0002',
+      //             val: '128G'
+      //           },
+      //           {
+      //             sel: false,
+      //             key: '0003',
+      //             val: '256G'
+      //           }
+      //         ]
+      //       },
+      //       cblb: {
+      //         label: "船舶类别：",
+      //         key: 'mem',
+      //         selectList: [
+      //           // {
+      //           //   sel: false,
+      //           //   key: '0001',
+      //           //   val: '64G'
+      //           // },
+      //           // {
+      //           //   sel: false,
+      //           //   key: '0002',
+      //           //   val: '128G'
+      //           // },
+      //           // {
+      //           //   sel: false,
+      //           //   key: '0003',
+      //           //   val: '256G'
+      //           // }
+      //         ]
+      //       }
+      //     }
+      //   }
+      // }
     },
     data() {
       return {
-
-        selList: {}
+        selList: {},
+        searchList: {
+          jgdm: {
+            label: "所属机构：",
+            selectList: [
+              {
+                sel: false,
+                key: '001',
+                val: '华为'
+              }
+            ]
+          },
+          zxzt: {
+            label: "设备状态：",
+            key: 'mem',
+            selectList: []
+          },
+          shiptype: {
+            label: "船舶类别：",
+            key: 'mem',
+            selectList: []
+          }
+        }
       }
     },
     created() {
+      let cblxList = this.dictUtil.getByCode(this, 'CBLX')
+      this.searchList.shiptype.selectList = cblxList
+      let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
+      this.searchList.zxzt.selectList = snztList
+      this.getJGList()
     },
     methods: {
-      AddDataList(){
-        this.$emit('addEvent')
+      getJGList() {//机构列表
+        this.$http.get('/api/jg/query').then(res => {
+          if (res.code == 200) {
+            let jgList = []
+            res.result.forEach((it, index) => {
+              let a = {}
+              a.sel = false;
+              a.key = it.jgdm;
+              a.val = it.jgmc
+              jgList.push(a)
+
+              if(index == res.result.length-1){
+                this.searchList.jgdm.selectList = jgList
+              }
+            })
+          }
+        }).catch(err => {
+        })
       },
+
+      AddDataList() {
+        this.$emit('addEvent')
+      }
+      ,
       selItem(line, item) {//选择项操作
         if (this.checkbox) {//每一项单选
           item.sel = true
@@ -178,22 +203,25 @@
         }
 
         this.setCallBackSel()
-      },
-      remove(line,item){
+      }
+      ,
+      remove(line, item) {
         item.sel = false
-      },
-      setCallBackSel(){
+        this.setCallBackSel()
+      }
+      ,
+      setCallBackSel() {
         this.selList = {}
-        for (let key in this.searchList){
-          console.log(key);
+        for (let key in this.searchList) {
           this.selList[key] = []
-
-          this.searchList[key].selectList.forEach((it,index)=>{
-            if(it.sel){
+          this.searchList[key].selectList.forEach((it, index) => {
+            if (it.sel) {
               this.selList[key].push(it.key)
             }
           })
         }
+
+        this.$emit('getParams',this.selList)
       }
     }
   }

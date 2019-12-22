@@ -21,35 +21,26 @@
 </style>
 <template>
   <div class="box-col">
-
-    <div class="tit" v-show="!RootShow">
-      <Row class="margin-top-10" style='background-color: #fff;position: relative;'>
-    			<span class="tabPageTit">
-    				<Icon type="ios-paper" size='30' color='#fff'></Icon>
-    			</span>
-        <div style="height: 45px;line-height: 45px;">
-          <div class="margin-top-10 box-row">
-            <div class="titmess">
-              <span class="titmess">{{'$t("ELECTRONIC_FENCE")'}}</span>
-            </div>
-            <div class="body-r-1 inputSty">
-              <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
-              <Input v-model="param.cphLike" placeholder='请输入船舶mmsi号查询' style="width: 200px"
-                     @on-keyup.enter="findMessList()"></Input>
-            </div>
-            <div class="butevent">
-              <Button type="success" @click="findList">
-                <Icon type="md-search"></Icon>
-                <!--查询-->
-              </Button>
-              <Button type="primary" @click="RootShow = !RootShow">
-                <Icon type="md-add"></Icon>
-              </Button>
-            </div>
-          </div>
+    <div class="box_row rowBetween colItemCenter boxMar_B"  v-show="!RootShow">
+      <pager-tit></pager-tit>
+      <div class="box_row rowRight">
+        <div class="body-r-1 inputSty">
+          <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
+          <Input v-model="param.cphLike" placeholder='请输入船舶mmsi号查询' style="width: 200px"
+                 @on-keyup.enter="findMessList()"></Input>
         </div>
-      </Row>
+        <div class="butevent">
+          <Button type="success" @click="findList">
+            <Icon type="md-search"></Icon>
+            <!--查询-->
+          </Button>
+          <Button type="primary" @click="AddRali">
+            <Icon type="md-add"></Icon>
+          </Button>
+        </div>
+      </div>
     </div>
+
     <div class="body" v-show="!RootShow">
       <Table ref="table"
              :height="tabHeight"
@@ -91,33 +82,40 @@
                        placeholder='请输入电子围栏名称'
                        style="width: 200px"></Input>
               </FormItem>
+              <FormItem label='MMSI' prop="mmsi">
+                <Input type="text"
+                       v-model="mmsi"
+                       size="large"
+                       placeholder='请输入MMSI'
+                       style="width: 200px"></Input>
+              </FormItem>
               <Button type="success"
                       size="large"
                       style="margin: 0 8px;"
                       @click="finish">完成
               </Button>
-              <Button type="primary" size="large" @click="AddRali" style="color: #949494">
+              <Button type="primary" size="large" @click="cancelRali" style="">
                 取消
               </Button>
             </Form>
           </div>
         </div>
         <div class="body">
-          <div class="box-row" style="height: 100%;">
-            <div class="carlist carlistBor" style="width: 180px;height: 100%;">
-              <div class="box">
-                <div class="tit">
-                  <Input value="" placeholder="请输入车辆信息..." size="small"
-                         style="width: 100%"></Input>
-                </div>
-                <div class="body">
-                  <Tree :data="data1" ref="tree"
-                        show-checkbox
-                        @on-check-change='checkClick'
-                        @on-select-change='treeClick'></Tree>
-                </div>
-              </div>
-            </div>
+          <div class="box-row" style="height: 700px;">
+<!--            <div class="carlist carlistBor" style="width: 180px;height: 100%;">-->
+<!--              <div class="box">-->
+<!--                <div class="tit">-->
+<!--                  <Input value="" placeholder="请输入船舶信息..." size="small"-->
+<!--                         style="width: 100%"></Input>-->
+<!--                </div>-->
+<!--                <div class="body">-->
+<!--                  <Tree :data="data1" ref="tree"-->
+<!--                        show-checkbox-->
+<!--                        @on-check-change='checkClick'-->
+<!--                        @on-select-change='treeClick'></Tree>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
             <div class="body-F carlistBor" style="position: relative;height: 100%;">
               <my-map ref='maps' :mapDot="mapDot" @choosePoint="choosePoint"></my-map>
             </div>
@@ -126,6 +124,7 @@
       </div>
     </div>
     <component
+      ref="comp"
       :is="componentName"
       :mess="mess"></component>
   </div>
@@ -134,7 +133,6 @@
 <script>
   import myMap from '../../map/mapBK.vue'
   import i18nTabTit from '@/mixins/i18nTabTit'
-
   import mixins from '@/mixins'
   import formData from './comp/formData'
   import bkShow from '../vehicle-management/comp/BKshow'
@@ -185,7 +183,7 @@
             align: 'center'
           },
           {
-            title: '车牌号',
+            title: 'MMSI',
             tit:"CAR_NUM_TAB",
             align: 'center',
             key: 'cph'
@@ -223,8 +221,8 @@
                   },
                   on: {
                     click: () => {
-                      this.componentName = 'bkShow'
                       this.mess = params.row
+                      this.componentName = 'bkShow'
                     }
                   }
                 }),
@@ -291,7 +289,9 @@
           "expand": true,
           "title": "校巴"
         }],
-        carIds: ''
+        carIds: '',
+        mmsi: '',
+        wlid: ''
       };
     },
     computed: {},
@@ -301,14 +301,7 @@
       },
     },
     created() {
-      this.$store.commit('setCurrentPath', [{
-        title: '首页',
-      }, {
-        title: '车辆管理',
-      }, {
-        title: '电子围栏',
-      }])
-      this.tabHeight = this.getWindowHeight() - 212
+      this.tabHeight = this.getWindowHeight() - 240
       this.getCarTree()
       this.findMessList();
     },
@@ -333,10 +326,14 @@
         for (let r of points) {
           this.param.dlxxzb += r.lng + "," + r.lat + ";";
         }
-        log(this.param.dlxxzb);
+        console.log(this.param.dlxxzb);
       },
       //电子围栏
+      cancelRali() {
+        this.RootShow = !this.RootShow
+      },
       AddRali() {
+        this.$refs.maps.bk();
         this.RootShow = !this.RootShow
       },
       //树多选框
@@ -371,26 +368,29 @@
         }
       },
       save() {
-        var v = this
-        this.$refs['param'].validate((valid) => {
-          if (valid) {
-            this.getChoosedIds();
-            this.$http.post(this.apis.DZWL.setCarsDzwl, {
-              wlid: this.fanceId,
-              carIds: this.carIds
-            }).then((res) => {
-              if (res.code === 200) {
-                this.RootShow = !this.RootShow
-                this.findMessList();
-              } else {
-                this.$Message.error(res.message);
-              }
-              v.SpinShow = false;
-            })
+        console.log('savedz');
+        this.$http.post(this.apis.DZWL.setCarsDzwl, {
+          wlid: this.fanceId,
+          // carIds: this.carIds
+          mmsi: this.mmsi
+        }).then((res) => {
+          if (res.code === 200) {
+            this.RootShow = !this.RootShow
+            this.findMessList();
           } else {
-            v.$Message.error('请认真填写信息!');
+            this.$Message.error(res.message);
           }
+          v.SpinShow = false;
         })
+        // var v = this
+        // this.$refs['param'].validate((valid) => {
+        //   if (valid) {
+        //     this.getChoosedIds();
+        //
+        //   } else {
+        //     v.$Message.error('请认真填写信息!');
+        //   }
+        // })
       },
       saveDzwl() {
         var v = this
@@ -421,10 +421,12 @@
         var v = this
         delete this.param.dlxxzb;
         delete this.param.wlmc;
-        this.$http.get('', {params: v.param}).then((res) => {
-          v.data9 = res.page.list
-          v.pageTotal = res.page.total
-          v.SpinShow = false;
+        this.$http.get(this.apis.DZWL.QUERY, {params: v.param}).then((res) => {
+          if (res.code == 200){
+            v.data9 = res.page.list
+            v.pageTotal = res.page.total
+            v.SpinShow = false;
+          }
         })
       },
       pageChange(event) {

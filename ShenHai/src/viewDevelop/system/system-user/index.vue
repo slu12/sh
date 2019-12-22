@@ -149,8 +149,8 @@
                   },
                   on: {
                     click: () => {
-                      this.userMesType = false
-                      this.usermes = params.row
+                      this.userMesType = false;
+                      this.usermes = params.row;
                       this.compName = 'newmess'
                     }
                   }

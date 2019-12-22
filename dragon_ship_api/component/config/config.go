@@ -26,6 +26,7 @@ type Log struct {
 	RotateCron string
 	MaxAge     int
 	MaxSize    int
+	Console    bool
 }
 
 type Cron struct {

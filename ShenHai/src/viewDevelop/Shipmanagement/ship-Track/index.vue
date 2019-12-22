@@ -1,19 +1,12 @@
-<style lang="less">
-  @import "../../../styles/common.less";
-</style>
-<style>
-  .choosed {
-    background-color: #eee;
-  }
-</style>
 <template>
-  <div class="box-row">
-    <div class="body-F" style="height:100%;">
-      <!--<my-map ref="map" @codeEvent="codeEvent"></my-map>-->
-      <component ref="map" :is="compName"></component>
-    </div>
-    <div class="box-row-z" style="float: right">
-      <nbss @reflh="rowClick"></nbss>
+  <div class="box_col" style="flex: 1;background-color: #F5CBD1">
+    <div class="box_row" style="height: 100%">
+      <div class="box_row_100">
+        <component ref="map" :is="compName"></component>
+      </div>
+      <template>
+        <nbss @reflh="rowClick"></nbss>
+      </template>
     </div>
   </div>
 </template>
@@ -22,12 +15,13 @@
 
   import B_myMap from '../../map/carJK.vue';
   import carInfo from './carInfo';
-  import nbss from '../../components/Nbss'
+  import nbss from './comp/nbss'
 
   export default {
     name: 'VehicleMonitoring',
     components: {
-      carInfo, B_myMap,nbss
+      carInfo, B_myMap,
+      nbss
     },
     computed: {
       local() {
@@ -46,7 +40,7 @@
     },
     data() {
       return {
-        compName: this.local == 'en-US' ? 'B_myMap' : 'B_myMap',
+        compName: 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
         SpinShow: false,

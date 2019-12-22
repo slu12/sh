@@ -45,6 +45,8 @@ func UpdateShipPosition(shipids string) error {
 
 		gps := model.MapToClGps(v)
 		db.Db.Model("cl_gps").Save(gps)
+
+		db.Db.Table("cl_cl").Where("mmsi=?", v["mmsi"].(string)).Update("navstatus", v["navStatus"])
 	}
 	return nil
 }

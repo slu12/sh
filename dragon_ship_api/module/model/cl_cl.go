@@ -53,6 +53,7 @@ type ClCl struct {
 	DEST_PORT    string    `gorm:"DEST_PORT",json:"dest_port"`          // '目的地',
 	DRAUGHT      string    `gorm:"DRAUGHT",json:"draught"`              // '吃水',
 	NATIONALITY  string    `gorm:"NATIONALITY",json:"nationality"`      // '船籍',
+	NavStatus    string    `gorm:"column:navstatus",json:"navStatus"`   // 'navStatus',
 	XS           string    `gorm:"XS"`                                  // '型深',
 	cbsbh        string    `gorm:"cbsbh"`                               // '船舶识别号',
 	djhm         string    `gorm:"djhm"`                                // '登记号码',
@@ -74,7 +75,12 @@ func MapToClCl(m map[string]interface{}) *ClCl {
 	c := ClCl{}
 	mmsi := ""
 	if m["mmsi"] != nil {
-		mmsi = strconv.FormatFloat(m["mmsi"].(float64), 'f', -1, 64)
+		switch m["mmsi"].(type) {
+		case string:
+			mmsi = m["mmsi"].(string)
+		case float64:
+			mmsi = strconv.FormatFloat(m["mmsi"].(float64), 'f', -1, 64)
+		}
 	}
 	length := ""
 	if m["length"] != nil {
@@ -94,14 +100,29 @@ func MapToClCl(m map[string]interface{}) *ClCl {
 			breadth = strconv.FormatFloat(m["breadth"].(float64), 'f', -1, 64)
 		}
 	}
+	shipname := ""
+	if m["shipname"] != nil {
+		switch m["shipname"].(type) {
+		case string:
+			shipname = m["shipname"].(string)
+		}
+	}
+	shiptypename := ""
+	if m["shiptypename"] != nil {
+		switch m["shiptypename"].(type) {
+		case string:
+			shiptypename = m["shiptypename"].(string)
+		}
+	}
 	c.MMSI = mmsi
-	c.Shipname = m["shipname"].(string)
-	c.Shiptypename = m["shiptypename"].(string)
+	c.Shipname = shipname
+	c.Shiptypename = shiptypename
 	c.LENGTH = length
 	c.BREADTH = breadth
 	c.ETA = m["eta"].(string)
 	c.DEST_PORT = m["dest_port"].(string)
 	c.DRAUGHT = m["draught"].(string)
 	c.NATIONALITY = m["nationality"].(string)
+	c.NavStatus = m["navStatus"].(string)
 	return &c
 }

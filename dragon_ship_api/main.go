@@ -16,12 +16,12 @@ import (
 	"syscall"
 )
 
-var env string
+var configPath string
 
 func main() {
-	flag.StringVar(&env, "e", "test", "environment")
+	flag.StringVar(&configPath, "c", "./conf/cfg_test.ini", "config path")
 	flag.Parse()
-	config.Load(env)
+	config.Load(configPath)
 	logs.Init()
 	db.Init()
 	jobs.StartShipPotisionJob()

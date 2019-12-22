@@ -24,8 +24,8 @@
 </style>
 
 <template>
-    <div style="height: 100%;background-color: #00FFFF;position: relative;">
-        <div id="allmap"></div>
+    <div style="height: 500px;background-color: #00FFFF;position: relative;">
+        <div id="allmap1" style="height: 500px"></div>
     </div>
 </template>
 
@@ -41,7 +41,7 @@
                     lat: 30.545038//bdwd
                 },
                 zoom:16,
-                mess:[
+                points:[
                     {
                         lng: 114.3724431,
                         lat: 30.544572
@@ -56,20 +56,21 @@
             }
         },
         props:{
-            carNumber:{
+          wlid:{
                 type:String,
                 default:''
-            }
+            },
         },
         created(){
+
         },
         mounted(){
-            var v = this
+          var v = this
             // 百度地图API功能
           this.$nextTick(()=>{
-            this.map = new BMap.Map("allmap"); // 创建Map实例
+            this.map = new BMap.Map("allmap1"); // 创建Map实例
             this.mapCenter()
-            this.bkDot(this.carNumber)
+            this.bkDot(this.wlid)
           })
 
 
@@ -77,15 +78,14 @@
         methods:{
             //电子围栏点
             bkDot(id){
-                var v = this
-                this.$http.get(this.apis.DZWL.GET_BY_CAR_ID + "?clId=" + id).then((res) => {
-                    console.log('电子围栏点',res)
+              var v = this
+                this.$http.get(this.apis.DZWL.GET + "/" + id).then((res) => {
                     if (res.code === 200 && res.result) {
-                        let ditMess  = res.result.dlxxzb.split(';');
+                        let ditpoints  = res.result.dlxxzb.split(';');
                         let dotLength = res.result.dlxxzb.split(';').length;
                         for(var i = 0 ; i<dotLength ; i++){
                             v.wlDot.push(
-                                new BMap.Point(ditMess[i].split(',')[0],ditMess[i].split(',')[1])
+                                new BMap.Point(ditpoints[i].split(',')[0],ditpoints[i].split(',')[1])
                             )
                         }
                         setTimeout(function () {
@@ -99,7 +99,7 @@
             mapCenter(){
                 var v = this
                 var point = new BMap.Point(v.mapcenter.lng, v.mapcenter.lat);
-                this.map.centerAndZoom(point, v.zoom);// 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(point, 12);// 初始化地图,设置中心点坐标和地图级别
                 this.map.addControl(new BMap.MapTypeControl({
                     mapTypes:[
                         BMAP_NORMAL_MAP
@@ -163,7 +163,7 @@
                     rectangleOptions: styleOptions //矩形的样式
                 })
                 drawingManager.addEventListener("overlaycomplete", function(e) {
-                    log(e);
+                    console.log(e);
                     v.$emit('choosePoint',e.overlay.ia)
                 });
             },

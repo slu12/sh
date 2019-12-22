@@ -17,7 +17,6 @@ import (
 	"time"
 )
 
-var env string
 var ids string
 var operation string
 var st string
@@ -25,21 +24,22 @@ var et string
 
 var tk = time.NewTicker(5 * time.Second)
 
+var configPath string
+
 func main() {
-	flag.StringVar(&operation, "o", "HistoryVoyage", "operation")
-	flag.StringVar(&env, "e", "test", "environment")
+	flag.StringVar(&configPath, "c", "./conf/cfg_test.ini", "config path")
+	flag.StringVar(&operation, "o", "ShipLatest", "operation")
 	flag.StringVar(&ids, "ids", "", "ids")
 	flag.StringVar(&st, "st", "1511008577", "st")
 	flag.StringVar(&et, "et", "1512972577", "et")
 	flag.Parse()
-	config.Load(env)
+	config.Load(configPath)
 	db.Init()
 	logs.Init()
 
 	switch operation {
 	case "HistoryTrack":
 		shipapis.GetShipHistoryTrack(ids, st, et)
-
 	case "HistoryVoyage":
 		shipapis.GetShipHistoryVoyage(ids, st, et, "")
 	case "ShipLatest":

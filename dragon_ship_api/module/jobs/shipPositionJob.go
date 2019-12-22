@@ -5,12 +5,16 @@
 package jobs
 
 import (
+	"bytes"
 	"dragon_ship_api/component/config"
 	"dragon_ship_api/component/db"
 	"dragon_ship_api/component/logs"
 	"dragon_ship_api/module/model"
 	"dragon_ship_api/module/shipapis"
 	"github.com/robfig/cron"
+	"io/ioutil"
+	"os"
+	"strings"
 )
 
 var shipPositionRunning = false
@@ -25,10 +29,7 @@ func StartShipPotisionJob() {
 			return
 		}
 		shipPositionRunning = true
-		shipids := config.Config.Base.Shipids
-		if err := UpdateShipPosition(shipids); err != nil {
-			logs.RunLog.Error("StartShipPotisionJob error,", err.Error())
-		}
+		getShipInfo()
 		shipPositionRunning = false
 	})
 	c.Start()
@@ -44,6 +45,45 @@ func UpdateShipPosition(shipids string) error {
 
 		gps := model.MapToClGps(v)
 		db.Db.Model("cl_gps").Save(gps)
+
+		db.Db.Table("cl_cl").Where("mmsi=?", v["mmsi"].(string)).Update("navstatus", v["navStatus"])
 	}
 	return nil
+}
+
+//func UpdateShipVoyage(shipid string) error {
+//	res, err := shipapis.GetShipCurrentVoyage(shipid,"")
+//	if err != nil {
+//		return err
+//	}
+//	return nil
+//}
+func getShipInfo() {
+	f, err := os.Open("./mmis.log")
+	if err != nil {
+		logs.RunLog.Error("open mmis log fail,err:", err.Error())
+		return
+	}
+	bs, err := ioutil.ReadAll(f)
+	if err != nil {
+		logs.RunLog.Error("read mmis log fail,err:", err.Error())
+		return
+	}
+	lines := bytes.Split(bs, []byte{'\n'})
+	ids := ""
+	count := 0
+	for _, v := range lines {
+		id := string(v)
+		id = strings.Trim(id, "\r")
+		id = strings.Trim(id, "\n")
+		ids += id
+		count++
+		if count >= 20 {
+			UpdateShipPosition(ids)
+			count = 0
+			ids = ""
+		} else {
+			ids += ","
+		}
+	}
 }

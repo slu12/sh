@@ -87,11 +87,10 @@ var (
 func NewLoggo(option *LoggerOption) *Logger {
 	option.LocalTime = true
 	option.Compress = true
-	if option.RotateCron == "" {
-		option.RotateCron = defaultRotateCron
-	}
 	l := Logger{option: option}
-	l.startRotateCron()
+	if option.RotateCron != "" {
+		go l.startRotateCron()
+	}
 	return &l
 }
 func (p *Logger) Print(m ...string) {

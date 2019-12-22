@@ -5,18 +5,16 @@
 package config
 
 import (
-	"fmt"
 	"gopkg.in/ini.v1"
 	"log"
 )
 
 var Config *AllConfig
 
-func Load(env string) {
-	p := fmt.Sprintf("./conf/cfg_%s.ini", env)
-	log.Println("path:", p)
+func Load(path string) {
+	log.Println("path:", path)
 	Config = new(AllConfig)
-	if err := ini.MapTo(Config, p); err != nil {
+	if err := ini.MapTo(Config, path); err != nil {
 		log.Panic("load config fail:", err.Error())
 	}
 }

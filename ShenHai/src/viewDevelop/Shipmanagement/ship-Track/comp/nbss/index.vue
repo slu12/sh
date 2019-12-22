@@ -290,7 +290,7 @@
       // 更改tab页签
       changeTab(index) {
         console.log(this.ship.mmsi, index);
-        // this.ship.mmsi = '413839203'
+        this.ship.mmsi = '413839203'
         if ((!this.ship.mmsi || this.ship.mmsi == '') && index != 0) {
           this.$Message.error('请先选择船舶')
           return

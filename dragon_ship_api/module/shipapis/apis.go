@@ -108,6 +108,7 @@ func GetShipHistoryTrack(shipid, startUtcTime, endUtcTime string) (*ListResult, 
 	if err != nil {
 		return nil, err
 	}
+
 	for k, _ := range list.Result {
 		v := list.Result[k]
 		if v["latitude"] == nil || v["longitude"] == nil {

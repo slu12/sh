@@ -7,23 +7,20 @@
     width: 100%;
     height: 100%;
     background-color: #5E687D;
-    .funcButItem{
+    .funcButItem {
       height: 96px;
       text-align: center;
       border-bottom: solid #999999 1px;
 
-      font-size:16px;
-      font-family:Microsoft YaHei;
-      font-weight:400;
-      color:rgba(255,255,255,1);
+      font-size: 16px;
+      font-family: Microsoft YaHei;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 1);
       cursor: pointer;
     }
-    .selItemSty{
+    .selItemSty {
       background-color: #363E4F;
     }
-
-
-
 
     #tabBar {
       height: e("calc(100% - 40px)");
@@ -47,7 +44,7 @@
           margin-bottom: 5px;
           text-align: center;
           vertical-align: middle;
-          background:#5E687D;
+          background: #5E687D;
           color: #fdfdfd;
         }
 
@@ -89,114 +86,129 @@
     bottom: 0;
     width: 387px;
     background-color: #363E4F;
-    .searchFuncBoxSty{
+    .searchFuncBoxSty {
       height: 76px;
       border-bottom: solid #999999 1px;
       position: relative;
-      .ivu-input-search{
-        background-color:#5E687D!important;
-        border-color:#5E687D!important;
+      .ivu-input-search {
+        background-color: #5E687D !important;
+        border-color: #5E687D !important;
       }
-      .closeModalBoxSty{
+      .closeModalBoxSty {
         position: absolute;
-        width:30px;
-        height:76px;
-        background:rgba(94,104,125,1);
+        width: 30px;
+        height: 76px;
+        background: rgba(94, 104, 125, 1);
         left: -30px;
         cursor: pointer;
-        font-size:14px;
-        font-family:Microsoft YaHei;
-        font-weight:400;
-        color:rgba(255,255,255,1);
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 1);
+      }
+    }
+    .shipListBoxSty {
+      height: 200px;
+      margin: 10px 14px;
+      .tabBarBox {
+        .tabbarItem {
+          width: 80px;
+          height: 30px;
+          text-align: center;
+          line-height: 28px;
+          cursor: pointer;
+          border: 1px solid rgba(255, 255, 255, 0);
+          font-size: 16px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 1);
+        }
+        .selTabbarItem {
+          border: 1px solid rgba(255, 255, 255, 1);
+        }
+      }
+
+      .shipSty {
+        background-color: #FFFFFF;
+        margin-bottom: 5px;
+        .shipname {
+          width: 300px;
+          padding-left: 15px;
+          font-size: 14px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: rgba(0, 0, 0, 1);
+          line-height: 36px;
+        }
+        .shipmess {
+          padding-left: 15px;
+          font-size: 12px;
+          font-family: Microsoft YaHei;
+          font-weight: 400;
+          color: rgba(102, 102, 102, 1);
+          line-height: 24px;
+        }
       }
     }
 
-    .ship{
-      height: 700px;
-      width: 100%;
-      overflow: auto;
-      .shipSty{
-        background-color: #FFFFFF;
-        margin-left: 5px;
-        margin-right: 5px;
-        margin-top: 5px;
-        .shipname{
-          width: 300px;
-          padding-left: 15px;
-          font-size:14px;
-          font-family:Microsoft YaHei;
-          font-weight:400;
-          color:rgba(0,0,0,1);
-          line-height:36px;
-        }
-        .shipmess{
-          padding-left: 15px;
-          font-size:12px;
-          font-family:Microsoft YaHei;
-          font-weight:400;
-          color:rgba(102,102,102,1);
-          line-height:24px;
-        }
-      }
-    }
-    .shipycxq{
+    .shipycxq {
       padding: 0 10px;
-      .shipname{
+      .shipname {
         width: 300px;
-        font-size:16px;
-        font-family:Microsoft YaHei;
-        font-weight:bold;
-        color:rgba(255,255,255,1);
-        line-height:36px;
+        font-size: 16px;
+        font-family: Microsoft YaHei;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        line-height: 36px;
       }
-      .shipmess{
+      .shipmess {
         background-color: #FFFFFF;
         line-height: 36px;
         padding: 0 10px;
-        font-size:14px;
-        font-family:Microsoft YaHei;
-        font-weight:400;
-        .leftyc{
-          color:rgba(0,0,0,1);
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        .leftyc {
+          color: rgba(0, 0, 0, 1);
         }
-        .rightyc{
-          color:rgba(102,102,102,1);
+        .rightyc {
+          color: rgba(102, 102, 102, 1);
         }
       }
     }
-    .shipxq{
+    .shipxq {
       padding: 0 10px;
-      .shipname{
+      .shipname {
         width: 300px;
-        font-size:16px;
-        font-family:Microsoft YaHei;
-        font-weight:bold;
-        color:rgba(255,255,255,1);
-        line-height:36px;
+        font-size: 16px;
+        font-family: Microsoft YaHei;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        line-height: 36px;
       }
-      .shipmess{
+      .shipmess {
         background-color: #FFFFFF;
         line-height: 24px;
         padding-left: 10px;
-        font-size:14px;
-        font-family:Microsoft YaHei;
-        font-weight:400;
-        color:rgba(102,102,102,1);
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        color: rgba(102, 102, 102, 1);
       }
-      .hcmess{
+      .hcmess {
         text-align: center;
-        font-size:14px;
-        font-family:Microsoft YaHei;
-        font-weight:bold;
-        color:rgba(255,255,255,1);
-        line-height:36px;
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        line-height: 36px;
         border: 1px solid #dddee1;
-        .did{
-          line-height:18px;
+        .did {
+          line-height: 18px;
         }
       }
     }
-    .ztlistClass{
+    .ztlistClass {
       width: 100%;
       font-size: 14px;
       cursor: pointer;
@@ -205,7 +217,7 @@
       margin-bottom: 5px;
       text-align: center;
       vertical-align: middle;
-      background:#5E687D;
+      background: #5E687D;
       color: #fdfdfd;
     }
     .activezxzt {
@@ -215,7 +227,7 @@
       z-index: 100;
     }
   }
-  .sq{
+  .sq {
     width: 40px;
     height: 80px;
     float: right;

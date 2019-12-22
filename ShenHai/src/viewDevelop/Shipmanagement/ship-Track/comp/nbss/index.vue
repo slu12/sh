@@ -2,9 +2,10 @@
   <div class="tabWrap">
     <div class="tabNav">
       <div class="funcButItem box_col rowCenter" style="height: 76px">
+        {{showModal}}
         <Icon type="md-search" color="#ffffff" size="32"/>
       </div>
-      <div class="funcButItem box_col rowCenter" :class="selFuncItem==index?'selItemSty':''"
+      <div class="funcButItem box_col rowCenter" :class="tabIndex==index?'selItemSty':''"
            v-for="(item,index) in tabList" :key="index"
            @click="changeTab(index)">
         <div v-for="(lab,key) in item.label.split(',')">
@@ -27,16 +28,12 @@
       <!--<Icon type="chevron-down" @click.native="downTab" size="32"></Icon>-->
       <!--</span>-->
     </div>
-    <div class="tabContent" v-if="true">
+    <div class="tabContent" v-if="showModal">
       <div class="searchFuncBoxSty box_col colItemCenter rowCenter">
         <div class="closeModalBoxSty box_col colItemCenter rowCenter"
              @click="unShow">
-          <div>
-            收
-          </div>
-          <div>
-            起
-          </div>
+          <div>收</div>
+          <div>起</div>
           <Icon type="ios-arrow-forward" size="22"/>
         </div>
         <div style="width: 360px">
@@ -44,28 +41,24 @@
                  @on-search="getshipMess" search enter-button placeholder="请输入MMSI或船舶名称"/>
         </div>
       </div>
-      <div v-if="tabIndex === 0">
-        <Row style="height: 40px">
-          <Row>
-            <Col span="6" v-for="(item,index) in zxztlist">
-              <div :class="[{activezxzt:index === zxztindex},'ztlistClass']" :key="index"
-                   @click="changezxztindex(index,item.zt)">{{item.label}}
-              </div>
-            </Col>
-          </Row>
-        </Row>
-        <div class="ship">
-          <Row class="shipSty" v-for="(item,index) in shipData" @click.native="getship(item)">
-            <Row class="shipname">
-              {{item.shipname}} - {{item.cbsbh}}
-            </Row>
-            <Row class="shipmess">
-              <Col span="14">MMSI ：{{item.mmsi}}</Col>
-              <Col span="10">类型 ：{{item.shiptypename}}</Col>
-            </Row>
+
+      <div class="shipListBoxSty" v-if="tabIndex === 0">
+        <div class="tabBarBox box_row rowBetween boxMar_B">
+          <div class="tabbarItem" :class="zxztindex==index?'selTabbarItem':''" v-for="(item,index) in zxztlist" :key="index"
+               @click="changezxztindex(index,item.zt)">
+            {{item.label}}
+          </div>
+        </div>
+        <div class="shipSty" v-for="(item,index) in shipData"
+             @click.native="getship(item)">
+          <div class="shipname">
+            {{item.shipname}} - {{item.cbsbh}}
+          </div>
+          <Row class="shipmess">
+            <Col span="14">MMSI ：{{item.mmsi}}</Col>
+            <Col span="10">类型 ：{{item.shiptypename}}</Col>
           </Row>
         </div>
-
       </div>
       <div v-if="tabIndex === 1">
         <div class="shipxq">
@@ -125,53 +118,51 @@
           </div>
         </div>
       </div>
-      <div v-if="tabIndex === 2">
-        <div class="shipxq">
-          <div class="shipname">设备编号 : {{ship.cbsbh}}</div>
-          <div class="shipmess">
-            <div>运行状态 : {{ship.zxzt}}</div>
-            <div>安装船舶 : {{ship.cbsbh}}</div>
-            <div>北斗设备编号 : {{ship.zdbh}}</div>
-            <div>所属机构 : {{ship.jgmc}}</div>
-            <div>定位时间 : {{ship.dwsj}}</div>
-            <div>定位坐标 : {{ship.dwzb}}</div>
-            <div>航速 : {{ship.hs}}</div>
-            <div>航向 : {{ship.hx}}</div>
-            <div>设备编号 : {{ship.zdbh}}</div>
-          </div>
+      <!--<div v-if="tabIndex === 2">-->
+        <!--<div class="shipxq">-->
+          <!--<div class="shipname">设备编号 : {{ship.cbsbh}}</div>-->
+          <!--<div class="shipmess">-->
+            <!--<div>运行状态 : {{ship.zxzt}}</div>-->
+            <!--<div>安装船舶 : {{ship.cbsbh}}</div>-->
+            <!--<div>北斗设备编号 : {{ship.zdbh}}</div>-->
+            <!--<div>所属机构 : {{ship.jgmc}}</div>-->
+            <!--<div>定位时间 : {{ship.dwsj}}</div>-->
+            <!--<div>定位坐标 : {{ship.dwzb}}</div>-->
+            <!--<div>航速 : {{ship.hs}}</div>-->
+            <!--<div>航向 : {{ship.hx}}</div>-->
+            <!--<div>设备编号 : {{ship.zdbh}}</div>-->
+          <!--</div>-->
 
-        </div>
-      </div>
-      <div v-if="tabIndex === 3">
-        <Row class="shipycxq">
-          <Row class="shipname">
-            船舶名称
-          </Row>
-          <Row class="shipmess">
-            <Col class="leftyc" span="14" align="left">异常名称</Col>
-            <Col class="rightyc" span="10" align="right">异常时间</Col>
-          </Row>
-        </Row>
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div v-if="tabIndex === 3">-->
+        <!--<Row class="shipycxq">-->
+          <!--<Row class="shipname">-->
+            <!--船舶名称-->
+          <!--</Row>-->
+          <!--<Row class="shipmess">-->
+            <!--<Col class="leftyc" span="14" align="left">异常名称</Col>-->
+            <!--<Col class="rightyc" span="10" align="right">异常时间</Col>-->
+          <!--</Row>-->
+        <!--</Row>-->
 
-      </div>
-      <div v-if="tabIndex === 4">
-        <div style="text-align: center;overflow: scroll;height: 800px">
-          <video v-for="(item,index) in videoList"
-                 data-setup='{"fluid":true,"aspectRatio":"16:9"}'
-                 :poster="videoimageList[index]"
-                 :id="'my-video' + index "
-                 class="video-js vjs-default-skin"
-                 controls preload="auto"
-                 @click="playVideo('my-video' + index)"
-                 style="object-fit: fill;height: 200px;width: 100%">
-            <source :src="item" type="application/x-mpegURL">
-          </video>
-        </div>
-      </div>
+      <!--</div>-->
+      <!--<div v-if="tabIndex === 4">-->
+        <!--<div style="text-align: center;overflow: scroll;height: 800px">-->
+          <!--<video v-for="(item,index) in videoList"-->
+                 <!--data-setup='{"fluid":true,"aspectRatio":"16:9"}'-->
+                 <!--:poster="videoimageList[index]"-->
+                 <!--:id="'my-video' + index "-->
+                 <!--class="video-js vjs-default-skin"-->
+                 <!--controls preload="auto"-->
+                 <!--@click="playVideo('my-video' + index)"-->
+                 <!--style="object-fit: fill;height: 200px;width: 100%">-->
+            <!--<source :src="item" type="application/x-mpegURL">-->
+          <!--</video>-->
+        <!--</div>-->
+      <!--</div>-->
+   <!---->
     </div>
-    <!--    <div class="sq" @click="unShow" v-if="showModal">-->
-    <!--      <Icon size="32" type="ios-arrow-forward" />-->
-    <!--    </div>-->
 
   </div>
 </template>
@@ -184,32 +175,33 @@
   export default {
     name: "index",
     components: {carJK},
-    watch: {
-      tabIndex: function (newVal) {
-        this.showModal = true
-        let scrollNav = document.getElementById('tabUl')
-        let tabBar = document.getElementById('tabBar')
-        let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
-        if (Number(newVal) >= 3) {
-          this.$nextTick(function () {
-            scrollNav.style.transform = `translateY(-${transformHeight}px)`
-          })
-        } else {
-          this.$nextTick(function () {
-            scrollNav.style.transform = 'translateY(0px)'
-          })
-        }
-        if (newVal != 4) {
-          for (let a = 0; a < 9; a++) {
-            videojs('my-video' + a).dispose();
-          }
-        }
-      }
-    },
+    // watch: {
+    //   tabIndex: function (newVal) {
+    //     console.log(newVal);
+    //     this.showModal = true
+    //     let scrollNav = document.getElementById('tabUl')
+    //     let tabBar = document.getElementById('tabBar')
+    //     let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
+    //     if (Number(newVal) >= 3) {
+    //       this.$nextTick(function () {
+    //         scrollNav.style.transform = `translateY(-${transformHeight}px)`
+    //       })
+    //     } else {
+    //       this.$nextTick(function () {
+    //         scrollNav.style.transform = 'translateY(0px)'
+    //       })
+    //     }
+    //     if (newVal != 4) {
+    //       for (let a = 0; a < 9; a++) {
+    //         videojs('my-video' + a).dispose();
+    //       }
+    //     }
+    //   }
+    // },
     data() {
       return {
         showModal: false,
-        tabIndex: '',
+        tabIndex: null,
         zxztindex: 0,
         zxztlist: [
           {label: '全部', zt: ''},
@@ -224,7 +216,6 @@
           {label: '异常,情况'},
           {label: '视频,监控'},
         ],
-        selFuncItem: null,//选中的功能模块索引
         shipData: [],
         ship: {},
         videoList: [],
@@ -275,7 +266,22 @@
       },
       //点击收起
       unShow() {
-        this.showModal = false
+        this.showModal = false;
+        this.tabIndex = null;
+        // this.zxztindex = 0;
+      },
+      // 更改tab页签
+      changeTab(index) {
+        console.log(this.ship.mmsi, index);
+        this.ship.mmsi = '413839203'
+        if ((!this.ship.mmsi || this.ship.mmsi == '') && index != 0) {
+          this.$Message.error('请先选择船舶')
+          return
+        }
+        this.$nextTick(() => {
+          this.tabIndex = index;
+          this.showModal = true;
+        })
       },
       // 更改状态页签
       changezxztindex(index, zt) {
@@ -283,20 +289,7 @@
         this.from.zxzt = zt
         this.getshipMess()
       },
-// 更改tab页签
-      changeTab(index) {
-        this.selFuncItem = index
-        console.log(this.ship.mmsi, index);
-        if ((!this.ship.mmsi || this.ship.mmsi == '') && index != 0) {
-          this.$Message.error('请先选择船舶')
-          return
-        }
-        this.$nextTick(() => {
-          this.tabIndex = index
-          this.$store.state.proofActiveName = this.tabIndex
-        })
-      },
-// 调整Tab滚动
+      // 调整Tab滚动
       upTab() {
         let scrollNav = document.getElementById('tabUl')
         this.$nextTick(function () {

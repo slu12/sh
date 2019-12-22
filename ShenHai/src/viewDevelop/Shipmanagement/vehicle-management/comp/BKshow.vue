@@ -7,7 +7,7 @@
                 :mask-closable="false"
                 title="电子围栏">
             <div :style="bodyH">
-                <bkshow :carNumber="carID"></bkshow>
+                <bkshow :wlid="wlid"></bkshow>
             </div>
             <div slot='footer'>
                 <Button type="default" @click="colse">关闭</Button>
@@ -29,9 +29,9 @@
             return {
                 showModal:true,
                 bodyH:{
-                    height:0
+                    height:550
                 },
-                carID:''
+              wlid:''
             }
         },
         props:{
@@ -41,7 +41,7 @@
             }
         },
         created(){
-            this.carID = this.mess.clId
+            this.wlid = this.mess.id
             log(this.mess)
             this.bodyH.height = (this.getWindowHeight() - 330)+'px'
         },

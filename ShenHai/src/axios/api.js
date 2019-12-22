@@ -293,6 +293,7 @@ export default {
     getWebsocketInfo:'/api/zdgl/getWebsocketInfo'
   },
   DZWL:{//电子围栏
+    GET:  '/api/dzwl',
     QUERY:  '/api/dzwl/pager',
     ADD:    '/api/dzwl/save',
     CHANGE: '/api/dzwl/update',

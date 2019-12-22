@@ -26,10 +26,10 @@
 
 <template>
       <div style="height: 100%;background-color: #00FFFF;position: relative;">
-            <div id="allmap"></div>
-            <div class="claer">
-                  <Button type="success" size="small" @click="clear">清除</Button>
-            </div>
+            <div id="allmap" style="width: 100%; height:100%; zoom:1;position:relative"></div>
+<!--            <div class="claer">-->
+<!--                  <Button type="success" size="small" @click="clear">清除</Button>-->
+<!--            </div>-->
       </div>
 </template>
 
@@ -64,30 +64,31 @@
         },
         watch: {
             mapDot: function (n, o) {
-//				if(n.length==1){
-//					this.mapcenter = {lng: n[0].mapCen.lng,lat: n[0].mapCen.lat}
-//					this.zoom = 12
-//				}else if(n.length==0){
-//					this.mapcenter = {lng: 114.370095,lat: 30.545038}
-//					this.zoom = 16
-//					this.clear()
-//				}else{
-//					this.mapcenter = {lng: n[0].mapCen.lng,lat: n[0].mapCen.lat}
-//					this.zoom = 12
-//				}
-//				this.disDot(n)
-//				this.mapCenter()
+              console.log('mapDot',n);
+              if(n.length==1){
+                this.mapcenter = {lng: n[0].mapCen.lng,lat: n[0].mapCen.lat}
+                this.zoom = 12
+              }else if(n.length==0){
+                this.mapcenter = {lng: 114.370095,lat: 30.545038}
+                this.zoom = 16
+                this.clear()
+              }else{
+                this.mapcenter = {lng: n[0].mapCen.lng,lat: n[0].mapCen.lat}
+                this.zoom = 12
+              }
+              this.disDot(n)
+              this.mapCenter()
             }
         },
         created() {
-
+          console.log("created")
         },
         mounted() {
+          console.log("mounted")
             var v = this
             this.$nextTick(()=>{
-              this.map = new BMap.Map("allmap"); // 创建Map实例
-              this.mapCenter()
-              this.bk()
+              v.map = new BMap.Map("allmap"); // 创建Map实例
+              v.mapCenter()
             })
             // 百度地图API功能
 //		  	this.disDot()
@@ -98,16 +99,12 @@
                 var v = this
                 var point = new BMap.Point(v.mapcenter.lng, v.mapcenter.lat);
                 this.map.centerAndZoom(point, v.zoom);// 初始化地图,设置中心点坐标和地图级别
-                this.map.addControl(new BMap.MapTypeControl({
-                    mapTypes: [
-                        BMAP_NORMAL_MAP
-                    ]
-                }));
                 //添加地图类型控件
                 this.map.enableScrollWheelZoom(true);     					     //开启鼠标滚轮缩放
                 this.map.addControl(new BMap.ScaleControl()); 					 // 添加比例尺控件
                 this.map.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
                 this.map.addControl(new BMap.NavigationControl()); 				// 添加平移缩放控件
+              this.bk()
             },
             //撒点
             disDot(list) {
@@ -128,7 +125,8 @@
             },
             //布控
             bk() {
-                var v = this
+              console.log('bk');
+              var v = this
                 var styleOptions = {//覆盖层的样式
                     strokeColor: "red",    //边线颜色。
                     fillColor: "red",      //填充颜色。当参数为空时，圆形将没有填充效果。
@@ -143,7 +141,7 @@
                     enableDrawingTool: true, //是否显示工具栏
                     drawingToolOptions: {
                         anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
-                        offset: new BMap.Size(64, 5), //偏离值
+                        offset: new BMap.Size(15, 15), //偏离值
                     },
                     circleOptions: styleOptions, //圆的样式
                     polylineOptions: styleOptions, //线的样式
@@ -151,7 +149,7 @@
                     rectangleOptions: styleOptions //矩形的样式
                 })
                 drawingManager.addEventListener("overlaycomplete", function (e) {
-                    log(e);
+                    console.log(e);
                     v.$emit('choosePoint', e.overlay.ia)
                 });
             },

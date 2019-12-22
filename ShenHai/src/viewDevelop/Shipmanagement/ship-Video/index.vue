@@ -13,7 +13,7 @@
 
         <div style="text-align: center;margin: 0 200px">
           <Row v-show="videoList.length>0">
-            <Col span="8" v-for="(item,index) in videoList" style="height: 250px;">
+            <Col span="8" v-for="(item,index) in videoList" :key="index" style="height: 250px;">
                 <Card>
                   <h5>{{index+1}}号通道</h5>
                   <video
@@ -23,14 +23,14 @@
                     class="video-js vjs-default-skin"
                     controls preload="auto"
                     @click="playVideo('my-video' + index)"
-                    style="object-fit: fill;height: 200px;width: 100%">
+                    style="object-fit: fill;width: 100%">
                     <source :src="item" type="application/x-mpegURL">
                   </video>
                 </Card>
             </Col>
           </Row>
           <Row v-show="videoList.length<=0" >
-            <Col span="8" v-for="(item,index) in 9" style="padding: 5px">
+            <Col span="8" v-for="(item,index) in 9" :key="index" style="padding: 5px">
                 <Card>
                   <h5>{{index+1}}号通道</h5>
                   <img src="./comp/jk.png" style="height: 200px;width: 100%" alt="">
@@ -66,8 +66,7 @@
       playVideo(id){  //播放视频
         console.log(id);
         videojs(id, {
-          height:280
-
+          height:250
         }, function (val) {
           console.log(val, "--------")
           this.play();

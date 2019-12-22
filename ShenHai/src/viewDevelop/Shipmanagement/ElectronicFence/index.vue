@@ -21,35 +21,26 @@
 </style>
 <template>
   <div class="box-col">
-
-    <div class="tit" v-show="!RootShow">
-      <Row class="margin-top-10" style='background-color: #fff;position: relative;'>
-    			<span class="tabPageTit">
-    				<Icon type="ios-paper" size='30' color='#fff'></Icon>
-    			</span>
-        <div style="height: 45px;line-height: 45px;">
-          <div class="margin-top-10 box-row">
-            <div class="titmess">
-              <span class="titmess">{{'$t("ELECTRONIC_FENCE")'}}</span>
-            </div>
-            <div class="body-r-1 inputSty">
-              <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
-              <Input v-model="param.cphLike" placeholder='请输入船舶mmsi号查询' style="width: 200px"
-                     @on-keyup.enter="findMessList()"></Input>
-            </div>
-            <div class="butevent">
-              <Button type="success" @click="findList">
-                <Icon type="md-search"></Icon>
-                <!--查询-->
-              </Button>
-              <Button type="primary" @click="RootShow = !RootShow">
-                <Icon type="md-add"></Icon>
-              </Button>
-            </div>
-          </div>
+    <div class="box_row rowBetween colItemCenter boxMar_B"  v-show="!RootShow">
+      <pager-tit></pager-tit>
+      <div class="box_row rowRight">
+        <div class="body-r-1 inputSty">
+          <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
+          <Input v-model="param.cphLike" placeholder='请输入船舶mmsi号查询' style="width: 200px"
+                 @on-keyup.enter="findMessList()"></Input>
         </div>
-      </Row>
+        <div class="butevent">
+          <Button type="success" @click="findList">
+            <Icon type="md-search"></Icon>
+            <!--查询-->
+          </Button>
+          <Button type="primary" @click="RootShow = !RootShow">
+            <Icon type="md-add"></Icon>
+          </Button>
+        </div>
+      </div>
     </div>
+
     <div class="body" v-show="!RootShow">
       <Table ref="table"
              :height="tabHeight"
@@ -107,7 +98,7 @@
             <div class="carlist carlistBor" style="width: 180px;height: 100%;">
               <div class="box">
                 <div class="tit">
-                  <Input value="" placeholder="请输入车辆信息..." size="small"
+                  <Input value="" placeholder="请输入船舶信息..." size="small"
                          style="width: 100%"></Input>
                 </div>
                 <div class="body">
@@ -134,7 +125,6 @@
 <script>
   import myMap from '../../map/mapBK.vue'
   import i18nTabTit from '@/mixins/i18nTabTit'
-
   import mixins from '@/mixins'
   import formData from './comp/formData'
   import bkShow from '../vehicle-management/comp/BKshow'
@@ -185,7 +175,7 @@
             align: 'center'
           },
           {
-            title: '车牌号',
+            title: 'MMSI',
             tit:"CAR_NUM_TAB",
             align: 'center',
             key: 'cph'
@@ -301,14 +291,7 @@
       },
     },
     created() {
-      this.$store.commit('setCurrentPath', [{
-        title: '首页',
-      }, {
-        title: '车辆管理',
-      }, {
-        title: '电子围栏',
-      }])
-      this.tabHeight = this.getWindowHeight() - 212
+      this.tabHeight = this.getWindowHeight() - 240
       this.getCarTree()
       this.findMessList();
     },

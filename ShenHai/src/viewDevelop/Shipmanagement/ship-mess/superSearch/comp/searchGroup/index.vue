@@ -10,7 +10,7 @@
       :loading="searchGroupLoading"
       style="width: 360px"
     >
-      <Option v-for="(option, index) in options2" :value="option.value" :key="index">{{option.label}}</Option>
+      <Option v-for="(option, index) in optionsList" :value="option.value" :key="index">{{option.label}}</Option>
     </Select>
   </div>
 </template>
@@ -22,21 +22,22 @@
       return {
         searchGroupVal:"",
         searchGroupLoading:false,
+        optionsList:[]
       }
     },
     methods:{
       remoteMethod (query) {
         if (query !== '') {
-          this.loading2 = true;
+          this.searchGroupLoading = true;
           setTimeout(() => {
-            this.loading2 = false;
+            this.searchGroupLoading = false;
             const list = this.list.map(item => {
               return {
                 value: item,
                 label: item
               };
             });
-            this.options2 = list.filter(item => item.label.toLowerCase().indexOf(query.toLowerCase()) > -1);
+            this.searchGroupLoading = list.filter(item => item.label.toLowerCase().indexOf(query.toLowerCase()) > -1);
           }, 200);
         } else {
           this.options2 = [];

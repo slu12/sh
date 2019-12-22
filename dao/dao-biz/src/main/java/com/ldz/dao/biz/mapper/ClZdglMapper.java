@@ -27,6 +27,9 @@ public interface ClZdglMapper extends Mapper<ClZdgl> , InsertListMapper<ClZdgl> 
 
     @Select(" select * from CL_ZDGL where sfyy is null")
     List<ClZdgl>  getZDNotYy();
+
+    @Update(" update cl_cl set zxzt = #{zxzt} where zdbh = #{zdbh}")
+    void updateCbzt(String zxzt, String zdbh);
 /*    @Insert("<script>" +
             "INSERT ALL INTO CL_ZDGL(ZDBH,MC,XH,PZLMD,SPSCMS,CMD,ZXZT,JSLMD,GPSXT,CJR,CJSJ) values"+
             " <foreach collection='list' item='item' index='index' separator=' INTO CL_ZDGL ' >  " +

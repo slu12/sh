@@ -45,554 +45,479 @@ import java.util.stream.Collectors;
 
 @Service
 public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbService {
-	@Autowired
-	private ClClMapper entityMapper;
-	@Autowired
-	private JgService jgService;
-	@Autowired
-	private CbService clService;
-	@Autowired
-	private JsyService jsyService;
-	@Autowired
-	private ZdglService zdglService;
-	@Autowired
-	private ClyxjlService clyxjlService;
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	@Autowired
-	private StringRedisTemplate reids;
-	@Autowired
-	private XcService xcService;
-	@Autowired
-	private GpsLsService gpsLsService;
+    @Autowired
+    private ClClMapper entityMapper;
+    @Autowired
+    private JgService jgService;
+    @Autowired
+    private CbService clService;
+    @Autowired
+    private JsyService jsyService;
+    @Autowired
+    private ZdglService zdglService;
+    @Autowired
+    private ClyxjlService clyxjlService;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private StringRedisTemplate reids;
+    @Autowired
+    private XcService xcService;
+    @Autowired
+    private GpsLsService gpsLsService;
 
-	private ExecutorService excutor = Executors.newSingleThreadExecutor();
+    private ExecutorService excutor = Executors.newSingleThreadExecutor();
 
 
-	@Value("${shipApi.ip}")
-	private String shipip;
-	@Value("${filePath}")
-	private String path;
+    @Value("${shipApi.ip}")
+    private String shipip;
+    @Value("${filePath}")
+    private String path;
 
-	@Override
-	protected Mapper<Cb> getBaseMapper() {
-		return entityMapper;
-	}
+    @Override
+    protected Mapper<Cb> getBaseMapper() {
+        return entityMapper;
+    }
 
-	@Override
-	public boolean fillPagerCondition(LimitedCondition condition) {
-		String zxzt = getRequestParamterAsString("zxzt");
-		if(StringUtils.isNotBlank(zxzt)){
-			SimpleCondition simpleCondition = new SimpleCondition(ClZdgl.class);
-			if(StringUtils.equals(zxzt, "20")){
-				simpleCondition.in(ClZdgl.InnerColumn.zxzt, Arrays.asList("00","10"));
-				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
-				if(CollectionUtils.isNotEmpty(zdgls)){
-					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
-					condition.notIn(Cb.InnerColumn.zdbh, strings);
-				}
-			}else{
-				simpleCondition.eq(ClZdgl.InnerColumn.zxzt, zxzt);
-				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
-				if(CollectionUtils.isNotEmpty(zdgls)){
-					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
-					condition.in(Cb.InnerColumn.zdbh, strings);
-				}else{
-					return false;
-				}
-			}
+    @Override
+    public boolean fillPagerCondition(LimitedCondition condition) {
+        String con = getRequestParamterAsString("con");
+        if (StringUtils.isNotBlank(con)) {
+            condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%" + con + "%'");
+        }
+        return true;
+    }
 
-		}
-		String con = getRequestParamterAsString("con");
-		if(StringUtils.isNotBlank(con)){
-			condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%"+ con + "%'");
-		}
-		return true;
-	}
+    @Override
+    protected void afterPager(PageInfo<Cb> resultPage) {
+        List<Cb> cbList = resultPage.getList();
+        if (CollectionUtils.isEmpty(cbList)) {
+            return;
+        }
+    }
 
-	@Override
-	protected void afterPager(PageInfo<Cb> resultPage) {
-		List<Cb> cbList = resultPage.getList();
-		if(CollectionUtils.isEmpty(cbList)){
-			return;
-		}
-		String zxzt = getRequestParamterAsString("zxzt");
-		if(StringUtils.isNotBlank(zxzt)){
-			cbList.forEach(cb -> cb.setZxzt(zxzt));
-		}else{
-			List<String> strings = cbList.stream().map(Cb::getZdbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
-			if(CollectionUtils.isNotEmpty(strings)){
-				List<ClZdgl> zdgls = zdglService.findIn(ClZdgl.InnerColumn.zdbh, strings);
-				Map<String, String> map = zdgls.stream().collect(Collectors.toMap(ClZdgl::getZdbh, ClZdgl::getZxzt));
-				for (int i = 0; i < cbList.size(); i++) {
-					Cb cb = cbList.get(i);
-					if(StringUtils.isBlank(cb.getZdbh())){
-						cb.setZxzt("20");
-					}else{
-						cb.setZxzt(map.get(cb.getZdbh()));
-					}
-				}
-			}
-		}
-	}
+    @Override
+    protected void afterQuery(List<Cb> list) {
 
-	@Override
-	protected void afterQuery(List<Cb> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+    }
 
-		if(CollectionUtils.isEmpty(list)){
-			return;
-		}
-		String zxzt = getRequestParamterAsString("zxzt");
-		if(StringUtils.isNotBlank(zxzt)){
-			list.forEach(cb -> cb.setZxzt(zxzt));
-		}else{
-			List<String> strings = list.stream().map(Cb::getZdbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
-			List<ClZdgl> zdgls = zdglService.findIn(ClZdgl.InnerColumn.zdbh, strings);
-			Map<String, String> map = zdgls.stream().collect(Collectors.toMap(ClZdgl::getZdbh, ClZdgl::getZxzt));
-			for (int i = 0; i < list.size(); i++) {
-				Cb cb = list.get(i);
-				if(StringUtils.isBlank(cb.getZdbh())){
-					cb.setZxzt("20");
-				}else{
-					cb.setZxzt(map.get(cb.getZdbh()));
-				}
-			}
-		}
-	}
+    @Override
+    public boolean fillQueryCondition(LimitedCondition condition) {
+        String con = getRequestParamterAsString("con");
+        if (StringUtils.isNotBlank(con)) {
+            condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%" + con + "%'");
+        }
+        return true;
+    }
 
-	@Override
-	public boolean fillQueryCondition(LimitedCondition condition) {
-		String zxzt = getRequestParamterAsString("zxzt");
-		if(StringUtils.isNotBlank(zxzt)){
-			SimpleCondition simpleCondition = new SimpleCondition(ClZdgl.class);
-			if(StringUtils.equals(zxzt, "20")){
-				simpleCondition.in(ClZdgl.InnerColumn.zxzt, Arrays.asList("00","10"));
-				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
-				if(CollectionUtils.isNotEmpty(zdgls)){
-					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
-					condition.notIn(Cb.InnerColumn.zdbh, strings);
-				}
-			}else{
-				simpleCondition.eq(ClZdgl.InnerColumn.zxzt, zxzt);
-				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
-				if(CollectionUtils.isNotEmpty(zdgls)){
-					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
-					condition.in(Cb.InnerColumn.zdbh, strings);
-				}else{
-					return false;
-				}
-			}
+    @Override
+    protected Class<?> getEntityCls() {
+        return Cb.class;
+    }
 
-		}
-		String con = getRequestParamterAsString("con");
-		if(StringUtils.isNotBlank(con)){
-			condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%"+ con + "%'");
-		}
-		return true;
-	}
-
-	@Override
-	protected Class<?> getEntityCls() {
-		return Cb.class;
-	}
-//车辆删除后，同步移除
-	@Override
-	public void remove(String id) {
-		int i=getBaseMapper().deleteByPrimaryKey(id);
-		if(i==1){
+    //车辆删除后，同步移除
+    @Override
+    public void remove(String id) {
+        int i = getBaseMapper().deleteByPrimaryKey(id);
+        if (i == 1) {
 //			移除 车辆运行记录表中的记录
-			ClClyxjl clClyxjl=new ClClyxjl();
-			clClyxjl.setClId(id);//车辆ID
-			clyxjlService.remove(clClyxjl);
-		}
-	}
+            ClClyxjl clClyxjl = new ClClyxjl();
+            clClyxjl.setClId(id);//车辆ID
+            clyxjlService.remove(clClyxjl);
+        }
+    }
 
-	@Override
-	public void remove(Cb entity) {
-		int i=getBaseMapper().delete(entity);
-		if(i==1){
+    @Override
+    public void remove(Cb entity) {
+        int i = getBaseMapper().delete(entity);
+        if (i == 1) {
 //			移除 CL_CLYXJL
-			ClClyxjl clClyxjl=new ClClyxjl();
-			clClyxjl.setClId(entity.getClId());//车辆ID
-			clyxjlService.remove(clClyxjl);
-		}
-	}
+            ClClyxjl clClyxjl = new ClClyxjl();
+            clClyxjl.setClId(entity.getClId());//车辆ID
+            clyxjlService.remove(clClyxjl);
+        }
+    }
 
-	@Override
-	public ApiResponse<String> removeIds(String[] ids) {
-		for (String id : ids) {
-			int i=getBaseMapper().deleteByPrimaryKey(id);
-			if(i==1){
+    @Override
+    public ApiResponse<String> removeIds(String[] ids) {
+        for (String id : ids) {
+            int i = getBaseMapper().deleteByPrimaryKey(id);
+            if (i == 1) {
 //			移除 CL_CLYXJL
-				ClClyxjl clClyxjl=new ClClyxjl();
-				clClyxjl.setClId(id);//车辆ID
-				clyxjlService.remove(clClyxjl);
-			}
-		}
-		return ApiResponse.deleteSuccess();
-	}
+                ClClyxjl clClyxjl = new ClClyxjl();
+                clClyxjl.setClId(id);//车辆ID
+                clyxjlService.remove(clClyxjl);
+            }
+        }
+        return ApiResponse.deleteSuccess();
+    }
 
-	@Override
-	public Cb findByOrgCode(String code) {
-		List<Cb> jgs = findEq(Cb.InnerColumn.clId, code);
-		if (jgs.size() == 0)
-			return null;
-		return jgs.get(0);
-	}
+    @Override
+    public Cb findByOrgCode(String code) {
+        List<Cb> jgs = findEq(Cb.InnerColumn.clId, code);
+        if (jgs.size() == 0)
+            return null;
+        return jgs.get(0);
+    }
 
-	@Override
-	public List<Cb> getOrgCarList(String orgCode) {
-		List<Cb> carList = clService.findEq(Cb.InnerColumn.jgdm, orgCode);
-		return carList;
-	}
+    @Override
+    public List<Cb> getOrgCarList(String orgCode) {
+        List<Cb> carList = clService.findEq(Cb.InnerColumn.jgdm, orgCode);
+        return carList;
+    }
 
-	@Override
-	public ApiResponse<String> saveEntity(Cb entity) {
-		SysYh user = getCurrentUser();
-		SysJg org = jgService.findByOrgCode(user.getJgdm());
-		Date now = new Date();
-		entity.setCjr(getOperateUser());
-		entity.setClId(genId());
-		entity.setCjsj(now);
-		entity.setJgdm(user.getJgdm());
-		entity.setJgmc(org.getJgmc());
-		save(entity);
-		return ApiResponse.saveSuccess();
-	}
+    @Override
+    public ApiResponse<String> saveEntity(Cb entity) {
+        SysYh user = getCurrentUser();
+        SysJg org = jgService.findByOrgCode(user.getJgdm());
+        Date now = new Date();
+        entity.setCjr(getOperateUser());
+        entity.setClId(genId());
+        entity.setCjsj(now);
+        entity.setJgdm(user.getJgdm());
+        entity.setJgmc(org.getJgmc());
+        entity.setZxzt("20");
+        save(entity);
+        return ApiResponse.saveSuccess();
+    }
 
-	@Override
-	public ApiResponse<String> updateEntity(Cb entity) {
-		Cb findById = findById(entity.getClId());
-		RuntimeCheck.ifNull(findById, "未找到记录");
-		entity.setXgr(getOperateUser());
-		entity.setXgsj(new Date());
-		update(entity);
-		return ApiResponse.success();
-	}
+    @Override
+    public ApiResponse<String> updateEntity(Cb entity) {
+        Cb findById = findById(entity.getClId());
+        RuntimeCheck.ifNull(findById, "未找到记录");
+        entity.setXgr(getOperateUser());
+        entity.setXgsj(new Date());
+        update(entity);
+        return ApiResponse.success();
+    }
 
-	@Override
-	public ApiResponse<List<Map<String, Object>>> getVehicleTypeStatistics(String zxzt) {
-		// 1、定义初始变量
-		ApiResponse<List<Map<String, Object>>> result = new ApiResponse<>();
-		List<Map<String, Object>> carGroup = new ArrayList<>();
-		SysYh user = getCurrentUser();
-		String jgdm = user.getJgdm();// 机构ID
-		zxzt = StringUtils.trim(zxzt);
-		// 2、查询车辆信息
-		List<ClClModel> carList = null;
-		if (StringUtils.isNotEmpty(zxzt)) {
-			carList = entityMapper.getVehicleTypeZxztStatistics(jgdm, zxzt);
-		} else {
-			carList = entityMapper.getVehicleTypeStatistics(jgdm);
-		}
+    @Override
+    public ApiResponse<List<Map<String, Object>>> getVehicleTypeStatistics(String zxzt) {
+        // 1、定义初始变量
+        ApiResponse<List<Map<String, Object>>> result = new ApiResponse<>();
+        List<Map<String, Object>> carGroup = new ArrayList<>();
+        SysYh user = getCurrentUser();
+        String jgdm = user.getJgdm();// 机构ID
+        zxzt = StringUtils.trim(zxzt);
+        // 2、查询车辆信息
+        List<ClClModel> carList = null;
+        if (StringUtils.isNotEmpty(zxzt)) {
+            carList = entityMapper.getVehicleTypeZxztStatistics(jgdm, zxzt);
+        } else {
+            carList = entityMapper.getVehicleTypeStatistics(jgdm);
+        }
 
-		if (carList.size() == 0){
-			return result;
-		}
+        if (carList.size() == 0) {
+            return result;
+        }
 
-		Map<String,List<ClClModel>> carMap = new HashMap<>();
-		for (ClClModel model : carList) {
-			String cx = model.getCxZtMc();
-			if (!carMap.containsKey(cx)){
-				List<ClClModel> modelList = new ArrayList<>();
-				modelList.add(model);
-				carMap.put(cx,modelList);
-			}else{
-				carMap.get(cx).add(model);
-			}
-		}
+        Map<String, List<ClClModel>> carMap = new HashMap<>();
+        for (ClClModel model : carList) {
+            String cx = model.getCxZtMc();
+            if (!carMap.containsKey(cx)) {
+                List<ClClModel> modelList = new ArrayList<>();
+                modelList.add(model);
+                carMap.put(cx, modelList);
+            } else {
+                carMap.get(cx).add(model);
+            }
+        }
 
-		for (Map.Entry<String, List<ClClModel>> entry : carMap.entrySet()) {
-			String cx = entry.getKey();
-			List<ClClModel> modelList = entry.getValue();
-			Map<String, Object> group = new HashMap<>();
-			List<Map<String,Object>> children = new ArrayList<>();
-			group.put("title",cx);
-			group.put("expand",true);
-			group.put("children",children);
-			carGroup.add(group);
-			for (ClClModel model : modelList) {
-				Map<String,Object> map = parseCarModel(model);
-				children.add(map);
-			}
-		}
-		result.setResult(carGroup);
-		return result;
-	}
+        for (Map.Entry<String, List<ClClModel>> entry : carMap.entrySet()) {
+            String cx = entry.getKey();
+            List<ClClModel> modelList = entry.getValue();
+            Map<String, Object> group = new HashMap<>();
+            List<Map<String, Object>> children = new ArrayList<>();
+            group.put("title", cx);
+            group.put("expand", true);
+            group.put("children", children);
+            carGroup.add(group);
+            for (ClClModel model : modelList) {
+                Map<String, Object> map = parseCarModel(model);
+                children.add(map);
+            }
+        }
+        result.setResult(carGroup);
+        return result;
+    }
 
-	private Map<String,Object> parseCarModel(ClClModel model){
-		Map<String,Object> map = new HashMap<>();
-		map.put("title", model.getCph());
-		map.put("clid", model.getClId());
-		map.put("cx", model.getCx());
-		Map<String,Object> point = new HashMap<>();
-		point.put("lng",model.getBdWd());
-		point.put("lat",model.getBdJd());
-		map.put("mapCen",point);
-		return map;
-	}
+    private Map<String, Object> parseCarModel(ClClModel model) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", model.getCph());
+        map.put("clid", model.getClId());
+        map.put("cx", model.getCx());
+        Map<String, Object> point = new HashMap<>();
+        point.put("lng", model.getBdWd());
+        point.put("lat", model.getBdJd());
+        map.put("mapCen", point);
+        return map;
+    }
 
-	@Override
-	public ApiResponse<List<Cb>> nianshen(Cb car) {
-		ApiResponse<List<Cb>> apiResponse = new ApiResponse<>();
-		long now = new Date().getTime();
+    @Override
+    public ApiResponse<List<Cb>> nianshen(Cb car) {
+        ApiResponse<List<Cb>> apiResponse = new ApiResponse<>();
+        long now = new Date().getTime();
 
-		LimitedCondition condition = new LimitedCondition(Cb.class);
-		if (StringUtils.isNotEmpty(car.getCph())){
-			condition.like(Cb.InnerColumn.cph,car.getCph());
-		}
-		List<Cb> cllist = entityMapper.selectByExample(condition);
-		List<Cb> cls= new ArrayList<>();
-		/*cllist.stream().filter(s -> s.getNssj() != null).filter(s -> (now-s.getNssj().getTime()) < a);*/
-		// 年审时间正序
-		cllist = cllist.stream().filter(p->p.getNssj() != null).collect(Collectors.toList());
-		cllist.sort(Comparator.comparing(Cb::getNssj));
-		for (Cb clCl : cllist) {
-			if (clCl.getNssj()!=null) {
-				long nianshen= clCl.getNssj().getTime();
-				long time = (nianshen-now)/(24 * 60 * 60 * 1000);
-				if (time<90) {
-					cls.add(clCl);
-				}
-			}
+        LimitedCondition condition = new LimitedCondition(Cb.class);
+        if (StringUtils.isNotEmpty(car.getCph())) {
+            condition.like(Cb.InnerColumn.cph, car.getCph());
+        }
+        List<Cb> cllist = entityMapper.selectByExample(condition);
+        List<Cb> cls = new ArrayList<>();
+        /*cllist.stream().filter(s -> s.getNssj() != null).filter(s -> (now-s.getNssj().getTime()) < a);*/
+        // 年审时间正序
+        cllist = cllist.stream().filter(p -> p.getNssj() != null).collect(Collectors.toList());
+        cllist.sort(Comparator.comparing(Cb::getNssj));
+        for (Cb clCl : cllist) {
+            if (clCl.getNssj() != null) {
+                long nianshen = clCl.getNssj().getTime();
+                long time = (nianshen - now) / (24 * 60 * 60 * 1000);
+                if (time < 90) {
+                    cls.add(clCl);
+                }
+            }
 
-		}
-		apiResponse.setResult(cls);
-		return apiResponse;
-	}
+        }
+        apiResponse.setResult(cls);
+        return apiResponse;
+    }
 
-	@Override
-	public ApiResponse<Map<String, Object>> carAccStatistics(Integer days,String type) {
-		SysYh user = getCurrentUser();
-		String jgdm = user.getJgdm();
-		Calendar now = Calendar.getInstance();
-		if (days == null)days = -3;
-		if (days > 0)days = -(days-1);
-		now.add(Calendar.DATE, days);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式
-		String weekStart = sdf.format(now.getTime());
-		String dateRange = " and cjsj> to_date('"+weekStart+"','yyyy-mm-dd') ";
-		String sql = "SELECT T1.sjxm,T1.cph,T2.speedupCount,t3.speedownCount,t4.wheelCount,t5.overspeedCount  FROM CL_CL t1 \n" +
-				"  LEFT JOIN (select ZDBH ,count(SJLX) as speedupCount FROM CL_SBYXSJJL  t WHERE t.SJLX='10' "+dateRange+" GROUP BY zdbh) t2 on T1.ZDBH=T2.ZDBH\n" +
-				"  LEFT JOIN (select ZDBH ,count(SJLX) as speedownCount FROM CL_SBYXSJJL  t WHERE t.SJLX='20' "+dateRange+"  GROUP BY zdbh) t3 on T1.ZDBH=T3.ZDBH\n" +
-				"  LEFT JOIN (select ZDBH ,count(SJLX) as wheelCount FROM CL_SBYXSJJL  t WHERE t.SJLX='30' "+dateRange+"  GROUP BY zdbh) t4 on T1.ZDBH=T4.ZDBH\n" +
-				"  LEFT JOIN (select ZDBH ,count(SJLX) as overspeedCount FROM CL_SBYXSJJL  t WHERE t.SJLX='40' "+dateRange+"  GROUP BY zdbh) t5 on T1.ZDBH=T5.ZDBH "+
-				"  where t1.jgdm like '"+jgdm+"%' ";
-		List result = jdbcTemplate.queryForList(sql);
-		List<SafedrivingModel> list = new ArrayList<>(result.size());
-		for (Object o : result) {
-			Map<String,Object> map = (Map<String, Object>) o;
-			SafedrivingModel model = new SafedrivingModel();
-			model.setCph((String) map.get("cph"));
-			model.setOverspeedCount(map.get("overspeedCount") == null ? 0 : Integer.parseInt(map.get("overspeedCount").toString()));
-			model.setSpeedownCount(map.get("speedownCount") == null ? 0 : Integer.parseInt(map.get("speedownCount").toString()));
-			model.setSpeedupCount(map.get("speedupCount") == null ? 0 : Integer.parseInt(map.get("speedupCount").toString()));
-			model.setWheelCount(map.get("wheelCount") == null ? 0 : Integer.parseInt(map.get("wheelCount").toString()));
-			model.setSjxm((String) map.get("sjxm"));
+    @Override
+    public ApiResponse<Map<String, Object>> carAccStatistics(Integer days, String type) {
+        SysYh user = getCurrentUser();
+        String jgdm = user.getJgdm();
+        Calendar now = Calendar.getInstance();
+        if (days == null) days = -3;
+        if (days > 0) days = -(days - 1);
+        now.add(Calendar.DATE, days);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式
+        String weekStart = sdf.format(now.getTime());
+        String dateRange = " and cjsj> to_date('" + weekStart + "','yyyy-mm-dd') ";
+        String sql = "SELECT T1.sjxm,T1.cph,T2.speedupCount,t3.speedownCount,t4.wheelCount,t5.overspeedCount  FROM CL_CL t1 \n" +
+                "  LEFT JOIN (select ZDBH ,count(SJLX) as speedupCount FROM CL_SBYXSJJL  t WHERE t.SJLX='10' " + dateRange + " GROUP BY zdbh) t2 on T1.ZDBH=T2.ZDBH\n" +
+                "  LEFT JOIN (select ZDBH ,count(SJLX) as speedownCount FROM CL_SBYXSJJL  t WHERE t.SJLX='20' " + dateRange + "  GROUP BY zdbh) t3 on T1.ZDBH=T3.ZDBH\n" +
+                "  LEFT JOIN (select ZDBH ,count(SJLX) as wheelCount FROM CL_SBYXSJJL  t WHERE t.SJLX='30' " + dateRange + "  GROUP BY zdbh) t4 on T1.ZDBH=T4.ZDBH\n" +
+                "  LEFT JOIN (select ZDBH ,count(SJLX) as overspeedCount FROM CL_SBYXSJJL  t WHERE t.SJLX='40' " + dateRange + "  GROUP BY zdbh) t5 on T1.ZDBH=T5.ZDBH " +
+                "  where t1.jgdm like '" + jgdm + "%' ";
+        List result = jdbcTemplate.queryForList(sql);
+        List<SafedrivingModel> list = new ArrayList<>(result.size());
+        for (Object o : result) {
+            Map<String, Object> map = (Map<String, Object>) o;
+            SafedrivingModel model = new SafedrivingModel();
+            model.setCph((String) map.get("cph"));
+            model.setOverspeedCount(map.get("overspeedCount") == null ? 0 : Integer.parseInt(map.get("overspeedCount").toString()));
+            model.setSpeedownCount(map.get("speedownCount") == null ? 0 : Integer.parseInt(map.get("speedownCount").toString()));
+            model.setSpeedupCount(map.get("speedupCount") == null ? 0 : Integer.parseInt(map.get("speedupCount").toString()));
+            model.setWheelCount(map.get("wheelCount") == null ? 0 : Integer.parseInt(map.get("wheelCount").toString()));
+            model.setSjxm((String) map.get("sjxm"));
 
-			if ("aqjs".equals(type)){
-				int total = model.getSpeedupCount() +
-						model.getSpeedupCount() +
-						model.getWheelCount() +
-						model.getOverspeedCount();
-				model.setTotal(total);
-			}
-			list.add(model);
-		}
+            if ("aqjs".equals(type)) {
+                int total = model.getSpeedupCount() +
+                        model.getSpeedupCount() +
+                        model.getWheelCount() +
+                        model.getOverspeedCount();
+                model.setTotal(total);
+            }
+            list.add(model);
+        }
 
-		if ("aqjs".equals(type)){
-			list.sort(Comparator.comparingInt(SafedrivingModel::getTotal).reversed());
-			if (list.size()>10){
-				list = list.subList(0,10);
-			}
-		}else if ("cstj".equals(type)){
-			list.sort(Comparator.comparingInt(SafedrivingModel::getOverspeedCount).reversed());
-			if (list.size()>10){
-				list = list.subList(0,10);
-			}
-		}
+        if ("aqjs".equals(type)) {
+            list.sort(Comparator.comparingInt(SafedrivingModel::getTotal).reversed());
+            if (list.size() > 10) {
+                list = list.subList(0, 10);
+            }
+        } else if ("cstj".equals(type)) {
+            list.sort(Comparator.comparingInt(SafedrivingModel::getOverspeedCount).reversed());
+            if (list.size() > 10) {
+                list = list.subList(0, 10);
+            }
+        }
 
-		List<String> carNumberList = new ArrayList<>(list.size());
-		List<Object> speedUpCountList = new ArrayList<>(list.size());
-		List<Object> speedDownCountList = new ArrayList<>(list.size());
-		List<Object> wheelCountList = new ArrayList<>(list.size());
-		List<Object> overSpeedCountList = new ArrayList<>(list.size());
-		List<String> driverNames = new ArrayList<>(list.size());
-		for (SafedrivingModel model : list) {
-			String carNumber = model.getCph();
-			String driverName = model.getSjxm();
-			carNumberList.add(carNumber);
-			driverNames.add(driverName);
+        List<String> carNumberList = new ArrayList<>(list.size());
+        List<Object> speedUpCountList = new ArrayList<>(list.size());
+        List<Object> speedDownCountList = new ArrayList<>(list.size());
+        List<Object> wheelCountList = new ArrayList<>(list.size());
+        List<Object> overSpeedCountList = new ArrayList<>(list.size());
+        List<String> driverNames = new ArrayList<>(list.size());
+        for (SafedrivingModel model : list) {
+            String carNumber = model.getCph();
+            String driverName = model.getSjxm();
+            carNumberList.add(carNumber);
+            driverNames.add(driverName);
 
-			speedUpCountList.add(model.getSpeedupCount());
-			speedDownCountList.add(model.getSpeedownCount());
-			wheelCountList.add(model.getWheelCount());
-			overSpeedCountList.add(model.getOverspeedCount());
-		}
+            speedUpCountList.add(model.getSpeedupCount());
+            speedDownCountList.add(model.getSpeedownCount());
+            wheelCountList.add(model.getWheelCount());
+            overSpeedCountList.add(model.getOverspeedCount());
+        }
 
-		Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
-		Map<String,Object> speedUpMap = new HashMap<>();
-		speedUpMap.put("name","急加速");
-		speedUpMap.put("yAxis",speedUpCountList);
+        Map<String, Object> speedUpMap = new HashMap<>();
+        speedUpMap.put("name", "急加速");
+        speedUpMap.put("yAxis", speedUpCountList);
 
-		Map<String,Object> wheelMap = new HashMap<>();
-		wheelMap.put("name","急转弯");
-		wheelMap.put("yAxis",wheelCountList);
-
-
-		Map<String,Object> breakMap = new HashMap<>();
-		breakMap.put("name","急刹车");
-		breakMap.put("yAxis",speedDownCountList);
+        Map<String, Object> wheelMap = new HashMap<>();
+        wheelMap.put("name", "急转弯");
+        wheelMap.put("yAxis", wheelCountList);
 
 
-		Map<String,Object> overSpeedMap = new HashMap<>();
-		overSpeedMap.put("name","超速");
-		overSpeedMap.put("yAxis",overSpeedCountList);
-
-		map.put("driverNames",driverNames);
-		map.put("carNumbers",carNumberList);
-		map.put("xAxis",carNumberList);
-		map.put("speedUpMap",speedUpMap);
-		map.put("wheelMap",wheelMap);
-		map.put("breakMap",breakMap);
-		map.put("overSpeedMap",overSpeedMap);
-		return ApiResponse.success(map);
-	}
+        Map<String, Object> breakMap = new HashMap<>();
+        breakMap.put("name", "急刹车");
+        breakMap.put("yAxis", speedDownCountList);
 
 
-	private static String convertWeekDate(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
+        Map<String, Object> overSpeedMap = new HashMap<>();
+        overSpeedMap.put("name", "超速");
+        overSpeedMap.put("yAxis", overSpeedCountList);
 
-		// 判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了
-
-		int dayWeek = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
-
-		if (1 == dayWeek) {
-
-			cal.add(Calendar.DAY_OF_MONTH, -1);
-
-		}
-
-		cal.setFirstDayOfWeek(Calendar.MONDAY);// 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一
-
-		int day = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
-
-		cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - day);// 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式
-		return sdf.format(cal.getTime()); // 周一时间
-
-	}
-
-	public static void main(String[] args) {
-
-	}
-	@Override
-	public ApiResponse<Map<String, Integer>> getnianshen() {
-		//获取当前登陆用户
-		SysYh user = getCurrentUser();
-		Cb clCl= new Cb();
-		clCl.setJgdm(user.getJgdm());
-
-		List<Cb> cllist = entityMapper.select(clCl);
+        map.put("driverNames", driverNames);
+        map.put("carNumbers", carNumberList);
+        map.put("xAxis", carNumberList);
+        map.put("speedUpMap", speedUpMap);
+        map.put("wheelMap", wheelMap);
+        map.put("breakMap", breakMap);
+        map.put("overSpeedMap", overSpeedMap);
+        return ApiResponse.success(map);
+    }
 
 
-		int thirty=0;
-		int sixty=0;
-		int ninety=0;
-		Date now = new Date();
-		for (Cb cl : cllist) {
-			if (cl.getNssj()==null) {
-				continue;
-			}
-			Date nssj = cl.getNssj();
-			int cha = differentDaysByMillisecond(now,nssj);
-			if (cha<=30) {
-				thirty++;
-			}
-			if (cha>30&&cha<=60) {
-				sixty++;
-			}
-			if (cha>60&&cha<=90) {
-				ninety++;
-			}
+    private static String convertWeekDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
 
-		}
-		ApiResponse<Map<String, Integer>> apiResponse = new ApiResponse<>();
-		Map<String, Integer> map = new HashMap<>();
-		map.put("30", thirty);
-		map.put("60", sixty);
-		map.put("90", ninety);
-		apiResponse.setResult(map);
-		return apiResponse;
-	}
+        // 判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了
 
-	@Override
-	public ApiResponse<String> unbindDevice(String carId) {
-		RuntimeCheck.ifBlank(carId,"请选择船舶");
-		Cb car = entityMapper.selectByPrimaryKey(carId);
-		RuntimeCheck.ifNull(car,"未找到船舶信息");
-		car.setZdbh(null);
-		entityMapper.updateByPrimaryKey(car);
-		return ApiResponse.success();
-	}
+        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
 
-	@Override
-	public ApiResponse<String> unbindDriver(String carId) {
-		RuntimeCheck.ifBlank(carId,"请选择车辆");
-		Cb car = entityMapper.selectByPrimaryKey(carId);
-		RuntimeCheck.ifNull(car,"未找到车辆");
-		car.setSjxm(null);
-		car.setSjId(null);
-		entityMapper.updateByPrimaryKey(car);
-		return ApiResponse.success();
-	}
+        if (1 == dayWeek) {
 
-	@Override
-	public ApiResponse<String> bindDriver(String carId, String driverId) {
-		RuntimeCheck.ifBlank(carId,"请选择车辆");
-		RuntimeCheck.ifBlank(driverId,"请选择驾驶员");
-		Cb car = entityMapper.selectByPrimaryKey(carId);
-		RuntimeCheck.ifNull(car,"未找到车辆");
-		ClJsy driver = jsyService.findById(driverId);
-		RuntimeCheck.ifNull(driver,"未找到驾驶员");
+            cal.add(Calendar.DAY_OF_MONTH, -1);
 
-		car.setSjxm(driver.getXm());
-		car.setSjId(driverId);
-		entityMapper.updateByPrimaryKeySelective(car);
-		return ApiResponse.success();
-	}
+        }
 
-	@Override
-	public ApiResponse<String> bindDevice(String carId, String devcieId) {
-		RuntimeCheck.ifBlank(carId,"请选择船舶");
-		RuntimeCheck.ifBlank(devcieId,"请选择终端");
-		Cb car = entityMapper.selectByPrimaryKey(carId);
-		RuntimeCheck.ifNull(car,"未找到船舶信息");
-		ClZdgl device = zdglService.findById(devcieId);
-		RuntimeCheck.ifNull(device,"未找到终端信息");
+        cal.setFirstDayOfWeek(Calendar.MONDAY);// 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一
 
-		List<Cb> clCls = clService.findEq(Cb.InnerColumn.zdbh, devcieId);
-		RuntimeCheck.ifTrue(CollectionUtils.isNotEmpty(clCls), "此终端已经绑定其他船舶, 请勿重复绑定");
-		car.setZdbh(devcieId);
-		entityMapper.updateByPrimaryKeySelective(car);
-		return ApiResponse.success();
-	}
+        int day = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天
 
-	@Override
-	public ApiResponse<String> bindWebcam(String mmsi, String sbh) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		RuntimeCheck.ifBlank(sbh, "请填写绑定设备");
-		List<Cb> cbs = clService.findEq(Cb.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
-		Cb cb = cbs.get(0);
-		RuntimeCheck.ifTrue(StringUtils.isNotBlank(cb.getSbh()), "当前船舶已绑定设备");
-		Map<String, String> allSbh = WebcamUtil.getAllSbh(reids);
-		RuntimeCheck.ifFalse(allSbh.containsKey(sbh), "当前设备号没有添加 , 请先添加当前设备号");
+        cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - day);// 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值
 
-		cb.setSbh(sbh);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 设置时间格式
+        return sdf.format(cal.getTime()); // 周一时间
+
+    }
+
+    public static void main(String[] args) {
+
+    }
+
+    @Override
+    public ApiResponse<Map<String, Integer>> getnianshen() {
+        //获取当前登陆用户
+        SysYh user = getCurrentUser();
+        Cb clCl = new Cb();
+        clCl.setJgdm(user.getJgdm());
+
+        List<Cb> cllist = entityMapper.select(clCl);
+
+
+        int thirty = 0;
+        int sixty = 0;
+        int ninety = 0;
+        Date now = new Date();
+        for (Cb cl : cllist) {
+            if (cl.getNssj() == null) {
+                continue;
+            }
+            Date nssj = cl.getNssj();
+            int cha = differentDaysByMillisecond(now, nssj);
+            if (cha <= 30) {
+                thirty++;
+            }
+            if (cha > 30 && cha <= 60) {
+                sixty++;
+            }
+            if (cha > 60 && cha <= 90) {
+                ninety++;
+            }
+
+        }
+        ApiResponse<Map<String, Integer>> apiResponse = new ApiResponse<>();
+        Map<String, Integer> map = new HashMap<>();
+        map.put("30", thirty);
+        map.put("60", sixty);
+        map.put("90", ninety);
+        apiResponse.setResult(map);
+        return apiResponse;
+    }
+
+    @Override
+    public ApiResponse<String> unbindDevice(String carId) {
+        RuntimeCheck.ifBlank(carId, "请选择船舶");
+        Cb car = entityMapper.selectByPrimaryKey(carId);
+        RuntimeCheck.ifNull(car, "未找到船舶信息");
+        car.setZdbh(null);
+        entityMapper.updateByPrimaryKey(car);
+        return ApiResponse.success();
+    }
+
+    @Override
+    public ApiResponse<String> unbindDriver(String carId) {
+        RuntimeCheck.ifBlank(carId, "请选择车辆");
+        Cb car = entityMapper.selectByPrimaryKey(carId);
+        RuntimeCheck.ifNull(car, "未找到车辆");
+        car.setSjxm(null);
+        car.setSjId(null);
+        entityMapper.updateByPrimaryKey(car);
+        return ApiResponse.success();
+    }
+
+    @Override
+    public ApiResponse<String> bindDriver(String carId, String driverId) {
+        RuntimeCheck.ifBlank(carId, "请选择车辆");
+        RuntimeCheck.ifBlank(driverId, "请选择驾驶员");
+        Cb car = entityMapper.selectByPrimaryKey(carId);
+        RuntimeCheck.ifNull(car, "未找到车辆");
+        ClJsy driver = jsyService.findById(driverId);
+        RuntimeCheck.ifNull(driver, "未找到驾驶员");
+
+        car.setSjxm(driver.getXm());
+        car.setSjId(driverId);
+        entityMapper.updateByPrimaryKeySelective(car);
+        return ApiResponse.success();
+    }
+
+    @Override
+    public ApiResponse<String> bindDevice(String carId, String devcieId) {
+        RuntimeCheck.ifBlank(carId, "请选择船舶");
+        RuntimeCheck.ifBlank(devcieId, "请选择终端");
+        Cb car = entityMapper.selectByPrimaryKey(carId);
+        RuntimeCheck.ifNull(car, "未找到船舶信息");
+        ClZdgl device = zdglService.findById(devcieId);
+        RuntimeCheck.ifNull(device, "未找到终端信息");
+
+        List<Cb> clCls = clService.findEq(Cb.InnerColumn.zdbh, devcieId);
+        RuntimeCheck.ifTrue(CollectionUtils.isNotEmpty(clCls), "此终端已经绑定其他船舶, 请勿重复绑定");
+        car.setZdbh(devcieId);
+        entityMapper.updateByPrimaryKeySelective(car);
+        return ApiResponse.success();
+    }
+
+    @Override
+    public ApiResponse<String> bindWebcam(String mmsi, String sbh) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(sbh, "请填写绑定设备");
+        List<Cb> cbs = clService.findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
+        RuntimeCheck.ifTrue(StringUtils.isNotBlank(cb.getSbh()), "当前船舶已绑定设备");
+        Map<String, String> allSbh = WebcamUtil.getAllSbh(reids);
+        RuntimeCheck.ifFalse(allSbh.containsKey(sbh), "当前设备号没有添加 , 请先添加当前设备号");
+
+        cb.setSbh(sbh);
 //		SysYh user = getCurrentUser();
 //		Sxt sxt = new Sxt();
 //		sxt.setChn(allSbh.get(sbh));
@@ -602,259 +527,258 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 //		sxt.setMmsi(mmsi);
 //		sxt.setSbh(sbh);
 //		sxtService.save(sxt);
-		update(cb);
-		return ApiResponse.success();
-	}
-
-	@Override
-	public ApiResponse<String> getXc(String mmsi, String start, String end, int pageNum, int pageSize) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		if(StringUtils.isBlank(start)){
-			start = DateTime.now().toString("yyyy-MM-dd") + " 00:00:00";
-		}else {
-			start += " 00:00:00";
-		}
-		if(StringUtils.isBlank(end)){
-			end =  DateTime.now().toString("yyyy-MM-dd") + " 23:59:59";
-		}else{
-			end += " 23:59:59";
-		}
-		// 查询船舶在这个时间段的航次
-		SimpleCondition condition = new SimpleCondition(ClXc.class);
-		condition.eq(ClXc.InnerColumn.clZdbh, mmsi);
-		condition.gte(ClXc.InnerColumn.xcKssj, start);
-		condition.lte(ClXc.InnerColumn.xcJssj, end);
-		PageInfo<ClXc> info = PageHelper.startPage(pageNum, pageSize).doSelectPageInfo(() -> xcService.findByCondition(condition));
-		ApiResponse<String> res = new ApiResponse<>();
-		res.setPage(info);
-
-		return ApiResponse.success();
-	}
+        update(cb);
+        return ApiResponse.success();
+    }
 
     @Override
-	public ApiResponse<List<ClGpsLs>> getXcGpsByMMSI(String mmsi, String start, String end) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		RuntimeCheck.ifBlank(start, "请选择行程开始时间");
-		RuntimeCheck.ifBlank(end, "请选择行程结束时间");
-		SimpleCondition condition = new SimpleCondition(ClGpsLs.class);
-		DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-		DateTime startTime = DateTime.parse(start, pattern);
-		DateTime endTime = DateTime.parse(end, pattern);
-		condition.eq(ClGpsLs.InnerColumn.zdbh, mmsi);
-		condition.gte(ClGpsLs.InnerColumn.cjsj, startTime);
-		condition.lte(ClGpsLs.InnerColumn.cjsj , endTime);
-		condition.setOrderByClause(" id asc");
-		List<ClGpsLs> gpsLs = gpsLsService.findByCondition(condition);
-		return ApiResponse.success(gpsLs);
-	}
+    public ApiResponse<String> getXc(String mmsi, String start, String end, int pageNum, int pageSize) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        if (StringUtils.isBlank(start)) {
+            start = DateTime.now().toString("yyyy-MM-dd") + " 00:00:00";
+        } else {
+            start += " 00:00:00";
+        }
+        if (StringUtils.isBlank(end)) {
+            end = DateTime.now().toString("yyyy-MM-dd") + " 23:59:59";
+        } else {
+            end += " 23:59:59";
+        }
+        // 查询船舶在这个时间段的航次
+        SimpleCondition condition = new SimpleCondition(ClXc.class);
+        condition.eq(ClXc.InnerColumn.clZdbh, mmsi);
+        condition.gte(ClXc.InnerColumn.xcKssj, start);
+        condition.lte(ClXc.InnerColumn.xcJssj, end);
+        PageInfo<ClXc> info = PageHelper.startPage(pageNum, pageSize).doSelectPageInfo(() -> xcService.findByCondition(condition));
+        ApiResponse<String> res = new ApiResponse<>();
+        res.setPage(info);
 
-	@Override
-	public ApiResponse<String> photo(String mmsi, String chn) throws IOException {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		RuntimeCheck.ifBlank(chn, "请选择拍摄通道");
-		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+        return ApiResponse.success();
+    }
+
+    @Override
+    public ApiResponse<List<ClGpsLs>> getXcGpsByMMSI(String mmsi, String start, String end) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(start, "请选择行程开始时间");
+        RuntimeCheck.ifBlank(end, "请选择行程结束时间");
+        SimpleCondition condition = new SimpleCondition(ClGpsLs.class);
+        DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime startTime = DateTime.parse(start, pattern);
+        DateTime endTime = DateTime.parse(end, pattern);
+        condition.eq(ClGpsLs.InnerColumn.zdbh, mmsi);
+        condition.gte(ClGpsLs.InnerColumn.cjsj, startTime);
+        condition.lte(ClGpsLs.InnerColumn.cjsj, endTime);
+        condition.setOrderByClause(" id asc");
+        List<ClGpsLs> gpsLs = gpsLsService.findByCondition(condition);
+        return ApiResponse.success(gpsLs);
+    }
+
+    @Override
+    public ApiResponse<String> photo(String mmsi, String chn) throws IOException {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(chn, "请选择拍摄通道");
+        List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
 //		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(cbs, "未找船舶信息");
-		Cb cb = cbs.get(0);
-		String photo = WebcamUtil.photo(reids, cb.getSbh(), chn);
-		URL url = new URL(photo);
-		String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn+ ".jpg";
-		FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
-		String file = path + filePath;
-		return ApiResponse.success(file);
-	}
+        RuntimeCheck.ifEmpty(cbs, "未找船舶信息");
+        Cb cb = cbs.get(0);
+        String photo = WebcamUtil.photo(reids, cb.getSbh(), chn);
+        URL url = new URL(photo);
+        String filePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn + ".jpg";
+        FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath));
+        String file = path + filePath;
+        return ApiResponse.success(file);
+    }
 
-	@Override
-	public ApiResponse<String> getHcByApi(String mmsi, String start, String end) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		if(StringUtils.isBlank(start)){
-			start = DateTime.now().toString("yyyy-MM-dd") + " 00:00:00";
-		}else{
-			start += " 00:00:00";
-		}
+    @Override
+    public ApiResponse<String> getHcByApi(String mmsi, String start, String end) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        if (StringUtils.isBlank(start)) {
+            start = DateTime.now().toString("yyyy-MM-dd") + " 00:00:00";
+        } else {
+            start += " 00:00:00";
+        }
 
 
-		return null;
-	}
+        return null;
+    }
 
     @Override
     public ApiResponse<String> shipInfo(String mmsi) {
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		String url = shipip + "/v1/GetShipInfo";
-		Map<String,String> params = new HashMap<>();
-		params.put("shipid", mmsi);
-		String res = HttpUtil.get(url, params);
-		JSONObject object = JSON.parseObject(res);
-		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "查询异常，请稍后再试");
-		return ApiResponse.success(object.getString("Result"));
+        String url = shipip + "/v1/GetShipInfo";
+        Map<String, String> params = new HashMap<>();
+        params.put("shipid", mmsi);
+        String res = HttpUtil.get(url, params);
+        JSONObject object = JSON.parseObject(res);
+        RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "查询异常，请稍后再试");
+        return ApiResponse.success(object.getString("Result"));
     }
 
     @Override
     public ApiResponse<String[]> getAllChn(String mmsi) {
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
-		Cb cb = cbs.get(0);
+        List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
 //		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
 //		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
 //		Sxt sxt = sxts.get(0);
-		Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
-		RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
-		String s = sbh.get(cb.getSbh());
-		String ch = s.replaceAll("CH", "");
-		String [] urls = new String[9];
-		List<String> split = Arrays.asList(ch.split(","));
-		for (int i = 0; i < 9; i++) {
-			if(split.contains((i+1) +"")){
-				String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno="+cb.getSbh()+"&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
-				urls[i] = url;
-			}else{
-				urls[i] = "";
-			}
-		}
-		return ApiResponse.success(urls);
+        Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
+        RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+        String s = sbh.get(cb.getSbh());
+        String ch = s.replaceAll("CH", "");
+        String[] urls = new String[9];
+        List<String> split = Arrays.asList(ch.split(","));
+        for (int i = 0; i < 9; i++) {
+            if (split.contains((i + 1) + "")) {
+                String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno=" + cb.getSbh() + "&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
+                urls[i] = url;
+            } else {
+                urls[i] = "";
+            }
+        }
+        return ApiResponse.success(urls);
     }
 
-	@Override
-	public ApiResponse<JSONArray> getHistoryVoyage(String mmsi, String start, String end) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		RuntimeCheck.ifBlank(start, "请选择轨迹时间");
-		RuntimeCheck.ifBlank(end, "请选择轨迹时间");
-		String url = shipip + "/v1/GetHistoryVoyage";
-		Map<String,String> params = new HashMap<>();
-		params.put("shipid", mmsi);
-		params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
-		params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
-		String res = HttpUtil.get(url, params);
-		JSONObject object = JSON.parseObject(res);
-		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
-		JSONArray array = object.getJSONArray("Result");
-		return ApiResponse.success(array);
-	}
+    @Override
+    public ApiResponse<JSONArray> getHistoryVoyage(String mmsi, String start, String end) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(start, "请选择轨迹时间");
+        RuntimeCheck.ifBlank(end, "请选择轨迹时间");
+        String url = shipip + "/v1/GetHistoryVoyage";
+        Map<String, String> params = new HashMap<>();
+        params.put("shipid", mmsi);
+        params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
+        params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
+        String res = HttpUtil.get(url, params);
+        JSONObject object = JSON.parseObject(res);
+        RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+        JSONArray array = object.getJSONArray("Result");
+        return ApiResponse.success(array);
+    }
 
-	@Override
-	public ApiResponse<JSONArray> getHistoryTrack(String mmsi, String start, String end) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		RuntimeCheck.ifBlank(start, "请选择轨迹时间");
-		RuntimeCheck.ifBlank(end, "请选择轨迹时间");
-		String url = shipip + "/v1/GetHistoryTrack";
-		Map<String,String> params = new HashMap<>();
-		params.put("shipid", mmsi);
-		params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
-		params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
-		String res = HttpUtil.get(url, params);
-		JSONObject object = JSON.parseObject(res);
-		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
-		JSONArray array = object.getJSONArray("Result");
-		return ApiResponse.success(array);
-	}
+    @Override
+    public ApiResponse<JSONArray> getHistoryTrack(String mmsi, String start, String end) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(start, "请选择轨迹时间");
+        RuntimeCheck.ifBlank(end, "请选择轨迹时间");
+        String url = shipip + "/v1/GetHistoryTrack";
+        Map<String, String> params = new HashMap<>();
+        params.put("shipid", mmsi);
+        params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
+        params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
+        String res = HttpUtil.get(url, params);
+        JSONObject object = JSON.parseObject(res);
+        RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+        JSONArray array = object.getJSONArray("Result");
+        return ApiResponse.success(array);
+    }
 
-	@Override
-	public ApiResponse<Map<String, String>> getCurrentVoyage(String mmsi) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		String url = shipip + "/v1/GetCurrentVoyage";
-		Map<String,String> params = new HashMap<>();
-		params.put("shipid", mmsi);
-		String res = null;
-		try {
-			res = HttpUtil.get(url, params);
-		}catch (Exception e){
-			RuntimeCheck.ifTrue(true, "请求异常 ， 请稍后再试");
-		}
-		JSONObject object = JSON.parseObject(res);
-		Map<String,String> map = new HashMap<>();
-		if(StringUtils.equals(object.getString("Status"),"7")){
- 			return ApiResponse.success(map);
-		}
-		RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
-		JSONObject result = object.getJSONObject("Result");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String departtime = result.getString("departtime");
-		String eta = result.getString("eta");
-		String anchortime = result.getString("anchortime");
-		map.put("departtime", format.format(new Date(Long.parseLong(departtime)*1000)));
-			map.put("eta",  format.format(new Date(Long.parseLong(eta)*1000)));
-			map.put("departportname", result.getString("departportname"));
-			map.put("arrivingportname", result.getString("arrivingportname"));
-			map.put("anchorportname",result.getString("anchorportname"));
-			map.put("anchortime", format.format(new Date(Long.parseLong(anchortime)*1000)));
+    @Override
+    public ApiResponse<Map<String, String>> getCurrentVoyage(String mmsi) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        String url = shipip + "/v1/GetCurrentVoyage";
+        Map<String, String> params = new HashMap<>();
+        params.put("shipid", mmsi);
+        String res = null;
+        try {
+            res = HttpUtil.get(url, params);
+        } catch (Exception e) {
+            RuntimeCheck.ifTrue(true, "请求异常 ， 请稍后再试");
+        }
+        JSONObject object = JSON.parseObject(res);
+        Map<String, String> map = new HashMap<>();
+        if (StringUtils.equals(object.getString("Status"), "7")) {
+            return ApiResponse.success(map);
+        }
+        RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
+        JSONObject result = object.getJSONObject("Result");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String departtime = result.getString("departtime");
+        String eta = result.getString("eta");
+        String anchortime = result.getString("anchortime");
+        map.put("departtime", format.format(new Date(Long.parseLong(departtime) * 1000)));
+        map.put("eta", format.format(new Date(Long.parseLong(eta) * 1000)));
+        map.put("departportname", result.getString("departportname"));
+        map.put("arrivingportname", result.getString("arrivingportname"));
+        map.put("anchorportname", result.getString("anchorportname"));
+        map.put("anchortime", format.format(new Date(Long.parseLong(anchortime) * 1000)));
 
-		return ApiResponse.success(map);
-	}
+        return ApiResponse.success(map);
+    }
 
-	@Override
-	public ApiResponse<String[]> getAllChnH5(String mmsi) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
-		Cb cb = cbs.get(0);
+    @Override
+    public ApiResponse<String[]> getAllChnH5(String mmsi) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
 //		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
 //		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
-		Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
-		RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
-		String s = sbh.get(cb.getSbh());
-		String ch = s.replaceAll("CH", "");
-		String [] urls = new String[9];
-		List<String> split = Arrays.asList(ch.split(","));
-		for (int i = 0; i < 9; i++) {
-			if(split.contains((i+1) +"")){
-				String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
-				urls[i] = url;
-			}else{
-				urls[i] = "";
-			}
-		}
-		ApiResponse<String[]> res = new ApiResponse<>();
-		res.setResult(urls);
-		res.setMessage(cb.getSbh());
-		return res;
-	}
+        Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
+        RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+        String s = sbh.get(cb.getSbh());
+        String ch = s.replaceAll("CH", "");
+        String[] urls = new String[9];
+        List<String> split = Arrays.asList(ch.split(","));
+        for (int i = 0; i < 9; i++) {
+            if (split.contains((i + 1) + "")) {
+                String url = "http://139.196.253.185:6604/hls/1_" + cb.getSbh() + "_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids);
+                urls[i] = url;
+            } else {
+                urls[i] = "";
+            }
+        }
+        ApiResponse<String[]> res = new ApiResponse<>();
+        res.setResult(urls);
+        res.setMessage(cb.getSbh());
+        return res;
+    }
 
-	@Override
-	public ApiResponse<String> unbindWebcam(String mmsi) {
-		RuntimeCheck.ifBlank(mmsi, "请选择船舶");
-		List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
-		RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
-		entityMapper.unbindWebcam(mmsi);
-		return ApiResponse.success();
-	}
+    @Override
+    public ApiResponse<String> unbindWebcam(String mmsi) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        entityMapper.unbindWebcam(mmsi);
+        return ApiResponse.success();
+    }
 
-	@Override
-	public ApiResponse<String[]> photos(String sbh) throws IOException {
-		Map<String, String> sbhs = WebcamUtil.getAllSbh(reids);
-		if(!sbhs.containsKey(sbh)){
-			return ApiResponse.success(new String[9]);
-		}
-		String s = sbhs.get(sbh);
-		String ch = s.replaceAll("CH", "");
-		List<String> split = Arrays.asList(ch.split(","));
-		String [] urls = new String[9];
-		for (int i = 0; i < 9; i++) {
-			if(split.contains((i+1) +"")){
-				String photo = WebcamUtil.photo(reids,sbh,i+"");
-				URL url = new URL(photo);
-				String filePath = "/zp/"  + sbh + "-" + i+ ".jpg";
-				excutor.submit( () -> {
-					try {
-						FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath), 100000,100000);
-					} catch (IOException e) {
-					}
-				});
+    @Override
+    public ApiResponse<String[]> photos(String sbh) throws IOException {
+        Map<String, String> sbhs = WebcamUtil.getAllSbh(reids);
+        if (!sbhs.containsKey(sbh)) {
+            return ApiResponse.success(new String[9]);
+        }
+        String s = sbhs.get(sbh);
+        String ch = s.replaceAll("CH", "");
+        List<String> split = Arrays.asList(ch.split(","));
+        String[] urls = new String[9];
+        for (int i = 0; i < 9; i++) {
+            if (split.contains((i + 1) + "")) {
+                String photo = WebcamUtil.photo(reids, sbh, i + "");
+                URL url = new URL(photo);
+                String filePath = "/zp/" + sbh + "-" + i + ".jpg";
+                excutor.submit(() -> {
+                    try {
+                        FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath), 100000, 100000);
+                    } catch (IOException e) {
+                    }
+                });
 
-				String file = path + filePath;
-				//String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
-				urls[i] = file;
-			}else{
-				urls[i] = "";
-			}
-		}
-		return ApiResponse.success(urls);
-	}
+                String file = path + filePath;
+                //String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
+                urls[i] = file;
+            } else {
+                urls[i] = "";
+            }
+        }
+        return ApiResponse.success(urls);
+    }
 
-	public static int differentDaysByMillisecond(Date date1,Date date2)
-	    {
-	        int days = (int) ((date2.getTime() - date1.getTime()) / (1000*3600*24));
-	        return days;
-	    }
+    public static int differentDaysByMillisecond(Date date1, Date date2) {
+        int days = (int) ((date2.getTime() - date1.getTime()) / (1000 * 3600 * 24));
+        return days;
+    }
 
 }

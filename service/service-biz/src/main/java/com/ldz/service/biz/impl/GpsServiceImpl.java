@@ -457,7 +457,7 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
             clcl.setHx(entity.getFxj());
             clcl.setDwzb(entity.getLongitude() + "," + entity.getLatitude());
             clcl.setDwsj(entity.getStartTime());
-            clService.update(clcl);
+
         }else{  // 设备没有绑定车辆时，默认保存终端信息，后续绑定车辆后可根据终端信息替换
             clsbyxsjjl.setCph(entity.getDeviceId());
         }
@@ -484,13 +484,16 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                     // todo 记得改回 00
                     zdgl.setZxzt("00");
                     zdglservice.update(zdgl);
+                    clcl.setZxzt("00");
+                    clService.update(clcl);
                 }
             }else if (StringUtils.equals(entity.getSczt(), "20")) {
                 if(!StringUtils.equals(zdgl.getZt(),"00") || !StringUtils.equals(zdgl.getZxzt(),"10")) {
                     zdgl.setZt("00");
                     zdgl.setZxzt("10");
                     zdglservice.update(zdgl);
-
+                    clcl.setZxzt("00");
+                    clService.update(clcl);
                 }
             }
         }

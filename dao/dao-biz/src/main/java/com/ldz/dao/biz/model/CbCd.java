@@ -27,13 +27,16 @@ public class CbCd {
 
     private String type;
 
+    private String name;
+
     public enum InnerColumn{
         id("ID"),
         yhId("YH_ID"),
         cjsj("CJSJ"),
         cjr("CJR"),
         json("JSON"),
-        type("TYPE");
+        type("TYPE"),
+        name("NAME");
 
         private final String column;
 

@@ -61,7 +61,7 @@ public class DzwlCtrl extends BaseController<ClDzwl,String>{
      * @return
      */
     @RequestMapping("setCarsDzwl")
-    public ApiResponse<String> setCarsDzwl(String carIds,String wlid){
-        return service.setCarsDzwl(carIds,wlid);
+    public ApiResponse<String> setCarsDzwl(String carIds,String wlid, String mmsi){
+        return service.setCarsDzwl(carIds,wlid, mmsi);
     }
 }

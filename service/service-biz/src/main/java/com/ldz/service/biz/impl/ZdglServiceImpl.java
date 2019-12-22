@@ -797,7 +797,12 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
         return ApiResponse.success();
     }
 
+    @Override
+    public void updateCbzt(String zxzt, String zdbh) {
 
+        entityMapper.updateCbzt(zxzt, zdbh);
+
+    }
 
 
 }

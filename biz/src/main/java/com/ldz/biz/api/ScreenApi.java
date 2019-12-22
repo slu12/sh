@@ -8,6 +8,7 @@ import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.HttpUtil;
+import com.ldz.util.commonUtil.SnowflakeIdWorker;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import org.apache.commons.io.FileUtils;
@@ -41,6 +42,8 @@ public class ScreenApi {
     private String shipip;
     @Value("${filePath}")
     private String path;
+    @Autowired
+    private SnowflakeIdWorker idWorker;
     /**
      * 抓拍接口
      */
@@ -173,8 +176,24 @@ public class ScreenApi {
         return ApiResponse.success(result);
     }
 
+    @GetMapping("/saveListCb")
+    public ApiResponse<String> saveList() throws IOException {
 
-
+        List<String> list = FileUtils.readLines(new File("/data/wwwroot/file/1.txt"), "UTF-8");
+        list.forEach(s -> {
+            String[] split = s.split(",");
+            Cb cb = new Cb();
+            cb.setClId(idWorker.nextId() + "");
+            cb.setMmsi(split[0]);
+            cb.setShipname(split[1]);
+            cb.setCjsj(new Date());
+            cb.setJgdm("100");
+            cb.setJgmc("神海大数据平台");
+            cb.setCjr("1-admini");
+            service.save(cb);
+        });
+        return ApiResponse.success();
+    }
 
 
 }

@@ -80,6 +80,63 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 	}
 
 	@Override
+	public boolean fillPagerCondition(LimitedCondition condition) {
+		String zxzt = getRequestParamterAsString("zxzt");
+		if(StringUtils.isNotBlank(zxzt)){
+			SimpleCondition simpleCondition = new SimpleCondition(ClZdgl.class);
+			if(StringUtils.equals(zxzt, "20")){
+				simpleCondition.in(ClZdgl.InnerColumn.zxzt, Arrays.asList("00","10"));
+				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
+				if(CollectionUtils.isNotEmpty(zdgls)){
+					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
+					condition.notIn(Cb.InnerColumn.zdbh, strings);
+				}
+			}else{
+				simpleCondition.eq(ClZdgl.InnerColumn.zxzt, zxzt);
+				List<ClZdgl> zdgls = zdglService.findByCondition(simpleCondition);
+				if(CollectionUtils.isNotEmpty(zdgls)){
+					List<String> strings = zdgls.stream().map(ClZdgl::getZdbh).collect(Collectors.toList());
+					condition.in(Cb.InnerColumn.zdbh, strings);
+				}else{
+					return false;
+				}
+			}
+
+		}
+		String con = getRequestParamterAsString("con");
+		if(StringUtils.isNotBlank(con)){
+			condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%"+ con + "%'");
+		}
+		return true;
+	}
+
+	@Override
+	protected void afterPager(PageInfo<Cb> resultPage) {
+		List<Cb> cbList = resultPage.getList();
+		if(CollectionUtils.isEmpty(cbList)){
+			return;
+		}
+		String zxzt = getRequestParamterAsString("zxzt");
+		if(StringUtils.isNotBlank(zxzt)){
+			cbList.forEach(cb -> cb.setZxzt(zxzt));
+		}else{
+			List<String> strings = cbList.stream().map(Cb::getZdbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+			if(CollectionUtils.isNotEmpty(strings)){
+				List<ClZdgl> zdgls = zdglService.findIn(ClZdgl.InnerColumn.zdbh, strings);
+				Map<String, String> map = zdgls.stream().collect(Collectors.toMap(ClZdgl::getZdbh, ClZdgl::getZxzt));
+				for (int i = 0; i < cbList.size(); i++) {
+					Cb cb = cbList.get(i);
+					if(StringUtils.isBlank(cb.getZdbh())){
+						cb.setZxzt("20");
+					}else{
+						cb.setZxzt(map.get(cb.getZdbh()));
+					}
+				}
+			}
+		}
+	}
+
+	@Override
 	protected void afterQuery(List<Cb> list) {
 
 		if(CollectionUtils.isEmpty(list)){
@@ -101,8 +158,6 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 				}
 			}
 		}
-
-
 	}
 
 	@Override
@@ -778,7 +833,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 			if(split.contains((i+1) +"")){
 				String photo = WebcamUtil.photo(reids,sbh,i+"");
 				URL url = new URL(photo);
-				String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + i+ ".jpg";
+				String filePath = "/zp/"  + sbh + "-" + i+ ".jpg";
 				excutor.submit( () -> {
 					try {
 						FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath), 100000,100000);

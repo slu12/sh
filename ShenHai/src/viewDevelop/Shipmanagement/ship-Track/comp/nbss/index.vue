@@ -4,39 +4,20 @@
       <div class="funcButItem box_col rowCenter" style="height: 76px">
         <Icon type="md-search" color="#ffffff" size="32"/>
       </div>
-      <div class="funcButItem box_col rowCenter" :class="selFuncItem==index?'selItemSty':''"
+      <div class="funcButItem box_col rowCenter" :class="tabIndex==index?'selItemSty':''"
            v-for="(item,index) in tabList" :key="index"
            @click="changeTab(index)">
         <div v-for="(lab,key) in item.label.split(',')">
           {{lab}}
         </div>
       </div>
-
-
-      <!--<span class="iconClass">-->
-      <!--<Icon type="ios-arrow-forward" size="32" @click.native="unShow"></Icon>-->
-      <!--</span>-->
-      <!--<div id="tabBar">-->
-      <!--<ul id="tabUl">-->
-      <!--<li :class="[{activeTab:index === tabIndex},'tabLi']" v-for="(item,index) in tabList" :key="index"-->
-      <!--@click="changeTab(index)">{{item.label}}-->
-      <!--</li>-->
-      <!--</ul>-->
-      <!--</div>-->
-      <!--<span class="iconClass">-->
-      <!--<Icon type="chevron-down" @click.native="downTab" size="32"></Icon>-->
-      <!--</span>-->
     </div>
-    <div class="tabContent" v-if="true">
+    <div class="tabContent box_col" v-if="showModal">
       <div class="searchFuncBoxSty box_col colItemCenter rowCenter">
         <div class="closeModalBoxSty box_col colItemCenter rowCenter"
              @click="unShow">
-          <div>
-            收
-          </div>
-          <div>
-            起
-          </div>
+          <div>收</div>
+          <div>起</div>
           <Icon type="ios-arrow-forward" size="22"/>
         </div>
         <div style="width: 360px">
@@ -44,105 +25,121 @@
                  @on-search="getshipMess" search enter-button placeholder="请输入MMSI或船舶名称"/>
         </div>
       </div>
-      <div v-if="tabIndex === 0">
-        <Row style="height: 40px">
+
+      <div class="shipListBoxSty box_col_auto" v-if="tabIndex === 0">
+        <div class="tabBarBox box_row rowBetween boxMar_B">
+          <div class="tabbarItem" :class="zxztindex==index?'selTabbarItem':''" v-for="(item,index) in zxztlist"
+               :key="index"
+               @click="changezxztindex(index,item.zt)">
+            {{item.label}}
+          </div>
+        </div>
+        <div class="shipSty" v-for="(item,index) in shipData"
+             @click.native="getship(item)">
+          <div class="shipname">
+            {{item.shipname}} - {{item.cbsbh}}
+          </div>
+          <Row class="shipmess">
+            <Col span="14">MMSI ：{{item.mmsi}}</Col>
+            <Col span="10">类型 ：{{item.shiptypename}}</Col>
+          </Row>
+        </div>
+      </div>
+      <div class="shipxq box_col_auto" v-if="tabIndex === 1">
+        <div class="shipname">{{ship.shipname}} - {{ship.cbsbh}}</div>
+        <div class="shipmess">
+          <div>MMSI : {{ship.mmsi}}</div>
+          <div>呼号 : {{ship.callsign}}</div>
+          <div>IMO : {{ship.imo}}</div>
+          <div>类型 : {{ship.shiptypename}}</div>
+          <div>北斗设备编号 : {{ship.zdbh}}</div>
+          <div>所属机构 : {{ship.jgmc}}</div>
+          <div>定位时间 : {{ship.dwsj}}</div>
+          <div>定位坐标 : {{ship.dwzb}}</div>
+          <div>航速 : {{ship.hs}}</div>
+          <div>航向 : {{ship.hx}}</div>
+        </div>
+
+        <div class="hcmess">
           <Row>
-            <Col span="6" v-for="(item,index) in zxztlist">
-              <div :class="[{activezxzt:index === zxztindex},'ztlistClass']" :key="index"
-                   @click="changezxztindex(index,item.zt)">{{item.label}}
-              </div>
-            </Col>
+            <Col span="8">出发港</Col>
+            <Col span="8">状态</Col>
+            <Col span="8">目的港</Col>
           </Row>
-        </Row>
-        <div class="ship">
-          <Row class="shipSty" v-for="(item,index) in shipData" @click.native="getship(item)">
-            <Row class="shipname">
-              {{item.shipname}} - {{item.cbsbh}}
-            </Row>
-            <Row class="shipmess">
-              <Col span="14">MMSI ：{{item.mmsi}}</Col>
-              <Col span="10">类型 ：{{item.shiptypename}}</Col>
-            </Row>
+          <Row>
+            <Col span="8" style="font-size: 24px">芜湖县</Col>
+            <Col span="8">>> 停泊 >></Col>
+            <Col span="8" style="font-size: 24px">wuhan</Col>
+          </Row>
+          <Row>
+            <Col span="8">出发时间</Col>
+            <Col span="8"> &nbsp;</Col>
+            <Col span="8">预计到达时间</Col>
+          </Row>
+          <Row class="did">
+            <Col span="8">2019-12-32</Col>
+            <Col span="8"> &nbsp;</Col>
+            <Col span="8">2019-12-32</Col>
+          </Row>
+          <Row class="did">
+            <Col span="8">2019-12-32</Col>
+            <Col span="8"> &nbsp;</Col>
+            <Col span="8">2019-12-32</Col>
           </Row>
         </div>
-
-      </div>
-      <div v-if="tabIndex === 1">
-        <div class="shipxq">
-          <div class="shipname">{{ship.shipname}} - {{ship.cbsbh}}</div>
-          <div class="shipmess">
-            <div>MMSI : {{ship.mmsi}}</div>
-            <div>呼号 : {{ship.callsign}}</div>
-            <div>IMO : {{ship.imo}}</div>
-            <div>类型 : {{ship.shiptypename}}</div>
-            <div>北斗设备编号 : {{ship.zdbh}}</div>
-            <div>所属机构 : {{ship.jgmc}}</div>
-            <div>定位时间 : {{ship.dwsj}}</div>
-            <div>定位坐标 : {{ship.dwzb}}</div>
-            <div>航速 : {{ship.hs}}</div>
-            <div>航向 : {{ship.hx}}</div>
+        <div class="funcBox box_row rowAuto colItemCenter">
+          <div class="funcItemBox">
+            <Icon type="ios-book-outline"/>
+            <div class="labelSty">
+              查看详细
+            </div>
           </div>
-          <div class="hcmess">
-            <Row>
-              <Col span="8">出发港</Col>
-              <Col span="8">状态</Col>
-              <Col span="8">目的港</Col>
-            </Row>
-            <Row>
-              <Col span="8" style="font-size: 24px">芜湖县</Col>
-              <Col span="8">>> 停泊 >></Col>
-              <Col span="8" style="font-size: 24px">wuhan</Col>
-            </Row>
-            <Row>
-              <Col span="8">出发时间</Col>
-              <Col span="8"> &nbsp;</Col>
-              <Col span="8">预计到达时间</Col>
-            </Row>
-            <Row class="did">
-              <Col span="8">2019-12-32</Col>
-              <Col span="8"> &nbsp;</Col>
-              <Col span="8">2019-12-32</Col>
-            </Row>
-            <Row class="did">
-              <Col span="8">2019-12-32</Col>
-              <Col span="8"> &nbsp;</Col>
-              <Col span="8">2019-12-32</Col>
-            </Row>
+          <div class="funcItemBox" @click.native="showPathHistory">
+            <Icon type="md-git-pull-request"/>
+            <div class="labelSty">
+              查看历史轨迹
+            </div>
           </div>
-          <div style="padding-top: 20px">
-            <Row>
-              <Col span="12" style="text-align: center" @click.native="showFance">
-                <Icon type="md-qr-scanner" size="32" color="#FFFFFF"/>
-                <br>
-                <span style="color: #FFFFFF;font-size: 14px">电子围栏</span>
-              </Col>
-              <Col span="12" style="text-align: center" @click.native="showPathHistory">
-                <Icon type="md-git-pull-request" size="32" color="#FFFFFF"/>
-                <br>
-                <span style="color: #FFFFFF;font-size: 14px">历史轨迹</span>
-              </Col>
-            </Row>
+          <div class="funcItemBox" @click.native="showFance">
+            <Icon type="md-qr-scanner"/>
+            <div class="labelSty">
+              电子围栏
+            </div>
+          </div>
+        </div>
+        <div class="funcBox box_row rowAuto colItemCenter">
+          <div class="funcItemBox">
+            <Icon type="md-videocam"/>
+            <div class="labelSty">
+              摄像头影像
+            </div>
+          </div>
+          <div class="funcItemBox" @click.native="showPathHistory">
+            <Icon type="md-bookmarks"/>
+            <div class="labelSty">
+              证书监管
+            </div>
+          </div>
+          <div class="funcItemBox">
           </div>
         </div>
       </div>
-      <div v-if="tabIndex === 2">
-        <div class="shipxq">
-          <div class="shipname">设备编号 : {{ship.cbsbh}}</div>
-          <div class="shipmess">
-            <div>运行状态 : {{ship.zxzt}}</div>
-            <div>安装船舶 : {{ship.cbsbh}}</div>
-            <div>北斗设备编号 : {{ship.zdbh}}</div>
-            <div>所属机构 : {{ship.jgmc}}</div>
-            <div>定位时间 : {{ship.dwsj}}</div>
-            <div>定位坐标 : {{ship.dwzb}}</div>
-            <div>航速 : {{ship.hs}}</div>
-            <div>航向 : {{ship.hx}}</div>
-            <div>设备编号 : {{ship.zdbh}}</div>
-          </div>
 
+      <div class="shipxq box_col_auto" v-if="tabIndex === 2">
+        <div class="shipname">设备编号 : {{ship.cbsbh}}</div>
+        <div class="shipmess">
+          <div>运行状态 : {{ship.zxzt}}</div>
+          <div>安装船舶 : {{ship.cbsbh}}</div>
+          <div>北斗设备编号 : {{ship.zdbh}}</div>
+          <div>所属机构 : {{ship.jgmc}}</div>
+          <div>定位时间 : {{ship.dwsj}}</div>
+          <div>定位坐标 : {{ship.dwzb}}</div>
+          <div>航速 : {{ship.hs}}</div>
+          <div>航向 : {{ship.hx}}</div>
+          <div>设备编号 : {{ship.zdbh}}</div>
         </div>
       </div>
-      <div v-if="tabIndex === 3">
+      <div class="box_col_auto" v-if="tabIndex === 3">
         <Row class="shipycxq">
           <Row class="shipname">
             船舶名称
@@ -152,10 +149,9 @@
             <Col class="rightyc" span="10" align="right">异常时间</Col>
           </Row>
         </Row>
-
       </div>
-      <div v-if="tabIndex === 4">
-        <div style="text-align: center;overflow: scroll;height: 800px">
+      <div class="box_col_auto" v-if="tabIndex === 4">
+        <div style="text-align: center">
           <video v-for="(item,index) in videoList"
                  data-setup='{"fluid":true,"aspectRatio":"16:9"}'
                  :poster="videoimageList[index]"
@@ -168,10 +164,8 @@
           </video>
         </div>
       </div>
+
     </div>
-    <!--    <div class="sq" @click="unShow" v-if="showModal">-->
-    <!--      <Icon size="32" type="ios-arrow-forward" />-->
-    <!--    </div>-->
 
   </div>
 </template>
@@ -186,7 +180,8 @@
     components: {carJK},
     watch: {
       tabIndex: function (newVal) {
-        this.showModal = true
+        console.log(newVal);
+        // this.showModal = true
         let scrollNav = document.getElementById('tabUl')
         let tabBar = document.getElementById('tabBar')
         let transformHeight = scrollNav.scrollHeight - tabBar.clientHeight
@@ -209,7 +204,7 @@
     data() {
       return {
         showModal: false,
-        tabIndex: '',
+        tabIndex: null,
         zxztindex: 0,
         zxztlist: [
           {label: '全部', zt: ''},
@@ -224,7 +219,6 @@
           {label: '异常,情况'},
           {label: '视频,监控'},
         ],
-        selFuncItem: null,//选中的功能模块索引
         shipData: [],
         ship: {},
         videoList: [],
@@ -275,7 +269,22 @@
       },
       //点击收起
       unShow() {
-        this.showModal = false
+        this.showModal = false;
+        this.tabIndex = null;
+        this.zxztindex = 0;
+      },
+      // 更改tab页签
+      changeTab(index) {
+        console.log(this.ship.mmsi, index);
+        // this.ship.mmsi = '413839203'
+        if ((!this.ship.mmsi || this.ship.mmsi == '') && index != 0) {
+          this.$Message.error('请先选择船舶')
+          return
+        }
+        this.$nextTick(() => {
+          this.tabIndex = index;
+          this.showModal = true;
+        })
       },
       // 更改状态页签
       changezxztindex(index, zt) {
@@ -283,20 +292,7 @@
         this.from.zxzt = zt
         this.getshipMess()
       },
-// 更改tab页签
-      changeTab(index) {
-        this.selFuncItem = index
-        console.log(this.ship.mmsi, index);
-        if ((!this.ship.mmsi || this.ship.mmsi == '') && index != 0) {
-          this.$Message.error('请先选择船舶')
-          return
-        }
-        this.$nextTick(() => {
-          this.tabIndex = index
-          this.$store.state.proofActiveName = this.tabIndex
-        })
-      },
-// 调整Tab滚动
+      // 调整Tab滚动
       upTab() {
         let scrollNav = document.getElementById('tabUl')
         this.$nextTick(function () {

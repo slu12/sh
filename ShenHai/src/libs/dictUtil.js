@@ -59,7 +59,7 @@ let dictUtil = {
         let a = [];
         if (!r.zdxmList) continue
         for (let e of r.zdxmList) {
-          a.push({key: e.zddm, val: e.zdmc,by1:e.by1});
+          a.push({key: e.zddm, val: e.zdmc,by1:e.by1,sel:false});
         }
         dictMap.set(r.lmdm, a)
       }

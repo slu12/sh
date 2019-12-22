@@ -284,6 +284,16 @@ export default [
         component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
       },
       {
+        path: 'watch-video',
+        name: 'WATCH_VIDEO',
+        meta: {
+          icon: 'ios-cog',
+          title: '视频查看',
+          hideInMenu:true
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/watchVideo')
+      },
+      {
         path: 'ship-trajectory',
         name: 'ship-trajectory',
         meta: {

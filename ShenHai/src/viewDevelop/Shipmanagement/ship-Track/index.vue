@@ -39,7 +39,7 @@
     },
     data() {
       return {
-        compName: this.local == 'en-US' ? 'B_myMap' : 'B_myMap',
+        compName: 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
         SpinShow: false,

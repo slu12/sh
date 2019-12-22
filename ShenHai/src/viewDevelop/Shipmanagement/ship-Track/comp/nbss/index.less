@@ -21,65 +21,9 @@
     .selItemSty {
       background-color: #363E4F;
     }
-
-    #tabBar {
-      height: e("calc(100% - 40px)");
-      overflow: hidden;
-      z-index: -1;
-
-      #tabUl {
-        width: 40px;
-        border-right: 1px solid #dddee1;
-        transition: -webkit-transform .5s ease-in-out;
-        transition: transform .5s ease-in-out;
-
-        .tabLi {
-          width: 100%;
-          font-size: 14px;
-          /*writing-mode: vertical-lr;*/
-          padding: 14px 0 14px 0;
-          cursor: pointer;
-          border: 1px solid #dddee1;
-          border-right: 0;
-          margin-bottom: 5px;
-          text-align: center;
-          vertical-align: middle;
-          background: #5E687D;
-          color: #fdfdfd;
-        }
-
-        .tabLi:hover {
-          color: #fdfdfd;
-        }
-
-        .activeTab {
-          color: #FFFFFF;
-          background: #363E4F;
-          width: 36px;
-          z-index: 100;
-        }
-      }
-    }
-
-    .iconClass {
-      display: inline-block;
-      height: 40px;
-      color: #FFFFFF;
-      margin-left: 3px;
-      margin-top: 6px;
-      cursor: pointer;
-      text-align: center;
-      vertical-align: middle;
-      line-height: 30px;
-      width: e("calc(100% - 10px)");
-    }
   }
 
   .tabContent {
-    //float: right;
-    //background: #363E4F;
-    //width: e("calc(100% - 41px)");
-    //height: 100%;
     position: absolute;
     right: 60px;
     top: 0;
@@ -127,7 +71,6 @@
           border: 1px solid rgba(255, 255, 255, 1);
         }
       }
-
       .shipSty {
         background-color: #FFFFFF;
         margin-bottom: 5px;
@@ -147,6 +90,62 @@
           font-weight: 400;
           color: rgba(102, 102, 102, 1);
           line-height: 24px;
+        }
+      }
+    }
+    //船舶信息
+    .shipxq {
+      margin: 10px 0;
+      .shipname {
+        margin: 0 14px;
+        font-size: 16px;
+        font-family: Microsoft YaHei;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        line-height: 36px;
+      }
+      .shipmess {
+        margin: 0 14px 15px;
+        background-color: #FFFFFF;
+        line-height: 24px;
+        padding-left: 10px;
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: 400;
+        color: rgba(102, 102, 102, 1);
+      }
+      .hcmess {
+        text-align: center;
+        font-size: 14px;
+        font-family: Microsoft YaHei;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 1);
+        line-height: 36px;
+        border-top: 1px solid #dddee1;
+        border-bottom: 1px solid #dddee1;
+        padding: 25px 15px;
+        .did {
+          line-height: 18px;
+        }
+      }
+
+      .funcBox {
+        margin-top: 30px;
+        .funcItemBox {
+          width: 85px;
+          text-align: center;
+          cursor: pointer;
+          i {
+            font-size: 32px;
+            color: #FFFFFF;
+          }
+          .labelSty {
+            margin-top: 8px;
+            font-size: 14px;
+            font-family: Microsoft YaHei;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 1);
+          }
         }
       }
     }
@@ -176,67 +175,5 @@
         }
       }
     }
-    .shipxq {
-      padding: 0 10px;
-      .shipname {
-        width: 300px;
-        font-size: 16px;
-        font-family: Microsoft YaHei;
-        font-weight: bold;
-        color: rgba(255, 255, 255, 1);
-        line-height: 36px;
-      }
-      .shipmess {
-        background-color: #FFFFFF;
-        line-height: 24px;
-        padding-left: 10px;
-        font-size: 14px;
-        font-family: Microsoft YaHei;
-        font-weight: 400;
-        color: rgba(102, 102, 102, 1);
-      }
-      .hcmess {
-        text-align: center;
-        font-size: 14px;
-        font-family: Microsoft YaHei;
-        font-weight: bold;
-        color: rgba(255, 255, 255, 1);
-        line-height: 36px;
-        border: 1px solid #dddee1;
-        .did {
-          line-height: 18px;
-        }
-      }
-    }
-    .ztlistClass {
-      width: 100%;
-      font-size: 14px;
-      cursor: pointer;
-      border: 1px solid #dddee1;
-      border-right: 0;
-      margin-bottom: 5px;
-      text-align: center;
-      vertical-align: middle;
-      background: #5E687D;
-      color: #fdfdfd;
-    }
-    .activezxzt {
-      color: #FFFFFF;
-      background: #363E4F;
-      width: 100%;
-      z-index: 100;
-    }
-  }
-  .sq {
-    width: 40px;
-    height: 80px;
-    float: right;
-    z-index: 9999;
-    background-color: #5E687D;
-    color: #FFFFFF;
-    text-align: center;
-    vertical-align: middle;
-    writing-mode: vertical-lr;
-    font-size: 16px;
   }
 }

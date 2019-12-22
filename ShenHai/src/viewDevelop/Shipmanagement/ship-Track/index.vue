@@ -2,7 +2,7 @@
   <div class="box_col" style="flex: 1;background-color: #F5CBD1">
     <div class="box_row" style="height: 100%">
       <div class="box_row_100">
-        <!--<component ref="map" :is="compName"></component>-->
+        <component ref="map" :is="compName"></component>
       </div>
       <template>
         <nbss @reflh="rowClick"></nbss>

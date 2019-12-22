@@ -151,6 +151,7 @@
         </Row>
       </div>
       <div class="box_col_auto" v-if="tabIndex === 4">
+        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>
         <div style="text-align: center">
           <video v-for="(item,index) in videoList"
                  data-setup='{"fluid":true,"aspectRatio":"16:9"}'
@@ -237,6 +238,17 @@
       player.dispose();
     },
     methods: {
+      goVideoEvent(pms){
+        this.$router.push({
+          name:'WATCH_VIDEO',
+          query:{
+            id:123123
+          },
+          params:{
+            text:pms
+          }
+        })
+      },
       playVideo(id) {  //播放视频
         console.log(id);
         videojs(id, {}, function (val) {

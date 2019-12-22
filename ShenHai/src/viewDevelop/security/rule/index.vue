@@ -40,8 +40,6 @@
           </Card>
         </Col>
       </Row>
-
-
     </div>
 
   </div>

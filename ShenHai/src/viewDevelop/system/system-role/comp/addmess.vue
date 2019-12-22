@@ -57,11 +57,13 @@
 
 <script>
 	import treelist from '@/data/list.js'
+  import i18nTabTit from "../../../../mixins/i18nTabTit";
 
     import menuChoose from '../../../components/menuChoose'
 
 	export default {
 		name: '',
+    mixins:[i18nTabTit],
 		components:{menuChoose},
 		data() {
 			return {

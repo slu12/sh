@@ -30,8 +30,8 @@
                  </a>
                  <List border size="small">
                    <ListItem>船籍</ListItem>
-                   <ListItem>状态</ListItem>
-                   <ListItem>设备</ListItem>
+                   <ListItem>终端状态</ListItem>
+                   <ListItem>船舶类别</ListItem>
                  </List>
                </Card>
            </Col>

@@ -5,7 +5,7 @@
         <component ref="map" :is="compName"></component>
       </div>
       <template>
-        <nbss @reflh="rowClick" @showFance="showFance"></nbss>
+        <nbss @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
       </template>
     </div>
   </div>
@@ -374,18 +374,11 @@
         this.showTabs = true;
         this.changeBtn();
       },
-      initGps() {
-        var v = this
-        this.$http.get(this.apis.CLJK.QUERY, {
-          params: {
-            zdLx: '30',
-            positionType: this.local == 'en-US' ? 'gcj02' : '',
-          }
-        }).then((res) => {
-          if (res.code === 200) {
+      initGps(ship) {
+            var v = this
             this.$store.commit('ChcarCodeList', []);
             this.initTime = new Date().getTime();
-            this.allCarList = res.result;
+            this.allCarList = ship;
             if (!this.allCarList) {
               this.allCarList = [];
             } else {
@@ -395,16 +388,14 @@
               }
               this.carArray[0] = this.allCarList;
               // this.checkWebsocket();
-              this.startQuery();
+              // this.startQuery();
             }
             this.carArray[0] = this.allCarList;
             this.allCarCount = this.allCarList.length;
-            this.$store.commit('ChcarCodeList', res.result);
+            this.$store.commit('ChcarCodeList', ship);
             /* let li =   this.$store.state.app.carCodeList;
              console.log("llllll ," , li)*/
-          }
           this.init();
-        })
       },
       showPath() {
         this.$refs.map.showPath();

@@ -27,12 +27,18 @@
                  <p slot="title">{{item.name}}</p>
                  <a href="#" slot="extra">
                    <tag>{{item.type}}</tag>
-                   <Icon type="md-close" @click="delTj(item.id)"/>
+                   <Button type="info" size="small">
+                     <Icon type="md-create" @click="update(item)"/>
+                   </Button>
+                   <Button type="warning" size="small">
+                     <Icon type="md-close" @click="delTj(item.id)"/>
+                   </Button>
+
                  </a>
                  <List border size="small">
-                   <ListItem>船籍 : {{item.json.jgdmname}}</ListItem>
-                   <ListItem>终端状态 : {{item.json.zxztname}}</ListItem>
-                   <ListItem>船舶类别 : {{item.json.shiptypename}}</ListItem>
+                   <ListItem>船籍 : {{item.json.portname.value}}</ListItem>
+                   <ListItem>终端状态 : {{item.json.zxzt.value}}</ListItem>
+                   <ListItem>船舶类别 : {{item.json.shiptype.value}}</ListItem>
                  </List>
                </Card>
            </Col>
@@ -44,20 +50,22 @@
               @on-page-size-change='(e)=>{param.pageSize=e;pageChange()}' show-total show-elevator
               show-sizer placement='top' @on-change='pageChange'></Page>
       </Row>
-      <component :is="compName" @getPager="getPager"></component>
+      <component :is="compName" :item="item" @getPager="getPager"></component>
     </div>
 </template>
 
 <script>
     import util from "../../../libs/util2";
     import add from './comp/add'
+    import update from './comp/update'
     export default {
         name: "index",
       components: {
-        add
+        add,update
       },
       data(){
         return{
+          item:{},
           tjjList:[],
           compName:'',
           pageTotal:0,
@@ -72,6 +80,10 @@
         this.getPager()
       },
       methods:{
+          update(item){
+            this.item =  item
+            this.compName = 'update'
+          },
           delTj(id){
             this.swal({
               title:'是否确认删除?',
@@ -81,7 +93,7 @@
               cancelButtonText: "取消",
             }).then( (val) =>{
                 if (val.value) {
-                  this.$http.get('/api/cbcd/remove/'+id).then((res)=>{
+                  this.$http.post('/api/cbcd/remove/'+id).then((res)=>{
                     if (res.code == 200){
                       this.$Message.success(res.message)
                       this.getPager()
@@ -101,7 +113,10 @@
                 this.pageTotal = res.page.total
                 this.tjjList = res.page.list
                 for (let i = 0;i<=this.tjjList.length;i++){
-                  this.tjjList[i].json =  JSON.parse(this.tjjList[i].json);
+                  console.log(this.tjjList[i].json);
+                  let a  = this.tjjList[i].json
+                  this.tjjList[i].json =  JSON.parse(a);
+                  console.log(this.tjjList[i].json);
                   this.tjjList[i].type = this.xsType(this.tjjList[i].type)
                 }
               }

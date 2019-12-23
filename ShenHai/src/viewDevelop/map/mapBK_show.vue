@@ -24,8 +24,8 @@
 </style>
 
 <template>
-    <div style="height: 500px;background-color: #00FFFF;position: relative;">
-        <div id="allmap1" style="height: 500px"></div>
+    <div style="height:100%;background-color: #00FFFF;position: relative;">
+        <div id="allmap1" style="height:100%"></div>
     </div>
 </template>
 
@@ -37,8 +37,8 @@
             return{
                 map:'',
                 mapcenter:{
-                    lng: 114.370095,//bdjd
-                    lat: 30.545038//bdwd
+                    lng: 118.439435,//bdjd
+                    lat: 31.358537//bdwd
                 },
                 zoom:16,
                 points:[

@@ -5,6 +5,7 @@
         title="新增条件集"
         :closable="false"
         :mask-closable="false"
+        width="60"
         @on-ok="ok"
         @on-cancel="cancel">
         <div>
@@ -53,19 +54,23 @@
           modal1: true,
           cblxList:[],
           searchList: {
+            //portname   港口     navStatus  船舶状态   zxzt 设备状态    shiptype 船舶类型
             jgdm: {
               label: "所属机构：",
               key:'',
+              value:'',
               selectList: []
             },
             zxzt: {
               label: "设备状态：",
               key:'',
+              value:'',
               selectList: []
             },
             shiptype: {
               label: "船舶类别：",
               key: '',
+              value:'',
               selectList: []
             }
           },
@@ -84,11 +89,12 @@
         }
       },
       created(){
-        let cblxList = this.dictUtil.getByCode(this, 'CBLX')
-        this.searchList.shiptype.selectList = cblxList
-        let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
-        this.searchList.zxzt.selectList = snztList
-        this.getJGList()
+        let cblxList = this.dictUtil.getByCode(this, 'CBLX');
+        this.searchList.shiptype.selectList = cblxList;
+        let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032');
+        this.searchList.zxzt.selectList = snztList;
+        let cjList  = this.dictUtil.getByCode(this, 'CJ');
+        this.searchList.jgdm.selectList = cjList
       },
       methods: {
         getname(val,e){
@@ -120,9 +126,21 @@
           })
         },
         ok () {
-          this.param.json.zxzt = this.searchList.zxzt.key
-          this.param.json.shiptype = this.searchList.shiptype.key
-          this.param.json.jgdm = this.searchList.jgdm.key
+          //portname   港口     navStatus  船舶状态   zxzt 设备状态    shiptype 船舶类型
+          this.param.json = {
+            portname:{
+              key:this.searchList.jgdm.key,
+              value:this.param.json.jgdmname
+            },
+            zxzt:{
+              key:this.searchList.zxzt.key,
+              value:this.param.json.zxztname
+            },
+            shiptype:{
+              key:this.searchList.shiptype.key,
+              value:this.param.json.shiptypename
+            },
+          }
           this.param.json = JSON.stringify(this.param.json);
           this.$http.post('/api/cbcd/save',this.param).then((res)=>{
             if (res.code == 200){

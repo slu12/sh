@@ -104,9 +104,9 @@
                     <Tooltip content="编辑">
                         <Button  icon="md-create" @click="emit('editCar')"></Button>
                     </Tooltip>
-                    <Tooltip content="车辆档案">
-                        <Button  icon="ios-clipboard-outline" @click="emit('showDoc')"></Button>
-                    </Tooltip>
+<!--                    <Tooltip content="车辆档案">-->
+<!--                        <Button  icon="ios-clipboard-outline" @click="emit('showDoc')"></Button>-->
+<!--                    </Tooltip>-->
                     <Tooltip content="历史轨迹">
                         <Button  icon="ios-map-outline" @click="emit('trace')"></Button>
                     </Tooltip>

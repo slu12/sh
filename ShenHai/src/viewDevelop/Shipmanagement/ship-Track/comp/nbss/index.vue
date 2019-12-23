@@ -2,7 +2,7 @@
   <div class="tabWrap">
     <div class="tabNav">
       <div class="funcButItem box_col rowCenter" style="height: 76px">
-        <Icon type="md-search" color="#ffffff" size="32"/>
+        <Icon type="md-search" color="#ffffff" size="32" @click="upShow"/>
       </div>
       <div class="funcButItem box_col rowCenter" :class="tabIndex==index?'selItemSty':''"
            v-for="(item,index) in tabList" :key="index"
@@ -43,6 +43,11 @@
             <Col span="14">MMSI ：{{item.mmsi}}</Col>
             <Col span="10">类型 ：{{item.shiptypename}}</Col>
           </Row>
+        </div>
+        <div class="shipSty" @click="jzMore">
+           <div style="text-align: center;height: 20px">
+               点击加载更多
+           </div>
         </div>
       </div>
       <div class="shipxq box_col_auto" v-if="tabIndex === 1">
@@ -161,10 +166,11 @@
       </div>
       <div class="box_col_auto" v-if="tabIndex === 4">
 <!--        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>-->
-        <div style="text-align: center" v-for="(item,index) in videoList">
+        <div style="text-align: center" v-for="(item,index) in videoList" v-if="item!=null">
           <h3 style="color: #FFFFFF">{{index+1}}号通道</h3>
-          <video
-                 data-setup='{"fluid":true,"aspectRatio":"16:9"}'
+          <img v-if="!showvideo[index]" :src="videoimageList[index]"  style="width: 100%;height: 33%" alt="点击播放" @click="showVideo(index)">
+          <video v-if="showvideo[index]"
+                 data-setup='{"fluid":true,"aspectRatio":"16:9","autoplay":true}'
                  :poster="videoimageList[index]"
                  :id="'my-video' + index "
                  class="video-js vjs-default-skin"
@@ -174,6 +180,7 @@
             <source :src="item" type="application/x-mpegURL">
           </video>
         </div>
+        <div v-if="videoList[o] == null" style="font-size: 32px;text-align: center;font-weight: 500">暂无视频信息</div>
       </div>
 
     </div>
@@ -240,8 +247,8 @@
           pageSize:100,
           pageNum:1
         },
-        hcMess:[]
-
+        hcMess:[],
+        showvideo:[false,false,false]
       }
     },
     created() {
@@ -262,11 +269,43 @@
           }
         })
       },
+      showVideo(index){
+        console.log(index,'1');
+        this.$nextTick(()=>{
+          this.showvideo[index] = true
+        })
+      },
       playVideo(id) {  //播放视频
         console.log(id);
         videojs(id, {}, function (val) {
           console.log(val, "--------")
           this.play();
+        })
+      },
+      jzMore(){
+        this.from.pageNum += 1
+        this.$http.post('/api/cl/pager',this.from).then((res) => {
+          if (res.code == 200) {
+            let a = res.page.list
+            if(a.length<=0){
+              this.$Message.error('没有更多数据了!')
+              return
+            }
+            for (let i = 0;i<a.length;i++){
+              if (a[i].dwzb!=''){
+                a[i].bdjd = parseFloat( a[i].dwzb.split(',')[0])
+                a[i].bdwd = parseFloat(a[i].dwzb.split(',')[1])
+              }else {
+                a[i].bdjd = ''
+                a[i].bdwd = ''
+              }
+            }
+            this.shipData.push(...a)
+            this.$nextTick(()=>{
+              this.tabIndex = 0
+            });
+            this.$parent.initGps(this.shipData)
+          }
         })
       },
       getship(item) {
@@ -305,6 +344,12 @@
       unShow() {
         this.showModal = false;
         this.tabIndex = null;
+        this.zxztindex = 0;
+      },
+      //点击收起
+      upShow() {
+        this.showModal = true;
+        this.tabIndex = 0;
         this.zxztindex = 0;
       },
       // 更改tab页签
@@ -349,6 +394,7 @@
             }
             this.videoList = res.result
             this.videoList = this.videoList.slice(0,3)
+            console.log(this.videoList,'this.videoList');
           } else {
             this.$Message.error(res.message)
           }
@@ -358,9 +404,7 @@
         this.$http.post('/api/cl/photos', {sbh: sbh}).then((res) => {
           if (res.code == 200) {
             this.videoimageList = res.result
-            console.log(this.videoimageList);
           } else {
-            this.$Message.error(res.message)
           }
         })
         setTimeout(() => {
@@ -370,9 +414,22 @@
       // 获取船舶
       getshipMess() {
         this.tabIndex = 0
+        this.from.pageNum = 1
         this.$http.post('/api/cl/pager',this.from).then((res) => {
           if (res.code == 200) {
             this.shipData = res.page.list
+            for (let i = 0;i<this.shipData.length;i++){
+              if (this.shipData[i].dwzb!=''){
+                this.shipData[i].bdjd = parseFloat( this.shipData[i].dwzb.split(',')[0])
+                this.shipData[i].bdwd = parseFloat(this.shipData[i].dwzb.split(',')[1])
+              }else {
+                this.shipData[i].bdjd = ''
+                this.shipData[i].bdwd = ''
+              }
+
+            }
+
+            this.$parent.initGps(this.shipData)
           }
         })
       }

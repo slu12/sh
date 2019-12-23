@@ -725,6 +725,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         try {
             res = HttpUtil.get(url, params);
         } catch (Exception e) {
+            e.printStackTrace();
             RuntimeCheck.ifTrue(true, "请求异常 ， 请稍后再试");
         }
         JSONObject object = JSON.parseObject(res);

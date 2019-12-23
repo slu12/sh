@@ -166,11 +166,11 @@
       </div>
       <div class="box_col_auto" v-if="tabIndex === 4">
 <!--        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>-->
-        <div style="text-align: center" v-for="(item,index) in videoList" v-if="item!=null">
+        <div style="text-align: center" v-for="(item,index) in file" v-if="item!=null">
           <h3 style="color: #FFFFFF">{{index+1}}号通道</h3>
-          <img v-show="!showvideo[index]" :src="videoimageList[index]"  style="width: 100%;height: 33%" alt="点击播放" @click="showVideo(index)">
-          <video v-show="showvideo[index]"
-                 :poster="videoimageList[index]"
+          <img v-show="!item.showModal" :src="item.imgUrl"  style="width: 100%;height: 33%" alt="点击播放" @click="item.showModal = !item.showModal">
+          <video v-show="item.showModal"
+                 :poster="item.videoUrl"
                  :id="'my-video' + index "
                  class="video-js vjs-default-skin"
                  controls preload="auto"
@@ -240,6 +240,20 @@
         ship: {},
         videoList: [],
         videoimageList: [],
+        file:[{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
+        },{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
+        },{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
+        }],
+
         from: {
           zxzt: '',
           con: '',
@@ -268,7 +282,7 @@
           }
         })
       },
-      showVideo(index){
+      showVideoEvent(index){
         console.log(index,'1');
         this.$nextTick(()=>{
           this.showvideo[index] = true
@@ -322,8 +336,8 @@
           this.ship.zxzt = '离线'
         }
         this.tabIndex = 1
-        this.getvideoImg(item.sbh)
-        this.getvideo(item.mmsi)
+        this.getvideoImg(item.sbh,item.mmsi)
+
         this.gethcMess(item.mmsi)
         this.$emit('reflh', item)
       },
@@ -396,17 +410,22 @@
               this.$Message.error('当前暂无视频')
             }
             this.videoList = res.result
-            this.videoList = this.videoList.slice(0,3)
+            for (let i =0;i<3;i++){
+              this.file[i].videoUrl = this.videoList[i]
+              this.file[i].imgUrl = this.videoimageList[i]
+              this.file[i].showVideo =false
+            }
             console.log(this.videoList,'this.videoList');
           } else {
             this.$Message.error(res.message)
           }
         })
       },
-      getvideoImg(sbh) {
+      getvideoImg(sbh,item) {
         this.$http.post('/api/cl/photos', {sbh: sbh}).then((res) => {
           if (res.code == 200) {
             this.videoimageList = res.result
+            this.getvideo(item)
           } else {
           }
         })

@@ -40,6 +40,11 @@
           </div>
         </div>
       </div>
+      <div class="muchStyBox">
+        <div class="muchButSty">
+         更多<Icon type="ios-arrow-down" />
+        </div>
+      </div>
     </div>
 <!--    <div>-->
 <!--      {{selList}}-->

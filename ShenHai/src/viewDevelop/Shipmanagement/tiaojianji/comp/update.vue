@@ -5,6 +5,7 @@
       title="修改条件集"
       :closable="false"
       :mask-closable="false"
+      width="60"
       @on-ok="ok"
       @on-cancel="cancel">
       <div>
@@ -86,19 +87,37 @@
     },
     created(){
       if (this.$parent.item){
+        this.param.json = {
+          portname:{
+            key:this.searchList.jgdm.key,
+            value:this.param.json.jgdmname
+          },
+          zxzt:{
+            key:this.searchList.zxzt.key,
+            value:this.param.json.zxztname
+          },
+          shiptype:{
+            key:this.searchList.shiptype.key,
+            value:this.param.json.shiptypename
+          },
+        }
         var a = this.$parent.item.json
         this.param.id = this.$parent.item.id
         this.param.name = this.$parent.item.name
-        this.param.type = this.$parent.item.type
-        this.param.jgdm = a.jgdm
-        this.searchList.jgdm.key = a.jgdm
-        this.param.zxzt = a.zxzt
-        this.searchList.zxzt.key = a.zxzt
-        this.param.shiptype = a.shiptype
-        this.searchList.shiptype.key = a.shiptype
-        this.param.jgdmname = a.jgdmname
-        this.param.zxztname = a.zxztname
-        this.param.shiptypename = a.shiptypename
+        if (this.$parent.item.type == '公开'){
+          this.param.type = '0'
+        }else {
+          this.param.type = '1'
+        }
+        this.param.jgdm = a.portname.key
+        this.searchList.jgdm.key = a.portname.key
+        this.param.zxzt = a.zxzt.key
+        this.searchList.zxzt.key = a.zxzt.key
+        this.param.shiptype = a.shiptype.key
+        this.searchList.shiptype.key = a.shiptype.key
+        this.param.json.jgdmname = a.portname.value
+        this.param.json.zxztname = a.zxzt.value
+        this.param.json.shiptypename = a.shiptype.value
       }
       let cblxList = this.dictUtil.getByCode(this, 'CBLX')
       this.searchList.shiptype.selectList = cblxList
@@ -137,9 +156,20 @@
         })
       },
       ok () {
-        this.param.json.zxzt = this.searchList.zxzt.key
-        this.param.json.shiptype = this.searchList.shiptype.key
-        this.param.json.jgdm = this.searchList.jgdm.key
+        this.param.json = {
+          portname:{
+            key:this.searchList.jgdm.key,
+            value:this.param.json.jgdmname
+          },
+          zxzt:{
+            key:this.searchList.zxzt.key,
+            value:this.param.json.zxztname
+          },
+          shiptype:{
+            key:this.searchList.shiptype.key,
+            value:this.param.json.shiptypename
+          },
+        }
         this.param.json = JSON.stringify(this.param.json);
         this.$http.post('/api/cbcd/update',this.param).then((res)=>{
           if (res.code == 200){

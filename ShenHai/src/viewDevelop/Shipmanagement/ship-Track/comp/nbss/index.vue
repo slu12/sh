@@ -65,16 +65,16 @@
           <div>航向 : {{ship.hx}}</div>
         </div>
 
-        <div class="hcmess" v-if="this.hcMess.length>0">
+        <div class="hcmess" v-if="this.hcMess && this.hcMess!=null && this.hcMess.departportname !=''">
           <Row>
             <Col span="8">出发港</Col>
             <Col span="8">状态</Col>
             <Col span="8">目的港</Col>
           </Row>
           <Row>
-            <Col span="8" style="font-size: 24px">芜湖县</Col>
-            <Col span="8">>> 停泊 >></Col>
-            <Col span="8" style="font-size: 24px">wuhan</Col>
+            <Col span="8" style="font-size: 24px">{{hcMess.departportname}}</Col>
+            <Col span="8">>> {{hcMess.anchorportname}} >></Col>
+            <Col span="8" style="font-size: 24px">{{hcMess.arrivingportname}}</Col>
           </Row>
           <Row>
             <Col span="8">出发时间</Col>
@@ -82,17 +82,17 @@
             <Col span="8">预计到达时间</Col>
           </Row>
           <Row class="did">
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.departtime}}</Col>
             <Col span="8"> &nbsp;</Col>
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.eta}}</Col>
           </Row>
           <Row class="did">
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.departtime}}</Col>
             <Col span="8"> &nbsp;</Col>
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.eta}}</Col>
           </Row>
         </div>
-        <div class="hcmess" v-if="this.hcMess.length<=0">
+        <div class="hcmess" v-else>
           <Row>
             <Col span="8"></Col>
             <Col span="8">暂无航程信息</Col>
@@ -247,7 +247,7 @@
           pageSize:100,
           pageNum:1
         },
-        hcMess:[],
+        hcMess:{},
         showvideo:[false,false,false]
       }
     },
@@ -326,7 +326,7 @@
       },
       gethcMess(mmsi) {
         this.$http.get('/api/cl/getCurrentVoyage', {params: {mmsi: mmsi}}).then((res) => {
-          if (res.code == 200) {
+          if (res.code == 200 && res.result) {
               this.hcMess = res.result
           }
         })
@@ -410,6 +410,11 @@
         setTimeout(() => {
           this.getvideoImg(sbh)
         }, 1000 * 60)
+      },
+      fqLr(item){
+        this.ship = item
+        this.tabIndex = 1
+        this.showModal = true
       },
       // 获取船舶
       getshipMess() {

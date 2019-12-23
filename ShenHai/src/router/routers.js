@@ -38,28 +38,52 @@ export default [
     component: () => import('@/view/login/login.vue')
   },
   {
-    path: '/home',
-    name: '_home',
-    redirect: '/home',
+    path: '/',
+    name: 'ship-Track',
+    redirect: '/ship-Track',
+      meta: {
+        hideInMenu: !true,
+        notCache: true
+      },
     component: Main,
-    meta: {
-      hideInMenu: !true,
-      notCache: true
-    },
-    children: [
+    children:[
       {
-        path: '/home',
-        name: 'home',
+        path: '/ship-Track',
+        name: 'ship-Track',
         meta: {
           hideInMenu: !true,
-          title: '首页',
           notCache: true,
-          icon: 'md-home'
+          icon: 'ios-cog',
+          title: '船舶监控',
+
         },
-        component: () => import('@/view/single-page/home')
-      }
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
+      },
     ]
   },
+  // {
+  //   path: '/home',
+  //   name: '_home',
+  //   redirect: '/home',
+  //   component: Main,
+  //   meta: {
+  //     hideInMenu: !true,
+  //     notCache: true
+  //   },
+  //   children: [
+  //     {
+  //       path: '/home',
+  //       name: 'home',
+  //       meta: {
+  //         hideInMenu: !true,
+  //         title: '首页',
+  //         notCache: true,
+  //         icon: 'md-home'
+  //       },
+  //       component: () => import('@/view/single-page/home')
+  //     }
+  //   ]
+  // },
 
   {
     path: '/system',
@@ -245,17 +269,17 @@ export default [
         },
         component: () => import('@/viewDevelop/Shipmanagement/ship-mess')
       },
-      {
-        path: 'ship-Track',
-        name: 'ship-Track',
-        meta: {
-          icon: 'ios-cog',
-          title: '船舶监控',
-          hideInMenu: !true,
-          notCache: true,
-        },
-        component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
-      },
+      // {
+      //   path: 'ship-Track',
+      //   name: 'ship-Track',
+      //   meta: {
+      //     icon: 'ios-cog',
+      //     title: '船舶监控',
+      //     hideInMenu: !true,
+      //     notCache: true,
+      //   },
+      //   component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
+      // },
       { path: 'historyTarck',
         name: 'historyTarck_new',
         meta: {

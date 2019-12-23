@@ -65,7 +65,7 @@
           <div>航向 : {{ship.hx}}</div>
         </div>
 
-        <div class="hcmess" v-if="this.hcMess && this.hcMess!=null && this.hcMess.departportname !=''">
+        <div class="hcmess" v-if="this.hcMess.departportname && this.hcMess!=null && this.hcMess.departportname !=''">
           <Row>
             <Col span="8">出发港</Col>
             <Col span="8">状态</Col>
@@ -168,9 +168,8 @@
 <!--        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>-->
         <div style="text-align: center" v-for="(item,index) in videoList" v-if="item!=null">
           <h3 style="color: #FFFFFF">{{index+1}}号通道</h3>
-          <img v-if="!showvideo[index]" :src="videoimageList[index]"  style="width: 100%;height: 33%" alt="点击播放" @click="showVideo(index)">
-          <video v-if="showvideo[index]"
-                 data-setup='{"fluid":true,"aspectRatio":"16:9","autoplay":true}'
+          <img v-show="!showvideo[index]" :src="videoimageList[index]"  style="width: 100%;height: 33%" alt="点击播放" @click="showVideo(index)">
+          <video v-show="showvideo[index]"
                  :poster="videoimageList[index]"
                  :id="'my-video' + index "
                  class="video-js vjs-default-skin"
@@ -180,7 +179,7 @@
             <source :src="item" type="application/x-mpegURL">
           </video>
         </div>
-        <div v-if="videoList[o] == null" style="font-size: 32px;text-align: center;font-weight: 500">暂无视频信息</div>
+        <div v-if="videoList[0] == null" style="font-size: 32px;text-align: center;font-weight: 500">暂无视频信息</div>
       </div>
 
     </div>
@@ -277,7 +276,11 @@
       },
       playVideo(id) {  //播放视频
         console.log(id);
-        videojs(id, {}, function (val) {
+        videojs(id, {
+          fluid:true,
+          aspectRatio:"16:9",
+          autoplay:true
+        }, function (val) {
           console.log(val, "--------")
           this.play();
         })

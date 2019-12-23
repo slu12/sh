@@ -84,6 +84,10 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 
     @Override
     public boolean fillPagerCondition(LimitedCondition condition) {
+        String portname = getRequestParamterAsString("portname");
+        if(StringUtils.isNotBlank(portname)){
+            condition.and().andCondition(" departportname = '" + portname + "' or anchorportname = '" + portname + "' or arrivingportname = '" + portname + "'");
+        }
         String con = getRequestParamterAsString("con");
         if (StringUtils.isNotBlank(con)) {
             condition.and().andCondition(" shipname like '%" + con + "%' or mmsi like '%" + con + "%'");

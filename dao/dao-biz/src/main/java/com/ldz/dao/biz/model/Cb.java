@@ -245,6 +245,28 @@ public class Cb implements Serializable {
     private String dest_port;
 
     /**
+     * 港口名称
+     */
+    @Column(name = "dest_std")
+    private String destStd;
+
+    /**
+     * 出发港名称
+     */
+    private String departportname;
+
+    /**
+     * 停泊港
+     */
+    private String anchorportname;
+
+    /**
+     * 预到港
+     */
+    private String arrivingportname;
+
+
+    /**
      * 吃水
      */
     private String draught;
@@ -393,7 +415,10 @@ public class Cb implements Serializable {
         nationality("NATIONALITY"),
         sbh("SBH"),
         zxzt("ZXZT"),
-        navStatus("NAVSTATUS");
+        navStatus("NAVSTATUS"),
+        arrivingportname("arrivingportname"),
+        anchorportname("anchorportname"),
+        departportname("departportname");
 
         private final String column;
 

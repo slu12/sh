@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 // 在成功执行了job类的execute方法后,更新JobDetail中JobDataMap的数据
 @PersistJobDataAfterExecution

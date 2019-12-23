@@ -244,6 +244,14 @@
           imgUrl:'',
           videoUrl:'',
           showVideo:false
+        },{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
+        },{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
         }],
 
         from: {
@@ -328,8 +336,8 @@
           this.ship.zxzt = '离线'
         }
         this.tabIndex = 1
-        this.getvideoImg(item.sbh)
-        this.getvideo(item.mmsi)
+        this.getvideoImg(item.sbh,item.mmsi)
+
         this.gethcMess(item.mmsi)
         this.$emit('reflh', item)
       },
@@ -402,17 +410,22 @@
               this.$Message.error('当前暂无视频')
             }
             this.videoList = res.result
-            this.videoList = this.videoList.slice(0,3)
+            for (let i =0;i<3;i++){
+              this.file[i].videoUrl = this.videoList[i]
+              this.file[i].imgUrl = this.videoimageList[i]
+              this.file[i].showVideo =false
+            }
             console.log(this.videoList,'this.videoList');
           } else {
             this.$Message.error(res.message)
           }
         })
       },
-      getvideoImg(sbh) {
+      getvideoImg(sbh,item) {
         this.$http.post('/api/cl/photos', {sbh: sbh}).then((res) => {
           if (res.code == 200) {
             this.videoimageList = res.result
+            this.getvideo(item)
           } else {
           }
         })

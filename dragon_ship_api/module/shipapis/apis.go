@@ -33,6 +33,7 @@ func getApiResult(getUrl string) (*ApiResult, error) {
 		return nil, err
 	}
 	res := ApiResult{}
+	logs.RunLog.Info("body", string(body))
 	if err := json.Unmarshal(body, &res); err != nil {
 		logs.RunLog.Error("Unmarshal:", err.Error())
 		return nil, err

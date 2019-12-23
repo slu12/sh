@@ -23,6 +23,7 @@ import com.ldz.util.exception.RuntimeCheck;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.br.CNPJ;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -65,6 +66,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     private XcService xcService;
     @Autowired
     private GpsLsService gpsLsService;
+    @Autowired
+    private GpsService gpsService;
 
     private ExecutorService excutor = Executors.newSingleThreadExecutor();
 
@@ -81,9 +84,13 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 
     @Override
     public boolean fillPagerCondition(LimitedCondition condition) {
+        String portname = getRequestParamterAsString("portname");
+        if(StringUtils.isNotBlank(portname)){
+            condition.and().andCondition(" departportname = '" + portname + "' or anchorportname = '" + portname + "' or arrivingportname = '" + portname + "'");
+        }
         String con = getRequestParamterAsString("con");
         if (StringUtils.isNotBlank(con)) {
-            condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%" + con + "%'");
+            condition.and().andCondition(" shipname like '%" + con + "%' or mmsi like '%" + con + "%'");
         }
         return true;
     }
@@ -94,6 +101,35 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         if (CollectionUtils.isEmpty(cbList)) {
             return;
         }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // 更新定位坐标
+        List<String> collect = cbList.stream().map(Cb::getSbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        List<String> list = cbList.stream().map(Cb::getMmsi).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        collect.addAll(list);
+        List<ClGps> gps = gpsService.findIn(ClGps.InnerColumn.zdbh, collect);
+        Map<String, ClGps> map = gps.stream().collect(Collectors.toMap(ClGps::getZdbh, p -> p));
+        cbList.forEach(cb -> {
+            if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isNotBlank(cb.getSbh())){
+                ClGps clGps = map.get(cb.getSbh());
+                if(clGps == null){
+                   clGps =  map.get(cb.getMmsi());
+                }
+                if(clGps != null){
+                    cb.setDwsj(format.format(clGps.getCjsj()));
+                    cb.setDwzb(clGps.getJd().doubleValue() + "," + clGps.getWd().doubleValue());
+                    cb.setHx(clGps.getFxj().doubleValue()+"");
+                    cb.setHs(clGps.getYxsd());
+                }
+            }else if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isBlank(cb.getSbh())){
+                ClGps clGps = map.get(cb.getMmsi());
+                if(clGps != null){
+                    cb.setDwsj(format.format(clGps.getCjsj()));
+                    cb.setDwzb(clGps.getJd().doubleValue() + "," + clGps.getWd().doubleValue());
+                    cb.setHx(clGps.getFxj().doubleValue()+"");
+                    cb.setHs(clGps.getYxsd());
+                }
+            }
+        });
     }
 
     @Override
@@ -279,7 +315,6 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
                     cls.add(clCl);
                 }
             }
-
         }
         apiResponse.setResult(cls);
         return apiResponse;
@@ -582,6 +617,9 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         RuntimeCheck.ifEmpty(cbs, "未找船舶信息");
         Cb cb = cbs.get(0);
         String photo = WebcamUtil.photo(reids, cb.getSbh(), chn);
+        if(StringUtils.isBlank(photo)){
+            return ApiResponse.success(photo);
+        }
         URL url = new URL(photo);
         String filePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn + ".jpg";
         FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath));
@@ -623,11 +661,14 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 //		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
 //		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
 //		Sxt sxt = sxts.get(0);
+        String[] urls = new String[9];
         Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
-        RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+        if(!sbh.containsKey(cb.getSbh())){
+            return ApiResponse.success(urls);
+        }
         String s = sbh.get(cb.getSbh());
         String ch = s.replaceAll("CH", "");
-        String[] urls = new String[9];
+
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
@@ -684,6 +725,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         try {
             res = HttpUtil.get(url, params);
         } catch (Exception e) {
+            e.printStackTrace();
             RuntimeCheck.ifTrue(true, "请求异常 ， 请稍后再试");
         }
         JSONObject object = JSON.parseObject(res);
@@ -716,10 +758,12 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 //		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
 //		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
         Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
-        RuntimeCheck.ifFalse(sbh.containsKey(cb.getSbh()), "此船舶绑定的设备未在平台添加");
+        String[] urls = new String[9];
+        if(!sbh.containsKey(cb.getSbh())){
+            return ApiResponse.success(urls);
+        }
         String s = sbh.get(cb.getSbh());
         String ch = s.replaceAll("CH", "");
-        String[] urls = new String[9];
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
@@ -757,18 +801,21 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
                 String photo = WebcamUtil.photo(reids, sbh, i + "");
-                URL url = new URL(photo);
                 String filePath = "/zp/" + sbh + "-" + i + ".jpg";
+                String file = path + filePath;
+                urls[i] = file;
+                if(StringUtils.isBlank(photo)){
+                   continue;
+                }
+                URL url = new URL(photo);
                 excutor.submit(() -> {
                     try {
                         FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath), 100000, 100000);
                     } catch (IOException e) {
                     }
                 });
-
-                String file = path + filePath;
                 //String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
-                urls[i] = file;
+
             } else {
                 urls[i] = "";
             }

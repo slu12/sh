@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 // 在成功执行了job类的execute方法后,更新JobDetail中JobDataMap的数据
 @PersistJobDataAfterExecution
@@ -78,7 +77,7 @@ public class UpdateGps implements Job {
                 ClGps clGps = collect.get(sbh);
                 clGps.setJd(new BigDecimal(split[1]));
                 clGps.setWd(new BigDecimal(split[0]));
-                clGps.setGxsj(new Date());
+                clGps.setCjsj(new Date());
                 clGps.setYxsd(webcamBean.getSp() + "");
                 clGps.setFxj(new BigDecimal(webcamBean.getHx()));
                 gpsMapper.updateByPrimaryKeySelective(clGps);
@@ -95,7 +94,6 @@ public class UpdateGps implements Job {
                 clGps.setZdbh(webcamBean.getId());
                 clGps.setJd(new BigDecimal(split[1]));
                 clGps.setWd(new BigDecimal(split[0]));
-                clGps.setGxsj(new Date());
                 clGps.setYxsd(webcamBean.getSp() + "");
                 clGps.setFxj(new BigDecimal(webcamBean.getHx()));
                 clGps.setCjsj(new Date());

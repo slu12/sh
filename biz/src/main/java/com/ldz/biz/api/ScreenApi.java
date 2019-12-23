@@ -52,6 +52,9 @@ public class ScreenApi {
         RuntimeCheck.ifBlank(sbh, "请选择设备");
         RuntimeCheck.ifBlank(chn, "请选择拍照通道");
         String photo = WebcamUtil.photo(reids,  sbh, chn);
+        if(StringUtils.isBlank(photo)){
+            return ApiResponse.success(photo);
+        }
         URL url = new URL(photo);
         String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + chn + System.currentTimeMillis()+ ".jpg";
         FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
@@ -171,6 +174,9 @@ public class ScreenApi {
         params.put("shipid", mmsi);
         String res = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(res);
+        if(StringUtils.equals(object.getString("Status"), "7")){
+            return ApiResponse.success(new JSONObject());
+        }
         RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
         JSONObject result = object.getJSONObject("Result");
         return ApiResponse.success(result);

@@ -204,8 +204,6 @@
         var marker = new BMap.Marker(point, {icon: myIcon});
         marker.setRotation(-45)
         marker.addEventListener("click", (code) => {
-          // console.log('店事件',code);
-          // console.log('item',item);
           // console.log('point',point);
           // v.$parent.$refs.carInfoRef.init(item);
           v.$emit('codeEvent', item)
@@ -217,11 +215,11 @@
       getIcon(car) {
         switch (car.status) {
           case 1:
-            return this.apis.STATIC_PATH + 'icon/ic_car.png';
+            return this.apis.STATIC_PATH + 'icon/ic_car-small.png';
           case 2:
-            return this.apis.STATIC_PATH + 'icon/running.png';
+            return this.apis.STATIC_PATH + 'icon/running-small.png';
           default:
-            return this.apis.STATIC_PATH + 'icon/ic_car_offline.png'
+              return this.apis.STATIC_PATH + 'icon/ic_car_offline-small.png'
         }
       },
       addClickHandler(item, marker) {

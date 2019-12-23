@@ -2,10 +2,10 @@
   <div class="box_col" style="flex: 1;background-color: #F5CBD1">
     <div class="box_row" style="height: 100%">
       <div class="box_row_100">
-        <component ref="map" :is="compName"></component>
+        <component ref="map" :is="compName" @codeEvent="codeEvent"></component>
       </div>
       <template>
-        <nbss @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
+        <nbss ref="nbss" @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
       </template>
     </div>
   </div>
@@ -511,6 +511,8 @@
         }
       },
       codeEvent(item) {
+        console.log(item,'111');
+        this.$refs.nbss.fqLr(item)
         this.$refs.carInfoRef.init(item);
       },
       rowClick(item) {

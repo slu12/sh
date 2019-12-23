@@ -60,7 +60,7 @@
         return{
           tjjList:[],
           compName:'',
-          pageTotal:'',
+          pageTotal:0,
           param:{
             nameLike:'',
             pageSize:12,
@@ -75,26 +75,24 @@
           delTj(id){
             this.swal({
               title:'是否确认删除?',
-              text: "Your will not be able to recover this imaginary file!",
               type: "warning",
               showCancelButton: true,
               confirmButtonText: "确认",
               cancelButtonText: "取消",
-            },function (isConfirm) {
-              if (isConfirm) {
-                this.$http.get('/api/cbcd/remove/'+id).then((res)=>{
-                  if (res.code == 200){
-                    this.$Message.success(res.message)
-                    this.getPager()
-                  }else {
-                    this.$Message.success(res.message)
-                  }
-                })
-              } else {
+            }).then( (val) =>{
+                if (val.value) {
+                  this.$http.get('/api/cbcd/remove/'+id).then((res)=>{
+                    if (res.code == 200){
+                      this.$Message.success(res.message)
+                      this.getPager()
+                    }else {
+                      this.$Message.success(res.message)
+                    }
+                  })
+                } else {
 
-              }
-            });
-
+                }
+            })
           },
           getPager(){
             this.param.pageNum = 1

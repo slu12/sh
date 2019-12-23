@@ -5,7 +5,7 @@
         <component ref="map" :is="compName"></component>
       </div>
       <template>
-        <nbss @reflh="rowClick"></nbss>
+        <nbss @reflh="rowClick" @showFance="showFance"></nbss>
       </template>
     </div>
   </div>
@@ -219,6 +219,7 @@
         })
       },
       showFance(carId) {
+        console.log(carId);
         this.fancePoints = [];
         var v = this
         this.$http.get(this.apis.DZWL.GET_BY_CAR_ID + "?clId=" + carId).then((res) => {

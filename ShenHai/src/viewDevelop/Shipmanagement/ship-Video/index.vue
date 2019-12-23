@@ -55,12 +55,15 @@
         videoimageList:[],
         videoList: [],
         param: {
-          mmsi:'413839203'
+          mmsi:''
         }
       }
     },
     created() {
-
+      console.log(this.$route);
+      if (this.$route.params.mmsi){
+        this.param.mmsi = this.$route.params.mmsi
+      }
     },
     methods: {
       playVideo(id){  //播放视频

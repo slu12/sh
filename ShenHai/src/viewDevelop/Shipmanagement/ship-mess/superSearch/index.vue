@@ -41,9 +41,9 @@
         </div>
       </div>
     </div>
-    <div>
-      {{selList}}
-    </div>
+<!--    <div>-->
+<!--      {{selList}}-->
+<!--    </div>-->
   </div>
 </template>
 

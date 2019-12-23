@@ -183,10 +183,10 @@
             align: 'center'
           },
           {
-            title: 'MMSI',
+            title: '机构名称',
             tit:"CAR_NUM_TAB",
             align: 'center',
-            key: 'cph'
+            key: 'jgmc'
           },
           {
             title: '围栏名称',
@@ -248,13 +248,7 @@
           }
         ],
         data9: [
-          {
-            FleetNumber: '鄂A12345',
-            FleetName: '公务车',
-            captainName: '公务车电子围栏0001',
-            Founder: '王铭',
-            time: '20170203 08:20:22'
-          }
+
         ],
         data1: [{
           "children": [{

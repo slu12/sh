@@ -26,13 +26,7 @@ export const otherRouter = {
   ]
 };
 export default [
-  { path: 'historyTarck',
-    name: 'historyTarck_new',
-    meta: {
-      title: '历史轨迹',
-      hideInMenu: true
-    },
-    component: () => import('@/viewDevelop/historyTarck') },
+
 
   {
     path: '/login',
@@ -44,51 +38,28 @@ export default [
     component: () => import('@/view/login/login.vue')
   },
   {
-    path: '/',
-    name: 'jk',
-    redirect: '/jk',
-      meta: {
-        hideInMenu: !true,
-        notCache: true
-      },
+    path: '/home',
+    name: '_home',
+    redirect: '/home',
     component: Main,
-    children:[
+    meta: {
+      hideInMenu: !true,
+      notCache: true
+    },
+    children: [
       {
-        path: '/jk',
-        name: 'jk',
+        path: '/home',
+        name: 'home',
         meta: {
           hideInMenu: !true,
-          icon: 'ios-cog',
-          title: '船舶监控',
+          title: '首页',
           notCache: true,
+          icon: 'md-home'
         },
-        // component: () => import('@/viewDevelop/VehicleMonitoring/jk')
-      },
+        component: () => import('@/view/single-page/home')
+      }
     ]
   },
-  // {
-  //   path: '/home',
-  //   name: '_home',
-  //   redirect: '/home',
-  //   component: Main,
-  //   meta: {
-  //     hideInMenu: !true,
-  //     notCache: true
-  //   },
-  //   children: [
-  //     {
-  //       path: '/home',
-  //       name: 'home',
-  //       meta: {
-  //         hideInMenu: !true,
-  //         title: '首页',
-  //         notCache: true,
-  //         icon: 'md-home'
-  //       },
-  //       component: () => import('@/view/single-page/home')
-  //     }
-  //   ]
-  // },
 
   {
     path: '/system',
@@ -135,16 +106,16 @@ export default [
         },
         component: () => import('@/viewDevelop/system/system-role')
       },
-      {
-        path: 'system-framework',
-        name: 'system-framework',
-        meta: {
-          icon: 'md-contacts',
-          title: '厂商管理',
-        },
-
-        component: () => import('@/viewDevelop/system/system-framework')
-      },
+      // {
+      //   path: 'system-framework',
+      //   name: 'system-framework',
+      //   meta: {
+      //     icon: 'md-contacts',
+      //     title: '厂商管理',
+      //   },
+      //
+      //   component: () => import('@/viewDevelop/system/system-framework')
+      // },
       {
         path: 'system-dictionary',
         name: 'system-dictionary',
@@ -279,9 +250,20 @@ export default [
         name: 'ship-Track',
         meta: {
           icon: 'ios-cog',
-          title: '船舶跟踪',
+          title: '船舶监控',
+          hideInMenu: !true,
+          notCache: true,
         },
         component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
+      },
+      { path: 'historyTarck',
+        name: 'historyTarck_new',
+        meta: {
+          icon: 'ios-cog',
+          title: '查看历史轨迹',
+          hideInMenu: true
+        },
+        component: () => import('@/viewDevelop/historyTarck')
       },
       {
         path: 'watch-video',

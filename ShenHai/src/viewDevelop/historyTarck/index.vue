@@ -116,7 +116,7 @@
                         <div style="padding: 8px">
                               <div class="carNumber">
                                     <Select class="select" v-model="formItem.zdbh" filterable>
-                                          <Option v-for="item in carList" :value="item.zdbh">{{item.cph}}</Option>
+                                          <Option v-for="item in carList" :value="item.zdbh">{{item.shipname}}</Option>
                                     </Select>
                               </div>
                               <div class="sTime" style="margin-top: 6px">

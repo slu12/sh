@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="shipSty" v-for="(item,index) in shipData"
-             @click.native="getship(item)">
+             @click="getship(item)">
           <div class="shipname">
             {{item.shipname}} - {{item.cbsbh}}
           </div>
@@ -60,7 +60,7 @@
           <div>航向 : {{ship.hx}}</div>
         </div>
 
-        <div class="hcmess">
+        <div class="hcmess" v-if="this.hcMess.length>0">
           <Row>
             <Col span="8">出发港</Col>
             <Col span="8">状态</Col>
@@ -87,39 +87,48 @@
             <Col span="8">2019-12-32</Col>
           </Row>
         </div>
+        <div class="hcmess" v-if="this.hcMess.length<=0">
+          <Row>
+            <Col span="8"></Col>
+            <Col span="8">暂无航程信息</Col>
+            <Col span="8"></Col>
+          </Row>
+        </div>
         <div class="funcBox box_row rowAuto colItemCenter">
-          <div class="funcItemBox">
-            <Icon type="ios-book-outline"/>
-            <div class="labelSty">
-              查看详细
-            </div>
-          </div>
-          <div class="funcItemBox" @click.native="showPathHistory">
+
+          <div class="funcItemBox" @click="showPathHistory(ship.zdbh)">
             <Icon type="md-git-pull-request"/>
             <div class="labelSty">
               查看历史轨迹
             </div>
           </div>
-          <div class="funcItemBox" @click.native="showFance">
+          <div class="funcItemBox" @click="showFance(ship.clId)">
             <Icon type="md-qr-scanner"/>
             <div class="labelSty">
               电子围栏
             </div>
           </div>
-        </div>
-        <div class="funcBox box_row rowAuto colItemCenter">
-          <div class="funcItemBox">
+          <div class="funcItemBox" @click="showSP(ship.mmsi)">
             <Icon type="md-videocam"/>
             <div class="labelSty">
               摄像头影像
             </div>
           </div>
-          <div class="funcItemBox" @click.native="showPathHistory">
-            <Icon type="md-bookmarks"/>
-            <div class="labelSty">
-              证书监管
-            </div>
-          </div>
+        </div>
+        <div class="funcBox box_row rowAuto colItemCenter">
+
+<!--          <div class="funcItemBox">-->
+<!--            <Icon type="ios-book-outline"/>-->
+<!--            <div class="labelSty">-->
+<!--              查看详细-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="funcItemBox" @click.native="showPathHistory">-->
+<!--            <Icon type="md-bookmarks"/>-->
+<!--            <div class="labelSty">-->
+<!--              证书监管-->
+<!--            </div>-->
+<!--          </div>-->
           <div class="funcItemBox">
           </div>
         </div>
@@ -151,16 +160,17 @@
         </Row>
       </div>
       <div class="box_col_auto" v-if="tabIndex === 4">
-        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>
-        <div style="text-align: center">
-          <video v-for="(item,index) in videoList"
+<!--        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>-->
+        <div style="text-align: center" v-for="(item,index) in videoList">
+          <h3 style="color: #FFFFFF">{{index+1}}号通道</h3>
+          <video
                  data-setup='{"fluid":true,"aspectRatio":"16:9"}'
                  :poster="videoimageList[index]"
                  :id="'my-video' + index "
                  class="video-js vjs-default-skin"
                  controls preload="auto"
                  @click="playVideo('my-video' + index)"
-                 style="object-fit: fill;height: 200px;width: 100%">
+                 style="object-fit: fill;width: 100%">
             <source :src="item" type="application/x-mpegURL">
           </video>
         </div>
@@ -230,6 +240,7 @@
           pageSize:100,
           pageNum:1
         },
+        hcMess:[]
 
       }
     },
@@ -261,6 +272,13 @@
       getship(item) {
         console.log(item, '点击详情');
         this.ship = item
+        if ( this.ship.zxzt == '00'){
+          this.ship.zxzt = '在线'
+        }else if (this.ship.zxzt == '10'){
+          this.ship.zxzt = '停泊'
+        }else {
+          this.ship.zxzt = '离线'
+        }
         this.tabIndex = 1
         this.getvideoImg(item.sbh)
         this.getvideo(item.mmsi)
@@ -270,16 +288,18 @@
       gethcMess(mmsi) {
         this.$http.get('/api/cl/getCurrentVoyage', {params: {mmsi: mmsi}}).then((res) => {
           if (res.code == 200) {
-
+              this.hcMess = res.result
           }
         })
       },
-      showPathHistory() {
-        this.$router.push({name: 'historyTarck_new', params: {zdbh: this.car.zdbh}});
+      showPathHistory(zdbh) {
+        this.$router.push({name: 'historyTarck_new', params: {zdbh:zdbh}});
       },
-      showFance() {
-        this.$parent.showFance(this.car.clid)
-
+      showFance(id) {
+        this.$parent.showFance(id)
+      },
+      showSP(mmsi){
+        this.$router.push({name: 'ship-Video', params: {mmsi:mmsi}});
       },
       //点击收起
       unShow() {
@@ -290,7 +310,7 @@
       // 更改tab页签
       changeTab(index) {
         console.log(this.ship.mmsi, index);
-        this.ship.mmsi = '413839203'
+        // this.ship.mmsi = '413839203'
         if ((!this.ship.mmsi || this.ship.mmsi == '') && index != 0) {
           this.$Message.error('请先选择船舶')
           return
@@ -328,6 +348,7 @@
               this.$Message.error('当前暂无视频')
             }
             this.videoList = res.result
+            this.videoList = this.videoList.slice(0,3)
           } else {
             this.$Message.error(res.message)
           }
@@ -348,6 +369,7 @@
       },
       // 获取船舶
       getshipMess() {
+        this.tabIndex = 0
         this.$http.post('/api/cl/pager',this.from).then((res) => {
           if (res.code == 200) {
             this.shipData = res.page.list

@@ -6,6 +6,7 @@ import com.ldz.job.job.dwq.DwqGpsSaveJob;
 import com.ldz.job.job.dwq.TravelDataSaveJob;
 import com.ldz.job.job.obd.GpsObdSaveJob;
 import com.ldz.job.job.obd.TravelReportSaveJob;
+import com.ldz.job.job.webcam.UpdateGps;
 import org.quartz.Job;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
@@ -56,6 +57,8 @@ public class ScheduleComponent {
 //        addJob(ZdReportJob.class,"0 0/1 * * * ? *","zdReport");
         // 临时升级设备使用。更新完后将取消获取job
 //        addJob(DeviceUpdateSyncJob.class,"0 0/5 * * * ? *","TmpDevUpdatesync");
+        addJob(UpdateGps.class, "0 0/5 * * * ? *", "updateGps");
+
 
         try {
             for (JobConfig jobConfig : jobConfigs) {

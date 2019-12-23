@@ -333,8 +333,13 @@ public class Cb implements Serializable {
     /**
      * 在线状态
      */
-    @Transient
     private String zxzt;
+
+    /**
+     * 船舶航行状态
+     */
+    @Column(name = "navStatus")
+    private String navStatus;
 
 
     /*
@@ -386,7 +391,9 @@ public class Cb implements Serializable {
         dest_port("DEST_PORT"),
         draught("DRAUGHT"),
         nationality("NATIONALITY"),
-        sbh("SBH");
+        sbh("SBH"),
+        zxzt("ZXZT"),
+        navStatus("NAVSTATUS");
 
         private final String column;
 

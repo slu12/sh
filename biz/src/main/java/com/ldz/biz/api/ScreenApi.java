@@ -195,5 +195,10 @@ public class ScreenApi {
         return ApiResponse.success();
     }
 
+    @GetMapping("/testGps")
+    public void getString(){
+        WebcamUtil.getGps("34286",reids);
+    }
+
 
 }

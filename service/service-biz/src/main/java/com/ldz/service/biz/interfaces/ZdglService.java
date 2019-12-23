@@ -57,4 +57,5 @@ public interface ZdglService extends BaseService<ClZdgl,String>{
 
     ApiResponse<String> redisCache();
 
+    void updateCbzt(String zxzt, String zdbh);
 }

@@ -102,6 +102,7 @@ public class TopicMessageListener implements MessageListener {
                 ClZdgl zdgl = zdglService.findById(itemValue);
                 zdgl.setZxzt("20");
                 zdglService.update(zdgl);
+                zdglService.updateCbzt(zdgl.getZxzt(),zdgl.getZdbh());
             }
         }catch(Exception e){
         	error.error("执行Redis事件异常", e);
@@ -214,6 +215,7 @@ public class TopicMessageListener implements MessageListener {
             }
             error.error("验证客户端是否在线接口异常："+zdgl);
             zdglService.update(zdgl);
+            zdglService.updateCbzt(zdgl.getZxzt(), zdgl.getZdbh());
         }else{
             ClZdgl zdgl = zdglService.findById(zdbh);
             error.error("zdgl："+zdgl);

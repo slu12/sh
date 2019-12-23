@@ -18,8 +18,8 @@ spring:
     maxWait: 1000
   #数据库连接配置信息
   datasource:
-    url: jdbc:mysql://119.23.242.234:9306/wxdc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
-#    url: jdbc:mysql://127.0.0.1:3306/wxdc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+#    url: jdbc:mysql://119.23.242.234:9306/wxdc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/eshenhai?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     username: root
     password: 123456
   #    url: jdbc:oracle:thin:@//47.98.39.45:1521/orcl

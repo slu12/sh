@@ -3,8 +3,10 @@ package com.ldz.util.commonUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ldz.util.bean.WebcamBean;
 import com.ldz.util.exception.RuntimeCheck;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -12,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -213,5 +214,35 @@ public class WebcamUtil {
         Map<String, String> map = sbhs.stream().collect(Collectors.toMap(stringStringMap -> stringStringMap.get("id"), p -> p.get("chn")));
         return map;
     }
+
+    /**
+     * 获取设备当前GPS状态
+     * @return
+     */
+    public static List<WebcamBean> getGps(String sbh , StringRedisTemplate redis){
+
+        String url = IP + "/StandardApiAction_getDeviceStatus.action";
+        Map<String,String> params = new HashMap<>();
+        String jsession = login(redis);
+        params.put("jsession",jsession);
+        params.put("devIdno", sbh);
+        String res = HttpUtil.get(url, params);
+        JSONObject object = JSON.parseObject(res);
+        if(StringUtils.equals(object.getString("result"), "5")){
+            redis.delete("webcam_jsession");
+            jsession = login(redis);
+            params.put("jsession",jsession);
+            res = HttpUtil.get(url,params);
+            object= JSON.parseObject(res);
+            RuntimeCheck.ifFalse(StringUtils.equals(object.getString("result"), "0"), "请求异常，请杀后再试");
+        }
+        JSONArray status = object.getJSONArray("status");
+        if(CollectionUtils.isEmpty(status)){
+            return new ArrayList<>();
+        }
+        List<WebcamBean> webcamBeans = status.toJavaList(WebcamBean.class);
+        return webcamBeans;
+    }
+
 
 }

@@ -113,33 +113,51 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 	}
 
 	@Override
-	public ApiResponse<String> setCarsDzwl(String carIds, String wlid) {
-		RuntimeCheck.ifBlank(carIds, "请选择车辆");
+	public ApiResponse<String> setCarsDzwl(String carIds, String wlid, String mmsi) {
+		RuntimeCheck.ifTrue( StringUtils.isBlank(carIds) && StringUtils.isBlank(mmsi), "请选择船舶");
 		RuntimeCheck.ifBlank(wlid, "请选择围栏");
-		List<String> carIdList = Arrays.asList(carIds.split(","));
+		List<Cb> carList;
 		Date now = new Date();
 		String creator = getOperateUser();
-		List<Cb> carList = clService.findIn(Cb.InnerColumn.clId,carIdList);
-		Map<String, Cb> carMap = carList.stream().collect(Collectors.toMap(Cb::getClId, p->p));
+		if(StringUtils.isNotBlank(carIds)){
+			List<String> carIdList = Arrays.asList(carIds.split(","));
+
+			carList = clService.findIn(Cb.InnerColumn.clId,carIdList);
+			Map<String, Cb> carMap = carList.stream().collect(Collectors.toMap(Cb::getClId, p->p));
+			for (String s : carIdList) {
+				ClDzwlCl dzwlCl = new ClDzwlCl();
+				dzwlCl.setCjr(creator);
+				dzwlCl.setCjsj(now);
+				dzwlCl.setClId(s);
+				dzwlCl.setWlId(wlid);
+				dzwlCl.setId(genId());
+				Cb car = carMap.get(s);
+				if (car != null){
+					dzwlCl.setCph(car.getShipname());
+				}
+				dzwlClMapper.insertSelective(dzwlCl);
+			}
+		}else {
+
+			carList = clService.findEq(Cb.InnerColumn.mmsi,mmsi);
+			RuntimeCheck.ifEmpty(carList, "未找到船舶信息");
+			Cb cb = carList.get(0);
+			ClDzwlCl dzwlCl = new ClDzwlCl();
+			dzwlCl.setCjr(creator);
+			dzwlCl.setCjsj(now);
+			dzwlCl.setClId(cb.getClId());
+			dzwlCl.setWlId(wlid);
+			dzwlCl.setId(genId());
+			dzwlCl.setCph(cb.getShipname());
+			dzwlClMapper.insertSelective(dzwlCl);
+		}
 
 		// 删除旧数据
 		/*SimpleCondition condition = new SimpleCondition(ClDzwlCl.class);
 		condition.in(ClDzwlCl.InnerColumn.clId,carIdList);
 		dzwlClMapper.deleteByExample(condition);*/
 
-		for (String s : carIdList) {
-			ClDzwlCl dzwlCl = new ClDzwlCl();
-			dzwlCl.setCjr(creator);
-			dzwlCl.setCjsj(now);
-			dzwlCl.setClId(s);
-			dzwlCl.setWlId(wlid);
-			dzwlCl.setId(genId());
-			Cb car = carMap.get(s);
-			if (car != null){
-				dzwlCl.setCph(car.getCph());
-			}
-			dzwlClMapper.insertSelective(dzwlCl);
-		}
+
 		return ApiResponse.success();
 	}
 
@@ -219,7 +237,7 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 //		entityMapper.insertSelective(entity);
 		save(entity);
 		if(org.apache.commons.lang3.StringUtils.isNotBlank(clIds)){
-			setCarsDzwl(clIds,entity.getId());
+			setCarsDzwl(clIds,entity.getId(),"");
 		}
 		return ApiResponse.success(entity.getId());
 	}

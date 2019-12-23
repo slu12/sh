@@ -114,7 +114,6 @@
 
                 res.page.list.forEach((it,index)=>{
                   it.json = JSON.parse(it.json)
-
                   if(index == res.page.list.length - 1){
                     this.tjjList = res.page.list
                     console.log(this.tjjList);

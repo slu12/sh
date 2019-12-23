@@ -113,10 +113,15 @@ public class WebcamUtil {
             params.put("jsession",jsession);
             res = HttpUtil.get(url, params);
             object = JSON.parseObject(res);
-            RuntimeCheck.ifFalse(StringUtils.equals(object.getString("result"), "0"), "请求异常 ， 请稍后再试");
+
+
         }
-        RuntimeCheck.ifTrue(result == 32, "设备不在线 ,请稍后再试");
-        RuntimeCheck.ifFalse(result == 0, "操作失败, 请稍后再试");
+        if(!StringUtils.equals(object.getString("result"), "0")){
+            return "";
+        }
+
+//        RuntimeCheck.ifTrue(result == 32, "设备不在线 ,请稍后再试");
+//        RuntimeCheck.ifFalse(result == 0, "操作失败, 请稍后再试");
 
         String imgurl = IP + ":6611/3/5?Type=3";
         String flength = object.getString("FLENGTH");

@@ -146,7 +146,7 @@
           }
         },
         created(){
-          console.log(this.data.sbh,'this.data.sbh');
+          // console.log(this.data.sbh,'this.data.sbh');
           this.bindDriverFlag = !!this.data.sbh
             this.bindDeviceFlag = !!this.data.zdbh
         },

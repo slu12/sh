@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-      <search-group></search-group>
+      <search-group @getSearchGroup="getSearchGroup" @clearEvent="clearGroup"></search-group>
       <div class="boxMar_L">
         <Button type="primary" @click="AddDataList()">
           <Icon type="md-add"></Icon>
@@ -31,7 +31,8 @@
       <div class="lineTitle">
         {{val.label}}
       </div>
-      <div class="box_row_100">
+
+      <div v-if="val.showAll" class="box_row_100">
         <div class="box_row_list">
           <div class="selItem" :class="item.sel?'selItemOK':''"
                v-for="(item,index) in val.selectList" :key="index"
@@ -40,15 +41,27 @@
           </div>
         </div>
       </div>
+
+      <div v-else class="box_row_1auto">
+        <div class="" style="white-space: nowrap;
+        overflow: hidden;line-height: 26px">
+          <span class="selItem" :class="item.sel?'selItemOK':''"
+                v-for="(item,index) in val.selectList" :key="index"
+                @click="selItem(val,item)">
+            {{item.val}}
+          </span>
+        </div>
+      </div>
       <div class="muchStyBox">
-        <div class="muchButSty">
-         更多<Icon type="ios-arrow-down" />
+        <div class="muchButSty" @click="val.showAll = !val.showAll">
+          更多
+          <Icon :type="val.showAll ?'ios-arrow-down':'ios-arrow-up' "/>
         </div>
       </div>
     </div>
-<!--    <div>-->
-<!--      {{selList}}-->
-<!--    </div>-->
+    <!--<div>-->
+    <!--{{selList}}-->
+    <!--</div>-->
   </div>
 </template>
 
@@ -139,8 +152,9 @@
       return {
         selList: {},
         searchList: {
-          jgdm: {
+          portname: {
             label: "所属机构：",
+            showAll: false,
             selectList: [
               {
                 sel: false,
@@ -151,50 +165,78 @@
           },
           zxzt: {
             label: "设备状态：",
-            key: 'mem',
+            showAll: false,
             selectList: []
           },
           shiptype: {
             label: "船舶类别：",
-            key: 'mem',
+            showAll: false,
             selectList: []
           }
         }
       }
     },
     created() {
+      let portnameList = this.dictUtil.getByCode(this, 'CJ')
+      this.searchList.portname.selectList = portnameList
+
       let cblxList = this.dictUtil.getByCode(this, 'CBLX')
       this.searchList.shiptype.selectList = cblxList
       let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
       this.searchList.zxzt.selectList = snztList
-      this.getJGList()
+      // this.getJGList()
     },
     methods: {
-      getJGList() {//机构列表
-        this.$http.get('/api/jg/query').then(res => {
-          if (res.code == 200) {
-            let jgList = []
-            res.result.forEach((it, index) => {
-              let a = {}
-              a.sel = false;
-              a.key = it.jgdm;
-              a.val = it.jgmc
-              jgList.push(a)
-
-              if(index == res.result.length-1){
-                this.searchList.jgdm.selectList = jgList
-              }
-            })
-          }
-        }).catch(err => {
-        })
-      },
+      // getJGList() {//机构列表
+      //   this.$http.get('/api/jg/query').then(res => {
+      //     if (res.code == 200) {
+      //       let jgList = []
+      //       res.result.forEach((it, index) => {
+      //         let a = {}
+      //         a.sel = false;
+      //         a.key = it.portname;
+      //         a.val = it.jgmc
+      //         jgList.push(a)
+      //
+      //         if (index == res.result.length - 1) {
+      //           this.searchList.portname.selectList = jgList
+      //         }
+      //       })
+      //     }
+      //   }).catch(err => {
+      //   })
+      // },
 
       AddDataList() {
         this.$emit('addEvent')
-      }
-      ,
+      },
+      clearGroup(){
+        for(let li in this.searchList){
+          this.searchList[li].selectList.forEach((it,index)=>{
+            it.sel = false
+          })
+        }
+        this.setCallBackSel()
+      },
+      getSearchGroup(val) {
+        let group = JSON.parse(val)
+        console.log('group',group);
+        for(let li in group){
+          let line = this.searchList[li]
+          let item = group[li]
+          this.selItem(line, item)
+          // line.selectList.forEach((it,index)=>{
+          //   if(it.key == item.key){
+          //     it.sel = true
+          //   }else{
+          //     it.sel = false
+          //   }
+          // })
+        }
+      },
       selItem(line, item) {//选择项操作
+        console.log(line);
+        console.log(item);
         if (this.checkbox) {//每一项单选
           item.sel = true
         } else {            //每一项多选
@@ -206,15 +248,12 @@
             }
           })
         }
-
         this.setCallBackSel()
-      }
-      ,
+      },
       remove(line, item) {
         item.sel = false
         this.setCallBackSel()
-      }
-      ,
+      },
       setCallBackSel() {
         this.selList = {}
         for (let key in this.searchList) {
@@ -226,7 +265,7 @@
           })
         }
 
-        this.$emit('getParams',this.selList)
+        this.$emit('getParams', this.selList)
       }
     }
   }

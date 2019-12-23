@@ -114,7 +114,8 @@
                 this.tjjList = res.page.list
                 for (let i = 0;i<=this.tjjList.length;i++){
                   console.log(this.tjjList[i].json);
-                  this.tjjList[i].json =  JSON.parse(this.tjjList[i].json);
+                  let a  = this.tjjList[i].json
+                  this.tjjList[i].json =  JSON.parse(a);
                   console.log(this.tjjList[i].json);
                   this.tjjList[i].type = this.xsType(this.tjjList[i].type)
                 }

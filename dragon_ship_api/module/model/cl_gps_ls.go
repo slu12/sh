@@ -32,7 +32,7 @@ func MapToClGpsLs(m map[string]interface{}) *ClGpsLs {
 	speed := m["speed"].(string)
 	course := m["course"].(string)
 	navStatus := m["navStatus"].(string)
-
+	postime := m["postime"].(int64)
 	if longitude < 0 {
 		longitude = 0
 	} else {
@@ -48,7 +48,8 @@ func MapToClGpsLs(m map[string]interface{}) *ClGpsLs {
 	if err != nil {
 		heading = 0
 	}
-	t := time.Unix(1576591084, 0)
+	//t := time.Now()
+	t := time.Unix(postime, 0)
 	id := genid.NextId()
 	c := ClGpsLs{
 		ID:          strconv.FormatInt(id, 10),

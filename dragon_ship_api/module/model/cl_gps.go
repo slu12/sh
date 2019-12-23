@@ -30,15 +30,24 @@ func MapToClGps(m map[string]interface{}) *ClGps {
 	speed := m["speed"].(string)
 	course := m["course"].(string)
 	navStatus := m["navStatus"].(string)
-
-	longitude = longitude / 1e6
-	latitude = latitude / 1e6
+	postime := m["postime"].(int64)
+	if longitude < 0 {
+		longitude = 0
+	} else {
+		longitude = longitude / 1e4 / 60
+	}
+	if latitude < 0 {
+		latitude = 0
+	} else {
+		latitude = latitude / 1e4 / 60
+	}
 
 	heading, err := strconv.ParseFloat(headingStr, 64)
 	if err != nil {
 		heading = 0
 	}
-	t := time.Unix(1576591084, 0)
+	//t := time.Now()
+	t := time.Unix(postime, 0)
 	c := ClGps{
 		Zdbh:        mmsi,
 		JD:          strconv.FormatFloat(longitude, 'E', -1, 64),

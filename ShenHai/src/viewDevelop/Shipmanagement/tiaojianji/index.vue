@@ -111,14 +111,23 @@
             this.$http.post('/api/cbcd/pager',this.param).then((res)=>{
               if (res.code == 200){
                 this.pageTotal = res.page.total
-                this.tjjList = res.page.list
-                for (let i = 0;i<=this.tjjList.length;i++){
-                  console.log(this.tjjList[i].json);
-                  let a  = this.tjjList[i].json
-                  this.tjjList[i].json =  JSON.parse(a);
-                  console.log(this.tjjList[i].json);
-                  this.tjjList[i].type = this.xsType(this.tjjList[i].type)
-                }
+
+                res.page.list.forEach((it,index)=>{
+                  it.json = JSON.parse(it.json)
+
+                  if(index == res.page.list.length - 1){
+                    this.tjjList = res.page.list
+                    console.log(this.tjjList);
+                  }
+                })
+
+                // for (let i = 0;i<=this.tjjList.length;i++){
+                //   console.log(this.tjjList[i].json);
+                //   let a  = this.tjjList[i].json
+                //   this.tjjList[i].json =  JSON.parse(a);
+                //   console.log(this.tjjList[i].json);
+                //   this.tjjList[i].type = this.xsType(this.tjjList[i].type)
+                // }
               }
             })
           },

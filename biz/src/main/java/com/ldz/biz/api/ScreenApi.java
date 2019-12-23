@@ -174,6 +174,9 @@ public class ScreenApi {
         params.put("shipid", mmsi);
         String res = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(res);
+        if(StringUtils.equals(object.getString("Status"), "7")){
+            return ApiResponse.success(new JSONObject());
+        }
         RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
         JSONObject result = object.getJSONObject("Result");
         return ApiResponse.success(result);

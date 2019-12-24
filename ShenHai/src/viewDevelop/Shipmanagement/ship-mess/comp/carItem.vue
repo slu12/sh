@@ -96,6 +96,12 @@
                         </div>
                     </Col>
                 </Row>
+                <Row>
+                  <Tag color="blue">长 : {{data.length}}</Tag>
+                  <Tag color="geekblue">宽 :{{data.breadth}}</Tag>
+                  <Tag color="purple">MMSI : {{data.mmsi}}</Tag>
+                  <Tag color="volcano">船籍 :{{data.nationality}}</Tag>
+                </Row>
             </Col>
         </Row>
         <Row type="flex" justify="end" style="padding-top: 20px">

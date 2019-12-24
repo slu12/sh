@@ -38,6 +38,7 @@
     components: {},
     data() {
       return {
+        mapInfo:"",
         componentName: '',
         choosedItem: null,
         map: '',
@@ -56,6 +57,11 @@
       }
     },
     created() {
+    },
+    watch:{
+      'zoom':function(newVal, oldVal) {
+        this.init()
+      }
     },
     mounted() {
       this.$nextTick(() => {
@@ -126,7 +132,7 @@
         // 百度地图API功能
         var map = new BMap.Map("allmap");
         // v.map = new BMap.Map("allmap");    // 创建Map实例
-        map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom);  // 初始化地图,设置中心点坐标和地图级别
+        map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), v.zoom);  // 初始化地图,设置中心点坐标和地图级别
         var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
         var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
         var top_right_navigation = new BMap.NavigationControl({
@@ -137,7 +143,13 @@
         map.addControl(top_left_control);
         map.addControl(top_left_navigation);
         // map.addControl(top_right_navigation);
-
+         map.addEventListener('zoomend', function () {
+          // 打印出当前缩放值
+          console.log(20180925104046, map.getZoom());
+          this.zoom = map.getZoom()
+           console.log(this.zoom,'zoom');
+          v.showCarPosition()
+        })
         v.map = map
       },
       //撒点
@@ -177,6 +189,7 @@
           // cursor:"pointer"
         });
         myLabel.setTitle("");//为label添加鼠标提示
+        this.showCarPosition()
         this.map.addOverlay(myLabel);
       },
       addLine(points) {
@@ -200,8 +213,20 @@
       },
       addMarker(item, point) {
         var v = this
-        var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32)});
-        var marker = new BMap.Marker(point, {icon: myIcon});
+        let a = parseInt(v.map.getZoom())
+        console.log(a,'a');
+        if (a<6){
+          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(9, 9), {anchor: new BMap.Size(9,9)});
+        } else if(a >= 6&& a<9 ){
+          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(16, 16), {anchor: new BMap.Size(16,24)});
+        }else if (a >= 9 && a< 12 ){
+          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(32, 32), {anchor: new BMap.Size(32, 32)});
+        }else if(a >= 12){
+          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(64, 64), {anchor: new BMap.Size(12,12)});
+        }else {
+          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(12, 12), {anchor: new BMap.Size(12,12)});
+        }
+         var marker = new BMap.Marker(point, {icon: myIcon});
         marker.setRotation(-45)
         marker.addEventListener("click", (code) => {
           // console.log('point',point);
@@ -215,11 +240,11 @@
       getIcon(car) {
         switch (car.status) {
           case 1:
-            return this.apis.STATIC_PATH + 'icon/ic_car-small.png';
+            return this.apis.STATIC_PATH + 'icon/ic_car.png';
           case 2:
-            return this.apis.STATIC_PATH + 'icon/running-small.png';
+            return this.apis.STATIC_PATH + 'icon/running.png';
           default:
-              return this.apis.STATIC_PATH + 'icon/ic_car_offline-small.png'
+              return this.apis.STATIC_PATH + 'icon/ic_car_offline.png'
         }
       },
       addClickHandler(item, marker) {

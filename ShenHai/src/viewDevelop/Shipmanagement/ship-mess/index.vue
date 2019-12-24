@@ -32,7 +32,14 @@
           </div>
         </div>
       </div>
-      <div :id="tabBox" class="centerBody">
+      <div :id="tabBox" class="centerBody" v-if="tableData.length<=0">
+         <Row>
+            <Col style="text-align: center;
+            font-size: 48px;font-weight: 700;
+            color: #d2d2d2;padding-top: 150px"> 暂无数据 </Col>
+         </Row>
+      </div>
+      <div v-else :id="tabBox" class="centerBody">
         <Row v-if="showCard" v-for="(row,rowIndex) in tableData" :data="row" :key="rowIndex">
           <Col span="6" v-for="(col,index) in row" :key="index">
             <car-item :data="col"

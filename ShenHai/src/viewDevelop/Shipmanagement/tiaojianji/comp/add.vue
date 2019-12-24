@@ -56,7 +56,7 @@
           searchList: {
             //portname   港口     navStatus  船舶状态   zxzt 设备状态    shiptype 船舶类型
             jgdm: {
-              label: "所属机构：",
+              label: "港口信息：",
               key:'',
               value:'',
               selectList: []

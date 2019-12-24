@@ -140,9 +140,11 @@
       </div>
 
       <div class="shipxq box_col_auto" v-if="tabIndex === 2">
-        <div class="shipname">设备编号 : {{ship.cbsbh}}</div>
+        <div v-if="ship.zdbh!=''&&ship.sbh!=''" class="shipname">设备编号 : {{ship.zdbh}}</div>
+        <div v-else class="shipname">设备编号 : {{ship.mmsi}}</div>
         <div class="shipmess">
-          <div>运行状态 : {{ship.zxzt}}</div>
+          <div v-if="ship.zdbh!=''&&ship.sbh!=''">运行状态 : {{ship.zxzt}}</div>
+          <div v-else >运行状态 : 正常</div>
           <div>安装船舶 : {{ship.cbsbh}}</div>
           <div>北斗设备编号 : {{ship.zdbh}}</div>
           <div>所属机构 : {{ship.jgmc}}</div>
@@ -150,7 +152,7 @@
           <div>定位坐标 : {{ship.dwzb}}</div>
           <div>航速 : {{ship.hs}}</div>
           <div>航向 : {{ship.hx}}</div>
-          <div>设备编号 : {{ship.zdbh}}</div>
+          <div>设备编号 : {{ship.sbh}}</div>
         </div>
       </div>
       <div class="box_col_auto" v-if="tabIndex === 3">
@@ -166,7 +168,7 @@
       </div>
       <div class="box_col_auto" v-if="tabIndex === 4">
 <!--        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>-->
-        <div style="text-align: center" v-for="(item,index) in file" v-if="item!=null">
+        <div style="text-align: center" v-for="(item,index) in file" v-if="item.imgUrl!=null">
           <h3 style="color: #FFFFFF">{{index+1}}号通道</h3>
           <img v-show="!item.showModal" :src="item.imgUrl"  style="width: 100%;height: 33%" alt="点击播放" @click="item.showModal = !item.showModal">
           <video v-show="item.showModal"
@@ -181,9 +183,7 @@
         </div>
         <div v-if="videoList[0] == null" style="font-size: 32px;text-align: center;font-weight: 500">暂无视频信息</div>
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -257,7 +257,7 @@
         from: {
           zxzt: '',
           con: '',
-          pageSize:100,
+          pageSize:200,
           pageNum:1
         },
         hcMess:{},
@@ -337,7 +337,9 @@
         }
         this.tabIndex = 1
         this.getvideoImg(item.sbh,item.mmsi)
-
+        setTimeout(()=>{
+          this.getvideo(item.mmsi)
+        },1000)
         this.gethcMess(item.mmsi)
         this.$emit('reflh', item)
       },
@@ -425,7 +427,6 @@
         this.$http.post('/api/cl/photos', {sbh: sbh}).then((res) => {
           if (res.code == 200) {
             this.videoimageList = res.result
-            this.getvideo(item)
           } else {
           }
         })

@@ -153,7 +153,7 @@
         selList: {},
         searchList: {
           portname: {
-            label: "所属机构：",
+            label: "港口信息：",
             showAll: false,
             selectList: [
               {

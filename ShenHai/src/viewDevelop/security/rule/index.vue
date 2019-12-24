@@ -2,6 +2,7 @@
   <div class="box-col">
     <div class="box_row rowBetween colItemCenter boxMar_B">
       <pager-tit></pager-tit>
+
       <div class="box_row rowRight">
         <div class="body-r-1 inputSty">
           <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
@@ -23,22 +24,29 @@
     <div class="box_col_auto">
 
       <Row>
-        <Switch size="large">
-          <span slot="open">激活</span>
-          <span slot="close">停用</span>
-        </Switch>
-        <Col span="6" v-for="(item,index) in data1" :key="index">
-          <Card style="height:300px;overflow: scroll">
-            <p slot="title">
-              {{item.mc}}
-            </p>
+
+        <Col span="12" style="padding: 10px" v-for="(item,index) in data1" :key="index">
+          <Card style="height:400px;overflow: scroll;">
+              <Row style="height: 40px">
+                <Col span="12" style="font-size: 20px;font-weight: 600">
+                  {{item.mc}}
+                </Col>
+                <Col span="12" align="right">
+                  <RadioGroup type="button" size="large" v-model="sp">
+                    <Radio label="0">激活</Radio>
+                    <Radio label="1">停用</Radio>
+                  </RadioGroup>
+                </Col>
+              </Row>
             <List header="数据来源" border size="small">
                 <ListItem v-for="(it,id) in item.sr" :key="id">{{it}}</ListItem>
-                <ListItem>
-                  输出结果: {{item.sc}} <br>
-                  适用对象: &nbsp;&nbsp; {{item.dx}}
-                </ListItem>
             </List>
+            <div style="padding-top: 10px">
+              <List header="输出结果" border size="small">
+                <ListItem>{{item.sc}}</ListItem>
+                <ListItem>适用对象: &nbsp;&nbsp;<Tag color="green">{{item.dx}}</Tag> </ListItem>
+              </List>
+            </div>
           </Card>
         </Col>
       </Row>
@@ -53,6 +61,7 @@
       data(){
           return {
               switch1: false,
+              sp: '0',
               data1:[
                 {mc:'江船入海',sr:['1.船舶类型','2.船舶坐标，以二维坐标点表示','3.禁入水域范围，以二维坐标点集合表示，构成一封闭区域']
                     ,sc:'提示消息。如果是江船并且当前位置在禁入水域，有报警消息。',dx:'海事'},

@@ -59,7 +59,7 @@
         let a = new Date()
         this.$http.post('/pub/newXc',{
           mmsi:"413839203",
-          start:this.moment(a.getTime()-24*60*60*1000).format('YYYY-MM-DD HH:mm:ss'),
+          start:this.moment(a.getTime()-12*60*60*1000).format('YYYY-MM-DD HH:mm:ss'),
           end:this.moment().format('YYYY-MM-DD HH:mm:ss')
         }).then(res=>{
           if(res.code == 200){

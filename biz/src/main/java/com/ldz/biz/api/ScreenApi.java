@@ -238,6 +238,7 @@ public class ScreenApi {
         }
         condition.gte(ClGpsLs.InnerColumn.cjsj, starttime.toDate());
         condition.lte(ClGpsLs.InnerColumn.cjsj, endtime.toDate());
+        condition.setOrderByClause(" cjsj asc , id asc");
         list = gpsLsService.findByCondition(condition);
 
         List<Point> points = new ArrayList<>();

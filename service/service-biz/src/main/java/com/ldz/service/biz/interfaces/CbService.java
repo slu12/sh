@@ -64,4 +64,7 @@ public interface CbService extends BaseService<Cb,String>{
     ApiResponse<String[]> photos(String sbh) throws IOException;
 
     ApiResponse<List<Point>> newXc(String mmsi, String start, String end);
+
+    ApiResponse<List<Map<String, String>>> getCbs();
+
 }

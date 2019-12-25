@@ -93,6 +93,11 @@ public class WebcamUtil {
     }
 
     /**
+     * 获取录像列表
+     */
+
+
+    /**
      * 抓拍
      */
     public static String photo(StringRedisTemplate redis, String DevIDNO, String Chn) {

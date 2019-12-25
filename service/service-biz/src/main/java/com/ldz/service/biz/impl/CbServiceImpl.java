@@ -16,14 +16,16 @@ import com.ldz.sys.model.SysJg;
 import com.ldz.sys.model.SysYh;
 import com.ldz.sys.service.JgService;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.bean.Point;
 import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
+import com.ldz.util.gps.Gps;
+import com.ldz.util.gps.PositionUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.constraints.br.CNPJ;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -84,6 +86,14 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
 
     @Override
     public boolean fillPagerCondition(LimitedCondition condition) {
+        String nav = getRequestParamterAsString("nav");
+        if(StringUtils.isNotBlank(nav)){
+            if(StringUtils.equals(nav,"0")){
+                condition.eq(Cb.InnerColumn.navStatus, "0");
+            }else {
+                condition.and().andNotEqualTo(Cb.InnerColumn.navStatus.name(), "0");
+            }
+        }
         String portname = getRequestParamterAsString("portname");
         if(StringUtils.isNotBlank(portname)){
             condition.and().andCondition(" departportname = '" + portname + "' or anchorportname = '" + portname + "' or arrivingportname = '" + portname + "'");
@@ -106,8 +116,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         List<String> collect = cbList.stream().map(Cb::getSbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
         List<String> list = cbList.stream().map(Cb::getMmsi).filter(StringUtils::isNotBlank).collect(Collectors.toList());
         collect.addAll(list);
-        List<ClGps> gps = gpsService.findIn(ClGps.InnerColumn.zdbh, collect);
-        Map<String, ClGps> map = gps.stream().collect(Collectors.toMap(ClGps::getZdbh, p -> p));
+        List<ClGps> gpses = gpsService.findIn(ClGps.InnerColumn.zdbh, collect);
+        Map<String, ClGps> map = gpses.stream().collect(Collectors.toMap(ClGps::getZdbh, p -> p));
         cbList.forEach(cb -> {
             if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isNotBlank(cb.getSbh())){
                 ClGps clGps = map.get(cb.getSbh());
@@ -115,16 +125,21 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
                    clGps =  map.get(cb.getMmsi());
                 }
                 if(clGps != null){
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                     cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setDwzb(clGps.getJd().doubleValue() + "," + clGps.getWd().doubleValue());
+                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
                     cb.setHx(clGps.getFxj().doubleValue()+"");
                     cb.setHs(clGps.getYxsd());
                 }
             }else if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isBlank(cb.getSbh())){
                 ClGps clGps = map.get(cb.getMmsi());
                 if(clGps != null){
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                     cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setDwzb(clGps.getJd().doubleValue() + "," + clGps.getWd().doubleValue());
+                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
+                    cb.setDwsj(format.format(clGps.getCjsj()));
                     cb.setHx(clGps.getFxj().doubleValue()+"");
                     cb.setHs(clGps.getYxsd());
                 }
@@ -133,18 +148,65 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     }
 
     @Override
-    protected void afterQuery(List<Cb> list) {
+    protected void afterQuery(List<Cb> cblist) {
 
-        if (CollectionUtils.isEmpty(list)) {
+        if (CollectionUtils.isEmpty(cblist)) {
             return;
         }
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // 更新定位坐标
+        List<String> collect = cblist.stream().map(Cb::getSbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        List<String> list = cblist.stream().map(Cb::getMmsi).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        collect.addAll(list);
+        List<ClGps> gpses = gpsService.findIn(ClGps.InnerColumn.zdbh, collect);
+        Map<String, ClGps> map = gpses.stream().collect(Collectors.toMap(ClGps::getZdbh, p -> p));
+        cblist.forEach(cb -> {
+            if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isNotBlank(cb.getSbh())){
+                ClGps clGps = map.get(cb.getSbh());
+                if(clGps == null){
+                    clGps =  map.get(cb.getMmsi());
+                }
+                if(clGps != null){
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                    cb.setDwsj(format.format(clGps.getCjsj()));
+                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
+                    cb.setHx(clGps.getFxj().doubleValue()+"");
+                    cb.setHs(clGps.getYxsd());
+                }
+            }else if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isBlank(cb.getSbh())){
+                ClGps clGps = map.get(cb.getMmsi());
+                if(clGps != null){
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                    cb.setDwsj(format.format(clGps.getCjsj()));
+                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
+                    cb.setDwsj(format.format(clGps.getCjsj()));
+                    cb.setHx(clGps.getFxj().doubleValue()+"");
+                    cb.setHs(clGps.getYxsd());
+                }
+            }
+        });
     }
 
     @Override
     public boolean fillQueryCondition(LimitedCondition condition) {
+        String nav = getRequestParamterAsString("nav");
+        if(StringUtils.isNotBlank(nav)){
+            if(StringUtils.equals(nav,"0")){
+                condition.eq(Cb.InnerColumn.navStatus, "0");
+            }else {
+                condition.and().andNotEqualTo(Cb.InnerColumn.navStatus.name(), "0");
+            }
+        }
+        String portname = getRequestParamterAsString("portname");
+        if(StringUtils.isNotBlank(portname)){
+            condition.and().andCondition(" departportname = '" + portname + "' or anchorportname = '" + portname + "' or arrivingportname = '" + portname + "'");
+        }
         String con = getRequestParamterAsString("con");
         if (StringUtils.isNotBlank(con)) {
-            condition.and().andCondition(" shipname like '%" + con + "%' or mmsi = '%" + con + "%'");
+            condition.and().andCondition(" shipname like '%" + con + "%' or mmsi like '%" + con + "%'");
         }
         return true;
     }
@@ -821,6 +883,52 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
             }
         }
         return ApiResponse.success(urls);
+    }
+
+    @Override
+    public ApiResponse<List<Point>> newXc(String mmsi, String start, String end) {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(start, "请选择时间");
+        RuntimeCheck.ifBlank(end, "请选择时间");
+
+        List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
+        //  gps 点获取顺序  定位器 > 设备  >  mmsi
+        DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+        DateTime starttime = pattern.parseDateTime(start);
+        DateTime endtime = pattern.parseDateTime(end);
+      /*  DateTime minusHours = endtime.minusHours(12);
+        long millis = minusHours.getMillis();
+        long starttimeMillis = starttime.getMillis();
+        RuntimeCheck.ifTrue(millis > starttimeMillis, "轨迹时间间隔不能超过12小时");*/
+        SimpleCondition condition = new SimpleCondition(ClGpsLs.class);
+        List<ClGpsLs> list;
+        if(StringUtils.isNotBlank(cb.getZdbh())){
+            condition.eq(ClGpsLs.InnerColumn.zdbh, cb.getZdbh());
+        }else if(StringUtils.isNotBlank(cb.getSbh())){
+            condition.eq(ClGpsLs.InnerColumn.zdbh, cb.getSbh());
+        }else {
+            condition.eq(ClGpsLs.InnerColumn.zdbh, mmsi);
+        }
+        condition.gte(ClGpsLs.InnerColumn.cjsj, starttime.toDate());
+        condition.lte(ClGpsLs.InnerColumn.cjsj, endtime.toDate());
+       list = gpsLsService.findByCondition(condition);
+
+       List<Point> points = new ArrayList<>();
+       list.forEach(clGpsLs -> {
+           Point point = new Point();
+           Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGpsLs.getWd().doubleValue(),clGpsLs.getJd().doubleValue() );
+           Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+           point.setDirection(clGpsLs.getFxj().doubleValue());
+           point.setLatitude(gps.getWgLat());
+           point.setLoc_time(clGpsLs.getCjsj().getTime()/1000);
+           point.setLongitude(gps.getWgLon());
+           double v = Double.parseDouble(clGpsLs.getYxsd());
+           point.setSpeed(v);
+           points.add(point);
+       });
+        return ApiResponse.success(points);
     }
 
     public static int differentDaysByMillisecond(Date date1, Date date2) {

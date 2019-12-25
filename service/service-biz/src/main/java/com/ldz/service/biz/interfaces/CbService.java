@@ -5,6 +5,7 @@ import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.sys.base.BaseService;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.bean.Point;
 
 import java.io.IOException;
 import java.util.List;
@@ -61,4 +62,6 @@ public interface CbService extends BaseService<Cb,String>{
     ApiResponse<String> unbindWebcam(String mmsi);
 
     ApiResponse<String[]> photos(String sbh) throws IOException;
+
+    ApiResponse<List<Point>> newXc(String mmsi, String start, String end);
 }

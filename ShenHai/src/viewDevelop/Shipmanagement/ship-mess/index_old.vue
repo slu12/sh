@@ -303,8 +303,7 @@
                                                 click: () => {
                                                     this.$router.push(
                                                         {
-                                                            name: 'historyTarck_new',
-                                                            params:{zdbh:params.row.zdbh}
+                                                          name: 'ship-trajectory',params:{mmsi:this.car.mmsi}
                                                         }
                                                     );
                                                 },

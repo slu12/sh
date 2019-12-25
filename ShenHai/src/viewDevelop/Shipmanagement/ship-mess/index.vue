@@ -200,8 +200,8 @@
                         click: () => {
                           this.$router.push(
                             {
-                              name: 'historyTarck_new',
-                              params:{zdbh:params.row.zdbh}
+                              name: 'ship-trajectory',
+                              params:{ mmsi: this.car.mmsi }
                             }
                           );
                         },
@@ -321,11 +321,11 @@
         this.mess = car
         this.compName = allmes
       },
-      trace(car) {
+      trace(mmsi) {
         this.$router.push(
           {
-            name: 'historyTarck_new',
-            params: {zdbh: car.zdbh}
+            name: 'ship-trajectory',
+            params:{ mmsi:mmsi.mmsi }
           }
         );
       },

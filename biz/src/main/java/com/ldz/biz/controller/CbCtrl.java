@@ -10,6 +10,7 @@ import com.ldz.sys.base.BaseController;
 import com.ldz.sys.base.BaseService;
 import com.ldz.sys.model.SysYh;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.bean.Point;
 import com.ldz.util.commonUtil.WebcamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -239,6 +240,15 @@ public class CbCtrl extends BaseController<Cb, String> {
 	@PostMapping("/getAllChnH5")
 	public ApiResponse<String[]> getAllChnH5(String mmsi){
 		return clservice.getAllChnH5(mmsi);
+	}
+
+	/**
+	 * 查询轨迹点
+	 * @return
+	 */
+	@PostMapping("/newXc")
+	public ApiResponse<List<Point>> newXc(String mmsi, String start, String end){
+		return clservice.newXc(mmsi, start, end);
 	}
 
 }

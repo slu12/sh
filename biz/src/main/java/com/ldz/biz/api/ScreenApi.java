@@ -4,17 +4,23 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.model.Cb;
+import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.service.biz.interfaces.CbService;
+import com.ldz.service.biz.interfaces.GpsLsService;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.bean.Point;
 import com.ldz.util.bean.SimpleCondition;
 import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.SnowflakeIdWorker;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
+import com.ldz.util.gps.Gps;
+import com.ldz.util.gps.PositionUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -44,6 +50,8 @@ public class ScreenApi {
     private String path;
     @Autowired
     private SnowflakeIdWorker idWorker;
+    @Autowired
+    private GpsLsService gpsLsService;
     /**
      * 抓拍接口
      */
@@ -206,5 +214,46 @@ public class ScreenApi {
         WebcamUtil.getGps("34286",reids);
     }
 
+    @PostMapping("/newXc")
+    public ApiResponse<List<Point>> newXc(String mmsi, String start, String end){
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        RuntimeCheck.ifBlank(start, "请选择时间");
+        RuntimeCheck.ifBlank(end, "请选择时间");
+
+        List<Cb> cbs = service.findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
+        //  gps 点获取顺序  定位器 > 设备  >  mmsi
+        DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime starttime = pattern.parseDateTime(start);
+        DateTime endtime = pattern.parseDateTime(end);
+        SimpleCondition condition = new SimpleCondition(ClGpsLs.class);
+        List<ClGpsLs> list;
+        if(StringUtils.isNotBlank(cb.getZdbh())){
+            condition.eq(ClGpsLs.InnerColumn.zdbh, cb.getZdbh());
+        }else if(StringUtils.isNotBlank(cb.getSbh())){
+            condition.eq(ClGpsLs.InnerColumn.zdbh, cb.getSbh());
+        }else {
+            condition.eq(ClGpsLs.InnerColumn.zdbh, mmsi);
+        }
+        condition.gte(ClGpsLs.InnerColumn.cjsj, starttime.toDate());
+        condition.lte(ClGpsLs.InnerColumn.cjsj, endtime.toDate());
+        list = gpsLsService.findByCondition(condition);
+
+        List<Point> points = new ArrayList<>();
+        list.forEach(clGpsLs -> {
+            Point point = new Point();
+            Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGpsLs.getWd().doubleValue(),clGpsLs.getJd().doubleValue() );
+            Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+            point.setDirection(clGpsLs.getFxj().doubleValue());
+            point.setLatitude(gps.getWgLat());
+            point.setLoc_time(clGpsLs.getCjsj().getTime()/1000);
+            point.setLongitude(gps.getWgLon());
+            double v = Double.parseDouble(clGpsLs.getYxsd());
+            point.setSpeed(v);
+            points.add(point);
+        });
+        return ApiResponse.success(points);
+    }
 
 }

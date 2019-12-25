@@ -5,7 +5,7 @@
       <div class="box_row_100">
         <div class="box_row rowBetween cbItMess" style="height: 100%;margin: 0 15px">
           <div class="cbName">
-            银祥7788 - YIN XIANG 7788
+            易航三号 - YI HANG 3
           </div>
           <div class="cbType">
             状态：在航
@@ -57,8 +57,8 @@
       get_GJ_Code(){
         var v = this
         let a = new Date()
-        this.$http.post('/pub/historyTrack',{
-          mmsi:"413472680",
+        this.$http.post('/pub/newXc',{
+          mmsi:"413839203",
           start:this.moment(a.getTime()-24*60*60*1000).format('YYYY-MM-DD HH:mm:ss'),
           end:this.moment().format('YYYY-MM-DD HH:mm:ss')
         }).then(res=>{

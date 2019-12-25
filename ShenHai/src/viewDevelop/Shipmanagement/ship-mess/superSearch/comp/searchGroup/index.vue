@@ -1,14 +1,18 @@
 <template>
   <div>
-    <Select
-      v-model="searchGroupVal"
-      clearable
-      @on-change="getSearchGroupVal"
-      @on-clear = "clearEvent"
-      style="width: 360px">
-      <Option v-for="(option, index) in optionsList" :value="option.id"
-              :key="index">{{option.text}}</Option>
-    </Select>
+    <Row>
+      <Col span="14">
+        <Select
+          v-model="searchGroupVal"
+          clearable
+          @on-change="getSearchGroupVal"
+          @on-clear = "clearEvent"
+          style="width: 200px">
+          <Option v-for="(option, index) in optionsList" :value="option.id"
+                  :key="index">{{option.text}}</Option>
+        </Select>
+      </Col>
+    </Row>
   </div>
 </template>
 

@@ -21,7 +21,11 @@
       </div>
       <search-group @getSearchGroup="getSearchGroup" @clearEvent="clearGroup"></search-group>
       <div class="boxMar_L">
-        <Button type="primary" @click="AddDataList()">
+        <Input v-model="con" @on-change="getPagerData()" placeholder="请输入MMSI/名称/设备号" style="width: 180px" />
+        <Button type="primary" @click="getPagerData()" style="margin-left: 5px">
+          <Icon type="md-search"></Icon>
+        </Button>
+        <Button type="primary" @click="AddDataList()" style="margin-left: 5px">
           <Icon type="md-add"></Icon>
         </Button>
       </div>
@@ -150,6 +154,7 @@
     },
     data() {
       return {
+        con:'',
         selList: {},
         searchList: {
           portname: {
@@ -187,6 +192,10 @@
       // this.getJGList()
     },
     methods: {
+      getPagerData(){
+        console.log(this.con,'1');
+        this.$emit('getPagerData',this.con)
+      },
       // getJGList() {//机构列表
       //   this.$http.get('/api/jg/query').then(res => {
       //     if (res.code == 200) {

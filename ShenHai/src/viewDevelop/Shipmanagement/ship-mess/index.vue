@@ -2,7 +2,9 @@
 <template>
   <div class="box_col">
     <superSearch @addEvent="AddDataList"
-                 @getParams="setParams"></superSearch>
+                 @getParams="setParams"
+                 @getPagerData="getPageData"
+    ></superSearch>
     <Card class="shipMessBox">
       <div class="boxPadd_B">
         <div class="">
@@ -113,12 +115,12 @@
             key: 'shipname',
             align: 'center'
           }, {
-            title: '呼号',
-            key: 'callsign',
+            title: '终端编号',
+            key: 'zdbh',
             align: 'center'
           }, {
-            title: 'IMO',
-            key: 'imo',
+            title: '设备号',
+            key: 'sbh',
             align: 'center'
           },
           {
@@ -138,7 +140,128 @@
             title: '船籍',
             key: 'nationality',
             align: 'center'
-          },
+          },{
+            title: '操作',
+            key: 'action',
+            width: 180,
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '编辑车辆',
+                    },
+                  },
+                  [
+                    h('Button', {
+                      props: {
+                        type: 'success',
+                        icon: 'md-create',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          this.messType = false
+                          this.mess = params.row
+                          //由于数据传递丢失 司机ID 司机 姓名 单独传递
+                          this.derMes.sjId = params.row.sjId
+                          this.derMes.sjxm = params.row.sjxm
+                          this.compName = newmes
+                        }
+                      }
+                    }),
+                  ]
+                ),
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '历史轨迹',
+                    },
+                  },
+                  [
+                    h('Button', {//历史轨迹
+                      props: {
+                        type: 'warning',
+                        icon: 'ios-pulse',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          this.$router.push(
+                            {
+                              name: 'historyTarck_new',
+                              params:{zdbh:params.row.zdbh}
+                            }
+                          );
+                        },
+                      }
+                    }),
+                  ]
+                ),
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '电子围栏',
+                    },
+                  },
+                  [
+                    h('Button', {//电子围栏展示
+                      props: {
+                        type: 'primary',
+                        icon: 'ios-globe-outline',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          this.compName = bkShow
+                          this.mess = params.row
+                        }
+                      }
+                    }),
+                  ]
+                ),
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '删除车辆',
+                    },
+                  },
+                  [
+                    h('Button', {// 删除
+                      props: {
+                        type: 'error',
+                        icon: 'md-close',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      on: {
+                        click: () => {
+                          this.listDele(params.row)
+                        }
+                      }
+                    })
+                  ]
+                ),
+              ]);
+            }
+          }
         ],
         mess: {},
         derMes: {
@@ -167,6 +290,7 @@
         data1: [],
         //收索
         param: {
+          con:'',
           jgdm:'',
           zxzt:'',
           shiptype:'',
@@ -249,10 +373,17 @@
       getCxDict() {
         this.cxDict = this.dictUtil.getByCode(this, this.cxDictCode);
       },
-      getPageData() {
+      getPageData(a) {
         var v = this
         v.tableData = [];
         v.data1 = [];
+        console.log(a,'2');
+        if (a){
+          v.param.con = a
+        }
+        if(a == ''){
+          v.param.con = ''
+        }
         this.$http.get(this.apis.CLGL.QUERY, {params: v.param}).then((res) => {
           if (res.code == 200 && res.page.list) {
             let data = res.page.list;

@@ -21,8 +21,30 @@
           <Icon type="ios-arrow-forward" size="22"/>
         </div>
         <div style="width: 360px">
+<!--          <Select-->
+<!--            v-model="from.con"-->
+<!--            filterable-->
+<!--            clearable-->
+<!--            remote-->
+<!--            loading-text="请输入关键字搜索"-->
+<!--            @on-query-change="remoteMethod1"-->
+<!--            ref="jlySelect"-->
+<!--            :remote-method="remoteMethod1"-->
+<!--            :loading="loading1">-->
+<!--            <Option v-for="(option, index) in options1" :value="option.value" :key="index">{{option.label}}</Option>-->
+<!--          </Select>-->
           <Input v-model="from.con" size="large"
-                 @on-search="getshipMess" search enter-button placeholder="请输入MMSI或船舶名称"/>
+                 @on-search="getshipMess" @on-change="getshipMess" search enter-button
+                 @on-focus=""
+                 placeholder="请输入MMSI或船舶名称">
+            <Icon type="ios-search" slot="suffix" />
+          </Input>
+          <div class="shipSty" style="position: absolute;top: 76px">
+            <div style="background-color: #FFFFFF;text-align: left;font-size: 18px;
+            font-weight: 500;width: 300px;padding: 10px;border: #5c6b77">
+               ship
+            </div>
+          </div>
         </div>
       </div>
 
@@ -220,13 +242,15 @@
     },
     data() {
       return {
+        loading1: false,
+        options1: [],
         showModal: false,
         tabIndex: null,
         zxztindex: 0,
         zxztlist: [
           {label: '全部', zt: ''},
-          {label: '在线', zt: '00'},
-          {label: '停泊', zt: '10'},
+          {label: '在航', zt: '00'},
+          {label: '锚泊', zt: '10'},
           {label: '离线', zt: '20'},
         ],
         tabList: [
@@ -271,6 +295,19 @@
       player.dispose();
     },
     methods: {
+      remoteMethod1 (query) {
+        if (query !== '') {
+          this.loading1 = true;
+          setTimeout(() => {
+            this.loading1 = false;
+            this.options1 = this.shipData.filter(item => {
+              return item.mmsi.indexOf(query.toUpperCase()) != -1
+            })
+          }, 200);
+        } else {
+          this.options1 = [];
+        }
+      },
       goVideoEvent(pms){
         this.$router.push({
           name:'WATCH_VIDEO',
@@ -336,10 +373,7 @@
           this.ship.zxzt = '离线'
         }
         this.tabIndex = 1
-        this.getvideoImg(item.sbh,item.mmsi)
-        setTimeout(()=>{
-          this.getvideo(item.mmsi)
-        },1000)
+
         this.gethcMess(item.mmsi)
         this.$emit('reflh', item)
       },
@@ -378,6 +412,12 @@
         if ((!this.ship.mmsi || this.ship.mmsi == '') && index != 0) {
           this.$Message.error('请先选择船舶')
           return
+        }
+        if(index == 4){
+          this.getvideoImg(item.sbh,item.mmsi)
+          setTimeout(()=>{
+            this.getvideo(item.mmsi)
+          },1000)
         }
         this.$nextTick(() => {
           this.tabIndex = index;

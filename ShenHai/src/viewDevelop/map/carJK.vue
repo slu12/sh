@@ -166,8 +166,8 @@
       addLabel(item, point) {
         console.log('添加标注')
         let html = '<div style="width: 160px;height: 28px;padding:4px;">' +
-          '<span>[' + item.shipname + ']</span> ' +
-          '<span style="float: right">' + item.hs + ' km/h</span>' +
+          '<p>[' + item.shipname + '] </p> ' +
+          '<p>' +"航速"+ item.hs + ' km/h </p>' +
           '</div>'
         var myLabel = new BMap.Label(html,     //为lable填写内容
           {
@@ -181,7 +181,7 @@
           'background-color': 'rgba(255,255,255,0.6)',
           // border:"none",                    //边
           'border-radius': '4px',
-          // height:"120px",                //高度
+          height:"45px",                //高度
           // width:"125px",                 //宽
           // textAlign:"center",            //文字水平居中显示
           // lineHeight:"120px",            //行高，文字垂直居中显示

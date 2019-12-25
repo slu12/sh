@@ -831,6 +831,9 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
         RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
         Cb cb = cbs.get(0);
+        if(StringUtils.isBlank(cb.getSbh())){
+            return ApiResponse.success(new String[9]);
+        }
 //		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
 //		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
         Map<String, String> sbh = WebcamUtil.getAllSbh(reids);

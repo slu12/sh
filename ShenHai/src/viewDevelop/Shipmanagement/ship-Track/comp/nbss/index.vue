@@ -123,7 +123,7 @@
         </div>
         <div class="funcBox box_row rowAuto colItemCenter">
 
-          <div class="funcItemBox" @click="showPathHistory(ship.zdbh)">
+          <div class="funcItemBox" @click="showPathHistory(ship.mmsi)">
             <Icon type="md-git-pull-request"/>
             <div class="labelSty">
               查看历史轨迹
@@ -403,8 +403,8 @@
           }
         })
       },
-      showPathHistory(zdbh) {
-        this.$router.push({name: 'ship-trajectory',params:{mmsi:this.car.mmsi}});
+      showPathHistory(mmsi) {
+        this.$router.push({name: 'ship-trajectory',params:{mmsi:mmsi}});
       },
       showFance(id) {
         this.$parent.showFance(id)

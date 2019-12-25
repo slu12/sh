@@ -63,6 +63,7 @@
       console.log(this.$route);
       if (this.$route.params.mmsi){
         this.param.mmsi = this.$route.params.mmsi
+        this.getvideo()
       }
     },
     methods: {

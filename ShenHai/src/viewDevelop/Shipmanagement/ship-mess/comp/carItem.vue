@@ -114,7 +114,7 @@
 <!--                        <Button  icon="ios-clipboard-outline" @click="emit('showDoc')"></Button>-->
 <!--                    </Tooltip>-->
                     <Tooltip content="历史轨迹">
-                        <Button  icon="ios-map-outline" @click="emit('trace')"></Button>
+                        <Button  icon="ios-map-outline" @click="emit('trace',data.mmsi)"></Button>
                     </Tooltip>
                     <Tooltip content="电子围栏">
                         <Button icon="ios-globe-outline" @click="emit('showFance')"></Button>

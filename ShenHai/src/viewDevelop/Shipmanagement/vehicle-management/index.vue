@@ -149,8 +149,7 @@
             trace(car) {
                 this.$router.push(
                     {
-                        name: 'historyTarck_new',
-                        params: {zdbh: car.zdbh}
+                      name: 'ship-trajectory',params:{mmsi:this.car.mmsi}
                     }
                 );
             },

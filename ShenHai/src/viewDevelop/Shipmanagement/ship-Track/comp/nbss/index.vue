@@ -404,7 +404,7 @@
         })
       },
       showPathHistory(zdbh) {
-        this.$router.push({name: 'historyTarck_new', params: {zdbh:zdbh}});
+        this.$router.push({name: 'ship-trajectory',params:{mmsi:this.car.mmsi}});
       },
       showFance(id) {
         this.$parent.showFance(id)

@@ -35,16 +35,16 @@
 <!--          </Select>-->
           <Input v-model="from.con" size="large"
                  @on-search="getshipMess" @on-change="getshipMess" search enter-button
-                 @on-focus=""
+                 @on-focus="showtj = true"
                  placeholder="请输入MMSI或船舶名称">
             <Icon type="ios-search" slot="suffix" />
           </Input>
-          <div class="shipSty" style="position: absolute;top: 76px">
-            <div style="background-color: #FFFFFF;text-align: left;font-size: 18px;
-            font-weight: 500;width: 300px;padding: 10px;border: #5c6b77">
-               ship
-            </div>
-          </div>
+<!--          <div v-if="showtj" class="shipSty" style="position: absolute;top: 66px">-->
+<!--            <div style="background-color: #FFFFFF;text-align: left;font-size: 18px;z-index: 9999;-->
+<!--            font-weight: 500;width: 359px;padding: 10px;border: #5c6b77" v-for="(item,index) in tjList" :key="index">-->
+<!--               {{item.json.portname.value}}.{{item.json.zxzt.value}}.{{item.json.shiptype.value}}-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
       </div>
 
@@ -242,6 +242,7 @@
     },
     data() {
       return {
+        showtj :false,
         loading1: false,
         options1: [],
         showModal: false,
@@ -285,16 +286,34 @@
           pageNum:1
         },
         hcMess:{},
-        showvideo:[false,false,false]
+        showvideo:[false,false,false],
+        tjList:[]
       }
     },
     created() {
       this.getshipMess()
+      this.getTj()
     },
     beforeDestroy: function () {
       player.dispose();
     },
     methods: {
+      getTj(){
+        this.$http.get('/api/cbcd/pager').then((res)=>{
+          if (res.code = 200){
+            this.tjList = res.page.list
+            res.page.list.forEach((it,index)=>{
+              it.json = JSON.parse(it.json)
+              if(index == res.page.list.length - 1){
+                this.tjList = res.page.list
+                console.log(this.tjjList);
+              }
+            })
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
       remoteMethod1 (query) {
         if (query !== '') {
           this.loading1 = true;
@@ -414,9 +433,9 @@
           return
         }
         if(index == 4){
-          this.getvideoImg(item.sbh,item.mmsi)
+          this.getvideoImg(this.ship.sbh,this.ship.mmsi)
           setTimeout(()=>{
-            this.getvideo(item.mmsi)
+            this.getvideo(this.ship.mmsi)
           },1000)
         }
         this.$nextTick(() => {

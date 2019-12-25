@@ -295,7 +295,7 @@
       local: function (n, o) {
         this.formItem.startTime = this.getTodayDate() + " 00:00:00";
         this.formItem.endTime = this.getTodayDate() + " 23:59:59";
-        this.formItem.zdbh = this.$route.params.zdbh;
+        this.formItem.mmsi = this.$route.params.mmsi;
         this.timeRange = [this.formItem.startTime, this.formItem.endTime];
         this.choosedIndex = 0;
         this.getCarList();
@@ -395,8 +395,7 @@
       getCarList() {
         this.$http.get(this.apis.CLGL.QUERY, {
           params: {
-            pageSize: 1000,
-            positionType: this.local == 'en-US' ? 'gcj02' : ''
+            pageSize: 100000,
           }
         }).then((res) => {
           if (res.code === 200 && res.page.list) {
@@ -423,18 +422,16 @@
         //     endTime = endTime.format('yyyy-MM-dd hh:mm:ss');
         // }
         let p = {
-          startTime: startTime,
-          endTime: endTime,
-          zdbh: this.formItem.mmsi,
-          ignition: this.formItem.ignition,
-          brennschluss: this.formItem.brennschluss
+          start: startTime,
+          end: endTime,
+          mmsi: this.formItem.mmsi,
         }
         this.totalTime = 0;
         this.totalLC = 0;
         this.pathList = [];
         this.item = {};
         this.showMap = false;
-        this.$http.post(this.apis.CLGL.GPS_HITSOR, p).then((res) => {
+        this.$http.post('/api/cl/newXc', p).then((res) => {
           if (res.code === 200 && res.result) {
             var geoc = new BMap.Geocoder();
             for (let r of res.result) {

@@ -168,7 +168,7 @@
               }
             ]
           },
-          zxzt: {
+          nav: {
             label: "设备状态：",
             showAll: false,
             selectList: []
@@ -188,7 +188,7 @@
       let cblxList = this.dictUtil.getByCode(this, 'CBLX')
       this.searchList.shiptype.selectList = cblxList
       let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
-      this.searchList.zxzt.selectList = snztList
+      this.searchList.nav.selectList = snztList
       // this.getJGList()
     },
     methods: {

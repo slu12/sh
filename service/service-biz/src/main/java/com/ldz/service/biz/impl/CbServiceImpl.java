@@ -90,8 +90,10 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         if(StringUtils.isNotBlank(nav)){
             if(StringUtils.equals(nav,"0")){
                 condition.eq(Cb.InnerColumn.navStatus, "0");
-            }else {
+            }else if(StringUtils.equals("1",nav)) {
                 condition.and().andNotEqualTo(Cb.InnerColumn.navStatus.name(), "0");
+            }else{
+                return false;
             }
         }
         String portname = getRequestParamterAsString("portname");
@@ -196,8 +198,10 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         if(StringUtils.isNotBlank(nav)){
             if(StringUtils.equals(nav,"0")){
                 condition.eq(Cb.InnerColumn.navStatus, "0");
-            }else {
+            }else if(StringUtils.equals("1",nav)) {
                 condition.and().andNotEqualTo(Cb.InnerColumn.navStatus.name(), "0");
+            }else{
+                return false;
             }
         }
         String portname = getRequestParamterAsString("portname");
@@ -895,7 +899,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
         Cb cb = cbs.get(0);
         //  gps 点获取顺序  定位器 > 设备  >  mmsi
-        DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTime starttime = pattern.parseDateTime(start);
         DateTime endtime = pattern.parseDateTime(end);
       /*  DateTime minusHours = endtime.minusHours(12);
@@ -913,6 +917,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         }
         condition.gte(ClGpsLs.InnerColumn.cjsj, starttime.toDate());
         condition.lte(ClGpsLs.InnerColumn.cjsj, endtime.toDate());
+        condition.setOrderByClause(" cjsj asc , id asc");
        list = gpsLsService.findByCondition(condition);
 
        List<Point> points = new ArrayList<>();

@@ -37,7 +37,7 @@
                  </a>
                  <List border size="small">
                    <ListItem>船籍 : {{item.json.portname.value}}</ListItem>
-                   <ListItem>终端状态 : {{item.json.zxzt.value}}</ListItem>
+                   <ListItem>终端状态 : {{item.json.nav.value}}</ListItem>
                    <ListItem>船舶类别 : {{item.json.shiptype.value}}</ListItem>
                  </List>
                </Card>

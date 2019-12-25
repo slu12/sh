@@ -113,6 +113,7 @@
     import addmess from './comp/addmess.vue'
     import addmessList from './comp/addmessList.vue'
     import mess from './comp/mess.vue'
+    import swal from 'sweetalert2'
 
     export default {
         name: 'char',
@@ -203,8 +204,9 @@
                 })
             },
             removeDcList(item, items) {
+              console.log("32156465456564654")
                 var v = this
-                swal({
+               swal({
                     title: "是删除数据?",
                     text: "",
                     icon: "warning",

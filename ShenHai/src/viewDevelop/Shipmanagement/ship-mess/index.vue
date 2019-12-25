@@ -292,7 +292,7 @@
         param: {
           con:'',
           jgdm:'',
-          zxzt:'',
+          nav:'',
           shiptype:'',
           pageNum: 1,
           pageSize: 8

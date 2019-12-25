@@ -238,13 +238,13 @@
         this.addClickHandler(item, marker);
       },
       getIcon(car) {
-        switch (car.status) {
-          case 1:
+        switch (car.navStatus) {
+          case '0':
             return this.apis.STATIC_PATH + 'icon/ic_car.png';
-          case 2:
-            return this.apis.STATIC_PATH + 'icon/running.png';
           default:
-              return this.apis.STATIC_PATH + 'icon/ic_car_offline.png'
+            return this.apis.STATIC_PATH + 'icon/running.png';
+         /* default:
+              return this.apis.STATIC_PATH + 'icon/ic_car_offline.png'*/
         }
       },
       addClickHandler(item, marker) {

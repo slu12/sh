@@ -201,7 +201,7 @@
                           this.$router.push(
                             {
                               name: 'ship-trajectory',
-                              params:{ mmsi: this.car.mmsi }
+                              params:{ mmsi: params.row.mmsi }
                             }
                           );
                         },

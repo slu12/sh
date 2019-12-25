@@ -25,7 +25,8 @@ public class WebcamUtil {
 
     private static String IP = "http://139.196.253.185";
 
-    private static String ZH = "ES4G870";
+//    private static String ZH = "ES4G870";
+    private static String ZH = "ES4G856";
 //    private static String ZH = "AHD30895";
 
     private static String PWD = "000000";

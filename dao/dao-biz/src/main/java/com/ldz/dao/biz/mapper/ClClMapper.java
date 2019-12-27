@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 //@CacheNamespace(implementation=MybatisRedisCache.class, eviction=FifoCache.class)
 public interface ClClMapper extends Mapper<Cb> {
@@ -50,4 +51,7 @@ public interface ClClMapper extends Mapper<Cb> {
 
 	@Update("update cl_cl  set sbh = null where mmsi = #{mmsi}")
     void unbindWebcam(@Param("mmsi") String mmsi);
+
+	@Select(" select shipname,mmsi from cl_cl")
+    List<Map<String,String>> getCbs();
 }

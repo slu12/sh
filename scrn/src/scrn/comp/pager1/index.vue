@@ -24,8 +24,8 @@
 </template>
 
 <script>
-  import login1 from '../file/1.JPG'
-  import login2 from '../file/2.JPG'
+  import login1 from '../file/1.jpg'
+  import login2 from '../file/2.jpg'
 
   export default {
     name: "index",

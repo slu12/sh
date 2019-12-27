@@ -25,7 +25,8 @@ public class WebcamUtil {
 
     private static String IP = "http://139.196.253.185";
 
-    private static String ZH = "ES4G870";
+//    private static String ZH = "ES4G870";
+    private static String ZH = "ES4G856";
 //    private static String ZH = "AHD30895";
 
     private static String PWD = "000000";
@@ -91,6 +92,11 @@ public class WebcamUtil {
         RuntimeCheck.ifFalse(result == 0, "操作失败, 请稍后再试");
         return result;
     }
+
+    /**
+     * 获取录像列表
+     */
+
 
     /**
      * 抓拍

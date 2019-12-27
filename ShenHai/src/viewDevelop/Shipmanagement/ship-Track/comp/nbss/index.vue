@@ -250,9 +250,9 @@
         zxztindex: 0,
         zxztlist: [
           {label: '全部', zt: ''},
-          {label: '在航', zt: '00'},
-          {label: '锚泊', zt: '10'},
-          {label: '离线', zt: '20'},
+          {label: '在航', zt: '0'},
+          {label: '锚泊', zt: '1'},
+          {label: '离线', zt: '2'},
         ],
         tabList: [
           {label: '船舶,列表'},
@@ -280,7 +280,7 @@
         }],
 
         from: {
-          zxzt: '',
+          nav: '',
           con: '',
           pageSize:200,
           pageNum:1
@@ -446,7 +446,7 @@
       // 更改状态页签
       changezxztindex(index, zt) {
         this.zxztindex = index
-        this.from.zxzt = zt
+        this.from.nav = zt
         this.getshipMess()
       },
       // 调整Tab滚动

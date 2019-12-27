@@ -251,4 +251,9 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.newXc(mmsi, start, end);
 	}
 
+	@PostMapping("/getCbs")
+	public ApiResponse<List<Map<String, String>>> getCbs(){
+		return clservice.getCbs();
+	}
+
 }

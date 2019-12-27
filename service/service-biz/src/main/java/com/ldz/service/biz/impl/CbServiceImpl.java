@@ -128,22 +128,27 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
                 }
                 if(clGps != null){
                     Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
-                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                    cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
-                    cb.setHx(clGps.getFxj().doubleValue()+"");
-                    cb.setHs(clGps.getYxsd());
+                    if(gps84_to_gcj02 != null ){
+                        Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setHx(clGps.getFxj().doubleValue()+"");
+                        cb.setHs(clGps.getYxsd());
+                    }
                 }
             }else if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isBlank(cb.getSbh())){
                 ClGps clGps = map.get(cb.getMmsi());
                 if(clGps != null){
                     Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
-                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                    cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
-                    cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setHx(clGps.getFxj().doubleValue()+"");
-                    cb.setHs(clGps.getYxsd());
+                    if(gps84_to_gcj02 != null ){
+                        Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setHx(clGps.getFxj().doubleValue()+"");
+                        cb.setHs(clGps.getYxsd());
+                    }
                 }
             }
         });
@@ -171,22 +176,27 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
                 }
                 if(clGps != null){
                     Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
-                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                    cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
-                    cb.setHx(clGps.getFxj().doubleValue()+"");
-                    cb.setHs(clGps.getYxsd());
+                    if(gps84_to_gcj02 != null ){
+                        Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setHx(clGps.getFxj().doubleValue()+"");
+                        cb.setHs(clGps.getYxsd());
+                    }
                 }
             }else if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isBlank(cb.getSbh())){
                 ClGps clGps = map.get(cb.getMmsi());
                 if(clGps != null){
                     Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
-                    Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                    cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
-                    cb.setDwsj(format.format(clGps.getCjsj()));
-                    cb.setHx(clGps.getFxj().doubleValue()+"");
-                    cb.setHs(clGps.getYxsd());
+                    if(gps84_to_gcj02 != null ){
+                        Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setDwzb(gps.getWgLon() + "," + gps.getWgLat());
+                        cb.setDwsj(format.format(clGps.getCjsj()));
+                        cb.setHx(clGps.getFxj().doubleValue()+"");
+                        cb.setHs(clGps.getYxsd());
+                    }
                 }
             }
         });
@@ -821,6 +831,9 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
         RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
         Cb cb = cbs.get(0);
+        if(StringUtils.isBlank(cb.getSbh())){
+            return ApiResponse.success(new String[9]);
+        }
 //		List<Sxt> sxts = sxtService.findEq(Sxt.InnerColumn.mmsi, mmsi);
 //		RuntimeCheck.ifEmpty(sxts, "此船舶尚未绑定设备");
         Map<String, String> sbh = WebcamUtil.getAllSbh(reids);
@@ -934,6 +947,12 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
            points.add(point);
        });
         return ApiResponse.success(points);
+    }
+
+    @Override
+    public ApiResponse<List<Map<String, String>>> getCbs() {
+        List<Map<String, String>> maps = entityMapper.getCbs();
+        return ApiResponse.success(maps);
     }
 
     public static int differentDaysByMillisecond(Date date1, Date date2) {

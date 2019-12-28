@@ -34,7 +34,7 @@
                                           <FormItem label='状态'>
                                                 <Select filterable :readonly="dataRead" filterable clearable
                                                         v-model="param.zt">
-                                                      <Option v-for="item in ztDictionary" :value="item.key">
+                                                      <Option v-for="(item,index) in ztDictionary" :value="item.key" :key="index">
                                                             {{item.val}}
                                                       </Option>
                                                 </Select>

@@ -11,9 +11,9 @@
         <div class="body-r-1 inputSty">
           <!--<Input v-model="param.mcLike" placeholder="请输入终端名称" style="width: 200px"-->
           <!--@on-keyup.enter="getPageData()"></Input>-->
-          <Input v-model="param.zdbhLike" :placeholder='$t("TERMINAL_NUM")' style="width: 200px"
+          <Input v-model="param.zdbhLike" placeholder='$t("TERMINAL_NUM")' style="width: 200px"
                  @on-keyup.enter="getPageData()"></Input>
-          <Input v-model="param.cphLike" :placeholder='$t("CAR_NUMBER")' style="width: 200px"
+          <Input v-model="param.cphLike" placeholder='$t("CAR_NUMBER")' style="width: 200px"
                  @on-keyup.enter="getPageData()"></Input>
           <!--<Input v-model="param.versionLike" placeholder="请输入版本号" style="width: 200px"-->
           <!--@on-keyup.enter="getPageData()"></Input>-->

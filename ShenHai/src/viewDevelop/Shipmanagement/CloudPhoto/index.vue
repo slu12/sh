@@ -1,72 +1,79 @@
 <style lang="less">
-      @import '../../../styles/common.less';
+  @import '../../../styles/common.less';
 
-      .CloudVideo {
-            background-color: #fff;
-            .videoSty {
-                  border-bottom: solid 1px #dedede;
-                  position: relative;
-                  .videoBF {
-                        cursor: pointer;
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0, 0, 0, 0.5);
-                        z-index: 100;
-                  }
-                  .icon {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        z-index: 101;
-                  }
-                  .VideoTit {
-                        position: absolute;
-                        top: 0px;
-                        left: 0;
-                        z-index: 102;
-                        color: #fff;
-                        background: rgba(0, 0, 0, 0.5);
-                        padding: 3px 5px;
-                        width: 100%;
-                  }
-                  .wzSty{
-                        /*position: absolute;*/
-                        /*top: 26px;*/
-                        /*left: 0;*/
-                        /*z-index: 102;*/
-                        transform: translateY(-5px);
-                        color: #fff;
-                        background: rgba(0, 0, 0, 0.5);
-                        padding: 3px 5px;
-                        padding-top: 0;
-                        width: 100%;
-                  }
-            }
-            .inputTit {
-                  margin-bottom: 5px;
-            }
+  .CloudVideo {
+    background-color: #fff;
+
+    .videoSty {
+      border-bottom: solid 1px #dedede;
+      position: relative;
+
+      .videoBF {
+        cursor: pointer;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 100;
       }
 
-      .videoInfo {
-            text-align: center;
-            padding: 16px;
-            margin-bottom: 16px;
+      .icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 101;
       }
-      .wzStyM{
-            /*position: absolute;*/
-            /*bottom:110px;*/
-            /*left: 20px;*/
-            /*right: 20px;*/
-            /*z-index: 102;*/
-            color: #fff;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 3px 5px;
-            /*width: 100%;*/
+
+      .VideoTit {
+        position: absolute;
+        top: 0px;
+        left: 0;
+        z-index: 102;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 3px 5px;
+        width: 100%;
       }
+
+      .wzSty {
+        /*position: absolute;*/
+        /*top: 26px;*/
+        /*left: 0;*/
+        /*z-index: 102;*/
+        transform: translateY(-5px);
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 3px 5px;
+        padding-top: 0;
+        width: 100%;
+      }
+    }
+
+    .inputTit {
+      margin-bottom: 5px;
+    }
+  }
+
+  .videoInfo {
+    text-align: center;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .wzStyM {
+    /*position: absolute;*/
+    /*bottom:110px;*/
+    /*left: 20px;*/
+    /*right: 20px;*/
+    /*z-index: 102;*/
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 3px 5px;
+    /*width: 100%;*/
+  }
 </style>
 <template>
   <div class="box_col">
@@ -191,122 +198,122 @@
 
 <script>
 
-      import swal from 'sweetalert2'
-    import mixins from '@/mixins'
+  import swal from 'sweetalert2'
+  import mixins from '@/mixins'
 
-    export default {
-        name: '',
-        mixins: [mixins],
-        components: {},
-        data() {
-            return {
-                maxPhoto: false,
-                maxUrl: '',
-                maxWz:'',
-                maxIndex: '',
-                vadeoShow: true,
-                videoPath: this.apis.VIDEO_PATH,
-                activeName: 0,
-                cjsjInRange: [],
-                carList: [],
-                pageTotal: 1,
-                page: {
-                    pageNum: 1,
-                    pageSize: 8
-                },
-                videoList: [],
-                param: {
-                    cjsjInRange: '',
-                    cphLike: '',
-                    wjmLike:'F',
-                    pageNum: 1,
-                    pageSize: 8
-                }
-            }
+  export default {
+    name: '',
+    mixins: [mixins],
+    components: {},
+    data() {
+      return {
+        maxPhoto: false,
+        maxUrl: '',
+        maxWz: '',
+        maxIndex: '',
+        vadeoShow: true,
+        videoPath: this.apis.VIDEO_PATH,
+        activeName: 0,
+        cjsjInRange: [],
+        carList: [],
+        pageTotal: 1,
+        page: {
+          pageNum: 1,
+          pageSize: 8
         },
-        created() {
-            if (this.$route.params && this.$route.params.zdbh){
-                this.param.zdbhLike = this.$route.params.zdbh
-            }
-            this.getCarList();
-        },
-        methods: {
-            showMax(url, index,wz) {
-                this.maxPhoto = true
-                this.maxUrl = url
-                this.maxIndex = index
-                this.maxWz = wz
-            },
-            videoS(type, item, index) {
-                this.videoList[index].video = true
-            },
-            videoF(type, item, index) {
-                this.videoList[index].video = false
-            },
-            videoColse(item, index) {
-                var v = this
-                  swal({
-                        text: "是否删除数据?",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: '确认',
-                        cancelButtonText: '取消'
-                  }).then((willDelete) => {
-                        if (willDelete.value) {
-                        this.$http.post(this.apis.CLOUD.DELE + '/' + item.id).then((res) => {
-                            if (res.code == 200) {
-                                v.$Message.success(res.message);
-                            } else {
-                                v.$Message.error(res.message);
-                            }
-                            v.getmess()
-                        }).catch((error) => {
-                            v.$Message.error('出错了！！！');
-                        })
-                    }
-                });
-            },
-            getmess(typ) {
-                if (this.cjsjInRange.length != 0 && this.cjsjInRange[0] != '' && this.cjsjInRange[1] != '') {
-                    this.param.cjsjInRange = this.getdateParaD(this.cjsjInRange[0]) + "," + this.getdateParaD(this.cjsjInRange[1]);
-                } else {
-                    this.param.cjsjInRange = '';
-                }
-                var v = this
-                v.param.wjmEndwith = '.jpg';
-                this.$http.get(this.apis.CLOUD.QUERY, {params: v.param}).then((res) => {
-                    v.pageTotal = res.page.total
-                    for (let r of res.page.list) {
-                        if (r.url) {
-                            r.video = false
-                            r.imgdz = r.url.replace('video', 'cache');
-                            r.imgdz = r.imgdz.replace('mp4', 'jpg')
-                        }
-                    }
-                    this.videoList = res.page.list
-                    // videoPath+item.url,index,item.wz
-                    this.maxUrl = this.videoPath + res.page.list[0].url
-                    this.maxWz = res.page.list[0].wz
-                    v.SpinShow = false;
-                })
-            },
-            getCarList() {
-                var v = this
-                this.$http.get(this.apis.CLGL.GET_ORG_CAR_LIST).then((res) => {
-                    this.carList = res.result
-                    this.getmess();
-                })
-            },
-            findMessList() {
-                this.getmess();
-            },
-            pageChange(event) {
-                var v = this
-                v.param.pageNum = event
-                this.getmess()
-            },
+        videoList: [],
+        param: {
+          cjsjInRange: '',
+          cphLike: '',
+          wjmLike: 'F',
+          pageNum: 1,
+          pageSize: 8
         }
+      }
+    },
+    created() {
+      if (this.$route.params && this.$route.params.zdbh) {
+        this.param.zdbhLike = this.$route.params.zdbh
+      }
+      this.getCarList();
+    },
+    methods: {
+      showMax(url, index, wz) {
+        this.maxPhoto = true
+        this.maxUrl = url
+        this.maxIndex = index
+        this.maxWz = wz
+      },
+      videoS(type, item, index) {
+        this.videoList[index].video = true
+      },
+      videoF(type, item, index) {
+        this.videoList[index].video = false
+      },
+      videoColse(item, index) {
+        var v = this
+        swal({
+          text: "是否删除数据?",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonText: '确认',
+          cancelButtonText: '取消'
+        }).then((willDelete) => {
+          if (willDelete.value) {
+            this.$http.post(this.apis.CLOUD.DELE + '/' + item.id).then((res) => {
+              if (res.code == 200) {
+                v.$Message.success(res.message);
+              } else {
+                v.$Message.error(res.message);
+              }
+              v.getmess()
+            }).catch((error) => {
+              v.$Message.error('出错了！！！');
+            })
+          }
+        });
+      },
+      getmess(typ) {
+        if (this.cjsjInRange.length != 0 && this.cjsjInRange[0] != '' && this.cjsjInRange[1] != '') {
+          this.param.cjsjInRange = this.getdateParaD(this.cjsjInRange[0]) + "," + this.getdateParaD(this.cjsjInRange[1]);
+        } else {
+          this.param.cjsjInRange = '';
+        }
+        var v = this
+        v.param.wjmEndwith = '.jpg';
+        this.$http.get(this.apis.CLOUD.QUERY, {params: v.param}).then((res) => {
+          v.pageTotal = res.page.total
+          for (let r of res.page.list) {
+            if (r.url) {
+              r.video = false
+              r.imgdz = r.url.replace('video', 'cache');
+              r.imgdz = r.imgdz.replace('mp4', 'jpg')
+            }
+          }
+          this.videoList = res.page.list
+          // videoPath+item.url,index,item.wz
+          this.maxUrl = this.videoPath + res.page.list[0].url
+          this.maxWz = res.page.list[0].wz
+          v.SpinShow = false;
+        })
+      },
+      getCarList() {
+        var v = this
+        this.$http.get(this.apis.CLGL.GET_ORG_CAR_LIST).then((res) => {
+          this.carList = res.result
+          this.getmess();
+        })
+      },
+      findMessList() {
+        this.getmess();
+      },
+      pageChange(event) {
+        var v = this
+        v.param.pageNum = event
+        this.getmess()
+      },
     }
+  }
 </script>
 
 <style>

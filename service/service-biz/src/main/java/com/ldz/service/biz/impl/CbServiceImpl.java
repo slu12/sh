@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTTLByHslColorTransform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -38,6 +39,7 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -70,6 +72,12 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     private GpsLsService gpsLsService;
     @Autowired
     private GpsService gpsService;
+    @Value("${staticPath}")
+    private String filePath;
+    @Autowired
+    private SpkService spkService;
+
+
 
     private ExecutorService excutor = Executors.newSingleThreadExecutor();
 
@@ -953,6 +961,68 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     public ApiResponse<List<Map<String, String>>> getCbs() {
         List<Map<String, String>> maps = entityMapper.getCbs();
         return ApiResponse.success(maps);
+    }
+
+    @Override
+    public ApiResponse<String> zp(String mmsi, String chn) throws IOException {
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
+        if(StringUtils.isBlank(chn)){
+            chn = "0";
+        }
+        RuntimeCheck.ifBlank(cb.getSbh(), "船舶未绑定设备, 不能进行拍照");
+        String photo = WebcamUtil.photo(reids, cb.getSbh(), chn);
+        RuntimeCheck.ifBlank(photo, "设备不在线,请稍后再试");
+        String now ="/zp/" +  DateTime.now().toString("yyyy-MM-dd");
+        String fileName = "F" + mmsi + "_" + System.currentTimeMillis() + ".jpg";
+        String s = now + "/" +fileName ;
+        File f = new File(filePath + s);
+        URL u = new URL(photo);
+        try {
+            FileUtils.copyURLToFile(u, f);
+        }catch (Exception e){
+            RuntimeCheck.ifTrue(true, "请求异常 , 请稍后再试");
+        }
+
+        String file = this.path + s;
+        ClSpk spk = new ClSpk();
+        spk.setId(genId());
+        spk.setWjm(fileName);
+        spk.setDz(s);
+        spk.setZdbh(mmsi);
+        spk.setUrl(file);
+        spk.setCjsj(new Date());
+        spk.setSplx("50");
+        spk.setJgdm(cb.getJgdm());
+        spk.setJgmc(cb.getJgmc());
+        spk.setCph(cb.getShipname());
+        spk.setClId(cb.getClId());
+        spkService.save(spk);
+        return ApiResponse.success(spk.getUrl());
+    }
+
+    @Override
+    public ApiResponse<String> lx(String mmsi, String chn, int sec) throws IOException {
+        if(sec <= 0){
+            sec = 30;
+        }
+
+        RuntimeCheck.ifBlank(mmsi, "请选择船舶");
+        List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
+        if(StringUtils.isBlank(chn)){
+            chn = "0";
+        }
+        RuntimeCheck.ifBlank(cb.getSbh(), "船舶未绑定设备,请先绑定设备");
+//        int test = WebcamUtil.realVideo(reids, cb.getSbh(), chn, sec, "testsh");
+        int test = 0;
+        if(test == 0) {
+            WebcamUtil.getVideo(reids, cb.getSbh(),"0",chn,DateTime.now().getYear() +"",DateTime.now().getMonthOfYear() +"",DateTime.now().getDayOfMonth()+"", "0","0","0","86339");
+        }
+        return null;
     }
 
     public static int differentDaysByMillisecond(Date date1, Date date2) {

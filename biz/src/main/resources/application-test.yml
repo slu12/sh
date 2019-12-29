@@ -26,7 +26,7 @@ server:
 biz:
   scTime: 30000
 
-staticPath:  D:\static\common\
+staticPath:  /data/wwwroot/file
 znzpurl: http://127.0.0.1:9888/api
 obdCheckUrl: http://119.23.242.234:9082/api/3007
 videoPath: http://www.168car.net:9091/test/

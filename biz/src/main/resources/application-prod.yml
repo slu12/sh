@@ -9,3 +9,5 @@ spring:
     password: 'G7%bB2@dF6@g'
 biz:
   scTime: 30000
+
+  staticPath: /data/wwwroot/file

@@ -86,6 +86,12 @@
       }
     },
     created(){
+      let cblxList = this.dictUtil.getByCode(this, 'CBLX')
+      this.searchList.shiptype.selectList = cblxList
+      let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
+      this.searchList.zxzt.selectList = snztList
+      let cjList  = this.dictUtil.getByCode(this, 'CJ');
+      this.searchList.jgdm.selectList = cjList
       if (this.$parent.item){
         this.param.json = {
           portname:{
@@ -119,12 +125,7 @@
         this.param.json.zxztname = a.zxzt.value
         this.param.json.shiptypename = a.shiptype.value
       }
-      let cblxList = this.dictUtil.getByCode(this, 'CBLX')
-      this.searchList.shiptype.selectList = cblxList
-      let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
-      this.searchList.zxzt.selectList = snztList
-      let cjList  = this.dictUtil.getByCode(this, 'CJ');
-      this.searchList.jgdm.selectList = cjList
+
     },
     methods: {
       getname(val,e){

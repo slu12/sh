@@ -116,7 +116,7 @@
         <div style="padding: 8px">
           <div class="carNumber">
             <Select class="select" v-model="formItem.mmsi" filterable>
-              <Option v-for="item in carList" :value="item.mmsi">{{item.shipname}}</Option>
+              <Option v-for="(item,index) in carList" :value="item.mmsi" :key="index">{{item.shipname}}</Option>
             </Select>
           </div>
           <div class="sTime" style="margin-top: 6px">
@@ -133,42 +133,42 @@
                     style="width: 60px" @click="formItemList">查询
             </Button>
           </div>
-          <div class="carMessH" style="margin-top: 6px">
-            <div class="box-row-nh">
-              <div class="body-1" style="margin: 4px;">
-                <div class="tit">
-                  总时长(min)
-                </div>
-                <div class="mess">
-                  {{getMinute(totalTime) | GLmess}}
-                </div>
-              </div>
-              <div class="body-1" style="margin: 4px;">
-                <div class="tit">
-                  总里程(km)
-                </div>
-                <div class="mess">
-                  {{(totalLC/1000).toFixed(2)}}
-                </div>
-              </div>
-              <div class="body-1" style="margin: 4px;">
-                <div class="tit">
-                  驾驶次数
-                </div>
-                <div class="mess">
-                  {{pathList.length | GLmess}}
-                </div>
-              </div>
-              <!--<div class="body-1" style="margin: 4px">-->
-              <!--<div class="tit">-->
-              <!--最高时速(km/h)-->
-              <!--</div>-->
-              <!--<div class="mess">-->
-              <!--150-->
-              <!--</div>-->
-              <!--</div>-->
-            </div>
-          </div>
+<!--          <div class="carMessH" style="margin-top: 6px">-->
+<!--            <div class="box-row-nh">-->
+<!--              <div class="body-1" style="margin: 4px;">-->
+<!--                <div class="tit">-->
+<!--                  总时长(min)-->
+<!--                </div>-->
+<!--                <div class="mess">-->
+<!--                  {{getMinute(totalTime) | GLmess}}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="body-1" style="margin: 4px;">-->
+<!--                <div class="tit">-->
+<!--                  总里程(km)-->
+<!--                </div>-->
+<!--                <div class="mess">-->
+<!--                  {{(totalLC/1000).toFixed(2)}}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="body-1" style="margin: 4px;">-->
+<!--                <div class="tit">-->
+<!--                  驾驶次数-->
+<!--                </div>-->
+<!--                <div class="mess">-->
+<!--                  {{pathList.length | GLmess}}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px">&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
+<!--              &lt;!&ndash;最高时速(km/h)&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
+<!--              &lt;!&ndash;150&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
 <!--        <div class="body" style="padding: 8px;margin-top: 8px">-->
 <!--          <div class="pageListCarH" v-for="(item,index) in pathList" @click="itemClick(item,index)"-->
@@ -235,7 +235,6 @@
 
 <script>
   import bkshow from '../../map/mapBK_show'
-
   import echarts from 'echarts'
   import mixins from '@/mixins'
   import {mapState, mapMutations} from 'vuex'
@@ -429,6 +428,7 @@
         this.pathList = [];
         this.item = {};
         this.showMap = false;
+        this.speeds = []
         this.$http.post('/api/cl/newXc', p).then((res) => {
           if (res.code === 200 && res.result) {
             var geoc = new BMap.Geocoder();
@@ -464,11 +464,13 @@
           }
           this.stationList = res.result;
           for (let r of this.stationList) {
-            let date = new Date(r.postime);
+            let date = this.getdateTime(r.loc_time);
             let speed = parseInt(r.speed);
-            this.speedList.push([r.postime, speed]);
-            this.speeds[date.getTime()] = speed;
+            this.speedList.push([date, speed]);
+            this.speeds[r.loc_time*1000] = speed;
           }
+          console.log(this.speeds,'chart');
+
           this.Buildmap()
         })
       },
@@ -488,7 +490,7 @@
               let date = new Date(r.postime);
               let speed = parseInt(r.speed);
               this.speedList.push([r.postime, speed]);
-              this.speeds[date.getTime()] = speed;
+              this.speeds[date] = speed;
             }
             if (this.local == 'en-US') {
               v.Buildmap()
@@ -512,13 +514,13 @@
           if (res.code === 200 && res.result) {
             this.stationList = res.result;
             for (let r of this.stationList) {
-              let date = new Date(r.cjsj);
-              let speed = parseInt(r.yxsd);
-              this.speedList.push([r.cjsj, speed]);
-              this.speeds[date.getTime()] = speed;
+              let date = this.getdateTime(r.loc_time);
+              let speed = parseInt(r.speed);
+              this.speedList.push([date, speed]);
               r.longitude = r.bdjd;
               r.latitude = r.bdwd;
             }
+            console.log(this.speedList,'chart');
             if (this.local == 'en-US') {
               v.Buildmap()
             } else {
@@ -687,6 +689,16 @@
           v.drawLineChart();
         }, 100)
       },
+      getdateTime(timestamp){
+          var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+          var Y = date.getFullYear() + '-';
+          var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+          var D = date.getDate() + ' ';
+          var h = date.getHours() + ':';
+          var m = date.getMinutes() + ':';
+          var s = date.getSeconds();
+          return Y+M+D+h+m+s;
+      },
       drawLineChart() {
         let v = this;
         // 基于准备好的dom，初始化echarts实例
@@ -731,9 +743,8 @@
                 show: true,
                 formatter: function (params) {
                   let time = params.value;
-                  let speed = v.speeds[time];
-                  var value = speed;
-                  return "车辆瞬时速度：" + value + " Km/h";
+                  let speed = v.speeds[time]
+                  return "瞬时速度：" + speed + " Km/h";
                 },
                 backgroundColor: '#004E52'
               },

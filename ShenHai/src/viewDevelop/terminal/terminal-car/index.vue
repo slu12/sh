@@ -35,16 +35,16 @@
                   <Icon type="md-search"></Icon>
                 </Button>
               </Tooltip>
-<!--              <Tooltip content="新增" placement="top">-->
-<!--              <Button type="primary" @click="AddMess()">-->
-<!--              <Icon type="md-add"></Icon>-->
-<!--              </Button>-->
-<!--              </Tooltip>-->
-<!--              <Tooltip content="批量导入" placement="top">-->
-<!--              <Button type="success" @click="componentName='plmess'">-->
-<!--              <Icon type="md-redo"></Icon>-->
-<!--              </Button>-->
-<!--              </Tooltip>-->
+              <Tooltip content="新增" placement="top">
+              <Button type="primary" @click="AddMess()">
+              <Icon type="md-add"></Icon>
+              </Button>
+              </Tooltip>
+              <Tooltip content="批量导入" placement="top">
+              <Button type="success" @click="componentName='plmess'">
+              <Icon type="md-redo"></Icon>
+              </Button>
+              </Tooltip>
               <Tooltip content="升级设备" placement="top">
               <Button type="warning" @click="batchUpdate()">
               <Icon type="md-arrow-round-up"></Icon>
@@ -323,13 +323,6 @@
             }
         },
         created() {
-            this.$store.commit('setCurrentPath', [{
-                title: '首页',
-            }, {
-                title: '系统管理',
-            }, {
-                title: '后视镜管理',
-            }]),
               this.tabHeight = this.getWindowHeight() - 260
             this.getPageData()
             this.getLXDic()

@@ -122,7 +122,6 @@
           </Row>
         </div>
         <div class="funcBox box_row rowAuto colItemCenter">
-
           <div class="funcItemBox" @click="showPathHistory(ship.mmsi)">
             <Icon type="md-git-pull-request"/>
             <div class="labelSty">
@@ -175,6 +174,17 @@
           <div>航速 : {{ship.hs}}</div>
           <div>航向 : {{ship.hx}}</div>
           <div>设备编号 : {{ship.sbh}}</div>
+        </div>
+        <div v-if="ship.sbh!=''" class="funcBox box_row rowAuto colItemCenter">
+          <div class="funcItemBox" @click="ZP(ship.mmsi)">
+            <Icon type="md-videocam"/>
+            <div class="labelSty">
+              拍照
+            </div>
+          </div>
+        </div>
+        <div>
+          <img :src="zp" alt="" style="height: 300px;width: 100%">
         </div>
       </div>
       <div class="box_col_auto" v-if="tabIndex === 3">
@@ -247,6 +257,7 @@
         options1: [],
         showModal: false,
         tabIndex: null,
+        zp:'',
         zxztindex: 0,
         zxztlist: [
           {label: '全部', zt: ''},
@@ -298,6 +309,15 @@
       player.dispose();
     },
     methods: {
+      ZP(a){
+        this.$http.post('/api/cl/zp',{mmsi:a,chn:'1'}).then((res)=>{
+          if (res.code == 200){
+              this.zp = res.message
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
       getTj(){
         this.$http.get('/api/cbcd/pager').then((res)=>{
           if (res.code = 200){

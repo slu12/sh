@@ -8,6 +8,7 @@ import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.Point;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
@@ -67,4 +68,7 @@ public interface CbService extends BaseService<Cb,String>{
 
     ApiResponse<List<Map<String, String>>> getCbs();
 
+    ApiResponse<String> zp(String mmsi, String chn) throws IOException;
+
+    ApiResponse<String> lx(String mmsi, String chn, int sec) throws IOException;
 }

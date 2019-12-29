@@ -7,9 +7,15 @@ import com.ldz.util.bean.WebcamBean;
 import com.ldz.util.exception.RuntimeCheck;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import javax.swing.text.EditorKit;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,6 +102,34 @@ public class WebcamUtil {
     /**
      * 获取录像列表
      */
+    public static void getVideo(StringRedisTemplate redis, String deviceNo,String loc, String chn, String year, String mon, String day, String rectype, String fileattr, String beg, String end) throws IOException {
+        String jsession = login(redis);
+        String url = IP + "/StandardApiAction_getVideoFileInfo.action";
+        Map<String,String> params = new HashMap<>();
+        params.put("jsession", jsession);
+        params.put("DevIDNO", deviceNo);
+        params.put("LOC",loc);
+        params.put("CHN",chn);
+        params.put("YEAR", year);
+        params.put("MON",mon);
+        params.put("DAY",day);
+        params.put("RECTYPE", rectype);
+        params.put("FILEATTR",fileattr);
+        params.put("BEG",beg);
+        params.put("END", end);
+        params.put("ARM1","0");
+        params.put("ARM2","0");
+        params.put("RES", "0");
+        params.put("STREAM","0");
+        params.put("STORE","0");
+        params.put("LABEL","testsh");
+        String response = HttpUtil.get(url, params);
+        String downurl = IP + "/StandardApiAction_addDownloadTask.action?did=" + deviceNo + "&";
+        URL uu = new URL(downurl);
+        FileUtils.copyURLToFile(uu, new File("D:/aaa.avi"));
+//        System.out.println(response);
+    }
+
 
 
     /**

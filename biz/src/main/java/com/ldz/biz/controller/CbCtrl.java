@@ -256,4 +256,29 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.getCbs();
 	}
 
+	/**
+	 * 抓拍
+	 * @param mmsi
+	 * @param chn
+	 * @return
+	 */
+	@PostMapping("/zp")
+	public ApiResponse<String> zp(String mmsi, String chn) throws IOException {
+		return clservice.zp(mmsi, chn);
+	}
+
+
+	/**
+	 * 实时录像
+	 * @param mmsi
+	 * @param chn
+	 * @return
+	 */
+	@PostMapping("/lx")
+	public ApiResponse<String> lx(String mmsi, String chn, int sec) throws IOException {
+		return clservice.lx(mmsi,chn, sec);
+	}
+
+
+
 }

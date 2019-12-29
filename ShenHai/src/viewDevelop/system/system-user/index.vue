@@ -53,6 +53,7 @@
   import newmess from './comp/newmes.vue'
   import changemes from './comp/changmes.vue'
   import i18nTabTit from '@/mixins/i18nTabTit'
+  import mixins from '@/mixins'
 
   export default {
     name: 'char',
@@ -60,7 +61,7 @@
       newmess,
       changemes
     },
-    mixins: [i18nTabTit],
+    mixins: [i18nTabTit,mixins],
     data() {
       return {
         //tab高度
@@ -256,9 +257,9 @@
       //添加新用户信息
       AddDataList() {
         var v = this
-        v.compName = 'newmess'
         v.userMesType = true
         this.usermes = null
+        v.compName = 'newmess'
       },
       listF(res) {
         this.getmess()

@@ -5,7 +5,7 @@
       <div>
             <Modal v-model="showModal" width='900'
                    :closable='false' :mask-closable="mesF"
-                   title='$t("NEW_TERMINAL_EQUIPMENT")'>
+                   title='新增设备'>
                   <div style="overflow: auto;height: 300px;">
                         <Form
                                 :model="param"
@@ -15,26 +15,26 @@
                                 :styles="{top: '20px'}">
                               <Row>
                                     <Col span="12">
-                                          <FormItem prop="zdbh" label='$t("TERMINAL_NUMBER")'>
+                                          <FormItem prop="zdbh" label='终端编号'>
                                                 <Input :readonly="dataRead" type="text" v-model="param.zdbh"
-                                                       placeholder='$t("TERMINAL_NUM")'>
+                                                       placeholder='终端编号'>
                                                 </Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="12">
-                                          <FormItem prop="mc" label='$t("EQUIPMENT_NAME")'>
+                                          <FormItem prop="mc" label='名称'>
                                                 <Input :readonly="dataRead" type="text" v-model="param.mc"
-                                                       placeholder='$t("TERMINAL_NAME")'>
+                                                       placeholder='名称'>
                                                 </Input>
                                           </FormItem>
                                     </Col>
                               </Row>
                               <Row>
                                     <Col span="12">
-                                          <FormItem label='$t("EQUIPMENT_STATE")'>
+                                          <FormItem label='状态'>
                                                 <Select filterable :readonly="dataRead" filterable clearable
                                                         v-model="param.zt">
-                                                      <Option v-for="item in ztDictionary" :value="item.key">
+                                                      <Option v-for="(item,index) in ztDictionary" :value="item.key" :key="index">
                                                             {{item.val}}
                                                       </Option>
                                                 </Select>
@@ -43,15 +43,15 @@
                               </Row>
                               <Row>
                                     <Col span="12">
-                                          <FormItem label='$t("MODEL")'>
+                                          <FormItem label='制造商'>
                                                 <Input :readonly="dataRead" type="text" v-model="param.xh"
-                                                       placeholder='$t("EQUIPMENT_MODEL")'></Input>
+                                                       placeholder='制造商'></Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="12" v-show="dataRead">
-                                          <FormItem label='$t("INTERFACE_ADDRESS_TAB")'>
+                                          <FormItem label='接口地址'>
                                                 <Input type="text" v-model="param.cmd"
-                                                       placeholder='$t("TERMINAL_INTERFACE_ADDRESS")'></Input>
+                                                       placeholder='接口地址'></Input>
                                           </FormItem>
                                     </Col>
                               </Row>
@@ -59,12 +59,12 @@
                   </div>
 
                   <div v-show="!dataRead" slot='footer'>
-                        <Button type="default" @click="close" style="color: #949494">{{$t("CANCEL")}}</Button>
-                        <Button type="primary" @click="save('addmess')">{{$t("DETERMINE")}}</Button>
+                        <Button type="default" @click="close" style="color: #949494">取消</Button>
+                        <Button type="primary" @click="save('addmess')">确定</Button>
                   </div>
                   <div v-show="dataRead" slot='footer'>
-                        <Button type="default" @click="close">{{$t("CLOSE")}}</Button>
-                        <Button type="success" @click="seet('addmess')">{$t("SET")}}</Button>
+                        <Button type="default" @click="close">关闭</Button>
+                        <Button type="success" @click="seet('addmess')">确定</Button>
                   </div>
             </Modal>
       </div>

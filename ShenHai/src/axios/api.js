@@ -16,7 +16,7 @@ export default {
   },
   UPLOAD:ajaxUrl+'/biz/upload',
   STATIC_PATH:'http://223.240.68.90:'+'9092/',//地图icon地址前缀
-  VIDEO_PATH:ajaxUrl+'9091/test/',
+  VIDEO_PATH:'http://223.240.68.90:'+'9091/test/',
   TXT:'/api/clsbyxsjjl/pager',
   fileDR:'/api/zdgl/excel',
   USERROOT:{

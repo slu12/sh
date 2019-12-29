@@ -27,9 +27,9 @@
               </RadioGroup>
             </div>
             <div>
-              <div>{{searchList.zxzt.label}}</div>
-              <RadioGroup type="button" szie="small" v-model="searchList.zxzt.key">
-                <Radio v-for="(it,index) in searchList.zxzt.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'zxzt')">{{it.val}}</Radio>
+              <div>{{searchList.nav.label}}</div>
+              <RadioGroup type="button" szie="small" v-model="searchList.nav.key">
+                <Radio v-for="(it,index) in searchList.nav.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'nav')">{{it.val}}</Radio>
               </RadioGroup>
             </div>
             <div>
@@ -59,7 +59,7 @@
             key:'',
             selectList: []
           },
-          zxzt: {
+          nav: {
             label: "设备状态：",
             key:'',
             selectList: []
@@ -77,8 +77,8 @@
           json:{
             jgdm:'',
             jgdmname:'',
-            zxzt:'',
-            zxztname:'',
+            nav:'',
+            navname:'',
             shiptype:'',
             shiptypename:''
           }
@@ -89,7 +89,7 @@
       let cblxList = this.dictUtil.getByCode(this, 'CBLX')
       this.searchList.shiptype.selectList = cblxList
       let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
-      this.searchList.zxzt.selectList = snztList
+      this.searchList.nav.selectList = snztList
       let cjList  = this.dictUtil.getByCode(this, 'CJ');
       this.searchList.jgdm.selectList = cjList
       if (this.$parent.item){
@@ -98,9 +98,9 @@
             key:this.searchList.jgdm.key,
             value:this.param.json.jgdmname
           },
-          zxzt:{
-            key:this.searchList.zxzt.key,
-            value:this.param.json.zxztname
+          nav:{
+            key:this.searchList.nav.key,
+            value:this.param.json.navname
           },
           shiptype:{
             key:this.searchList.shiptype.key,
@@ -116,13 +116,13 @@
           this.param.type = '1'
         }
         this.param.jgdm = a.portname.key
-        this.searchList.jgdm.key = a.portname.key
-        this.param.zxzt = a.zxzt.key
-        this.searchList.zxzt.key = a.zxzt.key
+        this.param.json.nav = a.nav.key
         this.param.shiptype = a.shiptype.key
+        this.searchList.jgdm.key = a.portname.key
+        this.searchList.nav.key = a.nav.key
         this.searchList.shiptype.key = a.shiptype.key
         this.param.json.jgdmname = a.portname.value
-        this.param.json.zxztname = a.zxzt.value
+        this.param.json.navname = a.nav.value
         this.param.json.shiptypename = a.shiptype.value
       }
 
@@ -134,7 +134,7 @@
         }else if (e == 'jgdm'){
           this.param.json.jgdmname = val
         }else {
-          this.param.json.zxztname = val
+          this.param.json.navname = val
         }
       },
       getJGList() {//机构列表
@@ -162,9 +162,9 @@
             key:this.searchList.jgdm.key,
             value:this.param.json.jgdmname
           },
-          zxzt:{
-            key:this.searchList.zxzt.key,
-            value:this.param.json.zxztname
+          nav:{
+            key:this.searchList.nav.key,
+            value:this.param.json.navname
           },
           shiptype:{
             key:this.searchList.shiptype.key,

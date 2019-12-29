@@ -105,12 +105,12 @@
       </div>
     </div>
     <div class="box_col_auto">
-      <div>
-        <Tabs type="card" v-model="param.wjmLike" @on-click="findMessList()">
-          <TabPane label='前摄像头' name="F"></TabPane>
-          <TabPane label='后摄像头' name="B"></TabPane>
-        </Tabs>
-      </div>
+<!--      <div>-->
+<!--        <Tabs type="card" v-model="param.wjmLike" @on-click="findMessList()">-->
+<!--          <TabPane label='前摄像头' name="F"></TabPane>-->
+<!--          <TabPane label='后摄像头' name="B"></TabPane>-->
+<!--        </Tabs>-->
+<!--      </div>-->
       <div v-show="videoList.length == 0" class="body" style="border: 1px solid #dddee1;position: relative">
         <h1 style="color: #bdbdbd;position: absolute;top:40%;left: 50%;transform: translate(-50%,-50%)">
           {{param.cphLike}}暂无图片
@@ -225,7 +225,6 @@
         param: {
           cjsjInRange: '',
           cphLike: '',
-          wjmLike: 'F',
           pageNum: 1,
           pageSize: 8
         }
@@ -235,7 +234,7 @@
       if (this.$route.params && this.$route.params.zdbh) {
         this.param.zdbhLike = this.$route.params.zdbh
       }
-      this.getCarList();
+      this.getmess()
     },
     methods: {
       showMax(url, index, wz) {

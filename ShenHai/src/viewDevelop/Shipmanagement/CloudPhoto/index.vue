@@ -111,8 +111,8 @@
 <!--          <TabPane label='后摄像头' name="B"></TabPane>-->
 <!--        </Tabs>-->
 <!--      </div>-->
-      <div v-show="videoList.length == 0" class="body" style="border: 1px solid #dddee1;position: relative">
-        <h1 style="color: #bdbdbd;position: absolute;top:40%;left: 50%;transform: translate(-50%,-50%)">
+      <div v-show="videoList.length == 0"  style="border: 1px solid #dddee1;position: relative">
+        <h1 style="color: #bdbdbd;position: absolute;top:80%;left: 50%;transform: translate(-50%,50%)">
           {{param.cphLike}}暂无图片
         </h1>
       </div>

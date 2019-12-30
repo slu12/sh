@@ -123,8 +123,8 @@
                style="min-height: 140px;"
                v-for="(item,index) in videoList">
             <img
-              :src="videoPath+item.url"
-              @click="showMax(videoPath+item.url,index,item.wz)"
+              :src="item.url"
+              @click="showMax(item.url,index,item.wz)"
               style="width: 100%;height: 200px">
             <div class="VideoTit">
               {{item.cph}}

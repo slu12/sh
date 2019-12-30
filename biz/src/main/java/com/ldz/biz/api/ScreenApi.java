@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ldz.dao.biz.model.Cb;
+import com.ldz.dao.biz.model.ClGps;
 import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.GpsLsService;
+import com.ldz.service.biz.interfaces.GpsService;
 import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.Point;
 import com.ldz.util.bean.SimpleCondition;
@@ -16,6 +18,7 @@ import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.gps.Gps;
 import com.ldz.util.gps.PositionUtil;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -52,6 +55,8 @@ public class ScreenApi {
     private SnowflakeIdWorker idWorker;
     @Autowired
     private GpsLsService gpsLsService;
+    @Autowired
+    private GpsService gpsService;
     /**
      * 抓拍接口
      */
@@ -256,5 +261,92 @@ public class ScreenApi {
         });
         return ApiResponse.success(points);
     }
+
+    @PostMapping("/currentGps")
+    public ApiResponse<Map<String,String>> currentGps(String mmsi){
+        RuntimeCheck.ifBlank(mmsi, "请填写mmsi");
+        List<Cb> cbs = service.findEq(Cb.InnerColumn.mmsi, mmsi);
+        RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
+        Cb cb = cbs.get(0);
+        Map<String,String> map = new HashMap<>();
+        if(StringUtils.isNotBlank(cb.getZdbh())){
+            List<ClGps> gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getZdbh());
+            if(CollectionUtils.isNotEmpty(gps)){
+                ClGps clGps = gps.get(0);
+                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                map.put("jd", bd09.getWgLon() +"");
+                map.put("wd", bd09.getWgLat() +"");
+            }else if(StringUtils.isNotBlank(cb.getSbh())){
+                gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getSbh());
+                if(CollectionUtils.isNotEmpty(gps)){
+                    ClGps clGps = gps.get(0);
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                    map.put("jd", bd09.getWgLon() +"");
+                    map.put("wd", bd09.getWgLat() +"");
+                }else{
+                    gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
+                    if(CollectionUtils.isNotEmpty(gps)){
+                        ClGps clGps = gps.get(0);
+                        Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                        Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                        map.put("jd", bd09.getWgLon() +"");
+                        map.put("wd", bd09.getWgLat() +"");
+                    }else {
+                        map.put("jd","-1");
+                        map.put("wd", "-1");
+                    }
+                }
+            }else {
+                gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
+                if(CollectionUtils.isNotEmpty(gps)){
+                    ClGps clGps = gps.get(0);
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                    map.put("jd", bd09.getWgLon() +"");
+                    map.put("wd", bd09.getWgLat() +"");
+                }else {
+                    map.put("jd","-1");
+                    map.put("wd", "-1");
+                }
+            }
+        }else if(StringUtils.isNotBlank(cb.getSbh())){
+            List<ClGps> gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getSbh());
+            if(CollectionUtils.isNotEmpty(gps)){
+                ClGps clGps = gps.get(0);
+                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                map.put("jd", bd09.getWgLon() +"");
+                map.put("wd", bd09.getWgLat() +"");
+            }else{
+                gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
+                if(CollectionUtils.isNotEmpty(gps)){
+                    ClGps clGps = gps.get(0);
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                    map.put("jd", bd09.getWgLon() +"");
+                    map.put("wd", bd09.getWgLat() +"");
+                }else {
+                    map.put("jd","-1");
+                    map.put("wd", "-1");
+                }
+            }
+        }else{
+            List<ClGps> gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
+            if(CollectionUtils.isNotEmpty(gps)){
+                ClGps clGps = gps.get(0);
+                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
+                map.put("jd", bd09.getWgLon() +"");
+                map.put("wd", bd09.getWgLat() +"");
+            }else{
+                map.put("jd","-1");
+                map.put("wd", "-1");
+            }
+        }
+        return ApiResponse.success(map);
+    }
+
 
 }

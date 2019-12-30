@@ -277,6 +277,7 @@ public class ScreenApi {
                 Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                 map.put("jd", bd09.getWgLon() +"");
                 map.put("wd", bd09.getWgLat() +"");
+                map.put("fxj", clGps.getFxj().doubleValue() + "");
             }else if(StringUtils.isNotBlank(cb.getSbh())){
                 gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getSbh());
                 if(CollectionUtils.isNotEmpty(gps)){
@@ -285,6 +286,7 @@ public class ScreenApi {
                     Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                     map.put("jd", bd09.getWgLon() +"");
                     map.put("wd", bd09.getWgLat() +"");
+                    map.put("fxj", clGps.getFxj().doubleValue() + "");
                 }else{
                     gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
                     if(CollectionUtils.isNotEmpty(gps)){
@@ -293,9 +295,11 @@ public class ScreenApi {
                         Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                         map.put("jd", bd09.getWgLon() +"");
                         map.put("wd", bd09.getWgLat() +"");
+                        map.put("fxj", clGps.getFxj().doubleValue() + "");
                     }else {
                         map.put("jd","-1");
                         map.put("wd", "-1");
+                        map.put("fxj", "0");
                     }
                 }
             }else {
@@ -306,9 +310,11 @@ public class ScreenApi {
                     Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                     map.put("jd", bd09.getWgLon() +"");
                     map.put("wd", bd09.getWgLat() +"");
+                    map.put("fxj", clGps.getFxj().doubleValue() + "");
                 }else {
                     map.put("jd","-1");
                     map.put("wd", "-1");
+                    map.put("fxj", "0");
                 }
             }
         }else if(StringUtils.isNotBlank(cb.getSbh())){
@@ -319,6 +325,7 @@ public class ScreenApi {
                 Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                 map.put("jd", bd09.getWgLon() +"");
                 map.put("wd", bd09.getWgLat() +"");
+                map.put("fxj", clGps.getFxj().doubleValue() + "");
             }else{
                 gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
                 if(CollectionUtils.isNotEmpty(gps)){
@@ -327,9 +334,11 @@ public class ScreenApi {
                     Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                     map.put("jd", bd09.getWgLon() +"");
                     map.put("wd", bd09.getWgLat() +"");
+                    map.put("fxj", clGps.getFxj().doubleValue() + "");
                 }else {
                     map.put("jd","-1");
                     map.put("wd", "-1");
+                    map.put("fxj", "0");
                 }
             }
         }else{
@@ -340,9 +349,11 @@ public class ScreenApi {
                 Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
                 map.put("jd", bd09.getWgLon() +"");
                 map.put("wd", bd09.getWgLat() +"");
+                map.put("fxj", clGps.getFxj().doubleValue() + "");
             }else{
                 map.put("jd","-1");
                 map.put("wd", "-1");
+                map.put("fxj", "0");
             }
         }
         return ApiResponse.success(map);

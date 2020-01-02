@@ -23,6 +23,7 @@ import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.gps.Gps;
 import com.ldz.util.gps.PositionUtil;
+import com.ldz.util.redis.RedisTemplateUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -76,6 +78,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     private String filePath;
     @Autowired
     private SpkService spkService;
+    @Autowired
+    private RedisTemplateUtil reidsUtil;
 
 
 
@@ -1008,7 +1012,6 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         if(sec <= 0){
             sec = 30;
         }
-
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
         List<Cb> cbs = findEq(Cb.InnerColumn.mmsi, mmsi);
         RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
@@ -1017,12 +1020,12 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
             chn = "0";
         }
         RuntimeCheck.ifBlank(cb.getSbh(), "船舶未绑定设备,请先绑定设备");
-//        int test = WebcamUtil.realVideo(reids, cb.getSbh(), chn, sec, "testsh");
-        int test = 0;
-        if(test == 0) {
-            WebcamUtil.getVideo(reids, cb.getSbh(),"0",chn,DateTime.now().getYear() +"",DateTime.now().getMonthOfYear() +"",DateTime.now().getDayOfMonth()+"", "0","0","0","86339");
-        }
-        return null;
+        int second = DateTime.now().secondOfDay().get();
+        int test = WebcamUtil.realVideo(reids, cb.getSbh(), chn, sec, "sh");
+        RuntimeCheck.ifFalse(test == 0 , "请求异常 , 请稍后再试");
+        // 记录当前时间
+        reidsUtil.boundValueOps("video_" +mmsi + "_" + cb.getSbh() + "_" + DateTime.now().toString("yyyy-MM-dd") + "_" + chn + "_" + second + "_" + sec ).set("1", (sec + 10) , TimeUnit.SECONDS);
+        return ApiResponse.success();
     }
 
     public static int differentDaysByMillisecond(Date date1, Date date2) {

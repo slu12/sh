@@ -8,7 +8,9 @@ import com.ldz.util.exception.RuntimeCheck;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import javax.swing.text.EditorKit;
@@ -95,6 +97,7 @@ public class WebcamUtil {
         String res = HttpUtil.get(url, params);
         JSONObject jsonObject = JSON.parseObject(res);
         Integer result = jsonObject.getInteger("result");
+        RuntimeCheck.ifTrue(result == 23, "设备不在线 , 请稍后再试");
         RuntimeCheck.ifFalse(result == 0, "操作失败, 请稍后再试");
         return result;
     }
@@ -102,7 +105,7 @@ public class WebcamUtil {
     /**
      * 获取录像列表
      */
-    public static void getVideo(StringRedisTemplate redis, String deviceNo,String loc, String chn, String year, String mon, String day, String rectype, String fileattr, String beg, String end) throws IOException {
+    public static String getVideo(StringRedisTemplate redis, String deviceNo,String loc, String chn, String year, String mon, String day, String rectype, String fileattr, String beg, String end) throws IOException {
         String jsession = login(redis);
         String url = IP + "/StandardApiAction_getVideoFileInfo.action";
         Map<String,String> params = new HashMap<>();
@@ -124,10 +127,22 @@ public class WebcamUtil {
         params.put("STORE","0");
         params.put("LABEL","testsh");
         String response = HttpUtil.get(url, params);
-        String downurl = IP + "/StandardApiAction_addDownloadTask.action?did=" + deviceNo + "&";
-        URL uu = new URL(downurl);
-        FileUtils.copyURLToFile(uu, new File("D:/aaa.avi"));
-//        System.out.println(response);
+        JSONObject object = JSON.parseObject(response);
+        String result = object.getString("result");
+        RuntimeCheck.ifTrue(StringUtils.equals(result, "23"), "设备不在线,请稍后再试");
+        JSONArray files = object.getJSONArray("files");
+        if(CollectionUtils.isNotEmpty(files)){
+            JSONObject jsonObject = files.getJSONObject(files.size()-1);
+            String downUrl = jsonObject.getString("DownUrl");
+            String filename = deviceNo + "-" + System.currentTimeMillis() + ".mp4";
+            downUrl.replace("jsession=","jsession="+jsession).replace("SAVENAME=","SAVENAME=" + filename);
+            URL u = new URL(downUrl);
+
+            File file = new File("/data/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + filename);
+            FileUtils.copyURLToFile(u,file);
+        }
+        return "";
+
     }
 
 

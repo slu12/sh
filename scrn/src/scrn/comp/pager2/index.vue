@@ -65,6 +65,9 @@
             this.addMarkCode(res.result.jd, res.result.wd, res.result.fxj)
           }
         }).catch(err => {})
+        setTimeout(()=>{
+          this.get_CB_Code()
+        },60000)
       },
       addMarkCode(bdjd, bdwd, fxj) {
         console.log(bdjd);
@@ -74,6 +77,7 @@
 
         var marker = new BMap.Marker(point, {icon: myIcon});  // 创建标注
         marker.setRotation(parseFloat(fxj) - 90)
+        this.map.clearverlay();
         this.map.addOverlay(marker);               // 将标注添加到地图中
         this.map.setCenter(new BMap.Point(bdjd, bdwd))
       },

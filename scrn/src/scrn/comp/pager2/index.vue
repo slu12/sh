@@ -65,15 +65,19 @@
             this.addMarkCode(res.result.jd, res.result.wd, res.result.fxj)
           }
         }).catch(err => {})
+        setTimeout(()=>{
+          this.get_CB_Code()
+        },60000)
       },
       addMarkCode(bdjd, bdwd, fxj) {
         console.log(bdjd);
         console.log(bdwd);
+        this.map.clearOverlays();
         var myIcon = new BMap.Icon(cbImg, new BMap.Size(60, 15), {imageSize: new BMap.Size(60, 15)}, {anchor: new BMap.Size(30, 17.5)});
         let point = new BMap.Point(bdjd, bdwd)
 
         var marker = new BMap.Marker(point, {icon: myIcon});  // 创建标注
-        marker.setRotation(parseFloat(fxj) - 90)
+        marker.setRotation(parseFloat(fxj) + 90)
         this.map.addOverlay(marker);               // 将标注添加到地图中
         this.map.setCenter(new BMap.Point(bdjd, bdwd))
       },

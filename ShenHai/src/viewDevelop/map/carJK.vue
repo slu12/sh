@@ -227,7 +227,7 @@
           var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(12, 12), {anchor: new BMap.Size(12,12)});
         }
          var marker = new BMap.Marker(point, {icon: myIcon});
-        marker.setRotation(-45)
+        marker.setRotation(parseFloat(item.hx)+90)
         marker.addEventListener("click", (code) => {
           // console.log('point',point);
           // v.$parent.$refs.carInfoRef.init(item);

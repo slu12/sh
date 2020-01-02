@@ -77,7 +77,7 @@
         let point = new BMap.Point(bdjd, bdwd)
 
         var marker = new BMap.Marker(point, {icon: myIcon});  // 创建标注
-        marker.setRotation(parseFloat(fxj) - 90)
+        marker.setRotation(parseFloat(fxj) + 90)
         this.map.addOverlay(marker);               // 将标注添加到地图中
         this.map.setCenter(new BMap.Point(bdjd, bdwd))
       },

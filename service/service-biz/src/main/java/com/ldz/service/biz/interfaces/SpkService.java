@@ -24,4 +24,5 @@ public interface SpkService extends BaseService<ClSpk,String>{
 
     ApiResponse<List<Map<String,Object>>> groupByDay(Page<ClSpk> page);
 
+    void saveVideo(String video,String mmsi);
 }

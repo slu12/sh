@@ -51,6 +51,7 @@ public class TopicMessageListener implements MessageListener {
     private ZdxmService zdxmService;
     private ZdglService zdglService;
     private StringRedisTemplate redis;
+    private SpkService spkService;
 
 
 
@@ -62,7 +63,7 @@ public class TopicMessageListener implements MessageListener {
     Logger error = LoggerFactory.getLogger("error_info");
 
     public TopicMessageListener(ZdxmService zdxmService,XcService xcService, ClYyService clYyService,
-                                GpsService gpsService,GpsLsService gpsLsService, ZdglService zdglService, RedisTemplateUtil redisTemplate,String url,String bizurl,double distance,double lowSpeed, StringRedisTemplate redis) {
+                                GpsService gpsService,GpsLsService gpsLsService, ZdglService zdglService, RedisTemplateUtil redisTemplate,String url,String bizurl,double distance,double lowSpeed, StringRedisTemplate redis, SpkService spkService) {
 
         this.zdxmService = zdxmService;
         this.xcService = xcService;
@@ -76,6 +77,7 @@ public class TopicMessageListener implements MessageListener {
         this.distance = distance;
         this.lowSpeed = lowSpeed;
         this.redis = redis;
+        this.spkService = spkService;
     }
 
     /**
@@ -106,9 +108,13 @@ public class TopicMessageListener implements MessageListener {
                     String time = split[3];
                     String[] times = time.split("-");
                     String chn = split[4];
-                    String start = split[5];
-                    String end = Integer.parseInt(start) + Integer.parseInt(split[6]) + "";
-                    WebcamUtil.getVideo(redis,sbh,"0",chn,times[0],times[1],times[2],"0","0",start,end);
+                    String start = Integer.parseInt(split[5])-60+"";
+                    String end = Integer.parseInt(start) + 60 + "";
+                    String filaname = split[6];
+                    String video = WebcamUtil.getVideo(redis, sbh, "2", chn, times[0], times[1], times[2], "0", "2", start, end, filaname);
+                    if(StringUtils.isNotBlank(video)){
+                       spkService.saveVideo(video,mmsi);
+                    }
 
                 }
             }else if (topic.equals("connect_timeout")){

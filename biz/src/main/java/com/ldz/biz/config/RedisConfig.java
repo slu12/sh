@@ -131,7 +131,7 @@ public class RedisConfig {
 
 		//topicMessageListener.setRedisTemplate(redisTemplateUtil);
 		container.addMessageListener(messageReceiver, topics);
-		container.addMessageListener(new TopicMessageListener(zdxmService,xcService,clYyService,gpsservice,gpsLsService,zdglService,redisTemplateUtil,url,bizurl,distance,lowSpeed,redis) , channelTopic);
+		container.addMessageListener(new TopicMessageListener(zdxmService,xcService,clYyService,gpsservice,gpsLsService,zdglService,redisTemplateUtil,url,bizurl,distance,lowSpeed,redis,spkService) , channelTopic);
 		container.addMessageListener(checkMessageReceiver,topicList);
 		container.addMessageListener(reportListener,zdTopicList);
 		//这个container 可以添加多个 messageListener

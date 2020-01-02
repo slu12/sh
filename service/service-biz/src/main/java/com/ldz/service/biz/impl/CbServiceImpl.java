@@ -891,16 +891,17 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         String[] urls = new String[9];
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
-                String photo = WebcamUtil.photo(reids, sbh, i + "");
                 String filePath = "/zp/" + sbh + "-" + i + ".jpg";
                 String file = path + filePath;
                 urls[i] = file;
-                if(StringUtils.isBlank(photo)){
-                   continue;
-                }
-                URL url = new URL(photo);
+                int finalI = i;
                 excutor.submit(() -> {
                     try {
+                        String photo = WebcamUtil.photo(reids, sbh, finalI + "");
+                        if(StringUtils.isBlank(photo)){
+                            return;
+                        }
+                        URL url = new URL(photo);
                         FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath), 100000, 100000);
                     } catch (IOException e) {
                     }
@@ -1023,9 +1024,10 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         int second = DateTime.now().secondOfDay().get();
         int test = WebcamUtil.realVideo(reids, cb.getSbh(), chn, sec, "sh");
         RuntimeCheck.ifFalse(test == 0 , "请求异常 , 请稍后再试");
+        String filename = cb.getSbh() + "-" + chn + "-" + System.currentTimeMillis() + ".mp4";
         // 记录当前时间
-        reidsUtil.boundValueOps("video_" +mmsi + "_" + cb.getSbh() + "_" + DateTime.now().toString("yyyy-MM-dd") + "_" + chn + "_" + second + "_" + sec ).set("1", (sec + 10) , TimeUnit.SECONDS);
-        return ApiResponse.success();
+        reidsUtil.boundValueOps("video_" +mmsi + "_" + cb.getSbh() + "_" + DateTime.now().toString("yyyy-MM-dd") + "_" + chn + "_" + second + "_" + filename).set("1", (sec + 60) , TimeUnit.SECONDS);
+        return ApiResponse.success("http://223.240.68.90:9092/video/" + DateTime.now().toString("yyyy-MM-dd" )+ "/"  + filename);
     }
 
     public static int differentDaysByMillisecond(Date date1, Date date2) {

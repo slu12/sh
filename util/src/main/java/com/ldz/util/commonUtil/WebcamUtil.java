@@ -16,12 +16,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import javax.swing.text.EditorKit;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URLEncoder;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -105,47 +105,54 @@ public class WebcamUtil {
     /**
      * 获取录像列表
      */
-    public static String getVideo(StringRedisTemplate redis, String deviceNo,String loc, String chn, String year, String mon, String day, String rectype, String fileattr, String beg, String end) throws IOException {
+    public static String getVideo(StringRedisTemplate redis, String deviceNo,String loc, String chn, String year, String mon, String day, String rectype, String fileattr, String beg, String end, String name) throws IOException {
         String jsession = login(redis);
         String url = IP + "/StandardApiAction_getVideoFileInfo.action";
+//        String url = IP + "/808gps/VideoManagement/StandardTTSAction_getVideoFileInfo.action";
         Map<String,String> params = new HashMap<>();
         params.put("jsession", jsession);
         params.put("DevIDNO", deviceNo);
-        params.put("LOC",loc);
+        params.put("LOC","2");
         params.put("CHN",chn);
         params.put("YEAR", year);
         params.put("MON",mon);
         params.put("DAY",day);
-        params.put("RECTYPE", rectype);
-        params.put("FILEATTR",fileattr);
-        params.put("BEG",beg);
+        params.put("RECTYPE", "-1");
+        params.put("FILEATTR","2");
+        params.put("BEG","0");
         params.put("END", end);
         params.put("ARM1","0");
         params.put("ARM2","0");
         params.put("RES", "0");
         params.put("STREAM","0");
         params.put("STORE","0");
-        params.put("LABEL","testsh");
+//        params.put("LABEL","sh");
         String response = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(response);
         String result = object.getString("result");
         RuntimeCheck.ifTrue(StringUtils.equals(result, "23"), "设备不在线,请稍后再试");
         JSONArray files = object.getJSONArray("files");
+        String filename = "";
         if(CollectionUtils.isNotEmpty(files)){
             JSONObject jsonObject = files.getJSONObject(files.size()-1);
             String downUrl = jsonObject.getString("DownUrl");
-            String filename = deviceNo + "-" + System.currentTimeMillis() + ".mp4";
-            downUrl.replace("jsession=","jsession="+jsession).replace("SAVENAME=","SAVENAME=" + filename);
+            filename = name;
+            downUrl = downUrl.replace("jsession=","jsession="+jsession).replace("SAVENAME=","SAVENAME=" + filename);
             URL u = new URL(downUrl);
-
+            HttpURLConnection conn = (HttpURLConnection)u.openConnection();
+            InputStream stream = conn.getInputStream();
             File file = new File("/data/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + filename);
-            FileUtils.copyURLToFile(u,file);
+            FileUtils.copyInputStreamToFile(stream, file);
+//            File file = new File("/data/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + filename);
+//            FileUtils.copyURLToFile(u,file,100000, 100000);
         }
-        return "";
+        if(StringUtils.isNotBlank(filename)){
+            return "http://223.240.68.90:9092/video/" + DateTime.now().toString("yyyy-MM-dd" )+ "/"  + filename;
+        }else {
+            return "";
+        }
 
     }
-
-
 
     /**
      * 抓拍

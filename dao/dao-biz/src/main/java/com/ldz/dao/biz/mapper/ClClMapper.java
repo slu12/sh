@@ -52,6 +52,6 @@ public interface ClClMapper extends Mapper<Cb> {
 	@Update("update cl_cl  set sbh = null where mmsi = #{mmsi}")
     void unbindWebcam(@Param("mmsi") String mmsi);
 
-	@Select(" select shipname,mmsi from cl_cl")
+	@Select(" select shipname,mmsi,cl_id clId from cl_cl")
     List<Map<String,String>> getCbs();
 }

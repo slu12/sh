@@ -18,6 +18,7 @@ import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.gps.Gps;
 import com.ldz.util.gps.PositionUtil;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,13 +33,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Log4j2
 @RestController
 @RequestMapping("/pub")
 public class ScreenApi {
@@ -57,6 +57,7 @@ public class ScreenApi {
     private GpsLsService gpsLsService;
     @Autowired
     private GpsService gpsService;
+
     /**
      * 抓拍接口
      */
@@ -64,19 +65,19 @@ public class ScreenApi {
     public ApiResponse<String> zp(String sbh, String chn) throws IOException {
         RuntimeCheck.ifBlank(sbh, "请选择设备");
         RuntimeCheck.ifBlank(chn, "请选择拍照通道");
-        String photo = WebcamUtil.photo(reids,  sbh, chn);
-        if(StringUtils.isBlank(photo)){
+        String photo = WebcamUtil.photo(reids, sbh, chn);
+        if (StringUtils.isBlank(photo)) {
             return ApiResponse.success(photo);
         }
         URL url = new URL(photo);
-        String filePath = "/zp/" +DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + chn + System.currentTimeMillis()+ ".jpg";
-        FileUtils.copyURLToFile(url, new File("/data/wwwroot/file"  + filePath));
+        String filePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + chn + System.currentTimeMillis() + ".jpg";
+        FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath));
         String file = path + filePath;
         return ApiResponse.success(file);
     }
 
     @PostMapping("/zb")
-    public ApiResponse<String[]> zb(String sbh){
+    public ApiResponse<String[]> zb(String sbh) {
 
         RuntimeCheck.ifBlank(sbh, "请选择设备");
         Map<String, String> map = WebcamUtil.getAllSbh(reids);
@@ -84,18 +85,19 @@ public class ScreenApi {
         RuntimeCheck.ifFalse(map.containsKey(sbh), "此设备未在平台添加");
         String s = map.get(sbh);
         String ch = s.replaceAll("CH", "");
-        String [] urls = new String[9];
+        String[] urls = new String[9];
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
-            if(split.contains((i+1) +"")){
-                String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno="+sbh+"&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
+            if (split.contains((i + 1) + "")) {
+                String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno=" + sbh + "&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
                 urls[i] = url;
-            }else{
+            } else {
                 urls[i] = "";
             }
         }
         return ApiResponse.success(urls);
     }
+
     @PostMapping("/zbH5")
     public ApiResponse<String[]> znH5(String sbh) {
 
@@ -105,13 +107,13 @@ public class ScreenApi {
         RuntimeCheck.ifFalse(map.containsKey(sbh), "此设备未在平台添加");
         String s = map.get(sbh);
         String ch = s.replaceAll("CH", "");
-        String [] urls = new String[9];
+        String[] urls = new String[9];
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
-            if(split.contains((i+1) +"")){
-                String url = "http://139.196.253.185:6604/hls/1_"+sbh  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
+            if (split.contains((i + 1) + "")) {
+                String url = "http://139.196.253.185:6604/hls/1_" + sbh + "_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids);
                 urls[i] = url;
-            }else{
+            } else {
                 urls[i] = "";
             }
         }
@@ -119,11 +121,10 @@ public class ScreenApi {
     }
 
     /**
-     *
      * @return
      */
     @PostMapping("/getCbs")
-    public ApiResponse<List<Cb>> getCbs(){
+    public ApiResponse<List<Cb>> getCbs() {
         SimpleCondition condition = new SimpleCondition(Cb.class);
         condition.setOrderByClause("cl_id desc");
         List<Cb> cbs = service.findByCondition(condition);
@@ -131,28 +132,28 @@ public class ScreenApi {
     }
 
     @PostMapping("/history")
-    public ApiResponse<List<Map<String, String>>> history(String mmsi, String start, String end){
+    public ApiResponse<List<Map<String, String>>> history(String mmsi, String start, String end) {
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
         RuntimeCheck.ifBlank(start, "请选择轨迹时间");
         RuntimeCheck.ifBlank(end, "请选择轨迹时间");
         String url = shipip + "/v1/GetHistoryVoyage";
-        Map<String,String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put("shipid", mmsi);
-        params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
-        params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+        params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
+        params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
         String res = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(res);
         RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
         JSONArray array = object.getJSONArray("Result");
-        List<Map<String,String>>  m = new ArrayList<>();
+        List<Map<String, String>> m = new ArrayList<>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         for (int i = 0; i < array.size(); i++) {
-            Map<String,String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             JSONObject jsonObject = array.getJSONObject(i);
             String departtime = jsonObject.getString("departtime");
             String ata = jsonObject.getString("ata");
-            map.put("departtime", format.format(new Date(Long.parseLong(departtime)*1000)));
-            map.put("ata",  format.format(new Date(Long.parseLong(ata)*1000)));
+            map.put("departtime", format.format(new Date(Long.parseLong(departtime) * 1000)));
+            map.put("ata", format.format(new Date(Long.parseLong(ata) * 1000)));
             map.put("departportname", jsonObject.getString("departportname"));
             map.put("arrivedportname", jsonObject.getString("arrivedportname"));
             map.put("totalvoyage", jsonObject.getString("totalvoyage"));
@@ -167,10 +168,10 @@ public class ScreenApi {
         RuntimeCheck.ifBlank(start, "请选择轨迹时间");
         RuntimeCheck.ifBlank(end, "请选择轨迹时间");
         String url = shipip + "/v1/GetHistoryTrack";
-        Map<String,String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put("shipid", mmsi);
-        params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
-        params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime()/1000 + "");
+        params.put("startUtcTime", DateTime.parse(start, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
+        params.put("endUtcTime", DateTime.parse(end, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate().getTime() / 1000 + "");
         String res = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(res);
         RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
@@ -183,11 +184,11 @@ public class ScreenApi {
     public ApiResponse<JSONObject> getCurrentVoyage(String mmsi) {
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
         String url = shipip + "/v1/GetCurrentVoyage";
-        Map<String,String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>();
         params.put("shipid", mmsi);
         String res = HttpUtil.get(url, params);
         JSONObject object = JSON.parseObject(res);
-        if(StringUtils.equals(object.getString("Status"), "7")){
+        if (StringUtils.equals(object.getString("Status"), "7")) {
             return ApiResponse.success(new JSONObject());
         }
         RuntimeCheck.ifFalse(StringUtils.equals(object.getString("Status"), "0"), "请求异常， 请稍后再试");
@@ -215,12 +216,12 @@ public class ScreenApi {
     }
 
     @GetMapping("/testGps")
-    public void getString(){
-        WebcamUtil.getGps("34286",reids);
+    public void getString() {
+        WebcamUtil.getGps("34286", reids);
     }
 
     @PostMapping("/newXc")
-    public ApiResponse<List<Point>> newXc(String mmsi, String start, String end){
+    public ApiResponse<List<Point>> newXc(String mmsi, String start, String end) {
         RuntimeCheck.ifBlank(mmsi, "请选择船舶");
         RuntimeCheck.ifBlank(start, "请选择时间");
         RuntimeCheck.ifBlank(end, "请选择时间");
@@ -234,11 +235,11 @@ public class ScreenApi {
         DateTime endtime = pattern.parseDateTime(end);
         SimpleCondition condition = new SimpleCondition(ClGpsLs.class);
         List<ClGpsLs> list;
-        if(StringUtils.isNotBlank(cb.getZdbh())){
+        if (StringUtils.isNotBlank(cb.getZdbh())) {
             condition.eq(ClGpsLs.InnerColumn.zdbh, cb.getZdbh());
-        }else if(StringUtils.isNotBlank(cb.getSbh())){
+        } else if (StringUtils.isNotBlank(cb.getSbh())) {
             condition.eq(ClGpsLs.InnerColumn.zdbh, cb.getSbh());
-        }else {
+        } else {
             condition.eq(ClGpsLs.InnerColumn.zdbh, mmsi);
         }
         condition.gte(ClGpsLs.InnerColumn.cjsj, starttime.toDate());
@@ -249,11 +250,11 @@ public class ScreenApi {
         List<Point> points = new ArrayList<>();
         list.forEach(clGpsLs -> {
             Point point = new Point();
-            Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGpsLs.getWd().doubleValue(),clGpsLs.getJd().doubleValue() );
+            Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGpsLs.getWd().doubleValue(), clGpsLs.getJd().doubleValue());
             Gps gps = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
             point.setDirection(clGpsLs.getFxj().doubleValue());
             point.setLatitude(gps.getWgLat());
-            point.setLoc_time(clGpsLs.getCjsj().getTime()/1000);
+            point.setLoc_time(clGpsLs.getCjsj().getTime() / 1000);
             point.setLongitude(gps.getWgLon());
             double v = Double.parseDouble(clGpsLs.getYxsd());
             point.setSpeed(v);
@@ -263,95 +264,95 @@ public class ScreenApi {
     }
 
     @PostMapping("/currentGps")
-    public ApiResponse<Map<String,String>> currentGps(String mmsi){
+    public ApiResponse<Map<String, String>> currentGps(String mmsi) {
         RuntimeCheck.ifBlank(mmsi, "请填写mmsi");
         List<Cb> cbs = service.findEq(Cb.InnerColumn.mmsi, mmsi);
         RuntimeCheck.ifEmpty(cbs, "未找到船舶信息");
         Cb cb = cbs.get(0);
-        Map<String,String> map = new HashMap<>();
-        if(StringUtils.isNotBlank(cb.getZdbh())){
+        Map<String, String> map = new HashMap<>();
+        if (StringUtils.isNotBlank(cb.getZdbh())) {
             List<ClGps> gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getZdbh());
-            if(CollectionUtils.isNotEmpty(gps)){
+            if (CollectionUtils.isNotEmpty(gps)) {
                 ClGps clGps = gps.get(0);
-                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGps.getWd().doubleValue(), clGps.getJd().doubleValue());
                 Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                map.put("jd", bd09.getWgLon() +"");
-                map.put("wd", bd09.getWgLat() +"");
+                map.put("jd", bd09.getWgLon() + "");
+                map.put("wd", bd09.getWgLat() + "");
                 map.put("fxj", clGps.getFxj().doubleValue() + "");
-            }else if(StringUtils.isNotBlank(cb.getSbh())){
+            } else if (StringUtils.isNotBlank(cb.getSbh())) {
                 gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getSbh());
-                if(CollectionUtils.isNotEmpty(gps)){
+                if (CollectionUtils.isNotEmpty(gps)) {
                     ClGps clGps = gps.get(0);
-                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGps.getWd().doubleValue(), clGps.getJd().doubleValue());
                     Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                    map.put("jd", bd09.getWgLon() +"");
-                    map.put("wd", bd09.getWgLat() +"");
+                    map.put("jd", bd09.getWgLon() + "");
+                    map.put("wd", bd09.getWgLat() + "");
                     map.put("fxj", clGps.getFxj().doubleValue() + "");
-                }else{
+                } else {
                     gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
-                    if(CollectionUtils.isNotEmpty(gps)){
+                    if (CollectionUtils.isNotEmpty(gps)) {
                         ClGps clGps = gps.get(0);
-                        Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                        Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGps.getWd().doubleValue(), clGps.getJd().doubleValue());
                         Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                        map.put("jd", bd09.getWgLon() +"");
-                        map.put("wd", bd09.getWgLat() +"");
+                        map.put("jd", bd09.getWgLon() + "");
+                        map.put("wd", bd09.getWgLat() + "");
                         map.put("fxj", clGps.getFxj().doubleValue() + "");
-                    }else {
-                        map.put("jd","-1");
+                    } else {
+                        map.put("jd", "-1");
                         map.put("wd", "-1");
                         map.put("fxj", "0");
                     }
                 }
-            }else {
+            } else {
                 gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
-                if(CollectionUtils.isNotEmpty(gps)){
+                if (CollectionUtils.isNotEmpty(gps)) {
                     ClGps clGps = gps.get(0);
-                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGps.getWd().doubleValue(), clGps.getJd().doubleValue());
                     Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                    map.put("jd", bd09.getWgLon() +"");
-                    map.put("wd", bd09.getWgLat() +"");
+                    map.put("jd", bd09.getWgLon() + "");
+                    map.put("wd", bd09.getWgLat() + "");
                     map.put("fxj", clGps.getFxj().doubleValue() + "");
-                }else {
-                    map.put("jd","-1");
+                } else {
+                    map.put("jd", "-1");
                     map.put("wd", "-1");
                     map.put("fxj", "0");
                 }
             }
-        }else if(StringUtils.isNotBlank(cb.getSbh())){
+        } else if (StringUtils.isNotBlank(cb.getSbh())) {
             List<ClGps> gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getSbh());
-            if(CollectionUtils.isNotEmpty(gps)){
+            if (CollectionUtils.isNotEmpty(gps)) {
                 ClGps clGps = gps.get(0);
-                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGps.getWd().doubleValue(), clGps.getJd().doubleValue());
                 Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                map.put("jd", bd09.getWgLon() +"");
-                map.put("wd", bd09.getWgLat() +"");
+                map.put("jd", bd09.getWgLon() + "");
+                map.put("wd", bd09.getWgLat() + "");
                 map.put("fxj", clGps.getFxj().doubleValue() + "");
-            }else{
+            } else {
                 gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
-                if(CollectionUtils.isNotEmpty(gps)){
+                if (CollectionUtils.isNotEmpty(gps)) {
                     ClGps clGps = gps.get(0);
-                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                    Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGps.getWd().doubleValue(), clGps.getJd().doubleValue());
                     Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                    map.put("jd", bd09.getWgLon() +"");
-                    map.put("wd", bd09.getWgLat() +"");
+                    map.put("jd", bd09.getWgLon() + "");
+                    map.put("wd", bd09.getWgLat() + "");
                     map.put("fxj", clGps.getFxj().doubleValue() + "");
-                }else {
-                    map.put("jd","-1");
+                } else {
+                    map.put("jd", "-1");
                     map.put("wd", "-1");
                     map.put("fxj", "0");
                 }
             }
-        }else{
+        } else {
             List<ClGps> gps = gpsService.findEq(ClGps.InnerColumn.zdbh, cb.getMmsi());
-            if(CollectionUtils.isNotEmpty(gps)){
+            if (CollectionUtils.isNotEmpty(gps)) {
                 ClGps clGps = gps.get(0);
-                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02( clGps.getWd().doubleValue(),clGps.getJd().doubleValue() );
+                Gps gps84_to_gcj02 = PositionUtil.gps84_To_Gcj02(clGps.getWd().doubleValue(), clGps.getJd().doubleValue());
                 Gps bd09 = PositionUtil.gcj02_To_Bd09(gps84_to_gcj02.getWgLat(), gps84_to_gcj02.getWgLon());
-                map.put("jd", bd09.getWgLon() +"");
-                map.put("wd", bd09.getWgLat() +"");
+                map.put("jd", bd09.getWgLon() + "");
+                map.put("wd", bd09.getWgLat() + "");
                 map.put("fxj", clGps.getFxj().doubleValue() + "");
-            }else{
-                map.put("jd","-1");
+            } else {
+                map.put("jd", "-1");
                 map.put("wd", "-1");
                 map.put("fxj", "0");
             }
@@ -359,7 +360,55 @@ public class ScreenApi {
         return ApiResponse.success(map);
     }
 
+    @GetMapping("/testCmd")
+    public ApiResponse<String> testCmd() {
 
+        String cmdStr = "/usr/local/ffmpeg/bin/ffmpeg -i @input -vcodec h264 @output";
+        String input = "/data/wwwroot/file/video/" + "2020-01-02/" + "1577979204952.mp4";
+        String output = "/data/wwwroot/file/video/" + "2020-01-02/" + "test-" + System.currentTimeMillis() + ".mp4";
+        cmdStr = cmdStr.replace("@input", input).replace("@output", output);
+        System.out.println("cmdstr --> " + cmdStr);
+
+        List<String> command = new ArrayList<>();
+        command.add("/usr/local/ffmpeg/bin/ffmpeg");
+        command.add("-i");
+        command.add(input);
+        command.add("-vcodec");
+        command.add("h264");
+        command.add(output);
+        try {
+
+            Process videoProcess = new ProcessBuilder(command).redirectErrorStream(true).start();
+            new  com.ldz.util.bean.PrintStream(videoProcess.getInputStream()).start();
+            new  com.ldz.util.bean.PrintStream(videoProcess.getErrorStream()).start();
+            videoProcess.waitFor();
+
+            List<String> imgcmd = new ArrayList<>();
+            imgcmd.add("/usr/local/ffmpeg/bin/ffmpeg");
+//            imgcmd.add("-ss");
+//            imgcmd.add("00:00");
+            imgcmd.add("-i");
+            imgcmd.add(output);
+            imgcmd.add("-y");
+            imgcmd.add("-f");
+            imgcmd.add("image2");
+//            imgcmd.add("-r");
+//            imgcmd.add("1");
+            imgcmd.add("-t");
+            imgcmd.add("1");
+//            imgcmd.add("00:01");
+            imgcmd.add(output.replace("mp4","jpg"));
+            Process imgProcess = new ProcessBuilder(imgcmd).redirectErrorStream(true).start();
+            new  com.ldz.util.bean.PrintStream(imgProcess.getInputStream()).start();
+            new  com.ldz.util.bean.PrintStream(imgProcess.getErrorStream()).start();
+            imgProcess.waitFor();
+
+        } catch (Exception e) {
+            return ApiResponse.success(e.getMessage());
+        }
+
+        return ApiResponse.success();
+    }
 
 
 }

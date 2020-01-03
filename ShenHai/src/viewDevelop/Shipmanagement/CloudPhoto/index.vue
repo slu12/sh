@@ -142,7 +142,7 @@
               [{{item.cjsj}}]
             </div>
             <div class="wzSty">
-              {{item.wz ? item.wz : '……'}}
+              {{item.wjm ? item.wjm : '……'}}
             </div>
           </div>
         </div>

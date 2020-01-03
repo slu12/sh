@@ -179,13 +179,28 @@
           <div class="funcItemBox" @click="ZP(ship.mmsi)">
             <Icon type="md-videocam"/>
             <div class="labelSty">
-              拍照
+              拍照片
             </div>
           </div>
+          <div class="funcItemBox" @click="ZPsp(ship.mmsi)">
+            <Icon type="md-videocam"/>
+            <div class="labelSty">
+              拍视频
+            </div>
+          </div>
+        </div>
+        <div v-if="!sendAuthCode">
+           请稍等{{auth_time}}s
+        </div>
+        <div v-if="sendAuthCode">
+          <video :src="zpsp"></video>
         </div>
         <div>
           <img :src="zp" alt="" style="height: 300px;width: 100%">
         </div>
+        <video  controls preload=""  id="video">
+          <source src="http://223.240.68.90:9092/video/2020-01-02/34286-1-1577955059403.mp4">
+        </video>
       </div>
       <div class="box_col_auto" v-if="tabIndex === 3">
         <Row class="shipycxq">
@@ -252,12 +267,15 @@
     },
     data() {
       return {
+        sendAuthCode:true,/*布尔值，通过v-show控制显示‘获取按钮’还是‘倒计时’ */
+        auth_time: 0, /*倒计时 计数器*/
         showtj :false,
         loading1: false,
         options1: [],
         showModal: false,
         tabIndex: null,
         zp:'',
+        zpsp:'',
         zxztindex: 0,
         zxztlist: [
           {label: '全部', zt: ''},
@@ -309,6 +327,24 @@
       player.dispose();
     },
     methods: {
+      ZPsp(a){
+        this.$http.post('/api/cl/lx',{mmsi:a,chn:'1',sec:'30'}).then((res)=>{
+          if (res.code == 200){
+            this.zpsp = res.message
+            this.sendAuthCode = false;
+            this.auth_time = 120;
+            var auth_timetimer =  setInterval(()=>{
+              this.auth_time--;
+              if(this.auth_time<=0){
+                this.sendAuthCode = true;
+                clearInterval(auth_timetimer);
+              }
+            }, 1000);
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
       ZP(a){
         this.$http.post('/api/cl/zp',{mmsi:a,chn:'1'}).then((res)=>{
           if (res.code == 200){

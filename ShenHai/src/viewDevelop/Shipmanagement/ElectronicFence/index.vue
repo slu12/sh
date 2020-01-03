@@ -66,7 +66,7 @@
     </div>
     <div class="body" v-show="RootShow" style="height: 80%;">
       <div class="box">
-        <div style="overflow: hidden;">
+        <div style="z-index: 999">
           <h1 style="float: left;">新增电子围栏</h1>
           <div id="input" style="float: right;padding: 5px;">
             <Form
@@ -74,7 +74,8 @@
               :model="param"
               :rules="ruleInline"
               :label-width="100"
-              :styles="{top: '20px'}">
+              :styles="{top: '20px'}"
+            >
               <FormItem label='围栏名称' prop="wlmc">
                 <Input type="text"
                        v-model="param.wlmc"
@@ -83,11 +84,21 @@
                        style="width: 200px"></Input>
               </FormItem>
               <FormItem label='MMSI' prop="mmsi">
-                <Input type="text"
-                       v-model="mmsi"
-                       size="large"
-                       placeholder='请输入MMSI'
-                       style="width: 200px"></Input>
+                <Select
+                  v-model="mmsi"
+                  multiple
+                  filterable
+                  remote
+                  style="width: 500px"
+                  :remote-method="remoteMethod2"
+                  :loading="loading2">
+                  <Option v-for="(option, index) in options2" :value="option.clId" :key="index" >{{option.mmsi}}</Option>
+                </Select>
+<!--                <Input type="text"-->
+<!--                       v-model="mmsi"-->
+<!--                       size="large"-->
+<!--                       placeholder='请输入MMSI'-->
+<!--                       style="width: 200px"></Input>-->
               </FormItem>
               <Button type="success"
                       size="large"
@@ -195,6 +206,23 @@
             key: 'wlmc'
           },
           {
+            title: '绑定船舶mmsi',
+            align: 'center',
+            key:'l',
+            render:(h,p)=>{
+              if (p.row.cls && p.row.cls.length>0){
+                let l = ''
+                for(let i = 0 ;i< p.row.cls.length;i++) {
+                   l = l+p.row.cls[i].mmsi+','
+                  console.log(l);
+                }
+                return h('div',l)
+              }else {
+                return h('div','无绑定船舶')
+              }
+            }
+          },
+          {
             title: '创建时间',
             tit:"CREATE_TIME",
             width: 180,
@@ -285,7 +313,10 @@
         }],
         carIds: '',
         mmsi: '',
-        wlid: ''
+        wlid: '',
+        loading2: false,
+        options2: [],
+        list:['1','2','3']
       };
     },
     computed: {},
@@ -296,10 +327,30 @@
     },
     created() {
       this.tabHeight = this.getWindowHeight() - 240
-      this.getCarTree()
       this.findMessList();
+      this.getCarTree()
     },
     methods: {
+      remoteMethod2 (query) {
+        if (query !== '') {
+          this.loading2 = true;
+          setTimeout(() => {
+            this.loading2 = false;
+            // const list = this.data1.map(item => {
+            //   return {
+            //     value: item.clId,
+            //     label: item.mmsi
+            //   };
+            // });
+            console.log(this.data1);
+            this.options2 = this.data1.filter(item =>{
+                return item.clId.indexOf(query.toUpperCase()) != -1
+            });
+          }, 200);
+        } else {
+          this.options2 = [];
+        }
+      },
       //删除数据
       listDele(id) {
         this.util.del(this, this.apis.DZWL_CL.DELE, [id], () => {
@@ -309,8 +360,8 @@
       finish() {
         this.saveDzwl();
       },
-      getCarTree() {
-        this.$http.get('').then((res) => {
+      getCarTree(mmsi) {
+        this.$http.post('/api/cl/getCbs',{pageNum:1,pageSize:99999999}).then((res) => {
           this.data1 = res.result
         }).catch((error) => {
         })
@@ -366,15 +417,16 @@
         this.$http.post(this.apis.DZWL.setCarsDzwl, {
           wlid: this.fanceId,
           // carIds: this.carIds
-          mmsi: this.mmsi
+          carIds: this.mmsi.toString()
         }).then((res) => {
           if (res.code === 200) {
             this.RootShow = !this.RootShow
             this.findMessList();
+            this.mmsi = null
           } else {
             this.$Message.error(res.message);
           }
-          v.SpinShow = false;
+          this.SpinShow = false;
         })
         // var v = this
         // this.$refs['param'].validate((valid) => {

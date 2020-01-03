@@ -376,7 +376,7 @@ export default [
         name: 'tiaojianji',
         meta: {
           icon: 'ios-cog',
-          title: '条件集管理',
+          title: '船队管理',
         },
         component: () => import('@/viewDevelop/Shipmanagement/tiaojianji')
       },

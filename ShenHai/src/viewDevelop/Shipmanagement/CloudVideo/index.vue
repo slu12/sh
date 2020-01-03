@@ -75,10 +75,6 @@
       </div>
     </div>
     <div class="box_col_auto">
-              <Tabs type="card" v-model="param.wjmLike" @on-click="findMessList()">
-                <TabPane label='前摄像头' name="F"></TabPane>
-                <TabPane label='后摄像头' name="B"></TabPane>
-              </Tabs>
               <div v-show="vadeoShow"  style="border: 1px solid #dddee1">
                 <div class="box-row-list">
                   <div class="bodyC videoSty"
@@ -86,17 +82,17 @@
                        v-for="(item,index) in videoList">
                     <div v-if="!item.video">
                       <div class="videoBF" @click="videoS(item.video,item,index)">
-                        <Icon class="icon" type="arrow-right-b"
+                        <Icon class="icon" type="ios-play"
                               @click="videoS(item.video,item,index)"
                               color="#b5b5b5" size='38'></Icon>
                       </div>
                       <img style="width: 100%;height: 200px"
-                           :src="videoPath+item.imgdz"/>
+                           :src="item.imgdz"/>
 
                     </div>
                     <video v-else
                            style="width: 100%;height: 200px"
-                           :src="videoPath+item.url"
+                           :src="item.url"
                            autoplay="autoplay"
                            controls="controls"></video>
                     <div class="VideoTit">
@@ -116,7 +112,7 @@
                       [{{item.cjsj}}]
                     </div>
                     <div>
-                      {{item.wz ? item.wz : '……'}}
+                      {{item.wjm ? item.wjm : '……'}}
                     </div>
                   </div>
                 </div>
@@ -165,7 +161,6 @@
                 param: {
                     cjsjInRange: '',
                     cphLike: '',
-                    wjmLike:'F',
                     pageNum: 1,
                     pageSize: 12,
                     zdbhLike: ''

@@ -11,6 +11,7 @@ import com.ldz.util.bean.*;
 import com.ldz.util.commonUtil.DateUtils;
 import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.JsonUtil;
+import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.gps.DistanceUtil;
 import com.ldz.util.redis.RedisTemplateUtil;
 import com.ldz.util.yingyan.GuiJIApi;
@@ -22,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.util.ObjectUtils;
 
@@ -44,12 +46,12 @@ public class TopicMessageListener implements MessageListener {
     private double lowSpeed;
     private XcService xcService;
     private ClYyService clYyService;
-
     private GpsLsService gpsLsService;
-
     private GpsService gpsService;
     private ZdxmService zdxmService;
     private ZdglService zdglService;
+    private StringRedisTemplate redis;
+    private SpkService spkService;
 
 
 
@@ -61,7 +63,7 @@ public class TopicMessageListener implements MessageListener {
     Logger error = LoggerFactory.getLogger("error_info");
 
     public TopicMessageListener(ZdxmService zdxmService,XcService xcService, ClYyService clYyService,
-                                GpsService gpsService,GpsLsService gpsLsService, ZdglService zdglService, RedisTemplateUtil redisTemplate,String url,String bizurl,double distance,double lowSpeed) {
+                                GpsService gpsService,GpsLsService gpsLsService, ZdglService zdglService, RedisTemplateUtil redisTemplate,String url,String bizurl,double distance,double lowSpeed, StringRedisTemplate redis, SpkService spkService) {
 
         this.zdxmService = zdxmService;
         this.xcService = xcService;
@@ -74,6 +76,8 @@ public class TopicMessageListener implements MessageListener {
         this.bizurl = bizurl;
         this.distance = distance;
         this.lowSpeed = lowSpeed;
+        this.redis = redis;
+        this.spkService = spkService;
     }
 
     /**
@@ -97,6 +101,21 @@ public class TopicMessageListener implements MessageListener {
                 }else if(StringUtils.contains(itemValue,"offline")){
                     // 车辆离线状态更新
                     updateClZt(itemValue);
+                }else if(StringUtils.startsWith(itemValue, "video")){
+                    String[] split = itemValue.split("_");
+                    String mmsi = split[1];
+                    String sbh = split[2];
+                    String time = split[3];
+                    String[] times = time.split("-");
+                    String chn = split[4];
+                    String start = Integer.parseInt(split[5])-60+"";
+                    String end = Integer.parseInt(start) + 60 + "";
+                    String filaname = split[6];
+                    String video = WebcamUtil.getVideo(redis, sbh, "2", chn, times[0], times[1], times[2], "0", "2", start, end, filaname);
+                    if(StringUtils.isNotBlank(video)){
+                       spkService.saveVideo(video,mmsi);
+                    }
+
                 }
             }else if (topic.equals("connect_timeout")){
                 ClZdgl zdgl = zdglService.findById(itemValue);

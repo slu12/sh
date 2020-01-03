@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.Topic;
@@ -102,6 +103,7 @@ public class RedisConfig {
 		ZdxmService zdxmService = SpringContextUtil.getBean(ZdxmService.class);
 		CbService clService = SpringContextUtil.getBean(CbService.class);
 		MileDwqMapper dwqMapper = SpringContextUtil.getBean(MileDwqMapper.class);
+		StringRedisTemplate redis = SpringContextUtil.getBean(StringRedisTemplate.class);
 		CheckMessageReceiver checkMessageReceiver = new CheckMessageReceiver(redisTemplateUtil,websocket,idWorker,obdFaultCodeMapper,zdxmService,sbyxsjjlService,clService,dwqMapper);
 
 
@@ -119,7 +121,7 @@ public class RedisConfig {
 
 		// 订阅过期 topic
 		// 设置监听的Topic
-		PatternTopic channelTopic = new PatternTopic("__keyevent@*__:expired");
+		PatternTopic channelTopic = new PatternTopic("__keyevent@10__:expired");
 		SpkService spkService = SpringContextUtil.getBean(SpkService.class);
 		GpsService gpsservice = SpringContextUtil.getBean(GpsService.class);
 		MessageReceiver messageReceiver = new MessageReceiver(spkService,gpsservice,redisTemplateUtil,dwqGpsMapper);
@@ -129,7 +131,7 @@ public class RedisConfig {
 
 		//topicMessageListener.setRedisTemplate(redisTemplateUtil);
 		container.addMessageListener(messageReceiver, topics);
-		container.addMessageListener(new TopicMessageListener(zdxmService,xcService,clYyService,gpsservice,gpsLsService,zdglService,redisTemplateUtil,url,bizurl,distance,lowSpeed) , channelTopic);
+		container.addMessageListener(new TopicMessageListener(zdxmService,xcService,clYyService,gpsservice,gpsLsService,zdglService,redisTemplateUtil,url,bizurl,distance,lowSpeed,redis,spkService) , channelTopic);
 		container.addMessageListener(checkMessageReceiver,topicList);
 		container.addMessageListener(reportListener,zdTopicList);
 		//这个container 可以添加多个 messageListener

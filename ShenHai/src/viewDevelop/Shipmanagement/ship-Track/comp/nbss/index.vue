@@ -176,31 +176,34 @@
           <div>设备编号 : {{ship.sbh}}</div>
         </div>
         <div v-if="ship.sbh!=''" class="funcBox box_row rowAuto colItemCenter">
-          <div class="funcItemBox" @click="ZP(ship.mmsi)">
-            <Icon type="md-videocam"/>
+          <div class="funcItemBox" v-for="(it,index) in 3" :key="index" @click="ZP(ship.mmsi,index+1)">
+            <Icon type="md-qr-scanner"/>
             <div class="labelSty">
-              拍照片
-            </div>
-          </div>
-          <div class="funcItemBox" @click="ZPsp(ship.mmsi)">
-            <Icon type="md-videocam"/>
-            <div class="labelSty">
-              拍视频
+             {{index+1}}号通道拍照
             </div>
           </div>
         </div>
-        <div v-if="!sendAuthCode">
+        <div  v-if="ship.sbh!=''" class="funcBox box_row rowAuto colItemCenter">
+          <div class="funcItemBox" v-for="(it,index) in 3" :key="index" @click="ZPsp(ship.mmsi,index+1)">
+            <Icon type="md-videocam"/>
+            <div class="labelSty">
+              {{index+1}}号通道视频
+            </div>
+          </div>
+        </div>
+        <div v-if="!sendAuthCode" style="text-align: center;color: #FFFFFF;font-weight: 600;font-size: 26px;padding-top: 20px">
            请稍等{{auth_time}}s
         </div>
-        <div v-if="sendAuthCode">
-          <video :src="zpsp"></video>
+        <div v-if="sendAuthCode" style="padding-top: 20px">
+          <video  controls preload=""  id="video" style="width: 100%;">
+            <source :src="zpsp">
+          </video>
+<!--          <video :src="zpsp"></video>-->
         </div>
-        <div>
+        <div style="padding-top: 20px">
           <img :src="zp" alt="" style="height: 300px;width: 100%">
         </div>
-        <video  controls preload=""  id="video">
-          <source src="http://223.240.68.90:9092/video/2020-01-02/34286-1-1577955059403.mp4">
-        </video>
+
       </div>
       <div class="box_col_auto" v-if="tabIndex === 3">
         <Row class="shipycxq">
@@ -327,8 +330,8 @@
       player.dispose();
     },
     methods: {
-      ZPsp(a){
-        this.$http.post('/api/cl/lx',{mmsi:a,chn:'1',sec:'30'}).then((res)=>{
+      ZPsp(a,b){
+        this.$http.post('/api/cl/lx',{mmsi:a,chn:b,sec:'30'}).then((res)=>{
           if (res.code == 200){
             this.zpsp = res.message
             this.sendAuthCode = false;
@@ -345,8 +348,8 @@
           }
         })
       },
-      ZP(a){
-        this.$http.post('/api/cl/zp',{mmsi:a,chn:'1'}).then((res)=>{
+      ZP(a,b){
+        this.$http.post('/api/cl/zp',{mmsi:a,chn:b}).then((res)=>{
           if (res.code == 200){
               this.zp = res.message
           }else {

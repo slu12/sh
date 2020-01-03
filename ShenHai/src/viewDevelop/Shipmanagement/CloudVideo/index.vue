@@ -61,7 +61,7 @@
                       style="width: 220px"></DatePicker>
         </div>
         <div class="body-r-1 inputSty">
-          <Input type="text" v-model="param.cphLike" style="width: 220px" placeholder='车牌号'></Input>
+          <Input type="text" v-model="param.mmsiLike" style="width: 220px" placeholder='船舶mmsi号'></Input>
         </div>
         <div class="body-r-1 inputSty">
           <Input type="text" v-model="param.zdbhLike" style="width: 220px" placeholder='终端编号'></Input>
@@ -81,13 +81,13 @@
                        style="min-height: 140px;"
                        v-for="(item,index) in videoList">
                     <div v-if="!item.video">
-                      <div class="videoBF" @click="videoS(item.video,item,index)">
-                        <Icon class="icon" type="ios-play"
-                              @click="videoS(item.video,item,index)"
-                              color="#b5b5b5" size='38'></Icon>
-                      </div>
-                      <img style="width: 100%;height: 200px"
-                           :src="item.imgdz"/>
+<!--                      <div class="videoBF" @click="videoS(item.video,item,index)">-->
+<!--                        <Icon class="icon" type="ios-play"-->
+<!--                              @click="videoS(item.video,item,index)"-->
+<!--                              color="#b5b5b5" size='38'></Icon>-->
+<!--                      </div>-->
+                      <img style="width: 100%;height: 200px"  @click="videoS(item.video,item,index)"
+                           :src="item.url.substring(0,item.url.length-3)+'jpg'"/>
 
                     </div>
                     <video v-else
@@ -160,9 +160,9 @@
                 videoList: [],
                 param: {
                     cjsjInRange: '',
-                    cphLike: '',
+                    mmsiLike: '',
                     pageNum: 1,
-                    pageSize: 12,
+                    pageSize: 8,
                     zdbhLike: ''
                 }
             }

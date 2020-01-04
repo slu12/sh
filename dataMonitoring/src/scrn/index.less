@@ -1,2 +1,148 @@
-.scrnBoxSty{
+.scrnBoxSty {
+  background-color: #050a32;
+  .labSty {
+    background: linear-gradient(to top, #5299ff, #7eeeff);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .pagerTop {
+    height: 125px;
+    line-height: 125px;
+    background-image: url("./comp/file/topBg.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    .titleBoxSty {
+      .labSty;
+      font-size: 60px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .dateBoxSty {
+      padding-left: 20px;
+      font-size: 18px;
+      color: #ffffff;
+    }
+    .topRightTextBox {
+      height: 100%;
+      padding-right: 20px;
+      .labelsty {
+        font-size: 20px;
+        color: #ffffff;
+      }
+      .valCard {
+        margin: auto 12px;
+        width: 36px;
+        height: 50px;
+        text-align: center;
+        line-height: 50px;
+        border-radius: 3px;
+        border: solid 1px #5a9cff;
+        background-color: #031759;
+        font-size: 24px;
+        font-weight: 600;
+        color: #ffffff;
+      }
+      .daySty {
+        line-height: 150px;
+        span {
+          font-size: 18px;
+          color: #6a88e4;
+        }
+      }
+    }
+  }
+
+  .hyBox {
+    width: 638px;
+    height: 463px;
+    background-image: url("./comp/file/hybg.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    .boxTitle {
+      .labSty;
+      margin: 12px 28px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .chartsBox {
+      //background-color: #348EED;
+      margin: 0px 12px 13px;
+    }
+  }
+
+  .yqBox {
+    width: 638px;
+    height: 411px;
+    background-image: url("./comp/file/yqbg.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    .boxTitle {
+      .labSty;
+      margin: 12px 28px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .chartsBox {
+      background-color: #348EED;
+      margin: 0px 12px 13px;
+    }
+  }
+
+  .xxBox {
+    width: 638px;
+    height: 904px;
+    background-image: url("./comp/file/xxbg.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: top;
+    .boxTitle {
+      .labSty;
+      margin: 12px 28px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 22px;
+      font-weight: 600;
+      text-align: right;
+    }
+    .centerBox {
+      //background-color: #348EED;
+      margin: 0px 40px 13px;
+      .tableBoxSty {
+        padding-top: 20px;
+        .ivu-table{
+          background-color: rgba(255,255,255,0);
+        }
+        .ivu-table th {
+          background-color: #102761;
+          border: none;
+          color: #ffffff;
+        }
+        .ivu-table td{
+          background-color: rgba(255,255,255,0);
+        }
+        .ivu-table th, .ivu-table td{
+          border-bottom: none;
+          color: #ffffff;
+        }
+        .ivu-table-wrapper{
+          border: none;
+        }
+        .ivu-table:before{
+          background-color: rgba(255,255,255,0);
+        }
+        .ivu-table:after{
+          background-color: rgba(255,255,255,0);
+        }
+      }
+    }
+
+  }
 }

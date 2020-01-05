@@ -1,12 +1,35 @@
 <template>
-  <div class="hyBox box_col">
-    <div class="boxTitle">
-      涉及服务行业
-    </div>
-    <div id="echartDemHY" class="box_col_100 chartsBox">
+  <div class="box_col chartBox">
+    <div id="RightID" class="chartDom">
 
     </div>
+    <div class="legLine box_row colItemCenter">
+      <div class="legCode" style="background-color: #0e6de9"></div>
+      <div class="legName">银行</div>
+      <div class="legVal">212万元</div>
+      <div class="legPID">36%</div>
+    </div>
 
+    <div class="legLine box_row colItemCenter">
+      <div class="legCode" style="background-color: #00af6d"></div>
+      <div class="legName">网贷</div>
+      <div class="legVal">212万元</div>
+      <div class="legPID">36%</div>
+    </div>
+
+    <div class="legLine box_row">
+      <div class="legCode" style="background-color: #e6af08"></div>
+      <div class="legName">汽车</div>
+      <div class="legVal">212万元</div>
+      <div class="legPID">36%</div>
+    </div>
+
+    <div class="legLine box_row" style="margin-bottom: 0">
+      <div class="legCode" style="background-color: #fc4e4e"></div>
+      <div class="legName">其他</div>
+      <div class="legVal">212万元</div>
+      <div class="legPID">36%</div>
+    </div>
   </div>
 </template>
 
@@ -22,65 +45,57 @@
     methods:{
       buildChart(){
         var v = this
-        var myChart = echarts.init(document.getElementById('echartDemHY'))
-        let option ={
+        var myChart = echarts.init(document.getElementById('RightID'))
+        let option = {
           series: [
             {
-              name: '访问来源',
+              name: '',
               type: 'pie',
               radius: ['25%', '60%'],
               center: ['50%', '50%'],
               //silent:true,
               data: [
                 {
-                  value: 335,
-                  name: '银行',
+                  value: 38,
+                  name: '',
                   itemStyle:{
-                    color:'#fc4e4e',
+                    color:'#fc4e4e'
                   }
                 },
                 {
-                  value: 310,
-                  name: '网贷',
+                  value: 30,
+                  name: '',
                   itemStyle:{
-                    color:'#12de80'
+                    color:'#0097ff'
                   }
                 },
-                {
-                  value: 274,
-                  name: '其他',
+                {value: 25, name: '',
                   itemStyle:{
                     color:'#ffe20c'
                   }
                 },
-                {
-                  value: 235,
-                  name: '汽车',
+                {value: 20, name: '',
                   itemStyle:{
-                    color:'#0097ff'
+                    color:'#12de80'
                   }
                 },
 
               ].sort(function (a, b) { return a.value - b.value; }),
               roseType: 'radius',
               label: {
-                color: 'white',
-                position: 'outside',
-                formatter:'{b}         \n{c}笔   {d}%',
-                fontSize:'16'
+                show:false
               },
               labelLine: {
-                show: true,
-                smooth: 0.1,
-                length: 30,
-                length2: 50
+                show: false
               },
+
+
             },
             {
               name: '',
               type: 'pie',
-              clockWise: true, //顺时加载
-              radius: ['150', '153'],
+              clockWise: false, //顺时加载
+              radius: ['107', '110'],
               avoidLabelOverlap: true,
               silent:true,
               itemStyle: {
@@ -101,13 +116,13 @@
 
               }]
             },
-          ]
-        }
+          ],
+        };
+
 
         myChart.setOption(option);
       }
     }
-
   }
 </script>
 

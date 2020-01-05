@@ -8,8 +8,8 @@
         <hx-box></hx-box>
         <yq-box></yq-box>
       </div>
-      <div class="box_row_100">
-
+      <div class="box_row_100" style="padding: 6px 70px 0 70px">
+        <center-box></center-box>
       </div>
       <div style="width: 638px">
         <xx-box></xx-box>
@@ -24,13 +24,15 @@
   import hxBox from './comp/hy'
   import yqBox from './comp/yq'
 
+  import centerBox from './comp/centerBox'
+
   import xxBox from './comp/xx'
   export default {
     name: 'scnr',
     components: {
       pagerTop,
       hxBox,yqBox,
-      xxBox
+      xxBox,centerBox
     },
     data() {
       return {

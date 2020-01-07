@@ -158,6 +158,15 @@ export default [
         },
         component: () => import('@/viewDevelop/terminal/terminal-car')
       },
+      {
+        path: 'system-video',
+        name: 'system-video',
+        meta: {
+          icon: 'ios-cog',
+          title: '北斗视频终端',
+        },
+        component: () => import('@/viewDevelop/system/system-video')
+      },
       // {
       //   path: 'system-ITSM',
       //   name: 'system-ITSM',
@@ -317,6 +326,24 @@ export default [
         },
         component: () => import('@/viewDevelop/Shipmanagement/ship-Video')
       },
+      {
+        path: 'CloudPhoto',
+        name: 'CloudPhoto',
+        meta: {
+          icon: 'ios-cog',
+          title: '云图片库',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/CloudPhoto')
+      },
+      {
+        path: 'CloudVideo',
+        name: 'CloudVideo',
+        meta: {
+          icon: 'ios-cog',
+          title: '云视频库',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/CloudVideo')
+      },
       // {
       //   path: 'ship-team',
       //   name: 'ship-team',
@@ -349,7 +376,7 @@ export default [
         name: 'tiaojianji',
         meta: {
           icon: 'ios-cog',
-          title: '条件集管理',
+          title: '船队管理',
         },
         component: () => import('@/viewDevelop/Shipmanagement/tiaojianji')
       },

@@ -27,9 +27,9 @@
                 </RadioGroup>
               </div>
               <div>
-                   <div>{{searchList.zxzt.label}}</div>
-                  <RadioGroup type="button" szie="small" v-model="searchList.zxzt.key">
-                    <Radio v-for="(it,index) in searchList.zxzt.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'zxzt')">{{it.val}}</Radio>
+                   <div>{{searchList.nav.label}}</div>
+                  <RadioGroup type="button" szie="small" v-model="searchList.nav.key">
+                    <Radio v-for="(it,index) in searchList.nav.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'nav')">{{it.val}}</Radio>
                   </RadioGroup>
               </div>
               <div>
@@ -54,14 +54,14 @@
           modal1: true,
           cblxList:[],
           searchList: {
-            //portname   港口     navStatus  船舶状态   zxzt 设备状态    shiptype 船舶类型
+            //portname   港口     navStatus  船舶状态   nav 设备状态    shiptype 船舶类型
             jgdm: {
-              label: "所属机构：",
+              label: "港口信息：",
               key:'',
               value:'',
               selectList: []
             },
-            zxzt: {
+            nav: {
               label: "设备状态：",
               key:'',
               value:'',
@@ -80,7 +80,7 @@
             json:{
               jgdm:'',
               jgdmname:'',
-              zxzt:'',
+              nav:'',
               zxztname:'',
               shiptype:'',
               shiptypename:''
@@ -92,7 +92,7 @@
         let cblxList = this.dictUtil.getByCode(this, 'CBLX');
         this.searchList.shiptype.selectList = cblxList;
         let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032');
-        this.searchList.zxzt.selectList = snztList;
+        this.searchList.nav.selectList = snztList;
         let cjList  = this.dictUtil.getByCode(this, 'CJ');
         this.searchList.jgdm.selectList = cjList
       },
@@ -132,8 +132,8 @@
               key:this.searchList.jgdm.key,
               value:this.param.json.jgdmname
             },
-            zxzt:{
-              key:this.searchList.zxzt.key,
+            nav:{
+              key:this.searchList.nav.key,
               value:this.param.json.zxztname
             },
             shiptype:{

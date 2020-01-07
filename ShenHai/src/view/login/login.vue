@@ -5,9 +5,9 @@
 <template>
   <div class="login">
     <div class="login-font">
-       <div class="cn">芜湖海事</div>
+       <div class="cn">神海</div>
        <div class="cn">船联网大数据平台</div>
-        <div class="en">Wuhu Maritime</div>
+        <div class="en">Shen Hai</div>
         <div class="en">Big data platform for ship networking</div>
     </div>
     <div class="login-con">

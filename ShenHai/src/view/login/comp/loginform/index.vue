@@ -62,6 +62,7 @@
       </FormItem>
       <FormItem>
         <Button @click="changepassword" type="primary" class="botton" long>确认</Button>
+        <Button @click="islogin = true" type="primary" ghost long class="botton1" style="margin-top: 15px">取消</Button>
       </FormItem>
     </Form>
   </div>
@@ -225,6 +226,13 @@
     font-family:Microsoft YaHei;
     font-weight:400;
     color:rgba(255,255,255,1);
+    line-height:9px;
+  }
+  .botton1{
+    height:40px;
+    font-size:14px;
+    font-family:Microsoft YaHei;
+    font-weight:400;
     line-height:9px;
   }
   .inputsty{

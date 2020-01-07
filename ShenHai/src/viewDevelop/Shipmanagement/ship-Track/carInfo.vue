@@ -155,7 +155,7 @@
                 this.$emit('close')
             },
             showPathHistory(){
-                this.$router.push({name: 'historyTarck_new',params:{zdbh:this.car.zdbh}});
+                this.$router.push({name: 'ship-trajectory',params:{mmsi:this.car.mmsi}});
             },
             /*
             gotoPhotoList() {

@@ -2,10 +2,10 @@
   <div class="box_col" style="flex: 1;background-color: #F5CBD1">
     <div class="box_row" style="height: 100%">
       <div class="box_row_100">
-        <component ref="map" :is="compName"></component>
+        <component ref="map" :is="compName" @codeEvent="codeEvent" :mess="mess"></component>
       </div>
       <template>
-        <nbss @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
+        <nbss ref="nbss" @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
       </template>
     </div>
   </div>
@@ -15,6 +15,7 @@
   import B_myMap from '../../map/carJK.vue';
   import carInfo from './carInfo';
   import nbss from './comp/nbss'
+  import bkShow from "../ship-mess/comp/BKshow";
 
   export default {
     name: 'VehicleMonitoring',
@@ -39,6 +40,7 @@
     },
     data() {
       return {
+        mess:'',
         compName: 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
@@ -218,21 +220,9 @@
           }
         })
       },
-      showFance(carId) {
-        console.log(carId);
-        this.fancePoints = [];
-        var v = this
-        this.$http.get(this.apis.DZWL.GET_BY_CAR_ID + "?clId=" + carId).then((res) => {
-          if (res.code === 200) {
-            let s = res.result.dlxxzb;
-            let ps = s.split(";");
-            for (let r of ps) {
-              let point = r.split(",");
-              this.fancePoints.push({lng: point[1], lat: point[0]})
-            }
-            this.addArea(this.fancePoints);
-          }
-        })
+      showFance(car) {
+          this.compName = ''
+          this.mess = car
       },
       addArea(points) {
         let ps = [];
@@ -511,6 +501,8 @@
         }
       },
       codeEvent(item) {
+        console.log(item,'111');
+        this.$refs.nbss.fqLr(item)
         this.$refs.carInfoRef.init(item);
       },
       rowClick(item) {

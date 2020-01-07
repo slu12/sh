@@ -33,7 +33,7 @@
             <Col span="8" v-for="(item,index) in 9" :key="index" style="padding: 5px">
                 <Card>
                   <h5>{{index+1}}号通道</h5>
-                  <img src="./comp/jk.png" style="height: 200px;width: 100%" alt="">
+                  <img src="./comp/jkk.png" style="height: 200px;width: 100%" alt="">
                 </Card>
             </Col>
           </Row>
@@ -63,6 +63,7 @@
       console.log(this.$route);
       if (this.$route.params.mmsi){
         this.param.mmsi = this.$route.params.mmsi
+        this.getvideo()
       }
     },
     methods: {

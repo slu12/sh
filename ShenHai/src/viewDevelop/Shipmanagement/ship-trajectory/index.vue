@@ -116,7 +116,7 @@
         <div style="padding: 8px">
           <div class="carNumber">
             <Select class="select" v-model="formItem.mmsi" filterable>
-              <Option v-for="item in carList" :value="item.mmsi">{{item.shipname}}</Option>
+              <Option v-for="(item,index) in carList" :value="item.mmsi" :key="index">{{item.shipname}}</Option>
             </Select>
           </div>
           <div class="sTime" style="margin-top: 6px">
@@ -133,101 +133,101 @@
                     style="width: 60px" @click="formItemList">查询
             </Button>
           </div>
-          <div class="carMessH" style="margin-top: 6px">
-            <div class="box-row-nh">
-              <div class="body-1" style="margin: 4px;">
-                <div class="tit">
-                  总时长(min)
-                </div>
-                <div class="mess">
-                  {{getMinute(totalTime) | GLmess}}
-                </div>
-              </div>
-              <div class="body-1" style="margin: 4px;">
-                <div class="tit">
-                  总里程(km)
-                </div>
-                <div class="mess">
-                  {{(totalLC/1000).toFixed(2)}}
-                </div>
-              </div>
-              <div class="body-1" style="margin: 4px;">
-                <div class="tit">
-                  驾驶次数
-                </div>
-                <div class="mess">
-                  {{pathList.length | GLmess}}
-                </div>
-              </div>
-              <!--<div class="body-1" style="margin: 4px">-->
-              <!--<div class="tit">-->
-              <!--最高时速(km/h)-->
-              <!--</div>-->
-              <!--<div class="mess">-->
-              <!--150-->
-              <!--</div>-->
-              <!--</div>-->
-            </div>
-          </div>
+<!--          <div class="carMessH" style="margin-top: 6px">-->
+<!--            <div class="box-row-nh">-->
+<!--              <div class="body-1" style="margin: 4px;">-->
+<!--                <div class="tit">-->
+<!--                  总时长(min)-->
+<!--                </div>-->
+<!--                <div class="mess">-->
+<!--                  {{getMinute(totalTime) | GLmess}}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="body-1" style="margin: 4px;">-->
+<!--                <div class="tit">-->
+<!--                  总里程(km)-->
+<!--                </div>-->
+<!--                <div class="mess">-->
+<!--                  {{(totalLC/1000).toFixed(2)}}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="body-1" style="margin: 4px;">-->
+<!--                <div class="tit">-->
+<!--                  驾驶次数-->
+<!--                </div>-->
+<!--                <div class="mess">-->
+<!--                  {{pathList.length | GLmess}}-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px">&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
+<!--              &lt;!&ndash;最高时速(km/h)&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
+<!--              &lt;!&ndash;150&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
-        <div class="body" style="padding: 8px;margin-top: 8px">
-          <div class="pageListCarH" v-for="(item,index) in pathList" @click="itemClick(item,index)"
-               :class="{'choosed':choosedIndex == index}">
-            <div>
-              <Icon type="ios-location"
-                    color="#00c3c1" size="22"></Icon>
-              <span class="pageMessH">
-								{{item.departportname}}——{{item.arrivedportname}}
-							</span>
-            </div>
-            <div>
-              <Icon type="ios-clock"
-                    color="#2fa2d7" size="20"></Icon>
-              <span class="pageMessH">
-								{{item.departtime}}
-							</span><br>
-              <Icon type="ios-clock"
-                    color="#2fa2d7" size="20"></Icon>
-              <span class="pageMessH">
-								{{item.ata}}
-							</span>
-            </div>
-            <div class="box-row-nh">
-              <!--<div class="body-1" style="margin: 4px;">-->
-              <!--<div class="tit">-->
-              <!--里程-->
-              <!--</div>-->
-              <!--<div class="mess">-->
-              <!--200-->
-              <!--</div>-->
-              <!--</div>-->
-              <div class="body-1" style="margin: 4px;">
-                <div class="tit">
-                  耗时 {{dateFormat(item.sc)}}
-                </div>
-                <!--<div class="mess">-->
+<!--        <div class="body" style="padding: 8px;margin-top: 8px">-->
+<!--          <div class="pageListCarH" v-for="(item,index) in pathList" @click="itemClick(item,index)"-->
+<!--               :class="{'choosed':choosedIndex == index}">-->
+<!--            <div>-->
+<!--              <Icon type="ios-location"-->
+<!--                    color="#00c3c1" size="22"></Icon>-->
+<!--              <span class="pageMessH">-->
+<!--								{{item.departportname}}——{{item.arrivedportname}}-->
+<!--							</span>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--              <Icon type="ios-clock"-->
+<!--                    color="#2fa2d7" size="20"></Icon>-->
+<!--              <span class="pageMessH">-->
+<!--								{{item.departtime}}-->
+<!--							</span><br>-->
+<!--              <Icon type="ios-clock"-->
+<!--                    color="#2fa2d7" size="20"></Icon>-->
+<!--              <span class="pageMessH">-->
+<!--								{{item.ata}}-->
+<!--							</span>-->
+<!--            </div>-->
+<!--            <div class="box-row-nh">-->
+<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px;">&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
+<!--              &lt;!&ndash;里程&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
+<!--              &lt;!&ndash;200&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              <div class="body-1" style="margin: 4px;">-->
+<!--                <div class="tit">-->
+<!--                  耗时 {{dateFormat(item.sc)}}-->
+<!--                </div>-->
+<!--                &lt;!&ndash;<div class="mess">&ndash;&gt;-->
 
-                <!--</div>-->
-              </div>
-              <!--<div class="body-1" style="margin: 4px;">-->
-              <!--<div class="tit">-->
-              <!--油耗-->
-              <!--</div>-->
-              <!--<div class="mess">-->
-              <!--200-->
-              <!--</div>-->
-              <!--</div>-->
-              <!--<div class="body-1" style="margin: 4px;">-->
-              <!--<div class="tit">-->
-              <!--最高时速-->
-              <!--</div>-->
-              <!--<div class="mess">-->
-              <!--3600-->
-              <!--</div>-->
-              <!--</div>-->
-            </div>
-          </div>
-        </div>
+<!--                &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              </div>-->
+<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px;">&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
+<!--              &lt;!&ndash;油耗&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
+<!--              &lt;!&ndash;200&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px;">&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
+<!--              &lt;!&ndash;最高时速&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
+<!--              &lt;!&ndash;3600&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;</div>&ndash;&gt;-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
       </div>
     </div>
   </div>
@@ -235,7 +235,6 @@
 
 <script>
   import bkshow from '../../map/mapBK_show'
-
   import echarts from 'echarts'
   import mixins from '@/mixins'
   import {mapState, mapMutations} from 'vuex'
@@ -295,7 +294,7 @@
       local: function (n, o) {
         this.formItem.startTime = this.getTodayDate() + " 00:00:00";
         this.formItem.endTime = this.getTodayDate() + " 23:59:59";
-        this.formItem.zdbh = this.$route.params.zdbh;
+        this.formItem.mmsi = this.$route.params.mmsi;
         this.timeRange = [this.formItem.startTime, this.formItem.endTime];
         this.choosedIndex = 0;
         this.getCarList();
@@ -351,9 +350,11 @@
       }
     },
     mounted() {
+      if (this.$route.params.mmsi){
+        this.formItem.mmsi = this.$route.params.mmsi;
+      }
       this.formItem.startTime = this.getTodayDate() + " 00:00:00";
       this.formItem.endTime = this.getTodayDate() + " 23:59:59";
-      this.formItem.mmsi = this.$route.params.mmsi;
       this.timeRange = [this.formItem.startTime, this.formItem.endTime];
       this.choosedIndex = 0;
       this.getCarList();
@@ -366,7 +367,7 @@
       itemClick(item, index) {
         this.item = item;
         this.choosedIndex = index;
-        this.getBdData();
+        // this.getBdData();
         this.stopAnimation();
         // this.getDbData();
       },
@@ -393,14 +394,9 @@
         return s;
       },
       getCarList() {
-        this.$http.get(this.apis.CLGL.QUERY, {
-          params: {
-            pageSize: 1000,
-            positionType: this.local == 'en-US' ? 'gcj02' : ''
-          }
-        }).then((res) => {
-          if (res.code === 200 && res.page.list) {
-            this.carList = res.page.list;
+        this.$http.post('/api/cl/getCbs').then((res) => {
+          if (res.code === 200 && res.result) {
+            this.carList = res.result;
             if (this.carList.length != 0) {
               this.formItemList();
             }
@@ -423,18 +419,17 @@
         //     endTime = endTime.format('yyyy-MM-dd hh:mm:ss');
         // }
         let p = {
-          startTime: startTime,
-          endTime: endTime,
-          zdbh: this.formItem.mmsi,
-          ignition: this.formItem.ignition,
-          brennschluss: this.formItem.brennschluss
+          start: startTime,
+          end: endTime,
+          mmsi: this.formItem.mmsi,
         }
         this.totalTime = 0;
         this.totalLC = 0;
         this.pathList = [];
         this.item = {};
         this.showMap = false;
-        this.$http.post(this.apis.CLGL.GPS_HITSOR, p).then((res) => {
+        this.speeds = []
+        this.$http.post('/api/cl/newXc', p).then((res) => {
           if (res.code === 200 && res.result) {
             var geoc = new BMap.Geocoder();
             for (let r of res.result) {
@@ -465,7 +460,18 @@
             if (this.pathList.length > 0) {
               this.itemClick(this.pathList[0], 0);
             }
+
           }
+          this.stationList = res.result;
+          for (let r of this.stationList) {
+            let date = this.getdateTime(r.loc_time);
+            let speed = parseInt(r.speed);
+            this.speedList.push([date, speed]);
+            this.speeds[r.loc_time*1000] = speed;
+          }
+          console.log(this.speeds,'chart');
+
+          this.Buildmap()
         })
       },
       getBdData() {
@@ -477,7 +483,6 @@
         this.speedList = [];
         this.speeds = {};
         let v = this;
-
         this.$http.post('/api/clsbyxsjjl/historyTrack', p).then((res) => {
           if (res.code === 200 && res.result) {
             this.stationList = res.result;
@@ -485,7 +490,7 @@
               let date = new Date(r.postime);
               let speed = parseInt(r.speed);
               this.speedList.push([r.postime, speed]);
-              this.speeds[date.getTime()] = speed;
+              this.speeds[date] = speed;
             }
             if (this.local == 'en-US') {
               v.Buildmap()
@@ -509,13 +514,13 @@
           if (res.code === 200 && res.result) {
             this.stationList = res.result;
             for (let r of this.stationList) {
-              let date = new Date(r.cjsj);
-              let speed = parseInt(r.yxsd);
-              this.speedList.push([r.cjsj, speed]);
-              this.speeds[date.getTime()] = speed;
+              let date = this.getdateTime(r.loc_time);
+              let speed = parseInt(r.speed);
+              this.speedList.push([date, speed]);
               r.longitude = r.bdjd;
               r.latitude = r.bdwd;
             }
+            console.log(this.speedList,'chart');
             if (this.local == 'en-US') {
               v.Buildmap()
             } else {
@@ -684,6 +689,16 @@
           v.drawLineChart();
         }, 100)
       },
+      getdateTime(timestamp){
+          var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+          var Y = date.getFullYear() + '-';
+          var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+          var D = date.getDate() + ' ';
+          var h = date.getHours() + ':';
+          var m = date.getMinutes() + ':';
+          var s = date.getSeconds();
+          return Y+M+D+h+m+s;
+      },
       drawLineChart() {
         let v = this;
         // 基于准备好的dom，初始化echarts实例
@@ -728,9 +743,8 @@
                 show: true,
                 formatter: function (params) {
                   let time = params.value;
-                  let speed = v.speeds[time];
-                  var value = speed;
-                  return "车辆瞬时速度：" + value + " Km/h";
+                  let speed = v.speeds[time]
+                  return "瞬时速度：" + speed + " Km/h";
                 },
                 backgroundColor: '#004E52'
               },

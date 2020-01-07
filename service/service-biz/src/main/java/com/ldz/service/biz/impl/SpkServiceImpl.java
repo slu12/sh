@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.github.pagehelper.Page;
+import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.XcService;
 import com.ldz.util.commonUtil.DateUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,6 +45,8 @@ public class SpkServiceImpl extends BaseServiceImpl<ClSpk, String> implements Sp
 
     @Autowired
     private ClSpkMapper entityMapper;
+    @Autowired
+    private CbService cbService;
 
     @Autowired
     private SimpMessagingTemplate websocket;
@@ -299,6 +302,28 @@ public class SpkServiceImpl extends BaseServiceImpl<ClSpk, String> implements Sp
             list.add(row);
         }
         return ApiResponse.success(list);
+    }
+
+    @Override
+    public void saveVideo(String video, String mmsi) {
+        List<Cb> cbs = cbService.findEq(Cb.InnerColumn.mmsi, mmsi);
+        if(CollectionUtils.isEmpty(cbs)){
+            return;
+        }
+        Cb cb = cbs.get(0);
+        ClSpk spk = new ClSpk();
+        spk.setId(genId());
+        spk.setCjsj(new Date());
+        spk.setDz(video.substring(video.indexOf("9092/")+4));
+        spk.setZdbh(mmsi);
+        spk.setClId(cb.getClId());
+        spk.setCph(cb.getShipname());
+        spk.setJgdm(cb.getJgdm());
+        spk.setJgmc(cb.getJgmc());
+        spk.setUrl(video);
+        spk.setWjm("F" +spk.getDz().substring(spk.getDz().lastIndexOf("/")+1));
+        spk.setSplx("60");
+        save(spk);
     }
 
 }

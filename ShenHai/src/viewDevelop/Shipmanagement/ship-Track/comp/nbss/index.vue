@@ -21,8 +21,30 @@
           <Icon type="ios-arrow-forward" size="22"/>
         </div>
         <div style="width: 360px">
+<!--          <Select-->
+<!--            v-model="from.con"-->
+<!--            filterable-->
+<!--            clearable-->
+<!--            remote-->
+<!--            loading-text="请输入关键字搜索"-->
+<!--            @on-query-change="remoteMethod1"-->
+<!--            ref="jlySelect"-->
+<!--            :remote-method="remoteMethod1"-->
+<!--            :loading="loading1">-->
+<!--            <Option v-for="(option, index) in options1" :value="option.value" :key="index">{{option.label}}</Option>-->
+<!--          </Select>-->
           <Input v-model="from.con" size="large"
-                 @on-search="getshipMess" search enter-button placeholder="请输入MMSI或船舶名称"/>
+                 @on-search="getshipMess" @on-change="getshipMess" search enter-button
+                 @on-focus="showtj = true"
+                 placeholder="请输入MMSI或船舶名称">
+            <Icon type="ios-search" slot="suffix" />
+          </Input>
+<!--          <div v-if="showtj" class="shipSty" style="position: absolute;top: 66px">-->
+<!--            <div style="background-color: #FFFFFF;text-align: left;font-size: 18px;z-index: 9999;-->
+<!--            font-weight: 500;width: 359px;padding: 10px;border: #5c6b77" v-for="(item,index) in tjList" :key="index">-->
+<!--               {{item.json.portname.value}}.{{item.json.zxzt.value}}.{{item.json.shiptype.value}}-->
+<!--            </div>-->
+<!--          </div>-->
         </div>
       </div>
 
@@ -65,16 +87,16 @@
           <div>航向 : {{ship.hx}}</div>
         </div>
 
-        <div class="hcmess" v-if="this.hcMess.length>0">
+        <div class="hcmess" v-if="this.hcMess.departportname && this.hcMess!=null && this.hcMess.departportname !=''">
           <Row>
             <Col span="8">出发港</Col>
             <Col span="8">状态</Col>
             <Col span="8">目的港</Col>
           </Row>
           <Row>
-            <Col span="8" style="font-size: 24px">芜湖县</Col>
-            <Col span="8">>> 停泊 >></Col>
-            <Col span="8" style="font-size: 24px">wuhan</Col>
+            <Col span="8" style="font-size: 24px">{{hcMess.departportname}}</Col>
+            <Col span="8">>> {{hcMess.anchorportname}} >></Col>
+            <Col span="8" style="font-size: 24px">{{hcMess.arrivingportname}}</Col>
           </Row>
           <Row>
             <Col span="8">出发时间</Col>
@@ -82,17 +104,17 @@
             <Col span="8">预计到达时间</Col>
           </Row>
           <Row class="did">
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.departtime}}</Col>
             <Col span="8"> &nbsp;</Col>
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.eta}}</Col>
           </Row>
           <Row class="did">
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.departtime}}</Col>
             <Col span="8"> &nbsp;</Col>
-            <Col span="8">2019-12-32</Col>
+            <Col span="8">{{hcMess.eta}}</Col>
           </Row>
         </div>
-        <div class="hcmess" v-if="this.hcMess.length<=0">
+        <div class="hcmess" v-else>
           <Row>
             <Col span="8"></Col>
             <Col span="8">暂无航程信息</Col>
@@ -100,8 +122,7 @@
           </Row>
         </div>
         <div class="funcBox box_row rowAuto colItemCenter">
-
-          <div class="funcItemBox" @click="showPathHistory(ship.zdbh)">
+          <div class="funcItemBox" @click="showPathHistory(ship.mmsi)">
             <Icon type="md-git-pull-request"/>
             <div class="labelSty">
               查看历史轨迹
@@ -140,9 +161,11 @@
       </div>
 
       <div class="shipxq box_col_auto" v-if="tabIndex === 2">
-        <div class="shipname">设备编号 : {{ship.cbsbh}}</div>
+        <div v-if="ship.zdbh!=''&&ship.sbh!=''" class="shipname">设备编号 : {{ship.zdbh}}</div>
+        <div v-else class="shipname">设备编号 : {{ship.mmsi}}</div>
         <div class="shipmess">
-          <div>运行状态 : {{ship.zxzt}}</div>
+          <div v-if="ship.zdbh!=''&&ship.sbh!=''">运行状态 : {{ship.zxzt}}</div>
+          <div v-else >运行状态 : 正常</div>
           <div>安装船舶 : {{ship.cbsbh}}</div>
           <div>北斗设备编号 : {{ship.zdbh}}</div>
           <div>所属机构 : {{ship.jgmc}}</div>
@@ -150,8 +173,37 @@
           <div>定位坐标 : {{ship.dwzb}}</div>
           <div>航速 : {{ship.hs}}</div>
           <div>航向 : {{ship.hx}}</div>
-          <div>设备编号 : {{ship.zdbh}}</div>
+          <div>设备编号 : {{ship.sbh}}</div>
         </div>
+        <div v-if="ship.sbh!=''" class="funcBox box_row rowAuto colItemCenter">
+          <div class="funcItemBox" v-for="(it,index) in 3" :key="index" @click="ZP(ship.mmsi,index+1)">
+            <Icon type="md-qr-scanner"/>
+            <div class="labelSty">
+             {{index+1}}号通道拍照
+            </div>
+          </div>
+        </div>
+        <div  v-if="ship.sbh!=''" class="funcBox box_row rowAuto colItemCenter">
+          <div class="funcItemBox" v-for="(it,index) in 3" :key="index" @click="ZPsp(ship.mmsi,index+1)">
+            <Icon type="md-videocam"/>
+            <div class="labelSty">
+              {{index+1}}号通道视频
+            </div>
+          </div>
+        </div>
+        <div v-if="!sendAuthCode" style="text-align: center;color: #FFFFFF;font-weight: 600;font-size: 26px;padding-top: 20px">
+           请稍等{{auth_time}}s
+        </div>
+        <div v-if="sendAuthCode" style="padding-top: 20px">
+          <video  controls preload=""  id="video" style="width: 100%;">
+            <source :src="zpsp">
+          </video>
+<!--          <video :src="zpsp"></video>-->
+        </div>
+        <div style="padding-top: 20px">
+          <img :src="zp" alt="" style="height: 300px;width: 100%">
+        </div>
+
       </div>
       <div class="box_col_auto" v-if="tabIndex === 3">
         <Row class="shipycxq">
@@ -166,12 +218,11 @@
       </div>
       <div class="box_col_auto" v-if="tabIndex === 4">
 <!--        <Button @click="goVideoEvent('参数')" type="success">WATCH_VIDEO</Button>-->
-        <div style="text-align: center" v-for="(item,index) in videoList" v-if="item!=null">
+        <div style="text-align: center" v-for="(item,index) in file" v-if="item.imgUrl!=null">
           <h3 style="color: #FFFFFF">{{index+1}}号通道</h3>
-          <img v-if="!showvideo[index]" :src="videoimageList[index]"  style="width: 100%;height: 33%" alt="点击播放" @click="showVideo(index)">
-          <video v-if="showvideo[index]"
-                 data-setup='{"fluid":true,"aspectRatio":"16:9","autoplay":true}'
-                 :poster="videoimageList[index]"
+          <img v-show="!item.showModal" :src="item.imgUrl"  style="width: 100%;height: 33%" alt="点击播放" @click="item.showModal = !item.showModal">
+          <video v-show="item.showModal"
+                 :poster="item.videoUrl"
                  :id="'my-video' + index "
                  class="video-js vjs-default-skin"
                  controls preload="auto"
@@ -180,11 +231,9 @@
             <source :src="item" type="application/x-mpegURL">
           </video>
         </div>
-        <div v-if="videoList[o] == null" style="font-size: 32px;text-align: center;font-weight: 500">暂无视频信息</div>
+        <div v-if="videoList[0] == null" style="font-size: 32px;text-align: center;font-weight: 500">暂无视频信息</div>
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -221,14 +270,21 @@
     },
     data() {
       return {
+        sendAuthCode:true,/*布尔值，通过v-show控制显示‘获取按钮’还是‘倒计时’ */
+        auth_time: 0, /*倒计时 计数器*/
+        showtj :false,
+        loading1: false,
+        options1: [],
         showModal: false,
         tabIndex: null,
+        zp:'',
+        zpsp:'',
         zxztindex: 0,
         zxztlist: [
           {label: '全部', zt: ''},
-          {label: '在线', zt: '00'},
-          {label: '停泊', zt: '10'},
-          {label: '离线', zt: '20'},
+          {label: '在航', zt: '0'},
+          {label: '锚泊', zt: '1'},
+          {label: '离线', zt: '2'},
         ],
         tabList: [
           {label: '船舶,列表'},
@@ -241,23 +297,95 @@
         ship: {},
         videoList: [],
         videoimageList: [],
+        file:[{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
+        },{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
+        },{
+          imgUrl:'',
+          videoUrl:'',
+          showVideo:false
+        }],
+
         from: {
-          zxzt: '',
+          nav: '',
           con: '',
-          pageSize:100,
+          pageSize:200,
           pageNum:1
         },
-        hcMess:[],
-        showvideo:[false,false,false]
+        hcMess:{},
+        showvideo:[false,false,false],
+        tjList:[]
       }
     },
     created() {
       this.getshipMess()
+      this.getTj()
     },
     beforeDestroy: function () {
       player.dispose();
     },
     methods: {
+      ZPsp(a,b){
+        this.$http.post('/api/cl/lx',{mmsi:a,chn:b,sec:'30'}).then((res)=>{
+          if (res.code == 200){
+            this.zpsp = res.message
+            this.sendAuthCode = false;
+            this.auth_time = 120;
+            var auth_timetimer =  setInterval(()=>{
+              this.auth_time--;
+              if(this.auth_time<=0){
+                this.sendAuthCode = true;
+                clearInterval(auth_timetimer);
+              }
+            }, 1000);
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
+      ZP(a,b){
+        this.$http.post('/api/cl/zp',{mmsi:a,chn:b}).then((res)=>{
+          if (res.code == 200){
+              this.zp = res.message
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
+      getTj(){
+        this.$http.get('/api/cbcd/pager').then((res)=>{
+          if (res.code = 200){
+            this.tjList = res.page.list
+            res.page.list.forEach((it,index)=>{
+              it.json = JSON.parse(it.json)
+              if(index == res.page.list.length - 1){
+                this.tjList = res.page.list
+                console.log(this.tjjList);
+              }
+            })
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
+      remoteMethod1 (query) {
+        if (query !== '') {
+          this.loading1 = true;
+          setTimeout(() => {
+            this.loading1 = false;
+            this.options1 = this.shipData.filter(item => {
+              return item.mmsi.indexOf(query.toUpperCase()) != -1
+            })
+          }, 200);
+        } else {
+          this.options1 = [];
+        }
+      },
       goVideoEvent(pms){
         this.$router.push({
           name:'WATCH_VIDEO',
@@ -269,7 +397,7 @@
           }
         })
       },
-      showVideo(index){
+      showVideoEvent(index){
         console.log(index,'1');
         this.$nextTick(()=>{
           this.showvideo[index] = true
@@ -277,7 +405,11 @@
       },
       playVideo(id) {  //播放视频
         console.log(id);
-        videojs(id, {}, function (val) {
+        videojs(id, {
+          fluid:true,
+          aspectRatio:"16:9",
+          autoplay:true
+        }, function (val) {
           console.log(val, "--------")
           this.play();
         })
@@ -319,20 +451,19 @@
           this.ship.zxzt = '离线'
         }
         this.tabIndex = 1
-        this.getvideoImg(item.sbh)
-        this.getvideo(item.mmsi)
+
         this.gethcMess(item.mmsi)
         this.$emit('reflh', item)
       },
       gethcMess(mmsi) {
         this.$http.get('/api/cl/getCurrentVoyage', {params: {mmsi: mmsi}}).then((res) => {
-          if (res.code == 200) {
+          if (res.code == 200 && res.result) {
               this.hcMess = res.result
           }
         })
       },
-      showPathHistory(zdbh) {
-        this.$router.push({name: 'historyTarck_new', params: {zdbh:zdbh}});
+      showPathHistory(mmsi) {
+        this.$router.push({name: 'ship-trajectory',params:{mmsi:mmsi}});
       },
       showFance(id) {
         this.$parent.showFance(id)
@@ -360,6 +491,12 @@
           this.$Message.error('请先选择船舶')
           return
         }
+        if(index == 4){
+          this.getvideoImg(this.ship.sbh,this.ship.mmsi)
+          setTimeout(()=>{
+            this.getvideo(this.ship.mmsi)
+          },1000)
+        }
         this.$nextTick(() => {
           this.tabIndex = index;
           this.showModal = true;
@@ -368,7 +505,7 @@
       // 更改状态页签
       changezxztindex(index, zt) {
         this.zxztindex = index
-        this.from.zxzt = zt
+        this.from.nav = zt
         this.getshipMess()
       },
       // 调整Tab滚动
@@ -393,14 +530,18 @@
               this.$Message.error('当前暂无视频')
             }
             this.videoList = res.result
-            this.videoList = this.videoList.slice(0,3)
+            for (let i =0;i<3;i++){
+              this.file[i].videoUrl = this.videoList[i]
+              this.file[i].imgUrl = this.videoimageList[i]
+              this.file[i].showVideo =false
+            }
             console.log(this.videoList,'this.videoList');
           } else {
             this.$Message.error(res.message)
           }
         })
       },
-      getvideoImg(sbh) {
+      getvideoImg(sbh,item) {
         this.$http.post('/api/cl/photos', {sbh: sbh}).then((res) => {
           if (res.code == 200) {
             this.videoimageList = res.result
@@ -410,6 +551,11 @@
         setTimeout(() => {
           this.getvideoImg(sbh)
         }, 1000 * 60)
+      },
+      fqLr(item){
+        this.ship = item
+        this.tabIndex = 1
+        this.showModal = true
       },
       // 获取船舶
       getshipMess() {

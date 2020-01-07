@@ -2,7 +2,9 @@
 <template>
   <div class="box_col">
     <superSearch @addEvent="AddDataList"
-                 @getParams="setParams"></superSearch>
+                 @getParams="setParams"
+                 @getPagerData="getPageData"
+    ></superSearch>
     <Card class="shipMessBox">
       <div class="boxPadd_B">
         <div class="">
@@ -32,7 +34,14 @@
           </div>
         </div>
       </div>
-      <div :id="tabBox" class="centerBody">
+      <div :id="tabBox" class="centerBody" v-if="tableData.length<=0">
+         <Row>
+            <Col style="text-align: center;
+            font-size: 48px;font-weight: 700;
+            color: #d2d2d2;padding-top: 150px"> 暂无数据 </Col>
+         </Row>
+      </div>
+      <div v-else :id="tabBox" class="centerBody">
         <Row v-if="showCard" v-for="(row,rowIndex) in tableData" :data="row" :key="rowIndex">
           <Col span="6" v-for="(col,index) in row" :key="index">
             <car-item :data="col"
@@ -106,12 +115,12 @@
             key: 'shipname',
             align: 'center'
           }, {
-            title: '呼号',
-            key: 'callsign',
+            title: '终端编号',
+            key: 'zdbh',
             align: 'center'
           }, {
-            title: 'IMO',
-            key: 'imo',
+            title: '设备号',
+            key: 'sbh',
             align: 'center'
           },
           {
@@ -131,7 +140,128 @@
             title: '船籍',
             key: 'nationality',
             align: 'center'
-          },
+          },{
+            title: '操作',
+            key: 'action',
+            width: 180,
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '编辑车辆',
+                    },
+                  },
+                  [
+                    h('Button', {
+                      props: {
+                        type: 'success',
+                        icon: 'md-create',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          this.messType = false
+                          this.mess = params.row
+                          //由于数据传递丢失 司机ID 司机 姓名 单独传递
+                          this.derMes.sjId = params.row.sjId
+                          this.derMes.sjxm = params.row.sjxm
+                          this.compName = newmes
+                        }
+                      }
+                    }),
+                  ]
+                ),
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '历史轨迹',
+                    },
+                  },
+                  [
+                    h('Button', {//历史轨迹
+                      props: {
+                        type: 'warning',
+                        icon: 'ios-pulse',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          this.$router.push(
+                            {
+                              name: 'ship-trajectory',
+                              params:{ mmsi: params.row.mmsi }
+                            }
+                          );
+                        },
+                      }
+                    }),
+                  ]
+                ),
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '电子围栏',
+                    },
+                  },
+                  [
+                    h('Button', {//电子围栏展示
+                      props: {
+                        type: 'primary',
+                        icon: 'ios-globe-outline',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      style: {
+                        marginRight: '5px'
+                      },
+                      on: {
+                        click: () => {
+                          this.compName = bkShow
+                          this.mess = params.row
+                        }
+                      }
+                    }),
+                  ]
+                ),
+                h('Tooltip',
+                  {
+                    props: {
+                      placement: 'top',
+                      content: '删除车辆',
+                    },
+                  },
+                  [
+                    h('Button', {// 删除
+                      props: {
+                        type: 'error',
+                        icon: 'md-close',
+                        shape: 'circle',
+                        size: 'small'
+                      },
+                      on: {
+                        click: () => {
+                          this.listDele(params.row)
+                        }
+                      }
+                    })
+                  ]
+                ),
+              ]);
+            }
+          }
         ],
         mess: {},
         derMes: {
@@ -160,8 +290,9 @@
         data1: [],
         //收索
         param: {
+          con:'',
           jgdm:'',
-          zxzt:'',
+          nav:'',
           shiptype:'',
           pageNum: 1,
           pageSize: 8
@@ -190,11 +321,11 @@
         this.mess = car
         this.compName = allmes
       },
-      trace(car) {
+      trace(mmsi) {
         this.$router.push(
           {
-            name: 'historyTarck_new',
-            params: {zdbh: car.zdbh}
+            name: 'ship-trajectory',
+            params:{ mmsi:mmsi.mmsi }
           }
         );
       },
@@ -242,10 +373,17 @@
       getCxDict() {
         this.cxDict = this.dictUtil.getByCode(this, this.cxDictCode);
       },
-      getPageData() {
+      getPageData(a) {
         var v = this
         v.tableData = [];
         v.data1 = [];
+        console.log(a,'2');
+        if (a){
+          v.param.con = a
+        }
+        if(a == ''){
+          v.param.con = ''
+        }
         this.$http.get(this.apis.CLGL.QUERY, {params: v.param}).then((res) => {
           if (res.code == 200 && res.page.list) {
             let data = res.page.list;

@@ -10,6 +10,7 @@ import com.ldz.sys.base.BaseController;
 import com.ldz.sys.base.BaseService;
 import com.ldz.sys.model.SysYh;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.bean.Point;
 import com.ldz.util.commonUtil.WebcamUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -240,5 +241,44 @@ public class CbCtrl extends BaseController<Cb, String> {
 	public ApiResponse<String[]> getAllChnH5(String mmsi){
 		return clservice.getAllChnH5(mmsi);
 	}
+
+	/**
+	 * 查询轨迹点
+	 * @return
+	 */
+	@PostMapping("/newXc")
+	public ApiResponse<List<Point>> newXc(String mmsi, String start, String end){
+		return clservice.newXc(mmsi, start, end);
+	}
+
+	@PostMapping("/getCbs")
+	public ApiResponse<List<Map<String, String>>> getCbs(){
+		return clservice.getCbs();
+	}
+
+	/**
+	 * 抓拍
+	 * @param mmsi
+	 * @param chn
+	 * @return
+	 */
+	@PostMapping("/zp")
+	public ApiResponse<String> zp(String mmsi, String chn) throws IOException {
+		return clservice.zp(mmsi, chn);
+	}
+
+
+	/**
+	 * 实时录像
+	 * @param mmsi
+	 * @param chn
+	 * @return
+	 */
+	@PostMapping("/lx")
+	public ApiResponse<String> lx(String mmsi, String chn, int sec) throws IOException {
+		return clservice.lx(mmsi,chn, sec);
+	}
+
+
 
 }

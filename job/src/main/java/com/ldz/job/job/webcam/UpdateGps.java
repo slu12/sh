@@ -88,6 +88,7 @@ public class UpdateGps implements Job {
                 clGpsLs.setJd(new BigDecimal(split[1]));
                 clGpsLs.setWd(new BigDecimal(split[0]));
                 clGpsLs.setYxsd(clGps.getYxsd());
+                clGpsLs.setZdbh(sbh);
                 gpsLsMapper.insert(clGpsLs);
             }else{
                 ClGps clGps = new ClGps();
@@ -105,6 +106,7 @@ public class UpdateGps implements Job {
                 clGpsLs.setJd(new BigDecimal(split[1]));
                 clGpsLs.setWd(new BigDecimal(split[0]));
                 clGpsLs.setYxsd(clGps.getYxsd());
+                clGpsLs.setZdbh(sbh);
                 gpsLsMapper.insert(clGpsLs);
             }
         }

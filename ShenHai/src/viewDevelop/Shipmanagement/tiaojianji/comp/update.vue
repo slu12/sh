@@ -5,6 +5,7 @@
       title="修改条件集"
       :closable="false"
       :mask-closable="false"
+      width="60"
       @on-ok="ok"
       @on-cancel="cancel">
       <div>
@@ -26,9 +27,9 @@
               </RadioGroup>
             </div>
             <div>
-              <div>{{searchList.zxzt.label}}</div>
-              <RadioGroup type="button" szie="small" v-model="searchList.zxzt.key">
-                <Radio v-for="(it,index) in searchList.zxzt.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'zxzt')">{{it.val}}</Radio>
+              <div>{{searchList.nav.label}}</div>
+              <RadioGroup type="button" szie="small" v-model="searchList.nav.key">
+                <Radio v-for="(it,index) in searchList.nav.selectList" :key="index" :label="it.key" @click.native="getname(it.val,'nav')">{{it.val}}</Radio>
               </RadioGroup>
             </div>
             <div>
@@ -54,11 +55,11 @@
         cblxList:[],
         searchList: {
           jgdm: {
-            label: "所属机构：",
+            label: "港口信息：",
             key:'',
             selectList: []
           },
-          zxzt: {
+          nav: {
             label: "设备状态：",
             key:'',
             selectList: []
@@ -76,8 +77,8 @@
           json:{
             jgdm:'',
             jgdmname:'',
-            zxzt:'',
-            zxztname:'',
+            nav:'',
+            navname:'',
             shiptype:'',
             shiptypename:''
           }
@@ -85,27 +86,46 @@
       }
     },
     created(){
-      if (this.$parent.item){
-        var a = this.$parent.item.json
-        this.param.id = this.$parent.item.id
-        this.param.name = this.$parent.item.name
-        this.param.type = this.$parent.item.type
-        this.param.jgdm = a.jgdm
-        this.searchList.jgdm.key = a.jgdm
-        this.param.zxzt = a.zxzt
-        this.searchList.zxzt.key = a.zxzt
-        this.param.shiptype = a.shiptype
-        this.searchList.shiptype.key = a.shiptype
-        this.param.jgdmname = a.jgdmname
-        this.param.zxztname = a.zxztname
-        this.param.shiptypename = a.shiptypename
-      }
       let cblxList = this.dictUtil.getByCode(this, 'CBLX')
       this.searchList.shiptype.selectList = cblxList
       let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
-      this.searchList.zxzt.selectList = snztList
+      this.searchList.nav.selectList = snztList
       let cjList  = this.dictUtil.getByCode(this, 'CJ');
       this.searchList.jgdm.selectList = cjList
+      if (this.$parent.item){
+        this.param.json = {
+          portname:{
+            key:this.searchList.jgdm.key,
+            value:this.param.json.jgdmname
+          },
+          nav:{
+            key:this.searchList.nav.key,
+            value:this.param.json.navname
+          },
+          shiptype:{
+            key:this.searchList.shiptype.key,
+            value:this.param.json.shiptypename
+          },
+        }
+        var a = this.$parent.item.json
+        this.param.id = this.$parent.item.id
+        this.param.name = this.$parent.item.name
+        if (this.$parent.item.type == '公开'){
+          this.param.type = '0'
+        }else {
+          this.param.type = '1'
+        }
+        this.param.jgdm = a.portname.key
+        this.param.json.nav = a.nav.key
+        this.param.shiptype = a.shiptype.key
+        this.searchList.jgdm.key = a.portname.key
+        this.searchList.nav.key = a.nav.key
+        this.searchList.shiptype.key = a.shiptype.key
+        this.param.json.jgdmname = a.portname.value
+        this.param.json.navname = a.nav.value
+        this.param.json.shiptypename = a.shiptype.value
+      }
+
     },
     methods: {
       getname(val,e){
@@ -114,7 +134,7 @@
         }else if (e == 'jgdm'){
           this.param.json.jgdmname = val
         }else {
-          this.param.json.zxztname = val
+          this.param.json.navname = val
         }
       },
       getJGList() {//机构列表
@@ -137,9 +157,20 @@
         })
       },
       ok () {
-        this.param.json.zxzt = this.searchList.zxzt.key
-        this.param.json.shiptype = this.searchList.shiptype.key
-        this.param.json.jgdm = this.searchList.jgdm.key
+        this.param.json = {
+          portname:{
+            key:this.searchList.jgdm.key,
+            value:this.param.json.jgdmname
+          },
+          nav:{
+            key:this.searchList.nav.key,
+            value:this.param.json.navname
+          },
+          shiptype:{
+            key:this.searchList.shiptype.key,
+            value:this.param.json.shiptypename
+          },
+        }
         this.param.json = JSON.stringify(this.param.json);
         this.$http.post('/api/cbcd/update',this.param).then((res)=>{
           if (res.code == 200){

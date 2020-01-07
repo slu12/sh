@@ -37,7 +37,7 @@
                  </a>
                  <List border size="small">
                    <ListItem>船籍 : {{item.json.portname.value}}</ListItem>
-                   <ListItem>终端状态 : {{item.json.zxzt.value}}</ListItem>
+                   <ListItem>终端状态 : {{item.json.nav.value}}</ListItem>
                    <ListItem>船舶类别 : {{item.json.shiptype.value}}</ListItem>
                  </List>
                </Card>
@@ -114,6 +114,7 @@
 
                 res.page.list.forEach((it,index)=>{
                   it.json = JSON.parse(it.json)
+                  it.type = this.xsType(it.type)
                   if(index == res.page.list.length - 1){
                     this.tjjList = res.page.list
                     console.log(this.tjjList);

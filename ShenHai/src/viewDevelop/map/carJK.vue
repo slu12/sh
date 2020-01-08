@@ -28,11 +28,141 @@
 <template>
   <div style="height: 100%;background-color: #00FFFF;">
     <!--<car-info ref="carInfoButton"></car-info>-->
-    <div id="allmap"></div>
+    <div id="allmap1"></div>
+      <div id="viewDiv"></div>
   </div>
 </template>
 
+<script src="https://js.arcgis.com/4.14/"></script>
 <script>
+  require([
+    "esri/Map",
+    "esri/views/MapView",
+    "esri/Graphic",
+    "esri/layers/GraphicsLayer",
+    "esri/layers/MapImageLayer"
+  ], function(Map, MapView,Graphic,GraphicsLayer,MapImageLayer) {
+    var map = new Map({
+      basemap: "topo" // 基础地图
+    });
+
+    var view = new MapView({
+      container: "viewDiv", // 地图所在的div id
+      map: map,
+      center: [118.71511,32.09042], // 地图中心点
+      zoom: 8
+    });
+
+
+
+
+  // 官方提供的加载数据接口的方法
+  // 动态地图服务图层
+  var layerkml = new MapImageLayer({
+        url:"http://www.cjienc.com/arcgis/rest/services/CJ_Demo/MapServer"
+      });
+
+  map.add(layerkml);
+  //注意这里的显示层级，新增的图层会遮罩之前添加的图层
+  var graphicsLayer = new GraphicsLayer();
+    map.add(graphicsLayer);
+    // -----标点开始-----
+
+    var point = {
+       type: "point",
+       longitude: 118.71511, // 标点经度
+       latitude: 32.09042 // 标点纬度
+     };
+
+     var simpleMarkerSymbol = {
+       type: "simple-marker",
+       color: [226, 119, 40], // 点的颜色
+       outline: {
+         color: [255, 255, 255], // 边框颜色
+         width: 1 // 边框宽度
+       }
+     };
+
+     var pointGraphic = new Graphic({
+       geometry: point, // 点的位置
+       symbol: simpleMarkerSymbol // 点的样式
+     });
+
+     graphicsLayer.add(pointGraphic);
+     // -----标点结束-----
+
+     // ---画区域开始 ---
+     var polygon = {
+       type: "polygon",
+       rings: [
+         [120.81511,32.09042],
+         [121.81511,32.09042],
+         [121.81511,31.09042],
+         [120.81511,33.09042],
+       ]
+     };
+
+     var simpleFillSymbol = {
+       type: "simple-fill",
+       color: [227, 139, 79, 0.8],  // 颜色，透明度
+       outline: {
+         color: [255, 255, 255], // 边框颜色
+         width: 1   // 边框宽度
+       }
+     };
+
+     var polygonGraphic = new Graphic({
+       geometry: polygon,
+       symbol: simpleFillSymbol
+     });
+
+     graphicsLayer.add(polygonGraphic);
+     // ---画区域结束 ---
+
+    // -----画线开始-----
+     var simpleLineSymbol = {
+       type: "simple-line",
+       color: [226, 119, 40], // 颜色
+       width: 2
+     };
+
+     var polyline = {
+       type: "polyline",
+       paths: [
+         [118.71511,32.09042],
+         [119.71511,32.09042],
+         [119.71511,31.09042],
+         [118.71511,33.09042],
+       ]
+     };
+
+     var polylineGraphic = new Graphic({
+       geometry: polyline,
+       symbol: simpleLineSymbol
+     })
+     graphicsLayer.add(polylineGraphic);
+
+     // ----画线结束----
+
+     // ----添加图片开始-------
+     var pictureGraphic = new Graphic({
+      geometry: {
+        type: "point",
+        longitude: 118.71511,  // 图片位置
+        latitude: 32.09042
+      },
+      symbol: {
+        type: "picture-marker",
+        url: "https://developers.arcgis.com/labs/images/bluepin.png", // 图片地址
+        width: "14px", // 图片宽度
+        height: "26px" // 图片高度
+      }
+    });
+    graphicsLayer.add(pictureGraphic);
+     // ----添加图片结束-------
+  });
+
+
   export default {
     name: 'getmapdot',
     components: {},

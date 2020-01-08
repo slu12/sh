@@ -1030,6 +1030,12 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         return ApiResponse.success("http://223.240.68.90:9092/video/" + DateTime.now().toString("yyyy-MM-dd" )+ "/"  + filename);
     }
 
+    @Override
+    public ApiResponse<List<Map<String, String>>> getCbForDzwl() {
+        List<Map<String, String>> maps = entityMapper.getCbsForDzwl();
+        return ApiResponse.success(maps);
+    }
+
     public static int differentDaysByMillisecond(Date date1, Date date2) {
         int days = (int) ((date2.getTime() - date1.getTime()) / (1000 * 3600 * 24));
         return days;

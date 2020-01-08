@@ -279,6 +279,14 @@ public class CbCtrl extends BaseController<Cb, String> {
 		return clservice.lx(mmsi,chn, sec);
 	}
 
+	/**
+	 * 查询绑定设备的终端
+	 */
+	@PostMapping("/getCbForDzwl")
+	public ApiResponse<List<Map<String,String>>> getCbForDzwl(){
+		return clservice.getCbForDzwl();
+	}
+
 
 
 }

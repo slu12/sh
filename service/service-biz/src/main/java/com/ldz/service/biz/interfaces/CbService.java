@@ -71,4 +71,6 @@ public interface CbService extends BaseService<Cb,String>{
     ApiResponse<String> zp(String mmsi, String chn) throws IOException;
 
     ApiResponse<String> lx(String mmsi, String chn, int sec) throws IOException;
+
+    ApiResponse<List<Map<String, String>>> getCbForDzwl();
 }

@@ -54,4 +54,7 @@ public interface ClClMapper extends Mapper<Cb> {
 
 	@Select(" select shipname,mmsi,cl_id clId from cl_cl")
     List<Map<String,String>> getCbs();
+
+	@Select(" select shipname,mmsi,cl_id clId from cl_cl where  (zdbh is not null or zdbh != '' ) or (sbh is not null or sbh != '')")
+	List<Map<String,String>> getCbsForDzwl();
 }

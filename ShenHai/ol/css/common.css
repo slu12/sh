@@ -1,0 +1,41 @@
+/* 公共css */
+
+
+/* 提示语css */
+.ts{
+    padding-left:15px;
+    color:#cc0000;
+    line-height: 29px;
+}
+
+/* 弹窗内容提示语css */
+.ui-dialog p {
+	line-height: 40px;
+}
+
+/* 超出隐藏  */
+.hiddexText {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+    display: block;
+    white-space: nowrap;
+}
+
+@media only screen and (max-width:480px) {
+	.hiddexText {
+    width: 300px;
+    display: block;
+    white-space: normal;
+}
+}
+
+/* 文字缩进  */
+input {
+	text-indent: 5px;
+}
+
+/* 列表中的按钮样式   */
+[class^="icon-"], [class*=" icon-"] {
+    line-height: inherit;
+}

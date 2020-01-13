@@ -33,135 +33,164 @@
   </div>
 </template>
 
-<script src="https://js.arcgis.com/4.14/"></script>
+//<script src="https://js.arcgis.com/4.14/"></script>
 <script>
-  require([
-    "esri/Map",
-    "esri/views/MapView",
-    "esri/Graphic",
-    "esri/layers/GraphicsLayer",
-    "esri/layers/MapImageLayer"
-  ], function(Map, MapView,Graphic,GraphicsLayer,MapImageLayer) {
-    var map = new Map({
-      basemap: "topo" // 基础地图
-    });
+  var points = []
+    // 标记分组，当地图缩放等级较低时，只显示该区域有多少个标记
+    var areaMap = new Map()
+    // 地图是否缩放完毕
+    var stationary = false
 
-    var view = new MapView({
-      container: "viewDiv", // 地图所在的div id
-      map: map,
-      center: [118.71511,32.09042], // 地图中心点
-      zoom: 8
-    });
+    // 重置标记分组数据
+    function resetAreaMap(){
+      areaMap = new Map()
+    }
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/Graphic",
+      "esri/layers/GraphicsLayer",
+      "esri/layers/MapImageLayer"
+    ], function(Map, MapView,Graphic,GraphicsLayer,MapImageLayer) {
+      var map = new Map({
+        basemap: "topo" // 基础地图
+      });
+      var defaultZoom = 8
 
-
-
-
-  // 官方提供的加载数据接口的方法
-  // 动态地图服务图层
-  var layerkml = new MapImageLayer({
-        url:"http://www.cjienc.com/arcgis/rest/services/CJ_Demo/MapServer"
+      var view = new MapView({
+        container: "viewDiv", // 地图所在的div id
+        map: map,
+        center: [118.71511,32.09042], // 地图中心点
+        zoom: defaultZoom
       });
 
-  map.add(layerkml);
-  //注意这里的显示层级，新增的图层会遮罩之前添加的图层
-  var graphicsLayer = new GraphicsLayer();
-    map.add(graphicsLayer);
-    // -----标点开始-----
+      // 官方提供的加载数据接口的方法
+      // 动态地图服务图层
+      var layerkml = new MapImageLayer({
+            url:"http://www.cjienc.com/arcgis/rest/services/CJ_Demo/MapServer"
+          });
 
-    var point = {
-       type: "point",
-       longitude: 118.71511, // 标点经度
-       latitude: 32.09042 // 标点纬度
-     };
+      map.add(layerkml);
+      //注意这里的显示层级，新增的图层会遮罩之前添加的图层
+      var graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
 
-     var simpleMarkerSymbol = {
-       type: "simple-marker",
-       color: [226, 119, 40], // 点的颜色
-       outline: {
-         color: [255, 255, 255], // 边框颜色
-         width: 1 // 边框宽度
-       }
-     };
+      // 加载图片标记
+      reloadPoint(points,defaultZoom)
 
-     var pointGraphic = new Graphic({
-       geometry: point, // 点的位置
-       symbol: simpleMarkerSymbol // 点的样式
-     });
+      // 监听缩放事件
+      view.watch("zoom",function(e){
+        if (!stationary){
+          zoomChange(e)
+        }
+      })
 
-     graphicsLayer.add(pointGraphic);
-     // -----标点结束-----
+      // 监听地图是否缩放完毕
+      view.watch("stationary",function(e){
+        stationary = e
+      })
 
-     // ---画区域开始 ---
-     var polygon = {
-       type: "polygon",
-       rings: [
-         [120.81511,32.09042],
-         [121.81511,32.09042],
-         [121.81511,31.09042],
-         [120.81511,33.09042],
-       ]
-     };
+      // 当地图缩放，或者数据重新加载时，重新绘制地图标记
+      function reloadPoint(pointData, zoom){
+        zoom = parseInt(zoom)
+        var lngd = 400 / zoom
+        var latd = 400 / zoom
 
-     var simpleFillSymbol = {
-       type: "simple-fill",
-       color: [227, 139, 79, 0.8],  // 颜色，透明度
-       outline: {
-         color: [255, 255, 255], // 边框颜色
-         width: 1   // 边框宽度
-       }
-     };
+        graphicsLayer.removeAll()
+        resetAreaMap()
 
-     var polygonGraphic = new Graphic({
-       geometry: polygon,
-       symbol: simpleFillSymbol
-     });
+        // 如果缩放等级较高，则显示具体标记点
+        if (zoom >= 12){
+          showPointDetail()
+          return
+        }
 
-     graphicsLayer.add(polygonGraphic);
-     // ---画区域结束 ---
+        // 地图标记按区域分组
+        for (var item of eval(pointData)) {
+          let name = getAreaName(item.lng,item.lat,lngd,latd)
+          let val = areaMap.get(name)
+          if (val == null){
+            areaMap.set(name,1)
+          }else{
+            areaMap.set(name,val +  1)
+          }
+        }
+        
+        // 将分组数据加载到地图上
+        for (let r of areaMap){
+          let index = r[0].indexOf("_")
+          let lng = parseFloat(r[0].substring(0,index))
+          let lat = parseFloat(r[0].substring(index+1,r[0].length))
 
-    // -----画线开始-----
-     var simpleLineSymbol = {
-       type: "simple-line",
-       color: [226, 119, 40], // 颜色
-       width: 2
-     };
+          lng = lng / 100
+          lat = lat / 100
 
-     var polyline = {
-       type: "polyline",
-       paths: [
-         [118.71511,32.09042],
-         [119.71511,32.09042],
-         [119.71511,31.09042],
-         [118.71511,33.09042],
-       ]
-     };
+          addTextMarker(graphicsLayer,lng,lat,r[1])
+        }
+      }
 
-     var polylineGraphic = new Graphic({
-       geometry: polyline,
-       symbol: simpleLineSymbol
-     })
-     graphicsLayer.add(polylineGraphic);
+      // 显示具体标记
+      function showPointDetail(){
+        for (var item of eval(points)) {
+          addImgMarker(graphicsLayer,item.lng,item.lat,0,"https://developers.arcgis.com/labs/images/bluepin.png",14,26)
+        }
+      }
+      
+      // 获取分组的名字
+      function getAreaName(lng,lat,lngd,latd) {
+        return parseInt(lng * 100  / lngd) * lngd + "_"+ parseInt(lat * 100  / latd) * latd
+      }
 
-     // ----画线结束----
+      // 添加图片标记
+      function addImgMarker(layer,lng,lat,angle,url,width,height) {
+        if (width == null){
+          width = 14
+        }
+        if (height == null){
+          height = 26
+        }
+        // ----添加图片开始-------
+        var pictureGraphic = new Graphic({
+          geometry: {
+            type: "point",
+            longitude: lng,  // 图片位置
+            latitude: lat
+          },
+          symbol: {
+            angle:angle,
+            type: "picture-marker",
+            url: url, // 图片地址
+            width: width + "px", // 图片宽度
+            height: height+ "px" // 图片高度
+          }
+        });
+        layer.add(pictureGraphic);
+      }
 
-     // ----添加图片开始-------
-     var pictureGraphic = new Graphic({
-      geometry: {
-        type: "point",
-        longitude: 118.71511,  // 图片位置
-        latitude: 32.09042
-      },
-      symbol: {
-        type: "picture-marker",
-        url: "https://developers.arcgis.com/labs/images/bluepin.png", // 图片地址
-        width: "14px", // 图片宽度
-        height: "26px" // 图片高度
+      // 添加文字标记
+      function addTextMarker(graphicsLayer,lng,lat,text) {
+        var textGraphic = new Graphic({
+          geometry: {
+            type: "point",
+            longitude:lng,
+            latitude: lat
+          },
+          symbol: {
+            type: "text",
+            color: [25,25,25],
+            haloColor: [255,0,255],
+            haloSize: "20px",
+            text: text,
+            xoffset: 0,
+            yoffset: 0,
+            font: {
+              size: 12
+            }
+          }
+        });
+        graphicsLayer.add(textGraphic);
       }
     });
-    graphicsLayer.add(pictureGraphic);
-     // ----添加图片结束-------
-  });
-
 
   export default {
     name: 'getmapdot',

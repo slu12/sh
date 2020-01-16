@@ -1,5 +1,0 @@
-// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
-// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
-//>>built
-define({"dojo/cldr/nls/number":{scientificFormat:"#E0","currencySpacing-afterCurrency-currencyMatch":"[:^S:]",infinity:"\u221e",superscriptingExponent:"\u00d7",list:";",percentSign:"%",minusSign:"-","currencySpacing-beforeCurrency-surroundingMatch":"[:digit:]","decimalFormat-short":"000\u00a0\u0442\u0440\u043b\u043d","currencySpacing-afterCurrency-insertBetween":"\u00a0",nan:"NaN",plusSign:"+","currencySpacing-afterCurrency-surroundingMatch":"[:digit:]","currencySpacing-beforeCurrency-currencyMatch":"[:^S:]",
-currencyFormat:"#,##0.00\u00a4;(#,##0.00\u00a4)",perMille:"\u2030",group:"\u00a0",percentFormat:"#,##0%","decimalFormat-long":"000 \u0442\u0440\u0438\u043b\u044c\u0439\u043e\u043d\u0430",decimalFormat:"#,##0.###",decimal:",","currencySpacing-beforeCurrency-insertBetween":"\u00a0",exponential:"\u0415",timeSeparator:":","currencyFormat-short":"000\u00a0\u0442\u0440\u043b\u043d\u00a0\u00a4",_localized:{}}});

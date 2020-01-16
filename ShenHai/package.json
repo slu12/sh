@@ -41,7 +41,8 @@
     "vuedraggable": "^2.16.0",
     "vuex": "^3.0.1",
     "wangeditor": "^3.1.1",
-    "xlsx": "^0.13.3"
+    "xlsx": "^0.13.3",
+    "arcgis-js-api": "~4.13.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.1",
@@ -54,7 +55,8 @@
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "lint-staged": "^6.0.0",
-    "vue-template-compiler": "^2.5.13"
+    "vue-template-compiler": "^2.5.13",
+    "grunt-dojo": "^1.1.1"
   },
   "browserslist": [
     "> 1%",

@@ -1,0 +1,10 @@
+git clone https://github.com/eile/draco.git
+cd draco
+git checkout esri
+mkdir build
+cd build
+source ~/dev/emsdk-1.38.31/emsdk_env.sh
+cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${EMSCRIPTEN}/cmake/Modules/Platform/Emscripten.cmake -DENABLE_EXTRA_SPEED=ON -DENABLE_WASM=ON ..
+ninja
+cp draco_decoder.js draco_decoder.wasm ../../arcgis-js-api-4/esri/libs/draco/
+sed -i 's/const version/var version/' ../../arcgis-js-api-4/esri/libs/draco/draco_decoder.js

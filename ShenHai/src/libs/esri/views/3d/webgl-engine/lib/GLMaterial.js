@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../../../core/tsSupport/declareExtendsHelper ../../../../core/tsSupport/decorateHelper ../../../../core/accessorSupport/decorators ./AutoDisposable".split(" "),function(b,d,f,g,e,h){Object.defineProperty(d,"__esModule",{value:!0});b=function(b){function a(a){var c=b.call(this)||this;c.material=a.material;c.programRep=a.programRep;c.techniqueRep=a.techniqueRep;return c}f(a,b);a.prototype.isVisible=function(){return this.material.isVisible()};a.prototype.isVisibleInPass=function(a){return this.material.isVisibleInPass(a)};
+a.prototype.getPrograms=function(){return[this.getProgram()]};a.prototype.getDrawMode=function(){return 4};a.prototype.ensureResources=function(a){return 0};a.prototype.ensureAttributeLocations=function(a){this.getProgram().assertCompatibleVertexAttributeLocations(a)};return a=g([e.subclass("esri.views.3d.webgl-engine.lib.GLMaterial")],a)}(e.declared(h.AutoDisposable));d.GLMaterial=b});

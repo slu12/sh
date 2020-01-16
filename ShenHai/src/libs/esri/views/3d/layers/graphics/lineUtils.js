@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../../../core/typedArrayUtil","../../webgl-engine/lib/GeometryData","../../webgl-engine/lib/Util"],function(q,b,k,l,p){function m(a){var c=a.length;return a[0]===a[c-3]&&a[1]===a[c-2]&&a[2]===a[c-1]}function n(a,c,d){var e=m(a)&&1===d,g=a.length/3-(e?1:0);d=new Uint32Array(2*(g-1));a=e&&a?k.slice(a,0,a.length-3):a;for(var e=e&&c?k.slice(c,0,c.length-3):c,h=0,b=0;b<g-1;b++)d[h++]=b,d[h++]=b+1;g={};h={};g[f.POSITION]=d;h[f.POSITION]={size:3,data:a,offsetIdx:0,strideIdx:3};
+c&&(g.mapPos=d,h.mapPos={size:3,data:e,offsetIdx:0,strideIdx:3});return new l.GeometryData(h,g,l.GeometryData.DefaultOffsets,"line")}Object.defineProperty(b,"__esModule",{value:!0});var f=p.VertexAttrConstants;b.isClosed=m;b.createPolylineGeometryData=n;b.createPolylineGeometry=function(a,c,d,e,b){a=n(a,c,b);a.vertexAttributes[f.COLOR]={size:4,data:d,offsetIdx:0,strideIdx:4};d=new Float32Array(1);d[0]=e;a.vertexAttributes[f.SIZE]={size:1,data:d,offsetIdx:0,strideIdx:1};e=new Uint32Array(a.vertexAttributes[f.POSITION].data.length);
+a.indices[f.COLOR]=e;a.indices[f.SIZE]=e;return a}});

@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../core/maybe"],function(h,c,d){function e(a,b){var c=d.isSome(a)?a.hasZ:!1;return d.isNone(b)?c?"absolute-height":"on-the-ground":"relative-to-ground"!==b.mode||!d.isNone(b.offset)&&0!==b.offset||!d.isSome(a)||"point"!==a.type||c&&0!==a.z?b.mode:"on-the-ground"}function g(a){var b=f(a);return e(a.geometry,b)}function f(a){return a.layer&&"elevationInfo"in a.layer?a.layer.elevationInfo:null}Object.defineProperty(c,"__esModule",{value:!0});c.getGeometryEffectiveElevationMode=
+e;c.getGraphicEffectiveElevationMode=g;c.getGraphicEffectiveElevationInfo=function(a){var b=f(a);a=e(a.geometry,b);var c=d.isSome(b)&&"on-the-ground"!==a?b.offset:0,b=d.isSome(b)&&"on-the-ground"!==a?b.featureExpressionInfo:null;return{mode:a,offset:c,featureExpressionInfo:b}};c.hasGraphicFeatureExpressionInfo=function(a){if("on-the-ground"===g(a))return!1;a=f(a);a=d.isSome(a)&&a.featureExpressionInfo?a.featureExpressionInfo.expression:null;return!(!a||"0"===a)}});

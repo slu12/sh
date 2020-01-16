@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../lib/DefaultVertexAttributeLocations","./sources/resolver"],function(d,b,c,a){Object.defineProperty(b,"__esModule",{value:!0});b.composite={name:"offscreen-composite",shaders:{vertexShader:a.resolveIncludes("renderer/offscreen/offscreen.vert"),fragmentShader:a.resolveIncludes("renderer/offscreen/composite.frag")},attributes:c.Default3D};b.compositeTransparentToHUDVisibility={name:"offscreen-composite-transparent-to-hud-visibility",shaders:{vertexShader:a.resolveIncludes("renderer/offscreen/offscreen.vert"),
+fragmentShader:a.resolveIncludes("renderer/offscreen/compositeTransparentToHUDVisibility.frag")},attributes:c.Default3D};b.compositeOccluded={name:"offscreen-composite-occluded",shaders:{vertexShader:a.resolveIncludes("renderer/offscreen/offscreen.vert"),fragmentShader:a.resolveIncludes("renderer/offscreen/compositeOccluded.frag")},attributes:c.Default3D}});

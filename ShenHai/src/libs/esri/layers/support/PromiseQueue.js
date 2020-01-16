@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../core/promiseUtils"],function(e,f,c){Object.defineProperty(f,"__esModule",{value:!0});e=function(){function a(){this._deferreds=[];this._values=[]}a.prototype.push=function(a){var b=this;return c.create(function(d,c){b._deferreds.push({resolve:d,reject:c});b._values.push(a)})};a.prototype.unshift=function(a){var b=this;return c.create(function(d,c){b._deferreds.unshift({resolve:d,reject:c});b._values.unshift(a)})};Object.defineProperty(a.prototype,"length",{get:function(){return this._deferreds.length},
+enumerable:!0,configurable:!0});a.prototype.process=function(){if(0===this.length)return!1;this._deferreds.shift().resolve(this._values.shift());return!0};a.prototype.cancelAll=function(){for(var a=c.createAbortError(),b=0,d=this._deferreds;b<d.length;b++)d[b].reject(a);this._deferreds.length=0;this._values.length=0};return a}();f.PromiseQueue=e});

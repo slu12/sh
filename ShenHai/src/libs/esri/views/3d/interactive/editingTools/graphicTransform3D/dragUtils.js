@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../../../../core/maybe ../../../../../core/screenUtils ../../../../../core/libs/gl-matrix-2/vec3f64 ../../../support/geometryUtils ../../../support/stack".split(" "),function(p,d,f,e,h,b,k){Object.defineProperty(d,"__esModule",{value:!0});d.createDragHandler=function(a,b,e){var c=null;return a.events.on("drag",function(a){"start"===a.action&&(c=b(a));if(!f.isNone(c)){var m=c(a);f.isSome(m)&&e(m);"end"===a.action&&(c=null)}})};d.createCartesianPlaneDrag=function(a,d,f){a=
+e.screenPointObjectToArray(a.start,e.castScreenPointArray(k.sv2d.get()));a=b.ray.fromScreen(d.state.camera,a,n);var c=h.vec3f64.create(),l=h.vec3f64.create();return b.plane.intersectRay(f,a,c)?function(a){var g=e.screenPointObjectToArray(a.screenPoint,e.castScreenPointArray(k.sv2d.get())),g=b.ray.fromScreen(d.state.camera,g,n);return b.plane.intersectRay(f,g,l)?{action:a.action,start:c,end:l}:null}:null};var n=b.ray.create()});

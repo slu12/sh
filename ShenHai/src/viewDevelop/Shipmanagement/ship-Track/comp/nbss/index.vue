@@ -436,7 +436,7 @@
             this.$nextTick(()=>{
               this.tabIndex = 0
             });
-            this.$parent.initGps(this.shipData)
+            // this.$parent.initGps(this.shipData)
           }
         })
       },
@@ -575,7 +575,7 @@
 
             }
 
-            this.$parent.initGps(this.shipData)
+            // this.$parent.initGps(this.shipData)
           }
         })
       }

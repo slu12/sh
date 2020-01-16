@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../core/tsSupport/declareExtendsHelper ../../core/tsSupport/decorateHelper ../../core/JSONSupport ../../core/lang ../../core/accessorSupport/decorators ./BuildingFilterMode ./BuildingFilterModeSolid ./BuildingFilterModeWireFrame".split(" "),function(p,q,h,d,k,l,c,m,e,g){var n={types:{key:"type",base:m,typeMap:{solid:e,"wire-frame":g}},json:{read:function(b){switch(b&&b.type){case "solid":return e.fromJSON(b);case "wireFrame":return g.fromJSON(b);default:return null}},write:{enabled:!0,
+isRequired:!0}}};return function(b){function a(){var a=null!==b&&b.apply(this,arguments)||this;a.filterExpression=null;a.filterMode=new e;a.title="";return a}h(a,b);f=a;a.prototype.clone=function(){return new f({filterExpression:this.filterExpression,filterMode:l.clone(this.filterMode),title:this.title})};var f;d([c.property({type:String,json:{write:{enabled:!0,isRequired:!0}}})],a.prototype,"filterExpression",void 0);d([c.property(n)],a.prototype,"filterMode",void 0);d([c.property({type:String,json:{write:{enabled:!0,
+isRequired:!0}}})],a.prototype,"title",void 0);return a=f=d([c.subclass("esri.layers.support.BuildingFilterBlock")],a)}(c.declared(k.JSONSupport))});

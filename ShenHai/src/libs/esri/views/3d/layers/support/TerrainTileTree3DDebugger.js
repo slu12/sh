@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../../../core/tsSupport/decorateHelper ../../../../core/tsSupport/declareExtendsHelper ../../../../core/accessorSupport/decorators ../../../../geometry/support/aaBoundingRect ./TileTree3DDebugger".split(" "),function(a,d,f,g,e,h,k){Object.defineProperty(d,"__esModule",{value:!0});a=function(a){function c(b){b=a.call(this,b)||this;b.enablePolygons=!1;return b}g(c,a);c.prototype.update=function(){var b=this;this.clear();if(this.enabled){var a=this.view.basemapTerrain.getRenderedTiles();
+this._update(a,function(a){return h.toExtent(a.extent,b.view.basemapTerrain.spatialReference)},{})}};return c=f([e.subclass("esri.views.3d.layers.support.TerrainTileTree3DDebugger")],c)}(e.declared(k.TileTree3DDebugger));d.TerrainTileTree3DDebugger=a});

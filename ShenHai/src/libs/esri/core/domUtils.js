@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../widgets/support/widget"],function(f,b,e){function c(a){return e.isWidgetBase(a)?a.domNode:a}Object.defineProperty(b,"__esModule",{value:!0});b.show=function(a){if(a=c(a))a.style.display="block"};b.getNode=c;b.hide=function(a){if(a=c(a))a.style.display="none"};b.toggle=function(a){if(a=c(a))a.style.display="none"===a.style.display?"block":"none"};b.byId=function(a){return"string"===typeof a?document.getElementById(a):a};b.empty=function(a){for(;a.hasChildNodes();)a.removeChild(a.firstChild)};
+b.insertAfter=function(a,d){var b=d.parentNode;b&&(b.lastChild===d?b.appendChild(a):b.insertBefore(a,d.nextSibling))};b.insertBefore=function(a,b){var d=b.parentNode;d&&d.insertBefore(a,b)};b.reparent=function(a,b){for(;a.hasChildNodes();)b.appendChild(a.firstChild)};b.remove=function(a){a.parentNode&&a.parentNode.removeChild(a)};b.closest=function(){if(Element.prototype.closest)return function(a,b){return a.closest(b)};var a=Element.prototype.matches||Element.prototype.msMatchesSelector;return function(b,
+c){do{if(a.call(b,c))return b;b=b.parentElement}while(null!==b&&1===b.nodeType);return null}}()});

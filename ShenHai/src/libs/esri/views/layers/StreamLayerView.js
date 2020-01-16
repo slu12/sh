@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../core/tsSupport/declareExtendsHelper ../../core/tsSupport/decorateHelper ../../core/Handles ../../core/watchUtils ../../core/accessorSupport/decorators ./support/FeatureFilter".split(" "),function(l,d,f,e,g,h,a,k){Object.defineProperty(d,"__esModule",{value:!0});d.StreamLayerView=function(d){return function(d){function b(){for(var b=[],a=0;a<arguments.length;a++)b[a]=arguments[a];var c=d.apply(this,b)||this;c._handles=new g;c.connectionError=null;c.connectionStatus="disconnected";
+c.filter=null;c._handles.add(h.on(c,"controller","data-received",function(a){c.emit("data-received",a)}));return c}f(b,d);e([a.property({aliasOf:"controller.connection.connectionError",readOnly:!0})],b.prototype,"connectionError",void 0);e([a.property({aliasOf:"controller.connection.connectionStatus",readOnly:!0})],b.prototype,"connectionStatus",void 0);e([a.property()],b.prototype,"controller",void 0);e([a.property({type:k})],b.prototype,"filter",void 0);return b=e([a.subclass("esri.layers.mixins.StreamLayerView")],
+b)}(a.declared(d))}});

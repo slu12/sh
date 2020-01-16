@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../core/tsSupport/generatorHelper","../../core/tsSupport/awaiterHelper","../cim/CIMSymbolRasterizer"],function(t,c,n,p,q){Object.defineProperty(c,"__esModule",{value:!0});var r=new q(null,!0);c.previewCIMSymbol=function(c,b){return p(this,void 0,void 0,function(){var g,h,k,d,e,a,l,f;return n(this,function(m){switch(m.label){case 0:return g=b&&b.size?b.size:null,h=b&&b.maxSize?b.maxSize:null,k=Math.min(g||22,h||120),d=3,[4,r.rasterizeCIMSymbolAsync(c,null,null,{targetSize:k*
+d})];case 1:return e=m.sent(),a=document.createElement("canvas"),a.width=e.imageData.width,a.height=e.imageData.height,l=a.getContext("2d"),l.putImageData(e.imageData,0,0),f=new Image(a.width/d,a.height/d),f.src=a.toDataURL(),[2,f]}})})}});

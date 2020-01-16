@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../../core/tsSupport/generatorHelper ../../../core/tsSupport/awaiterHelper @dojo/framework/shim/array ../../../core/maybe ../../../layers/support/fieldUtils".split(" "),function(x,d,u,v,w,k,g){Object.defineProperty(d,"__esModule",{value:!0});d.getRequiredFields=function(a,c){void 0===c&&(c=a.popupTemplate);return v(this,void 0,void 0,function(){var d,n,e,l,f,b,p,q,r,t,m;return u(this,function(h){switch(h.label){case 0:return k.isSome(c)?[4,c.getRequiredFields(a.fields)]:
+[2,[]];case 1:d=h.sent();n=c.lastEditInfoEnabled;e=a.objectIdField;l=a.typeIdField;f=a.globalIdField;if(w.includes(d,"*"))return[2,["*"]];p=g.fixFields;q=[a.fields];t=(r=d).concat;return(m=n)?[4,g.getFeatureEditFields(a)]:[3,3];case 2:m=h.sent(),h.label=3;case 3:return b=p.apply(void 0,q.concat([t.apply(r,[m||null])])),l&&b.push(l),b&&e&&g.hasField(a.fields,e)&&-1===b.indexOf(e)&&b.push(e),b&&f&&g.hasField(a.fields,f)&&-1===b.indexOf(f)&&b.push(f),[2,b]}})})};d.getFetchPopupTemplate=function(a,c){return a.popupTemplate?
+a.popupTemplate:k.isSome(c)&&c.defaultPopupTemplateEnabled&&k.isSome(a.defaultPopupTemplate)?a.defaultPopupTemplate:null}});

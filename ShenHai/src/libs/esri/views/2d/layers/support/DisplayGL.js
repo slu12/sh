@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../../../core/tsSupport/extendsHelper","../../engine","../../ViewState"],function(h,k,m,l,n){Object.defineProperty(k,"__esModule",{value:!0});h=function(g){function f(c){var a=g.call(this)||this;a.layerView=c;a._childrenRenderParameters={context:null,pixelRatio:1,state:new n,stationary:!0};a.requestRender=a.requestRender.bind(a);return a}m(f,g);f.prototype.attach=function(){return g.prototype.attach.call(this)};f.prototype.detach=function(){g.prototype.detach.call(this)};
+f.prototype.doRender=function(c){if(c.drawPhase===l.enums.WGLDrawPhase.MAP&&this.layerView.attached){var a=window.devicePixelRatio,b=this.stage.context,e=c.state,d=this._childrenRenderParameters;d.context=b.gl;d.state.copy(e);d.state.pixelRatio=a;d.stationary=c.stationary;a=b.getBoundFramebufferObject();e=b.getViewport();b.resetState();b.bindFramebuffer(a);b.setViewport(0,0,d.state.size[0]*c.pixelRatio,d.state.size[1]*c.pixelRatio);this.layerView.render(d);b.enforceState();b.setViewport(e.x,e.y,e.width,
+e.height)}};return f}(l.DisplayObject);k.DisplayGL=h;k.default=h});

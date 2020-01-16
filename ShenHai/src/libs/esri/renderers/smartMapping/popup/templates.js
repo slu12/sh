@@ -1,0 +1,4 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../../core/tsSupport/generatorHelper","../../../core/tsSupport/awaiterHelper","./predominance"],function(h,a,c,f,g){Object.defineProperty(a,"__esModule",{value:!0});a.getTemplates=function(a){return f(this,void 0,void 0,function(){var b,d,e;return c(this,function(c){b=a.renderer;d=a.layer;e=b.authoringInfo&&b.authoringInfo.type;return"unique-value"===b.type&&"predominance"===e?[2,g.getTemplates({renderer:b,layer:d})]:[2,null]})})}});

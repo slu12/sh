@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports dojo/_base/kernel ./core/has ./core/promiseUtils ./support/revision".split(" "),function(f,a,g,d,h,e){Object.defineProperty(a,"__esModule",{value:!0});a.revision=e.commitHash;(function(){var b=g.config,c=b.has&&void 0!==b.has["config-deferredInstrumentation"],a=b.has&&void 0!==b.has["config-useDeferredInstrumentation"];void 0!==b.useDeferredInstrumentation||c||a||(d.add("config-deferredInstrumentation",!1,!0,!0),d.add("config-useDeferredInstrumentation",!1,!0,!0))})();a.version=
+"4.14";a.workerMessages={request:function(b){return h.create(function(c){f(["./request"],c)}).then(function(c){var a=b.options||{};a.responseType="array-buffer";return c(b.url,a)}).then(function(a){return{result:{data:a.data,ssl:a.ssl},transferList:[a.data]}})}};!d("host-webworker")&&d("esri-console-log-version")&&console.debug("Using ArcGIS API for JavaScript "+a.version+" [Date: "+e.buildDate+", Revision: "+e.commitHash.slice(0,8)+"]")});

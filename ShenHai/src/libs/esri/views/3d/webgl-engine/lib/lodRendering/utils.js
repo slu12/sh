@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../doublePrecisionUtils"],function(k,d,h){Object.defineProperty(d,"__esModule",{value:!0});d.acquireGLMaterials=function(a,b){var c={};c[0]=b.acquire(a,"color");c[3]=b.acquire(a,"depthShadowMap");c[2]=b.acquire(a,"normal");c[1]=b.acquire(a,"depth");c[4]=b.acquire(a,"highlight");return c};d.releaseGLMaterials=function(a,b){b.release(a.id,"color");b.release(a.id,"depthShadowMap");b.release(a.id,"normal");b.release(a.id,"depth");b.release(a.id,"highlight")};d.encodeDoubleVec3=
+function(a,b,c,d,f){g[0]=a.get(b,0);g[1]=a.get(b,1);g[2]=a.get(b,2);h.encodeDoubleArray(g,e,3);c.set(f,0,e[0]);d.set(f,0,e[1]);c.set(f,1,e[2]);d.set(f,1,e[3]);c.set(f,2,e[4]);d.set(f,2,e[5])};var g=new Float64Array(3),e=new Float32Array(6)});

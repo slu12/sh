@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../../core/tsSupport/generatorHelper ../../../core/tsSupport/awaiterHelper ../../../core/tsSupport/assignHelper ../../../core/Error ../../../core/promiseUtils ./support/utils ../support/utils".split(" "),function(p,q,e,f,k,g,l,m,h){function n(c){return f(this,void 0,void 0,function(){var a,d,b,f;return e(this,function(e){switch(e.label){case 0:if(!(c&&c.layer&&c.view&&c.fields))throw new g("predominant-categories:missing-parameters","'layer', 'view' and 'fields' parameters are required");
+a=k({},c);d=[0,2,1,3,4];b=h.createLayerAdapter(a.layer,d);a.layer=b;if(!b)throw new g("predominant-categories:invalid-parameters","'layer' must be one of these types: "+h.getLayerTypeLabels(d).join(", "));return[4,l.all([a.view.when(),b.load()])];case 1:e.sent();if(f=m.verifyBasicFieldValidity(b,a.fields,"predominant-categories:invalid-parameters"))throw f;return[2,a]}})})}return function(c){return f(this,void 0,void 0,function(){var a,d;return e(this,function(b){switch(b.label){case 0:return[4,n(c)];
+case 1:return a=b.sent(),d=a.layer,[2,d.predominantCategories({fields:a.fields,view:a.view})]}})})}});

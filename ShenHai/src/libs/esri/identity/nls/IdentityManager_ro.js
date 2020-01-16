@@ -1,0 +1,6 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define({"dijit/nls/loading":{loadingState:"\u00cenc\u0103rcare...",errorState:"Ne pare r\u0103u, a ap\u0103rut o eroare ",_localized:{}},"dijit/nls/common":{buttonOk:"OK",buttonCancel:"Anulare",buttonSave:"Salvare",itemClose:"\u00cenchidere",_localized:{}},"esri/identity/nls/identity":{lblItem:"element",title:"Autentificare",info:"V\u0103 rug\u0103m s\u0103 v\u0103 autentifica\u0163i pentru a accesa elementul din {server} {resource}",oAuthInfo:"Conecta\u021bi-v\u0103 la {server}.",lblUser:"Nume de utilizator:",
+lblPwd:"Parol\u0103:",lblOk:"OK",lblSigning:"Autentificare...",lblCancel:"Anulare",errorMsg:"Nume de utilizator/Parol\u0103 nevalid\u0103. \u00cencerca\u0163i din nou.",invalidUser:"Numele de utilizator sau parola introdus\u0103 este incorect\u0103.",forbidden:"Numele de utilizator \u015fi parola sunt valide, \u00eens\u0103 nu ave\u0163i acces la aceast\u0103 resurs\u0103.",noAuthService:"Nu se poate accesa serviciul de autentificare.",_localized:{}},"dijit/form/nls/validate":{invalidMessage:"Valoarea introdus\u0103 nu este valid\u0103.",
+missingMessage:"Aceast\u0103 valoare este necesar\u0103.",rangeMessage:"Aceast\u0103 valoare este \u00een afara intervalului. ",_localized:{}}});

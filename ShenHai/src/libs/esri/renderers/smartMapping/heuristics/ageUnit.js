@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define("require exports ../../../core/tsSupport/generatorHelper ../../../core/tsSupport/awaiterHelper ../../../core/Error ../statistics/summaryStatisticsForAge ../statistics/support/ageUtils ../support/utils".split(" "),function(v,w,p,q,m,n,r,t){function u(a){var c=Math.abs(a.avg),b=null;r.supportedAgeUnits.some(function(a){c>2*t.unitValueInDays[a]&&(b=a);return!!b});return b}return function(a){return q(this,void 0,void 0,function(){var c,b,f,g,h,e,d,k;return p(this,function(l){switch(l.label){case 0:return c=
+a.view,b=a.layer,f=a.startTime,g=a.endTime,h="days",[4,n({view:c,layer:b,startTime:f,endTime:g,unit:h})];case 1:e=l.sent();if(null==e.avg)throw new m("age-unit:insufficient-info","'avg' statistics is invalid");d=u(e);return d===h?[2,{unit:d,statistics:e}]:[4,n({view:c,layer:b,startTime:f,endTime:g,unit:d})];case 2:k=l.sent();if(null==k.avg)throw new m("age-unit:insufficient-info","'avg' statistics is invalid");return[2,{unit:d,statistics:k}]}})})}});

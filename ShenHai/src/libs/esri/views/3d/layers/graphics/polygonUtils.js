@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../webgl-engine/lib/GeometryData","../../webgl-engine/lib/Util"],function(g,e,f,b){Object.defineProperty(e,"__esModule",{value:!0});e.createPolygonGeometryData=function(a){var c={},d={};d[b.VertexAttrConstants.POSITION]={size:3,data:a.vertices};c[b.VertexAttrConstants.POSITION]=a.indices;if(a.color){var e=new Uint32Array(a.indices.length);d[b.VertexAttrConstants.COLOR]={size:4,data:a.color};c[b.VertexAttrConstants.COLOR]=e}a.uv0&&(d[b.VertexAttrConstants.UV0]={size:2,
+data:a.uv0},c[b.VertexAttrConstants.UV0]=a.indices);a.eleVertices&&(d.mapPos={size:3,data:a.eleVertices},c.mapPos=a.indices);return new f.GeometryData(d,c)}});

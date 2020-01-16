@@ -1,0 +1,5 @@
+// All material copyright ESRI, All Rights Reserved, unless otherwise specified.
+// See https://js.arcgis.com/4.14/esri/copyright.txt for details.
+//>>built
+define(["require","exports","../../../../../../core/tsSupport/makeTemplateObjectHelper","../util/DecodeNormal.glsl","../../shaderModules/interfaces"],function(h,a,c,g,d){Object.defineProperty(a,"__esModule",{value:!0});a.NormalAttribute=function(b,a){0===a.normalType&&(b.attributes.add("normal","vec3"),b.vertex.code.add(d.glsl(e||(e=c(["\n      vec3 normalModel() {\n        return normal;\n      }\n    "],["\n      vec3 normalModel() {\n        return normal;\n      }\n    "])))));1===a.normalType&&
+(b.include(g.DecodeNormal),b.attributes.add("normalCompressed","vec2"),b.vertex.code.add(d.glsl(f||(f=c(["\n      vec3 normalModel() {\n        return decodeNormal(normalCompressed);\n      }\n    "],["\n      vec3 normalModel() {\n        return decodeNormal(normalCompressed);\n      }\n    "])))))};var e,f});

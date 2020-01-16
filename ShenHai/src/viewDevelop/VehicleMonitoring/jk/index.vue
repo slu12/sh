@@ -457,7 +457,7 @@
           })
           // console.log('lisr',this.mapCarList);
           // this.mapCarList = this.carArray[0];
-          this.$refs.map.update();
+          // this.$refs.map.update();
           /* if(this.choosedCar != n
           ull){
                this.$refs.carInfoRef.init(this.choosedCar);

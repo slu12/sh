@@ -54,8 +54,7 @@
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "lint-staged": "^6.0.0",
-    "vue-template-compiler": "^2.5.13",
-    "grunt-dojo": "^1.1.1"
+    "vue-template-compiler": "^2.5.13"
   },
   "browserslist": [
     "> 1%",

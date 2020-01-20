@@ -88,25 +88,29 @@
       },
       handleSubmit() {
         var v = this
-        this.$refs['loginForm'].validate((valid) => {
-          if (valid) {
-            this.$http.post(this.apis.LOGIN.QUERY, this.form).then(res=>{
-                if(res.code == 200){
-                  localStorage.setItem('user',this.form.username)
-                  Cookies.set('usermess', this.form.username);
-                  Cookies.set('accessToken', res.result.accessToken);
-
-                  localStorage.setItem('menuList', JSON.stringify(res.result.menuTree))
-                  v.setMenuList()
-                  v.initDict(res.result.dictList);
-
-                  v.$router.push({
-                    name: this.$config.homeName
-                  })
-                }
-            }).catch(err=>{})
-          }
+        v.$router.push({
+          name: this.$config.homeName
         })
+        return
+        // this.$refs['loginForm'].validate((valid) => {
+        //   if (valid) {
+        //     this.$http.post(this.apis.LOGIN.QUERY, this.form).then(res=>{
+        //         if(res.code == 200){
+        //           localStorage.setItem('user',this.form.username)
+        //           Cookies.set('usermess', this.form.username);
+        //           Cookies.set('accessToken', res.result.accessToken);
+        //
+        //           localStorage.setItem('menuList', JSON.stringify(res.result.menuTree))
+        //           v.setMenuList()
+        //           v.initDict(res.result.dictList);
+        //
+        //           v.$router.push({
+        //             name: this.$config.homeName
+        //           })
+        //         }
+        //     }).catch(err=>{})
+        //   }
+        // })
       }
     }
   }

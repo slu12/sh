@@ -1,0 +1,67 @@
+.videoCardBoxSty{
+  width: 100%;
+  margin-bottom: 16px;
+  min-height: 400px;
+  .ivu-card-body{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding:16px 0 0 0 ;
+    .roomNumber{
+      font-size: 18px;
+      font-weight: 600;
+      border-bottom: solid 1px #ededed;
+    }
+    .videoImgBox{
+      background-color: #738699;
+      height: 200px;
+      border-radius: 4px;
+      position: relative;
+      i{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 40px;
+        color: #ffffff;
+      }
+    }
+    .messBox{
+      //background-color: #348EED;
+      .labTit{
+        width: 80px;
+      }
+      .labVal{
+
+      }
+      .joinPerBox{
+        .perItem{
+          width: 40px;
+          height: 40px;
+          text-align: center;
+          line-height: 40px;
+          background-color: #738699;
+          border-radius: 100%;
+          border:1px solid #ffffff;
+          margin-left: -10px;
+          color: #ffffff;
+        }
+        .perItem:first-child{
+          background-color: #9abc32;
+        }
+        .perItem:nth-child(2){
+          background-color: #4d2a86;
+        }
+        .perItem:nth-child(3){
+          background-color: #348EED;
+        }
+        .perNum{
+          margin-left: 12px;
+          line-height: 40px;
+          font-size: 22px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}

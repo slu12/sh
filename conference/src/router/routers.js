@@ -18,16 +18,15 @@ import parentView from '@/components/parent-view'
  */
 
 export default [
-  {
-    path: '/',
-    name: 'SCRN',
-    meta: {
-      title: '超級管理',
-      hideInMenu: true
-    },
-    component: () => import('@/scrn')
-  }
-  /**
+  // {
+  //   path: '/',
+  //   name: 'SCRN',
+  //   meta: {
+  //     title: '超級管理',
+  //     hideInMenu: true
+  //   },
+  //   component: () => import('@/scrn')
+  // }
   {
     path: '/login',
     name: 'login',
@@ -60,7 +59,47 @@ export default [
       }
     ]
   },
-
+  {
+    path: '/system_setting',
+    name: 'SYSTEM-SETTING',
+    meta: {
+      icon: 'logo-buffer',
+      title: '----'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'setting',
+        name: 'setting',
+        meta: {
+          icon: 'md-person',
+          title: '基础配置',
+        },
+        component: () => import('@/viewConference/setting')
+      },
+    ]
+  },
+  {
+    path: '/system-video',
+    name: 'SYSTEM-VIDEO',
+    meta: {
+      icon: 'logo-buffer',
+      title: '----'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'video',
+        name: 'VIDEO',
+        meta: {
+          icon: 'md-arrow-dropdown-circle',
+          title: '视频会议'
+        },
+        component: () => import('@/viewConference/video')
+      },
+    ]
+  },
+  /**
   {
     path: '/system',
     name: 'SYSTEM',

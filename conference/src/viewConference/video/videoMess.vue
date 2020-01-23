@@ -4,7 +4,7 @@
       <div class="pagerLeftBox">
         cnpm install agora-rtc-sdk ss
       </div>
-      <div class="pagerRightBox box_row_1auto boxMar">
+      <div id="appid" class="pagerRightBox box_row_1auto boxMar">
 
       </div>
     </div>
@@ -33,6 +33,7 @@
           mode: "live",
           codec: "vp8",
           // proxyServer: "YOUR NGINX PROXY SERVER IP",
+          proxyServer: "http://localhost:8080/",
           // turnServer: {
           //   turnServerURL: "YOUR TURNSERVER URL",
           //   username: "YOUR USERNAME",
@@ -43,9 +44,16 @@
           // }
         }
         this.client = AgoraRTC.createClient(config);
-        this.createStream()
+
+        // this.client.init("appId", function() {
+        //   console.log("client initialized");
+        // }, function(err) {
+        //   console.log("client init failed ", err);
+        // });
+        // this.createStream()
+        this.getDevices()
       },
-      createStream(){
+      createStream(){//创建音视频流对象。
         var v = this
         navigator.mediaDevices.getUserMedia(
           {video: true, audio: true}
@@ -69,7 +77,18 @@
           //   });
           // });
         });
+      },
+      getDevices(){//获取可用的媒体输入/输出设备。
+        console.log('getDevices');
+        AgoraRTC.getDevices (function(devices) {
+          var devCount = devices.length;
+
+          var id = devices[0].deviceId;
+        }, function(errStr){
+          console.error("Failed to getDevice", errStr);
+        });
       }
+
     }
   }
 </script>

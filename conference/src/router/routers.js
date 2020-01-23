@@ -99,6 +99,15 @@ export default [
       },
     ]
   },
+  {
+    path: '/room',
+    name: 'ROOM',
+    meta: {
+      title: 'Login - 登录',
+      hideInMenu: true
+    },
+    component: () => import('@/viewConference/video/videoMess.vue')
+  },
   /**
   {
     path: '/system',

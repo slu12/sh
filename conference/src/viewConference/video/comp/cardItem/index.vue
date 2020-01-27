@@ -1,7 +1,12 @@
 <template>
   <Card class="videoCardBoxSty">
-    <div class="boxPadd_LR boxPadd_B roomNumber">
-      #100000
+    <div class="boxPadd_LR boxPadd_B topLineBox box_row rowBetween">
+      <div class="roomNumber">
+        #100000
+      </div>
+      <div class="roomTyp">
+        <Tag color="magenta">状态</Tag>
+      </div>
     </div>
     <div class="themeSty">
       <h2>车辆管理项目启动会</h2>

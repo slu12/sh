@@ -103,10 +103,40 @@ export default [
     path: '/room',
     name: 'ROOM',
     meta: {
-      title: 'Login - 登录',
+      title: '会议直播',
       hideInMenu: true
     },
     component: () => import('@/viewConference/video/videoMess.vue')
+  },
+
+  {
+    path: '/system-hisvideo',
+    name: 'SYSTEM-HISVIDEO',
+    meta: {
+      icon: 'logo-buffer',
+      title: '----'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'hisvideo',
+        name: 'HISVIDEO',
+        meta: {
+          icon: 'md-arrow-dropdown-circle',
+          title: '历史会议'
+        },
+        component: () => import('@/viewConference/hisVideo')
+      },
+    ]
+  },
+  {
+    path: '/hisroom',
+    name: 'HISROOM',
+    meta: {
+      title: '会议直播',
+      hideInMenu: true
+    },
+    component: () => import('@/viewConference/hisVideo/videoMess.vue')
   },
   /**
   {

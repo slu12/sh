@@ -1,58 +1,52 @@
 <template>
-  <div class="box_col videoMessPager">
-    <div class="box_row" style="height: 100%">
-      <div class="pagerLeftBox boxPadd_LR">
-        <div class="box_col">
-          <div class="box_col_autoY boxMar_TB">
-            <video-item-box v-for="(it,index) in 10" :item="index.toString()"></video-item-box>
-          </div>
-        </div>
+  <div class="box_col hisvideoMessPager">
+    <div id="" class="pagerRightBox box_col_auto boxPadd_LR boxPadd_T">
+      <div class="playVideoBox box_col">
+        <Icon type="logo-youtube"/>
       </div>
-      <div id="" class="pagerRightBox box_row_1auto boxMar boxPadd_LR boxPadd_T">
-        <div class="playVideoBox box_col">
-          <Icon type="logo-youtube" />
+      <div class="settingBox box_row">
+        <div class="settingItem">
+          <Icon type="ios-rewind" />
         </div>
-        <div class="settingBox box_row">
-          <div class="settingItem">
-            <Icon type="md-settings" />
-          </div>
-          <div class="settingItem">
-            <Icon type="md-mic-off" />
-            <!--<Icon type="md-mic" />-->
-          </div>
-          <div class="settingItem">
-            <Icon type="ios-videocam" />
-          </div>
-          <div class="settingItem" title="关闭" @click="closePager">
-            <Icon type="md-close-circle" color/>
-          </div>
+        <div class="settingItem">
+          <Icon type="ios-play" />
+        </div>
+        <div class="settingItem">
+          <Icon type="ios-pause" />
+        </div>
+        <div class="settingItem">
+          <Icon type="ios-fastforward" />
+        </div>
+
+        <div class="settingItem" title="关闭" @click="closePager">
+          <Icon type="md-close-circle" color/>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
   import AgoraRTC from 'agora-rtc-sdk'
   import videoItemBox from './video/itemBox'
+
   export default {
     name: "videoMess",
-    components:{videoItemBox},
-    data(){
+    components: {videoItemBox},
+    data() {
       return {
-        client:''
+        client: ''
       }
     },
-    created(){
+    created() {
     },
-    mounted(){
-      this.$nextTick(()=>{
+    mounted() {
+      this.$nextTick(() => {
         this.createClient()
       })
     },
-    methods:{
-      createClient(){//创建客户端。
+    methods: {
+      createClient() {//创建客户端。
         var config = {
           mode: "live",
           codec: "vp8",
@@ -77,18 +71,18 @@
         // this.createStream()
         this.getDevices()
       },
-      createStream(){//创建音视频流对象。
+      createStream() {//创建音视频流对象。
         var v = this
         navigator.mediaDevices.getUserMedia(
           {video: true, audio: true}
-        ).then(function(mediaStream){
-          console.log('===',mediaStream);
+        ).then(function (mediaStream) {
+          console.log('===', mediaStream);
 
           var videoSource = mediaStream.getVideoTracks()[0];
           var audioSource = mediaStream.getAudioTracks()[0];
 
-          console.log('===',videoSource);
-          console.log('===',audioSource);
+          console.log('===', videoSource);
+          console.log('===', audioSource);
           // 对 videoSource 和 audioSource 进行处理后
           // var localStream = AgoraRTC.createStream({
           //   video: true,
@@ -102,16 +96,18 @@
           // });
         });
       },
-      getDevices(){//获取可用的媒体输入/输出设备。
+      getDevices() {//获取可用的媒体输入/输出设备。
         console.log('getDevices');
-        AgoraRTC.getDevices (function(devices) {
+        AgoraRTC.getDevices(function (devices) {
           var devCount = devices.length;
 
           var id = devices[0].deviceId;
-        }, function(errStr){
+        }, function (errStr) {
           console.error("Failed to getDevice", errStr);
         });
       },
+
+
       closePager(){
         this.$router.back()
       }
@@ -121,5 +117,5 @@
 </script>
 
 <style lang="less">
-@import "./less/mess";
+  @import "./less/mess";
 </style>

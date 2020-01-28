@@ -361,7 +361,7 @@
         this.saveDzwl();
       },
       getCarTree(mmsi) {
-        this.$http.post('/api/cl/getCbs',{pageNum:1,pageSize:99999999}).then((res) => {
+        this.$http.post('/api/cl/getCbForDzwl',{pageNum:1,pageSize:99999999}).then((res) => {
           this.data1 = res.result
         }).catch((error) => {
         })

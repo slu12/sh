@@ -157,11 +157,28 @@
         console.log('撒点')
         this.clear()
         var v = this
-        for (let r of this.carList) {
-          var point = new BMap.Point(r.lng, r.lat);
-          this.addMarker(r, point);
-          // this.addLabel(r, point);
+        if (document.createElement('canvas').getContext) {  // 判断当前浏览器是否支持绘制海量点
+          var points = [];  // 添加海量点数据
+          for (var i = 0; i < this.carList.length; i++) {
+            points.push(new BMap.Point(this.carList[i].lng,this.carList[i].lat))
+          }
+          var options = {
+            size: BMAP_POINT_SIZE_SMALL,
+            color: '#d33556'
+          }
+          var pointCollection = new BMap.PointCollection(points, options);  // 初始化PointCollection
+          pointCollection.addEventListener('click', function (e) {
+            alert('单击点的坐标为：' + e.point.lng + ',' + e.point.lat);  // 监听点击事件
+          });
+          v.map.addOverlay(pointCollection);  // 添加Overlay
+        } else {
+          alert('请在chrome、safari、IE8+以上浏览器查看本示例');
         }
+        // for (let r of this.carList) {
+        //   var point = new BMap.Point(r.lng, r.lat);
+        //   this.addMarker(r, point);
+        //   // this.addLabel(r, point);
+        // }
       },
       addLabel(item, point) {
         console.log('添加标注')

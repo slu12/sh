@@ -1,0 +1,54 @@
+.videoMessPager{
+  //background-color: #5c6b77;
+  background-color: #ededed;
+  .pagerLeftBox{
+    width: 256px;
+    background-color: #ffffff;
+  }
+  .pagerRightBox{
+    background-color: #FFFFFF;
+    padding-bottom: 55px!important;
+    position: relative;
+    .playVideoBox{
+      background-color: #738699;
+      position: relative;
+      i{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 60px;
+        color: #ffffff;
+      }
+    }
+  }
+  .settingBox{
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 8px;
+    .settingItem{
+      border-radius: 8px 0 0 8px;
+      width: 40px;
+      height: 40px;
+      //background-color:#348EED;
+      cursor: pointer;
+      position: relative;
+      i{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        color:#348EED;
+        font-size: 30px;
+      }
+    }
+    .settingItem:nth-child(2){
+      border-radius: 0;
+    }
+    .settingItem:nth-child(3){
+      border-radius: 0 8px 8px 0;
+    }
+  }
+}

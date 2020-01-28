@@ -241,7 +241,6 @@
   import carJK from "@/viewDevelop/map/carJK";
   import videojs from 'video.js'
   import 'videojs-contrib-hls'
-  import axios from 'axios'
 
   export default {
     name: "index",
@@ -296,7 +295,6 @@
         ],
         shipData: [],
         ship: {},
-        shipDataJson:[],
         videoList: [],
         videoimageList: [],
         file:[{
@@ -321,32 +319,15 @@
         },
         hcMess:{},
         showvideo:[false,false,false],
-        tjList:[],
+        tjList:[]
       }
     },
     created() {
-
-      axios.get("http://223.240.68.90:9090/ces.json").then(res => {
-        this.shipDataJson = res.data.result
-        // console.log(res.data.result);
-      })
-      setTimeout(()=>{
-        this.getshipMess()
-        this.getTj()
-      },1000)
-
+      this.getshipMess()
+      this.getTj()
     },
     beforeDestroy: function () {
       player.dispose();
-    },
-    mounted(){
-
-      // this.$http.get('../../../../../static/ces.json')
-      //   .then(res =>{
-      //     console.log(res)
-      //   })
-      //   .catch(err=>{console.log(err)}
-      //   )
     },
     methods: {
       ZPsp(a,b){
@@ -455,7 +436,7 @@
             this.$nextTick(()=>{
               this.tabIndex = 0
             });
-            this.$parent.initGps(this.shipData)
+            // this.$parent.initGps(this.shipData)
           }
         })
       },
@@ -580,27 +561,23 @@
       getshipMess() {
         this.tabIndex = 0
         this.from.pageNum = 1
-        if (this.shipDataJson.length<=0){
-          this.$http.post('/api/cl/pager',this.from).then((res) => {
-            if (res.code == 200) {
-              this.shipData = res.page.list
+        this.$http.post('/api/cl/pager',this.from).then((res) => {
+          if (res.code == 200) {
+            this.shipData = res.page.list
+            for (let i = 0;i<this.shipData.length;i++){
+              if (this.shipData[i].dwzb!=''){
+                this.shipData[i].bdjd = parseFloat( this.shipData[i].dwzb.split(',')[0])
+                this.shipData[i].bdwd = parseFloat(this.shipData[i].dwzb.split(',')[1])
+              }else {
+                this.shipData[i].bdjd = ''
+                this.shipData[i].bdwd = ''
+              }
+
             }
-          })
-        }else {
-          this.shipData = this.shipDataJson
-        }
-        for (let i = 0;i<this.shipData.length;i++){
-          if (this.shipData[i].dwzb!=''){
-            this.shipData[i].bdjd = parseFloat( this.shipData[i].dwzb.split(',')[0])
-            this.shipData[i].bdwd = parseFloat(this.shipData[i].dwzb.split(',')[1])
-          }else {
-            this.shipData[i].bdjd = ''
-            this.shipData[i].bdwd = ''
+
+            // this.$parent.initGps(this.shipData)
           }
-
-        }
-
-        this.$parent.initGps(this.shipData)
+        })
       }
     }
 

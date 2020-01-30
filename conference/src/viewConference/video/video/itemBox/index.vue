@@ -4,7 +4,7 @@
       <div class="box_row colCenter">
         <Avatar>A</Avatar>
         <div class="namebox">
-          name
+          name{{item.getId()}}
         </div>
       </div>
       <div v-if="item==0">
@@ -17,7 +17,7 @@
         旁听
       </div>
     </div>
-    <div class="videoBox">
+    <div :id="'remote_video_'+item.getId()" class="videoBox">
       <Icon type="logo-youtube" />
 
       <div class="settingBox box_row">
@@ -41,11 +41,22 @@
     name: "index",
     props: {
       item: {
-        type: String,
+        type: Object,
         default: () => {
-          return '0'
+          return {}
         }
       }
+    },
+    created(){
+      console.log('********************',this.item.getId());
+
+      console.log('idididi',this.item.getId());
+    },
+    mounted(){
+      this.$nextTick(()=>{
+        // this.$parent.localStream.play("remote_video_"+this.item.getId())
+        console.log(this.$parent);
+      })
     }
   }
 </script>

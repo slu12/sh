@@ -1,12 +1,59 @@
 <template>
   <div class="box_col videoMessPager">
+    <div class="topBox boxPadd box_row colCenter rowBetween">
+      <div class="box_row">
+        <div class="conName">
+          会议主题
+        </div>
+      </div>
+      <div class="box_row colCenter">
+        <div class="conTime">
+          00:00:00
+        </div>
+        <Button type="success">会议开始</Button>
+        <Button type="warning">会议结束</Button>
+        <Button type="primary" class="boxMar_L">会议静音</Button>
+        <Button type="error" class="boxMar_L" @click="closePager">退出房间</Button>
+      </div>
+    </div>
     <div class="box_row" style="height: 100%">
       <div class="pagerLeftBox boxPadd_LR">
         <div class="box_col">
+          <Card class="cardaItemBox boxMar_T">
+            <div slot="title" class="box_row rowBetween colCenter">
+              <div class="box_row colCenter">
+                <Avatar>A</Avatar>
+                <div class="namebox">
+                  name
+                </div>
+              </div>
+              <div>
+                主讲
+              </div>
+            </div>
+            <div id="localVidioBox" class="videoBox">
+              <Icon type="logo-youtube"/>
+            </div>
+            <div style="position: relative">
+              <div class="settingBox box_row">
+                <!--<div class="settingItem">-->
+                <!--<Icon type="md-settings" />-->
+                <!--</div>-->
+                <div class="settingItem" @click="setAudio">
+                  <Icon v-show="muteAudio" type="md-mic"/>
+                  <Icon v-show="!muteAudio" type="md-mic-off"/>
+                </div>
+                <div class="settingItem" style="position: relative" @click="setVideo">
+                  <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
+                  <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
+                </div>
+              </div>
+            </div>
+          </Card>
           <div class="box_col_autoY boxMar_TB">
             <!--<div v-for="(val,key) in remoteStreams">-->
-              <!--<div>{{val}}</div>-->
-              <!--<div>{{key}}</div>-->
+            <!--<div>{{val}}</div>-->
+            <!--<div>{{key}}</div>-->
             <!--</div>-->
             <!--<video-item-box  v-for="(val,key) in remoteStreams" :key="key"></video-item-box>-->
             <video-item-box v-for="(it,index) in remoteStreams" :key="index" :item="it"></video-item-box>
@@ -15,23 +62,22 @@
       </div>
       <div id="local_stream" class="pagerRightBox box_row_1auto boxMar boxPadd_LR boxPadd_T">
         <!--<div class="playVideoBox box_col">-->
-        <!--<Icon type="logo-youtube" />-->
+          <!--<Icon type="logo-youtube"/>-->
         <!--</div>-->
         <div class="settingBox box_row">
-          <div class="settingItem">
-            <Icon type="md-settings"/>
+          <div class="settingItem" @click="setAudio">
+            <Icon v-show="muteAudio" type="md-mic"/>
+            <Icon v-show="!muteAudio" type="md-mic-off"/>
           </div>
-          <div class="settingItem">
-            <Icon type="md-mic-off"/>
-            <!--<Icon type="md-mic" />-->
+          <div class="settingItem" @click="setVideo">
+            <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
+            <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
           </div>
-          <div class="settingItem">
-            <Icon type="ios-videocam"/>
-          </div>
-          <div class="settingItem" title="关闭" @click="closePager">
-            <Icon type="md-close-circle" color/>
-          </div>
+          <!--<div class="settingItem" title="关闭" @click="closePager">-->
+          <!--<Icon type="md-close-circle" color/>-->
+          <!--</div>-->
         </div>
+        <Button type="default" class="shareEvent" @click="shareEvent">屏幕共享</Button>
       </div>
     </div>
 
@@ -47,23 +93,27 @@
     components: {videoItemBox},
     data() {
       return {
-        client: '',
+        client: '',//客户端对象
         appid: '8d1a79107f9c4decac672c4201a14693',
-        key: '0068d1a79107f9c4decac672c4201a14693IAA6Krw92e3Wx+MtnTdY+FPKplBlzSV47XCInr4ndibrgsieo/oAAAAAEABcVIsjK8czXgEAAQAnxzNe',
-        roomName:'libinbin1',
+        key: '0068d1a79107f9c4decac672c4201a14693IAAISRxkDidysSyqt7VlxrK1HhrPwKeU59itAENqMwd1w8ieo/oAAAAAEADHKAOf5i41XgEAAQDlLjVe',
+        roomName: 'libinbin1',
         params: {
           uid: 91,
         },
-        localStream: '',
-        remoteStreams: []
+        DevicesInfo:{},//浏览器设备信息
+        localStream: '',//创建音视频流对象。
+        remoteStreams: [],//接收的音视频流对象
+        //本地通道
+        muteAudio: true,//音频轨道
+        muteVideo: true,//视频轨道
       }
     },
     created() {
     },
     mounted() {
       this.$nextTick(() => {
-        this.createClient()
-        this.handleEvents()
+        this.createClient();
+        // this.handleEvents();
       })
     },
     methods: {
@@ -86,12 +136,12 @@
         this.client = AgoraRTC.createClient(config);
         //-----
         this.client.init(v.appid, function () {
-          console.log("client initialized");
-          v.client.leave(function () {
-            console.log('退出success');
-          }, function () {
-            console.log('退出error');
-          })
+          // console.log("client initialized");
+          // v.client.leave(function () {
+          //   console.log('退出success');
+          // }, function () {
+          //   console.log('退出error');
+          // })
           v.client.join(v.key, v.roomName, v.params.uid, function () {
             //success
             console.log('success');
@@ -116,14 +166,27 @@
           microphoneId: obj.audios.value,
           cameraId: obj.videos.value
         });
-        v.localStream.init(function () {
-          v.localStream.play("local_stream")//本地视频流
-          v.client.publish(v.localStream, function (e) {
-            console.log('将本地视频流发布出去**********************************');
-          });
+        // v.localStream.init(function () {
+        //   v.localStream.play("local_stream")//本地视频流
+        //   v.client.publish(v.localStream, function (e) {
+        //     console.log('将本地视频流发布出去**********************************');
+        //   });
+        // });
+
+        var localvideoBox = AgoraRTC.createStream({
+          streamID: v.params.uid,
+          audio: true,
+          video: true,
+          screen: false,//全屏
+          microphoneId: obj.audios.value,
+          cameraId: obj.videos.value
+        });
+        localvideoBox.init(function () {
+          localvideoBox.play("localVidioBox")//本地视频流
         });
       },
       getDevices(callback) {
+        var v = this
         AgoraRTC.getDevices(function (items) {
           items.filter(function (item) {
             return ['audioinput', 'videoinput'].indexOf(item.kind) !== -1
@@ -164,10 +227,10 @@
               });
             }
           }
+          v.DevicesInfo = {videos: videos, audios: audios}
           callback({videos: videos, audios: audios});
         });
       },
-
       //视频流接收
       handleEvents() {
         var rtc = this
@@ -197,11 +260,11 @@
           var id = remoteStream.getId();
           // Toast.info("stream-added uid: " + id)
           // if (id !== rtc.params.uid) {
-            rtc.client.subscribe(remoteStream, function (err) {
-              console.log('加入视频流222222');
+          rtc.client.subscribe(remoteStream, function (err) {
+            console.log('加入视频流222222');
 
-              console.log("stream subscribe failed", err);
-            })
+            console.log("stream subscribe failed", err);
+          })
           // }
           console.log('stream-added remote-uid: ', id);
         });
@@ -211,12 +274,12 @@
           var remoteStream = evt.stream;
           var id = remoteStream.getId();
           console.log(id);
-          rtc.remoteStreams.push(remoteStream);
+          rtc.remoteStreams.push(remoteStream);//监听推送的视频流
           // rtc.remoteStreams.id = remoteStream
           console.log('监控进入', rtc.remoteStreams);
-          setTimeout(()=>{
-            remoteStream.play("remote_video_"+id);
-          },100)
+          // setTimeout(()=>{
+          //   remoteStream.play("remote_video_"+id);
+          // },100)
           // Toast.info('stream-subscribed remote-uid: ' + id);
           console.log('stream-subscribed remote-uid: ', id);
         })
@@ -247,14 +310,60 @@
           console.log("onTokenPrivilegeDidExpire")
         })
       },
-      removeView(id){
-        console.log('************',id);
+      removeView(id) {
+        console.log('************', id);
         console.log(this.remoteStreams[0].getId());
-        this.remoteStreams.forEach((it,index)=>{
-          if(id === it.getId()){
-            this.remoteStreams.splice(index,1)
+        this.remoteStreams.forEach((it, index) => {
+          if (id === it.getId()) {
+            this.remoteStreams.splice(index, 1)
           }
         })
+      },
+      //屏幕共享
+      shareEvent(){
+        var v = this
+        console.log(v.DevicesInfo);
+        v.localStream = AgoraRTC.createStream({
+          streamID: v.params.uid,
+          audio: true,
+          video: false,
+          screen: true,//全屏
+          microphoneId: v.DevicesInfo.audios.value,
+          cameraId: v.DevicesInfo.videos.value
+        });
+        v.localStream.init(function () {
+          // v.localStream.play("local_stream")//本地视频流
+          v.client.publish(v.localStream, function (e) {
+            console.log('将本地视频流发布出去**********************************');
+          });
+        });
+      },
+      //=====================
+      setAudio() {//启用/关闭 音频轨道
+        if (this.muteAudio) {
+          let nut = this.localStream.muteAudio()
+          if (nut) {
+            this.muteAudio = !this.muteAudio
+          }
+        } else {
+          let nut = this.localStream.unmuteAudio()
+          if (nut) {
+            this.muteAudio = !this.muteAudio
+          }
+        }
+      },
+      setVideo() {//启用/关闭 视频轨道
+        if (this.muteVideo) {
+          let nut = this.localStream.muteVideo()
+          if (nut) {
+            this.muteVideo = !this.muteVideo
+          }
+        } else {
+          let nut = this.localStream.unmuteVideo()
+          if (nut) {
+            this.muteVideo = !this.muteVideo
+          }
+        }
       },
       closePager() {//关闭页面
         var v = this
@@ -318,4 +427,5 @@
 
 <style lang="less">
   @import "./less/mess";
+  @import "./video/itemBox/index.less";
 </style>

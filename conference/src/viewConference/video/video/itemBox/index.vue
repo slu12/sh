@@ -19,17 +19,19 @@
     </div>
     <div :id="'remote_video_'+item.getId()" class="videoBox">
       <Icon type="logo-youtube" />
-
+    </div>
+    <div style="position: relative">
       <div class="settingBox box_row">
-        <div class="settingItem">
-          <Icon type="md-settings" />
+        <!--<div class="settingItem">-->
+          <!--<Icon type="md-settings" />-->
+        <!--</div>-->
+        <div class="settingItem" @click="setAudio">
+          <Icon v-show="muteAudio" type="md-mic"/>
+          <Icon v-show="!muteAudio" type="md-mic-off"/>
         </div>
-        <div class="settingItem">
-          <Icon type="md-mic-off" />
-          <!--<Icon type="md-mic" />-->
-        </div>
-        <div class="settingItem">
-          <Icon type="ios-videocam" />
+        <div class="settingItem" @click="setVideo">
+          <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
+          <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
         </div>
       </div>
     </div>
@@ -47,6 +49,12 @@
         }
       }
     },
+    data(){
+      return {
+        muteAudio:true,//音频轨道
+        muteVideo:true,//视频轨道
+      }
+    },
     created(){
       console.log('********************',this.item.getId());
 
@@ -54,9 +62,37 @@
     },
     mounted(){
       this.$nextTick(()=>{
-        // this.$parent.localStream.play("remote_video_"+this.item.getId())
+        this.item.play("remote_video_"+this.item.getId())
         console.log(this.$parent);
       })
+    },
+    methods:{
+      setAudio() {//启用/关闭 音频轨道
+        if (this.muteAudio) {
+          let nut = this.item.muteAudio()
+          if (nut) {
+            this.muteAudio = !this.muteAudio
+          }
+        }else{
+          let nut = this.item.unmuteAudio()
+          if (nut) {
+            this.muteAudio = !this.muteAudio
+          }
+        }
+      },
+      setVideo() {//启用/关闭 视频轨道
+        if (this.muteVideo) {
+          let nut = this.item.muteVideo()
+          if (nut) {
+            this.muteVideo = !this.muteVideo
+          }
+        }else{
+          let nut = this.item.unmuteVideo()
+          if (nut) {
+            this.muteVideo = !this.muteVideo
+          }
+        }
+      },
     }
   }
 </script>

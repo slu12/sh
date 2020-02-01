@@ -10,8 +10,6 @@
         <div class="conTime">
           00:00:00
         </div>
-        <Button type="success">会议开始</Button>
-        <Button type="warning">会议结束</Button>
         <Button type="primary" class="boxMar_L">会议静音</Button>
         <Button type="error" class="boxMar_L" @click="closePager">退出房间</Button>
       </div>
@@ -35,10 +33,11 @@
               <Icon type="logo-youtube"/>
             </div>
             <div style="position: relative">
-              <div class="settingBox box_row">
-                <!--<div class="settingItem">-->
-                <!--<Icon type="md-settings" />-->
-                <!--</div>-->
+              <div class="settingBox box_row"
+                   style="position: absolute;
+                    bottom: 0px;
+                    left: 50%;
+                    transform: translateX(-50%);">
                 <div class="settingItem" @click="setAudio">
                   <Icon v-show="muteAudio" type="md-mic"/>
                   <Icon v-show="!muteAudio" type="md-mic-off"/>
@@ -60,24 +59,34 @@
           </div>
         </div>
       </div>
-      <div id="local_stream" class="pagerRightBox box_row_1auto boxMar boxPadd_LR boxPadd_T">
-        <!--<div class="playVideoBox box_col">-->
-          <!--<Icon type="logo-youtube"/>-->
-        <!--</div>-->
-        <div class="settingBox box_row">
-          <div class="settingItem" @click="setAudio">
-            <Icon v-show="muteAudio" type="md-mic"/>
-            <Icon v-show="!muteAudio" type="md-mic-off"/>
+      <div class="pagerRightBox box_row_1auto boxMar boxPadd">
+        <div class="box_col">
+          <div id="local_stream" class="box_col_100">
+
           </div>
-          <div class="settingItem" @click="setVideo">
-            <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
-            <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
+          <div class="eventBoxBottom boxMar_T box_row colCenter">
+            <div class="box_row_100">
+              <Button type="success">会议开始</Button>
+              <Button type="warning">会议结束</Button>
+            </div>
+            <div class="settingBox box_row_100 box_row rowCenter">
+              <div class="settingItem" @click="setAudio">
+                <Icon v-show="muteAudio" type="md-mic"/>
+                <Icon v-show="!muteAudio" type="md-mic-off"/>
+              </div>
+              <div class="settingItem" @click="setVideo">
+                <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
+                <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
+              </div>
+              <!--<div class="settingItem" title="关闭" @click="closePager">-->
+              <!--<Icon type="md-close-circle" color/>-->
+              <!--</div>-->
+            </div>
+            <div class="box_row_100 box_row rowRight">
+              <Button type="default" class="shareEvent" @click="shareEvent">屏幕共享</Button>
+            </div>
           </div>
-          <!--<div class="settingItem" title="关闭" @click="closePager">-->
-          <!--<Icon type="md-close-circle" color/>-->
-          <!--</div>-->
         </div>
-        <Button type="default" class="shareEvent" @click="shareEvent">屏幕共享</Button>
       </div>
     </div>
 
@@ -93,19 +102,42 @@
     components: {videoItemBox},
     data() {
       return {
+        //===========
+        rtcConfig: {
+          mode: "rtc",
+          codec: "h264",
+          // proxyServer: "YOUR NGINX PROXY SERVER IP",
+          // proxyServer: "http://localhost:8080/",
+          // turnServer: {
+          //   turnServerURL: "YOUR TURNSERVER URL",
+          //   username: "YOUR USERNAME",
+          //   password: "YOUR PASSWORD",
+          //   udpport: "THE UDP PORT YOU WANT TO ADD",
+          //   tcpport: "THE TCP PORT YOU WANT TO ADD",
+          //   forceturn: false
+          // }
+        },
+        //===========
         client: '',//客户端对象
+        localStream: '',//创建音视频流对象。
         appid: '8d1a79107f9c4decac672c4201a14693',
-        key: '0068d1a79107f9c4decac672c4201a14693IAAISRxkDidysSyqt7VlxrK1HhrPwKeU59itAENqMwd1w8ieo/oAAAAAEADHKAOf5i41XgEAAQDlLjVe',
+        key: '0068d1a79107f9c4decac672c4201a14693IAAIWDXK4TYMsEa7ivGPsyVy5i78KgCqufVjlGwPUl+oh8ieo/oAAAAAEAA8xgfcptA2XgEAAQCl0DZe',
         roomName: 'libinbin1',
         params: {
-          uid: 91,
+          uid: 99,
         },
-        DevicesInfo:{},//浏览器设备信息
-        localStream: '',//创建音视频流对象。
+        DevicesInfo: {},//浏览器设备信息
+        localStreamMin: "",//创建音视频流对象 小窗口。
         remoteStreams: [],//接收的音视频流对象
         //本地通道
         muteAudio: true,//音频轨道
         muteVideo: true,//视频轨道
+        //屏幕共享参数配置
+        shareClient: "",//分享的客户端
+        shareStream: '',//创建音视频流对象。
+        shareParams: {
+          uid: 99999
+        }
       }
     },
     created() {
@@ -119,71 +151,54 @@
     methods: {
       createClient() {//创建客户端。
         var v = this
-        var config = {
-          mode: "rtc",
-          codec: "h264",
-          // proxyServer: "YOUR NGINX PROXY SERVER IP",
-          // proxyServer: "http://localhost:8080/",
-          // turnServer: {
-          //   turnServerURL: "YOUR TURNSERVER URL",
-          //   username: "YOUR USERNAME",
-          //   password: "YOUR PASSWORD",
-          //   udpport: "THE UDP PORT YOU WANT TO ADD",
-          //   tcpport: "THE TCP PORT YOU WANT TO ADD",
-          //   forceturn: false
-          // }
-        }
-        this.client = AgoraRTC.createClient(config);
+        this.client = AgoraRTC.createClient(v.rtcConfig);
         //-----
-        this.client.init(v.appid, function () {
-          // console.log("client initialized");
+        this.client.init(v.appid, function () {//初始化客户端
+          console.log("client initialized");
           // v.client.leave(function () {
           //   console.log('退出success');
           // }, function () {
           //   console.log('退出error');
           // })
           v.client.join(v.key, v.roomName, v.params.uid, function () {
-            //success
-            console.log('success');
             v.getDevices((obj) => {//获取设备ID(视频、音频)
-              v.createStream(obj)
+              v.createStream()
             })
-          }, function () {
-            //  error
+          }, function (error) {
             console.log(error);
           });
         }, function (err) {
           console.log("client init failed ", err);
         });
       },
-      createStream(obj) {
+      createStream() {//创建音视频流对象
         var v = this;
         v.localStream = AgoraRTC.createStream({
           streamID: v.params.uid,
           audio: true,
           video: true,
-          screen: false,//全屏
-          microphoneId: obj.audios.value,
-          cameraId: obj.videos.value
+          screen: false,//屏幕共享
+          microphoneId: v.DevicesInfo.audios.value,
+          cameraId: v.DevicesInfo.videos.value
         });
-        // v.localStream.init(function () {
-        //   v.localStream.play("local_stream")//本地视频流
-        //   v.client.publish(v.localStream, function (e) {
-        //     console.log('将本地视频流发布出去**********************************');
-        //   });
-        // });
+        v.localStream.init(function () {
+          v.localStream.play("local_stream")//本地视频流大模块
+          // v.client.publish(v.localStream, function (e) {
+          //   console.log('将本地视频流发布出去**********************************');
+          // });
+        });
 
-        var localvideoBox = AgoraRTC.createStream({
-          streamID: v.params.uid,
-          audio: true,
-          video: true,
-          screen: false,//全屏
-          microphoneId: obj.audios.value,
-          cameraId: obj.videos.value
-        });
-        localvideoBox.init(function () {
-          localvideoBox.play("localVidioBox")//本地视频流
-        });
+        // v.localStreamMin = AgoraRTC.createStream({
+        //   streamID: v.params.uid,
+        //   audio: true,
+        //   video: true,
+        //   screen: false,////屏幕共享
+        //   microphoneId: v.DevicesInfo.audios.value,
+        //   cameraId: v.DevicesInfo.videos.value
+        // });
+        // v.localStreamMin.init(function () {
+        //   v.localStreamMin.play("localVidioBox")//本地视频流小模块
+        // });
       },
       getDevices(callback) {
         var v = this
@@ -294,7 +309,7 @@
           rtc.remoteStreams = rtc.remoteStreams.filter(function (stream) {
             return stream.getId() !== id
           })
-          removeView(id);
+          rtc.removeView(id);
           console.log('stream-removed remote-uid: ', id);
         })
         rtc.client.on("onTokenPrivilegeWillExpire", function () {
@@ -308,11 +323,11 @@
           // client.renewToken(token);
           // Toast.info("onTokenPrivilegeDidExpire")
           console.log("onTokenPrivilegeDidExpire")
-        })
+        });
       },
       removeView(id) {
         console.log('************', id);
-        console.log(this.remoteStreams[0].getId());
+        console.log(this.remoteStreams);
         this.remoteStreams.forEach((it, index) => {
           if (id === it.getId()) {
             this.remoteStreams.splice(index, 1)
@@ -320,23 +335,60 @@
         })
       },
       //屏幕共享
-      shareEvent(){
+      //
+      shareEvent() {//屏幕共享
         var v = this
+        const shareUid = 99999
+        this.shareClient = AgoraRTC.createClient(v.rtcConfig);//屏幕共享终端
+
+        this.shareClient.init(v.appid, function () {//初始化客户端
+          v.shareClient.join(v.key, v.roomName, v.shareParams.shareParams, function () {
+            v.getDevices((obj) => {//获取设备ID(视频、音频)
+              v.shareCreateStream()
+            })
+          }, function () {
+            console.log(error);
+          });
+        }, function (err) {
+          console.log("client init failed ", err);
+        });
         console.log(v.DevicesInfo);
-        v.localStream = AgoraRTC.createStream({
-          streamID: v.params.uid,
+
+      },
+      shareCreateStream() {
+        var v = this
+        v.shareStream = AgoraRTC.createStream({
+          streamID: v.shareParams.shareParams,
           audio: true,
-          video: false,
-          screen: true,//全屏
+          video: true,
+          screen: true,//屏幕共享
           microphoneId: v.DevicesInfo.audios.value,
           cameraId: v.DevicesInfo.videos.value
         });
-        v.localStream.init(function () {
-          // v.localStream.play("local_stream")//本地视频流
-          v.client.publish(v.localStream, function (e) {
+        v.shareStream.init(function () {
+          // v.shareStream.play("local_stream")//屏幕共享流本地展示
+          v.shareClient.publish(v.shareStream, function (e) {
             console.log('将本地视频流发布出去**********************************');
+          }, function (err) {
+            console.log(err);
           });
         });
+
+        //共享关闭时间监听
+        v.shareStream.on('stopScreenSharing', function () {
+          console.log("结束*************************************");
+          v.shareClient.unpublish(v.shareStream, function (e) {
+            console.log('终止本地视频流发布**********************************');
+          });
+          v.shareClient.leave(function () {
+            console.log('退出success');
+          }, function () {
+            console.log('退出error');
+          })
+
+          v.shareStream.close()
+
+        })
       },
       //=====================
       setAudio() {//启用/关闭 音频轨道
@@ -354,12 +406,12 @@
       },
       setVideo() {//启用/关闭 视频轨道
         if (this.muteVideo) {
-          let nut = this.localStream.muteVideo()
+          let nut = this.localStreamMin.muteVideo()
           if (nut) {
             this.muteVideo = !this.muteVideo
           }
         } else {
-          let nut = this.localStream.unmuteVideo()
+          let nut = this.localStreamMin.unmuteVideo()
           if (nut) {
             this.muteVideo = !this.muteVideo
           }
@@ -367,60 +419,25 @@
       },
       closePager() {//关闭页面
         var v = this
-        this.client = ""
 
-        // this.client.unpublish(v.localStream, function(err) {//取消发布本地音视频流
-        //   console.log(err);
-        // })
-
-        // this.client.leave(function () {
-        //   console.log('退出success');
-        // }, function () {
-        //   console.log('退出error');
-        // })
-        // this.$router.back()
-      },
-      //  =======================
-      createStreamDEF() {//创建音视频流对象。
-        var v = this
-        navigator.mediaDevices.getUserMedia(
-          {video: true, audio: true}
-        ).then(function (mediaStream) {
-          // console.log('===',mediaStream);
-          var videoSource = mediaStream.getVideoTracks()[0];
-          var audioSource = mediaStream.getAudioTracks()[0];
-          // console.log('===',videoSource);
-          // console.log('===',audioSource);
-          // 对 videoSource 和 audioSource 进行处理后
-          var localStream = AgoraRTC.createStream({
-
-            video: true,
-            audio: true,
-            videoSource: videoSource,
-            audioSource: audioSource
-          });
-          localStream.init(function () {
-            v.client.publish(localStream, function (e) {
-
-              console.log('push**********************************');
-            });
-          });
-        });
+        this.$router.back()
       },
 
-      getDevicesDEf() {//获取可用的媒体输入/输出设备。
-        console.log('getDevices');
-        AgoraRTC.getDevices(function (devices) {
-          console.log('****');
-          console.log(devices);
-          var devCount = devices.length;
+    },
 
-          var id = devices[0].deviceId;
-        }, function (errStr) {
-          console.error("Failed to getDevice", errStr);
-        });
-      },
+    beforeDestroy() {
+      var v = this
 
+      v.client.leave(function () {
+        console.log('退出success');
+      }, function () {
+        console.log('退出error');
+      })
+
+      v.client.unpublish(v.localStream, function (e) {
+        console.log('终止本地视频流发布**********************************');
+      });
+      v.localStream.close()
     }
   }
 </script>

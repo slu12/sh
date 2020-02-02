@@ -25,8 +25,14 @@
                   name
                 </div>
               </div>
-              <div>
-                主讲
+              <div class="box_row colCenter">
+                <div style="margin-right: 12px">
+                  主讲
+                </div>
+                <Icon type="md-expand" size="22"
+                      style="cursor: pointer"
+                      @click.native="showMaxVideo('0000')"
+                />
               </div>
             </div>
             <div id="localVidioBox" class="videoBox">
@@ -57,6 +63,11 @@
             <!--<video-item-box  v-for="(val,key) in remoteStreams" :key="key"></video-item-box>-->
             <video-item-box v-for="(it,index) in remoteStreams" :key="index" :item="it"></video-item-box>
           </div>
+
+          <div class="boxMar_B">
+            <Button type="success" long>会议开始</Button>
+            <!--<Button type="warning">会议结束</Button>-->
+          </div>
         </div>
       </div>
       <div class="pagerRightBox box_row_1auto boxMar boxPadd">
@@ -66,8 +77,6 @@
           </div>
           <div class="eventBoxBottom boxMar_T box_row colCenter">
             <div class="box_row_100">
-              <Button type="success">会议开始</Button>
-              <Button type="warning">会议结束</Button>
             </div>
             <div class="settingBox box_row_100 box_row rowCenter">
               <div class="settingItem" @click="setAudio">
@@ -83,7 +92,7 @@
               <!--</div>-->
             </div>
             <div class="box_row_100 box_row rowRight">
-              <Button type="default" class="shareEvent" @click="shareEvent">屏幕共享</Button>
+              <Button type="default" @click="shareEvent">屏幕共享</Button>
             </div>
           </div>
         </div>
@@ -145,7 +154,7 @@
     mounted() {
       this.$nextTick(() => {
         this.createClient();
-        // this.handleEvents();
+        this.handleEvents();
       })
     },
     methods: {
@@ -183,22 +192,22 @@
         });
         v.localStream.init(function () {
           v.localStream.play("local_stream")//本地视频流大模块
-          // v.client.publish(v.localStream, function (e) {
-          //   console.log('将本地视频流发布出去**********************************');
-          // });
+          v.client.publish(v.localStream, function (e) {
+            console.log('将本地视频流发布出去**********************************');
+          });
         });
 
-        // v.localStreamMin = AgoraRTC.createStream({
-        //   streamID: v.params.uid,
-        //   audio: true,
-        //   video: true,
-        //   screen: false,////屏幕共享
-        //   microphoneId: v.DevicesInfo.audios.value,
-        //   cameraId: v.DevicesInfo.videos.value
-        // });
-        // v.localStreamMin.init(function () {
-        //   v.localStreamMin.play("localVidioBox")//本地视频流小模块
-        // });
+        v.localStreamMin = AgoraRTC.createStream({
+          streamID: v.params.uid,
+          audio: true,
+          video: true,
+          screen: false,////屏幕共享
+          microphoneId: v.DevicesInfo.audios.value,
+          cameraId: v.DevicesInfo.videos.value
+        });
+        v.localStreamMin.init(function () {
+          v.localStreamMin.play("localVidioBox")//本地视频流小模块
+        });
       },
       getDevices(callback) {
         var v = this
@@ -394,12 +403,14 @@
       setAudio() {//启用/关闭 音频轨道
         if (this.muteAudio) {
           let nut = this.localStream.muteAudio()
-          if (nut) {
+          let nutMin = this.localStreamMin.muteAudio()
+            if (nut || nutMin) {
             this.muteAudio = !this.muteAudio
           }
         } else {
           let nut = this.localStream.unmuteAudio()
-          if (nut) {
+          let nutMin = this.localStreamMin.unmuteAudio()
+          if (nut || nutMin) {
             this.muteAudio = !this.muteAudio
           }
         }
@@ -407,12 +418,14 @@
       setVideo() {//启用/关闭 视频轨道
         if (this.muteVideo) {
           let nut = this.localStreamMin.muteVideo()
-          if (nut) {
+          let nutMin = this.localStreamMin.muteVideo()
+          if (nut || nutMin) {
             this.muteVideo = !this.muteVideo
           }
         } else {
           let nut = this.localStreamMin.unmuteVideo()
-          if (nut) {
+          let nutMin = this.localStreamMin.unmuteVideo()
+          if (nut || nutMin) {
             this.muteVideo = !this.muteVideo
           }
         }
@@ -423,6 +436,12 @@
         this.$router.back()
       },
 
+      showMaxVideo(it){
+        var v = this
+        if(it=='0000'){
+          v.localStream.play("local_stream")
+        }
+      },
     },
 
     beforeDestroy() {
@@ -438,6 +457,8 @@
         console.log('终止本地视频流发布**********************************');
       });
       v.localStream.close()
+
+      v.localStreamMin.close()
     }
   }
 </script>

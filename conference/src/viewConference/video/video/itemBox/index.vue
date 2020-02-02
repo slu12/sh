@@ -21,10 +21,11 @@
       <Icon type="logo-youtube" />
     </div>
     <div style="position: relative">
-      <div class="settingBox box_row">
-        <!--<div class="settingItem">-->
-          <!--<Icon type="md-settings" />-->
-        <!--</div>-->
+      <div class="settingBox box_row"
+           style="position: absolute;
+                    bottom: 0px;
+                    left: 50%;
+                    transform: translateX(-50%);">
         <div class="settingItem" @click="setAudio">
           <Icon v-show="muteAudio" type="md-mic"/>
           <Icon v-show="!muteAudio" type="md-mic-off"/>

@@ -46,5 +46,5 @@ html,body{
 #app {
   .size;
 }
-  @import "//at.alicdn.com/t/font_1598165_pqalx9futd.css";
+  @import "//at.alicdn.com/t/font_1598165_tsbdgc0jal8.css";
 </style>

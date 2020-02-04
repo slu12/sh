@@ -28,7 +28,7 @@ export default [
   //   component: () => import('@/scrn')
   // }
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     meta: {
       title: 'Login - 登录',
@@ -39,7 +39,7 @@ export default [
   {
     path: '/',
     name: '_home',
-    redirect: '/home',
+    // redirect: '/home',
     component: Main,
     meta: {
       hideInMenu: !true,
@@ -47,7 +47,7 @@ export default [
     },
     children: [
       {
-        path: '/',
+        path: '/index',
         name: 'home',
         meta: {
           hideInMenu: !true,

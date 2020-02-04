@@ -22,7 +22,8 @@ import '@/assets/css/boxSty.less'
 import '@/assets/css/boxGauge.less'
 //iview组件替换样式引入
 import '@/assets/css/iviewSty.less'
-
+//视频插件样式
+// import 'video.js/dist/video-js.css'
 /**
  *自定义全局组件
  */
@@ -67,6 +68,12 @@ Vue.prototype.AF = AF;
  */
 import session from './libs/session';
 Vue.prototype.session = session
+/**
+ * 页面提示
+ */
+import swal from 'sweetalert2'
+Vue.prototype.swal = swal
+
 //**********************************************************************************************************************
 
 Vue.use(iView, {

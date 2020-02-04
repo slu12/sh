@@ -44,10 +44,18 @@
     name: "index",
     props: {
       item: {
-        type: Object,
-        default: () => {
-          return {}
-        }
+        type: ''
+      }
+    },
+    computed:{
+      orderAudioStop(){
+        return this.$parent.orderAudioStop
+      }
+    },
+    watch:{
+      orderAudioStop:function(n,o){
+        console.log(n);
+        this.setAudio()
       }
     },
     data(){
@@ -58,13 +66,14 @@
     },
     created(){
       console.log('********************',this.item.getId());
-
-      console.log('idididi',this.item.getId());
     },
     mounted(){
+      console.log(this.$parent.orderAudioStop);
+      console.log("***************************");
+      console.log(this.orderAudioStop);
+      console.log("***************************");
       this.$nextTick(()=>{
         this.item.play("remote_video_"+this.item.getId())
-        console.log(this.$parent);
       })
     },
     methods:{

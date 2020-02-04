@@ -2,14 +2,14 @@
   <Card class="hisVideoCardBoxSty">
     <div class="boxPadd_LR boxPadd_B topLineBox box_row rowBetween">
       <div class="roomNumber">
-        #100000
+        #{{item.room_name}}
       </div>
       <div class="roomTyp">
-        <Button type="info" size="small" @click="hisEvent">回放</Button>
+
       </div>
     </div>
     <div class="themeSty">
-      <h2>车辆管理项目启动会</h2>
+      <h2>{{item.name}}</h2>
     </div>
     <div class="videoImgBox boxMar">
       <Icon type="logo-youtube" />
@@ -21,7 +21,7 @@
           主讲人：
         </div>
         <div class="labValName">
-          Arron
+          {{item.zcr.name}}
         </div>
       </div>
       <div class="box_row colCenter mesline">
@@ -29,7 +29,7 @@
           开始时间：
         </div>
         <div class="labValName">
-          2020-01-01 12:20:20
+          {{item.startTime}}
         </div>
       </div>
       <div class="box_row colCenter mesline">
@@ -37,10 +37,12 @@
           结束时间：
         </div>
         <div class="labValName">
-          2020-01-01 14:20:20
+          {{item.stopTime}}
         </div>
       </div>
-
+      <div style="margin: 12px 0">
+        <Button type="info" long @click="hisEvent">回放</Button>
+      </div>
     </div>
   </Card>
 </template>
@@ -48,14 +50,24 @@
 <script>
   export default {
     name: "index",
+    props:{
+      item:{
+        props:{
+          type:Object,
+          default:()=>{
+            return {}
+          }
+        }
+      }
+    },
     methods:{
-      hisEvent(){//加入会议
+      hisEvent(){//会议回放
         this.$router.push({
           name:"HISROOM",
           query:{
-            room:'0000000',
-            userId:'11111'
-          }
+            videoUrl:this.item.record_url,
+          },
+
         })
       },
     }

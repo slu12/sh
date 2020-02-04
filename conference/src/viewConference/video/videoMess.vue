@@ -8,10 +8,16 @@
       </div>
       <div class="box_row colCenter">
         <div class="conTime">
-          00:00:00
+          {{conTime | conTime}}
+          <!--{{Math.floor(conTime/(60*60))}}:{{Math.floor(conTime/(60*60))}}-->
         </div>
-        <Button type="primary" class="boxMar_L">会议静音</Button>
-        <Button type="error" class="boxMar_L" @click="closePager">退出房间</Button>
+        <div>
+          <Button v-if="!orderAudioStop" type="primary" class="boxMar_L" @click="setOrderAudio(true)">会议静音</Button>
+
+          <Button v-else type="primary" class="boxMar_L" @click="setOrderAudio(false)">开启声音</Button>
+
+        </div>
+        <Button type="error" class="boxMar_L" :disabled="returnRoom" @click="closePager">退出房间</Button>
       </div>
     </div>
     <div class="box_row" style="height: 100%">
@@ -56,17 +62,14 @@
             </div>
           </Card>
           <div class="box_col_autoY boxMar_TB">
-            <!--<div v-for="(val,key) in remoteStreams">-->
-            <!--<div>{{val}}</div>-->
-            <!--<div>{{key}}</div>-->
-            <!--</div>-->
-            <!--<video-item-box  v-for="(val,key) in remoteStreams" :key="key"></video-item-box>-->
-            <video-item-box v-for="(it,index) in remoteStreams" :key="index" :item="it"></video-item-box>
+            <video-item-box v-if="remoteStreams.length>0"
+                            v-for="(it,index) in remoteStreams"
+                            :key="index" :item="it"></video-item-box>
           </div>
 
           <div class="boxMar_B">
-            <Button type="success" long>会议开始</Button>
-            <!--<Button type="warning">会议结束</Button>-->
+            <Button v-if="!startCon" type="success" long @click="startConEvent">会议开始</Button>
+            <Button v-else type="warning" long @click="endConEvent">会议结束</Button>
           </div>
         </div>
       </div>
@@ -92,7 +95,7 @@
               <!--</div>-->
             </div>
             <div class="box_row_100 box_row rowRight">
-              <Button type="default" @click="shareEvent">屏幕共享</Button>
+              <Button type="default" @click="getShareRoomToken">屏幕共享</Button>
             </div>
           </div>
         </div>
@@ -109,6 +112,24 @@
   export default {
     name: "videoMess",
     components: {videoItemBox},
+    filters: {
+      conTime: (val) => {
+        let m = Math.floor(val / 60)
+        let s = val - m * 60
+        return m + ':' + s
+      }
+    },
+    computed: {
+      returnRoom() {
+        if (this.roomMEss.sid != "" && this.roomMEss.stopTime == "") {
+          return true
+        } else if (this.roomMEss.sid != "" && this.roomMEss.stopTime != "") {
+          return false
+        } else {
+          return false
+        }
+      },
+    },
     data() {
       return {
         //===========
@@ -129,11 +150,13 @@
         //===========
         client: '',//客户端对象
         localStream: '',//创建音视频流对象。
-        appid: '8d1a79107f9c4decac672c4201a14693',
-        key: '0068d1a79107f9c4decac672c4201a14693IAAIWDXK4TYMsEa7ivGPsyVy5i78KgCqufVjlGwPUl+oh8ieo/oAAAAAEAA8xgfcptA2XgEAAQCl0DZe',
-        roomName: 'libinbin1',
+        appid: '8d1a79107f9c4decac672c4201a14693',//不变得的
+        //token === (key)
+        key:'',
+          // '0068d1a79107f9c4decac672c4201a14693IACqmYeBZm5VzjAJZvG5QPF0FpPgjGKUhIP7UMm+To1Y3Mieo/oAAAAAEAB5HOB85m05XgEAAQDjbTle',
+        roomName: '',//libinbin99
         params: {
-          uid: 99,
+          uid: 99999,
         },
         DevicesInfo: {},//浏览器设备信息
         localStreamMin: "",//创建音视频流对象 小窗口。
@@ -144,31 +167,49 @@
         //屏幕共享参数配置
         shareClient: "",//分享的客户端
         shareStream: '',//创建音视频流对象。
+        shareToken:"",
         shareParams: {
-          uid: 99999
-        }
+          uid: 9999
+        },
+        //  =============
+        roomMEss: {},
+        orderAudioStop: false,//关闭其他音频流通道
+        conTime: 0,//会议时长
+        startCon: false,//开始会议
       }
     },
     created() {
+      if (this.$route.params._id) {
+        console.log(this.$route.room);
+        this.roomMEss = this.$route.params
+        this.roomName = this.$route.query.room
+      } else {
+        this.$router.back()
+      }
+      console.log(this.$route);
     },
     mounted() {
+      localStorage.removeItem("VDPS");
       this.$nextTick(() => {
-        this.createClient();
-        this.handleEvents();
+        this.getRoomToken(()=>{
+          this.createClient();
+          this.handleEvents();
+        })
       })
     },
     methods: {
+      getRoomToken(callBack) {//获取房间token
+        this.$http.get('/getVideoToken/'+this.params.uid+'/'+this.$route.query.room).then(res=>{
+          this.key = res.message
+          callBack && callBack()
+        }).catch(err=>{})
+      },
       createClient() {//创建客户端。
         var v = this
         this.client = AgoraRTC.createClient(v.rtcConfig);
         //-----
         this.client.init(v.appid, function () {//初始化客户端
           console.log("client initialized");
-          // v.client.leave(function () {
-          //   console.log('退出success');
-          // }, function () {
-          //   console.log('退出error');
-          // })
           v.client.join(v.key, v.roomName, v.params.uid, function () {
             v.getDevices((obj) => {//获取设备ID(视频、音频)
               v.createStream()
@@ -344,14 +385,19 @@
         })
       },
       //屏幕共享
-      //
+      getShareRoomToken(callBack) {//获取房间token
+        this.$http.get('/getVideoToken/'+this.shareParams.uid+'/'+this.$route.query.room).then(res=>{
+          this.shareToken = res.message
+          callBack && callBack()
+          this.shareEvent()
+        }).catch(err=>{})
+      },
       shareEvent() {//屏幕共享
         var v = this
-        const shareUid = 99999
         this.shareClient = AgoraRTC.createClient(v.rtcConfig);//屏幕共享终端
 
         this.shareClient.init(v.appid, function () {//初始化客户端
-          v.shareClient.join(v.key, v.roomName, v.shareParams.shareParams, function () {
+          v.shareClient.join(v.shareToken, v.roomName, v.shareParams.shareParams, function () {
             v.getDevices((obj) => {//获取设备ID(视频、音频)
               v.shareCreateStream()
             })
@@ -364,7 +410,7 @@
         console.log(v.DevicesInfo);
 
       },
-      shareCreateStream() {
+      shareCreateStream() {//屏幕共享
         var v = this
         v.shareStream = AgoraRTC.createStream({
           streamID: v.shareParams.shareParams,
@@ -404,7 +450,7 @@
         if (this.muteAudio) {
           let nut = this.localStream.muteAudio()
           let nutMin = this.localStreamMin.muteAudio()
-            if (nut || nutMin) {
+          if (nut || nutMin) {
             this.muteAudio = !this.muteAudio
           }
         } else {
@@ -436,17 +482,59 @@
         this.$router.back()
       },
 
-      showMaxVideo(it){
+      showMaxVideo(it) {//小屏幕切换
         var v = this
-        if(it=='0000'){
+        if (it == '0000') {
           v.localStream.play("local_stream")
         }
       },
+      setOrderAudio(val) {//设置接收流声音
+        this.orderAudioStop = val
+      },
+      startConEvent() {//会议开始
+        this.$http.post('/serverless/api/startVideo', {
+          room_name: this.roomName,
+          _id: this.$route.query.id
+        }).then(res => {
+          this.roomMEss.sid = res.sid
+          let a = JSON.stringify(res)
+          localStorage.setItem('VDPS', a)
+          this.startCon = 1
+          this.ST()
+        }).catch(err => {
+        })
+      },
+      ST() {//会议计时
+        this.conTime = this.conTime + 1;
+        if (this.startCon == 1) {
+          setTimeout(() => {
+            this.ST()
+          }, 1000)
+        }
+        console.log(this.conTime);
+      },
+      endConEvent() {//会议结束
+        var v = this
+        let vdps = localStorage.getItem('VDPS')
+        vdps = JSON.parse(vdps)
+        vdps.room_name = this.roomName;
+        vdps._id = this.$route.query.id;
+        this.$http.post('/serverless/api/stopVideo', vdps).then(res => {
+          this.startCon = -1
+        }).catch(err => {
+          console.log(err);
+          v.swal({
+            title: err.message,
+            type: 'error'
+          })
+        })
+
+      }
     },
 
     beforeDestroy() {
       var v = this
-
+      this.startCon = -1
       v.client.leave(function () {
         console.log('退出success');
       }, function () {

@@ -38,7 +38,7 @@
 import { mapActions,mapMutations } from 'vuex'
 
 import log from './file/log.png'
-// import ewm from './file/ewm.png'
+import ewm from './file/ewm.png'
 
 export default {
   components: {
@@ -47,11 +47,11 @@ export default {
   data(){
     return {
       log,
-      ewm:""
+      ewm
     }
   },
   created(){
-    this.getEWM()
+    // this.getEWM()
   },
   mounted(){
     // this.clearTagNavList()

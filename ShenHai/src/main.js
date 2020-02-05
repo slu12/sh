@@ -14,6 +14,9 @@ import './index.less'
 import '@/assets/icons/iconfont.css'
 import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
+import * as esriLoader from 'esri-loader'
+
+Vue.prototype.esriLoader = esriLoader
 import 'v-org-tree/dist/v-org-tree.css'
 //**********************************************************************************************************************
 //弹性布局公用样式引入

@@ -1,0 +1,89 @@
+.videoCardBoxSty{
+  width: 100%;
+  margin-bottom: 16px;
+  min-height: 400px;
+  .ivu-card-body{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding:16px 0 0 0 ;
+    .topLineBox{
+      border-bottom: solid 1px #ededed;
+    }
+    .roomNumber{
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .themeSty{
+      padding: 8px;
+      padding-bottom: 0;
+    }
+    .startTime{
+      padding: 6px 8px 0 8px;
+    }
+    .videoImgBox{
+      margin-top: 6px;
+      background-color: #738699;
+      height: 200px;
+      border-radius: 4px;
+      position: relative;
+      i{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 40px;
+        color: #ffffff;
+      }
+    }
+    .messBox{
+      //background-color: #348EED;
+      .mesline{
+        padding-bottom: 8px;
+        margin-bottom: 6px;
+        border-bottom: solid 1px #ededed;
+      }
+      .labTit{
+        width: 80px;
+        font-size: 16px;
+        font-weight: 600;
+        //color: ;
+      }
+      .labValName{
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .labVal{
+
+      }
+      .joinPerBox{
+        .perItem{
+          width: 30px;
+          height: 30px;
+          text-align: center;
+          line-height: 30px;
+          background-color: #738699;
+          border-radius: 100%;
+          border:1px solid #ffffff;
+          margin-left: -10px;
+          color: #ffffff;
+        }
+        .perItem:first-child{
+          background-color: #9abc32;
+        }
+        .perItem:nth-child(2){
+          background-color: #4d2a86;
+        }
+        .perItem:nth-child(3){
+          background-color: #348EED;
+        }
+        .perNum{
+          margin-left: 12px;
+          line-height: 30px;
+          font-size: 22px;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}

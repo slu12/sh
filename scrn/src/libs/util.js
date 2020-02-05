@@ -16,6 +16,19 @@ export const getToken = () => {
   else return false
 }
 
+export const APPID_KEY = 'APPID_KEY'
+
+export const setAppid = (APPID) => {
+  Cookies.set(APPID_KEY, APPID, { expires: cookieExpires || 1 })
+}
+
+export const getAppid = () => {
+  const appid = Cookies.get(APPID_KEY)
+  if (appid) return appid
+  else return false
+}
+
+
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0
 }

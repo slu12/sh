@@ -1,0 +1,167 @@
+<html><head>
+<title>测试</title>
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- 浏览器标签左侧小图标 -->
+<!-- <link rel="shortcut icon" type="image/x-icon" href="http://www.cjienc.com:8100/resources/image/backstage/title_icon.png"> -->
+
+
+
+<link rel="stylesheet" href="css/ace.min.css">
+<link rel="stylesheet" href="css/ace-rtl.min.css">
+<link rel="stylesheet" href="css/ace-skins.min.css">
+
+<link rel="stylesheet" href="css/common.css">
+<!-- openlayers 引用包 -->
+<link rel="stylesheet" href="css/ol.css" type="text/css">
+<!-- js部分 -->
+
+
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<!-- openlayers 引用包 -->
+<script type="text/javascript" src="js/ol.js"></script>
+<script type="text/javascript" src="js/ol2.js"></script>
+<script type="text/javascript" src="http://api.tianditu.gov.cn/api?v=4.0&tk=426ec1572bf4d6e5a5c25230673b0268"></script>
+
+
+
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+	var projection = ol.proj.get('EPSG:4326');
+	var tileUrl = "http://www.cjienc.com/arcgis/rest/services/cjinobeacon2/MapServer/tile/{z}/{y}/{x}?token=N_XUjY4G2s39UeJLarc2Nxb0ZdsBixABktXGWdI0ZRFkcrLqq8lpklZT7gbbkWK-";
+	// var tileUrl1 = "http://api.tianditu.gov.cn/api?v=4.0&tk=426ec1572bf4d6e5a5c25230673b0268";
+	// var tileUrl1 = "http://api.tianditu.gov.cn/api?v=4.0&tk=426ec1572bf4d6e5a5c25230673b0268";
+
+
+	//var tileUrl = "http://27.17.26.90/arcgis/rest/services/cjinobeacon2/MapServer/tile/{z}/{y}/{x}?token=TtW0sIyF8o2RMFinaU-fghS4STJTiqIeE5fIyUGynWme0gzcR3-V7WPtKRFk4FFh";
+	var tileUrl1 = "http://27.17.26.90/arcgis/rest/services/basemap84/MapServer/tile/{z}/{y}/{x}?token=TtW0sIyF8o2RMFinaU-fghS4STJTiqIeE5fIyUGynWme0gzcR3-V7WPtKRFk4FFh";
+
+
+
+
+	var origin = [-400, 400];
+	var resolutions = [
+	    0.023794610058302804,
+	    0.00951784402332112,
+	    0.00475892201166056,
+	    0.00237946100583028,
+	    0.00118973050291514,
+	    0.00059486525145757,
+	    0.000297432625728785,
+	    0.0001487163128643925,
+	    0.00007435815643219625,
+	    0.000037179078216098126,
+	    0.00001859072883855198,
+	    0.000009294174688773075,
+	    0.000004647087344386537,
+	    0.00000237946100583028,
+	];
+
+	var fullExtent = [103.87588002846373, 19.45228966609097, 121.40686460052386, 41.24664597260153];
+
+	var tileGrid = new ol.tilegrid.TileGrid({
+	    tileSize: 256,
+	    origin: origin,
+	    extent: fullExtent,
+	    resolutions: resolutions
+	});
+	var tileArcGISXYZ = new ol.source.XYZ({
+	    tileGrid: tileGrid,
+	    projection: projection,
+	    url: tileUrl,
+	});
+	var tileArcGISXYZ1 = new ol.source.XYZ({
+	    tileGrid: tileGrid,
+	    projection: projection,
+	    url: tileUrl1 ,
+
+
+	});
+
+	var map = new ol.Map({
+	    target: 'map',
+	    layers: [
+			new ol.layer.Tile({
+	            source: tileArcGISXYZ1
+	        }),
+	        new ol.layer.Tile({
+	            source: tileArcGISXYZ
+	        })
+	    ],
+	    view: new ol.View({
+	        center: ol.extent.getCenter(fullExtent),
+	        resolutions: resolutions,
+	        projection: projection,
+	        extent: fullExtent
+	    })
+	});
+	map.getView().setZoom(5);
+
+    var element = document.getElementById('popup');
+
+    var popup = new ol.Overlay({
+      element: element,
+      positioning: 'bottom-center',
+      stopEvent: false,
+      offset: [0, -50]
+    });
+    map.addOverlay(popup);
+
+    var feature = null;
+    map.on('click', function(evt) {
+    	if(feature != undefined || feature != null){
+    		var iconStyle = new ol.style.Style({
+				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [0.5, 46],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'pixels',
+					src: 'http://www.cjienc.com:8100/resources/images/map/pos.png'
+				}))
+			});
+    		feature.setStyle(iconStyle);
+    	}
+
+    	$(element).popover('destroy');
+    	feature = map.forEachFeatureAtPixel(evt.pixel,
+            function(feature) {
+              return feature;
+            });
+        if (feature) {
+          var coordinates = feature.getGeometry().getCoordinates();
+          popup.setPosition(coordinates);
+          $(element).popover({
+            'placement': 'top',
+            'html': true,
+            'content': feature.get('name')
+          });
+          // 改变标注样式
+          var iconStyle = new ol.style.Style({
+				image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+					anchor: [0.5, 46],
+					anchorXUnits: 'fraction',
+					anchorYUnits: 'pixels',
+					src: 'http://www.cjienc.com:8100/resources/images/map/pos_sel.png'
+				}))
+			});
+		  console.log(feature);
+          feature.setStyle(iconStyle);
+
+          $(element).popover('show');
+        } else {
+          $(element).popover('destroy');
+        }
+     });
+    </script>
+
+
+
+
+</body></html>

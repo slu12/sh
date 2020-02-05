@@ -22,7 +22,12 @@ export const otherRouter = {
   redirect: '/home',
   component: Main,
   children: [
-    { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/viewDevelop/historyTarck') },
+    {
+      path: 'historyTarck',
+      title: '历史轨迹',
+      name: 'historyTarck_new',
+      component: () => import('@/viewDevelop/historyTarck')
+    },
   ]
 };
 export default [
@@ -41,12 +46,12 @@ export default [
     path: '/',
     name: 'ship-Track',
     redirect: '/ship-Track',
-      meta: {
-        hideInMenu: !true,
-        notCache: true
-      },
+    meta: {
+      hideInMenu: !true,
+      notCache: true
+    },
     component: Main,
-    children:[
+    children: [
       {
         path: '/ship-Track',
         name: 'ship-Track',
@@ -61,29 +66,30 @@ export default [
       },
     ]
   },
-  // {
-  //   path: '/home',
-  //   name: '_home',
-  //   redirect: '/home',
-  //   component: Main,
-  //   meta: {
-  //     hideInMenu: !true,
-  //     notCache: true
-  //   },
-  //   children: [
-  //     {
-  //       path: '/home',
-  //       name: 'home',
-  //       meta: {
-  //         hideInMenu: !true,
-  //         title: '首页',
-  //         notCache: true,
-  //         icon: 'md-home'
-  //       },
-  //       component: () => import('@/view/single-page/home')
-  //     }
-  //   ]
-  // },
+  {
+    path: '/home',
+    name: '_home',
+    redirect: '/home',
+    component: Main,
+    meta: {
+      hideInMenu: !true,
+      notCache: true
+    },
+    children: [
+      {
+        path: '/home',
+        name: 'home',
+        meta: {
+          hideInMenu: !true,
+          title: '首页',
+          notCache: true,
+          icon: 'md-home'
+        },
+        component: () => import('@/view/mapDemo')
+        // component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
 
   {
     path: '/system',
@@ -268,7 +274,7 @@ export default [
       title: '船舶管理',
     },
     component: Main,
-    children:[
+    children: [
       {
         path: 'ship-mess',
         name: 'ship-mess',
@@ -289,7 +295,8 @@ export default [
       //   },
       //   component: () => import('@/viewDevelop/Shipmanagement/ship-Track')
       // },
-      { path: 'historyTarck',
+      {
+        path: 'historyTarck',
         name: 'historyTarck_new',
         meta: {
           icon: 'ios-cog',
@@ -304,7 +311,7 @@ export default [
         meta: {
           icon: 'ios-cog',
           title: '视频查看',
-          hideInMenu:true
+          hideInMenu: true
         },
         component: () => import('@/viewDevelop/Shipmanagement/watchVideo')
       },
@@ -437,10 +444,10 @@ export default [
     meta: {
       icon: 'ios-cog',
       title: '安全管理',
-      showAlways:true
+      showAlways: true
     },
     component: Main,
-    children:[
+    children: [
       {
         path: '/rule',
         name: 'rule',
@@ -453,23 +460,6 @@ export default [
     ]
 
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   // {
@@ -882,13 +872,13 @@ export default [
     name: 'error_404',
     meta: {
       hideInMenu: true,
-      title:'404'
+      title: '404'
     },
     component: () => import('@/view/error-page/404.vue')
   },
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
-    // { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/viewDevelop/historyTarck') },
-    // { path: 'historyPath', title: '历史轨迹', name: 'historypath', component: () => import('@/views/whdx/OperationMonitoring/VehicleMonitoring/HistoryPath') },
+  // { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/viewDevelop/historyTarck') },
+  // { path: 'historyPath', title: '历史轨迹', name: 'historypath', component: () => import('@/views/whdx/OperationMonitoring/VehicleMonitoring/HistoryPath') },
 
 ]
 

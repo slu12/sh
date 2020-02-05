@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ldz.util.bean.ApiResponse;
+import com.ldz.util.bean.StreamGobbler;
 import com.ldz.util.bean.WebcamBean;
 import com.ldz.util.exception.RuntimeCheck;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +37,8 @@ import java.util.stream.Collectors;
 public class WebcamUtil {
 
     private static String IP = "http://139.196.253.185";
+
+    private static final Logger logger = LoggerFactory.getLogger(WebcamUtil.class);
 
     //    private static String ZH = "ES4G870";
     private static String ZH = "ES4G856";
@@ -88,10 +91,29 @@ public class WebcamUtil {
         return result;
     }
 
+    public static int checkOnline(String device, StringRedisTemplate redis){
+        String jsession = login(redis);
+        String url = IP + "/StandardApiAction_getDeviceOlStatus.action";
+        Map<String,String> params = new HashMap<>();
+        params.put("devIdno", device);
+        params.put("jsession", jsession);
+        String res = HttpUtil.get(url, params);
+        JSONObject object = JSON.parseObject(res);
+        JSONArray onlines = object.getJSONArray("onlines");
+        if(CollectionUtils.isEmpty(onlines)){
+            return 2;
+        }
+        JSONObject jsonObject = onlines.getJSONObject(0);
+        return jsonObject.getInteger("online");
+    }
+
+
     /**
      * 实时录像
      */
     public static int realVideo(StringRedisTemplate redis, String deviceNo, String chn, int sec, String label) {
+        int online = checkOnline(deviceNo, redis);
+        RuntimeCheck.ifFalse(online == 1 , "设备不在线 , 请稍后再试");
         // 拼接视频录像地址
         String url = IP + "/StandardApiAction_realTimeVedio.action";
         Map<String, String> params = new HashMap<>();
@@ -153,7 +175,7 @@ public class WebcamUtil {
             String output = "/data/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + name;
 
             try {
-                List<String> command = new ArrayList<>();
+               /* List<String> command = new ArrayList<>();
                 command.add("/usr/local/ffmpeg/bin/ffmpeg");
                 command.add("-i");
                 command.add(input);
@@ -163,32 +185,54 @@ public class WebcamUtil {
                 Process videoProcess = new ProcessBuilder(command).redirectErrorStream(true).start();
                 new  com.ldz.util.bean.PrintStream(videoProcess.getInputStream()).start();
                 new  com.ldz.util.bean.PrintStream(videoProcess.getErrorStream()).start();
-                videoProcess.waitFor();
-                System.out.println("video-->" + output);
+                videoProcess.waitFor();*/
+
+                try {
+                    String cmdStr =  "/usr/local/ffmpeg/bin/ffmpeg -i " + input + " -vcodec h264 " + output;
+                    logger.info("线程执行命令1------"+cmdStr);
+                    Process process  = Runtime.getRuntime().exec(new String[]{"sh","-c",cmdStr});
+                    StreamGobbler errorGobbler  =  new  StreamGobbler(process.getErrorStream(),  "ERROR");
+                    errorGobbler.start();//  kick  off  stderr
+                    StreamGobbler  outGobbler  =  new  StreamGobbler(process.getInputStream(),  "STDOUT");
+                    outGobbler.start();//  kick  off  stdout
+                    process.waitFor();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    logger.error("exeCmd1 error:"+e);
+                }
+               /* System.out.println("video-->" + output);
                 // 视频编码转换完成 , 获取封面图
                 // -ss 00:00 -i @videofile -y -f image2 -r 1 -t 00:01 @cachefile
                 List<String> imgcmd = new ArrayList<>();
                 imgcmd.add("/usr/local/ffmpeg/bin/ffmpeg");
-//            imgcmd.add("-ss");
-//            imgcmd.add("00:00");
                 imgcmd.add("-i");
                 imgcmd.add(output);
                 imgcmd.add("-y");
                 imgcmd.add("-f");
                 imgcmd.add("image2");
-//            imgcmd.add("-r");
-//            imgcmd.add("1");
                 imgcmd.add("-t");
                 imgcmd.add("1");
-//            imgcmd.add("00:01");
                 imgcmd.add(output.replace("mp4","jpg"));
                 Process imgProcess = new ProcessBuilder(imgcmd).redirectErrorStream(true).start();
                 new  com.ldz.util.bean.PrintStream(imgProcess.getInputStream()).start();
                 new  com.ldz.util.bean.PrintStream(imgProcess.getErrorStream()).start();
-                imgProcess.waitFor();
+                imgProcess.waitFor();*/
+                try {
+                    String cmdStr =  "/usr/local/ffmpeg/bin/ffmpeg -i " + output + "  -y -f image2 -t 1 " + output.replace("mp4","jpg");
+                    logger.info("线程执行命令1------"+cmdStr);
+                    Process process  = Runtime.getRuntime().exec(new String[]{"sh","-c",cmdStr});
+                    StreamGobbler errorGobbler  =  new  StreamGobbler(process.getErrorStream(),  "ERROR");
+                    errorGobbler.start();//  kick  off  stderr
+                    StreamGobbler  outGobbler  =  new  StreamGobbler(process.getInputStream(),  "STDOUT");
+                    outGobbler.start();//  kick  off  stdout
+                    process.waitFor();
+                }catch (Exception e){
+                    e.printStackTrace();
+                    logger.error("exeCmd1 error:"+e);
+                }
                 System.out.println("input-->" + input);
                 try {
-                    boolean delete = new File(input).delete();
+                    new File(input).delete();
                 }catch (Exception e1){
                     e1.printStackTrace();
                     System.out.println("e1-->" + e1.getMessage());
@@ -210,6 +254,8 @@ public class WebcamUtil {
      * 抓拍
      */
     public static String photo(StringRedisTemplate redis, String DevIDNO, String Chn) {
+        int online = checkOnline(DevIDNO, redis);
+        RuntimeCheck.ifFalse(online == 1 , "设备不在线 , 请稍后再试");
         String jsession = login(redis);
         // 拼接抓拍url
         String url = IP + "/StandardApiAction_capturePicture.action";

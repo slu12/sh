@@ -12,12 +12,13 @@
                @on-search="getRoom"/>
       </div>
     </div>
-    <div class="box_col_autoY">
+    <div class="box_col_autoY" style="position: relative">
       <Row :gutter="16">
         <Col span="8" v-for="(it,index) in roomList">
           <video-card :item="it"></video-card>
         </Col>
       </Row>
+      <img v-if="roomList.length == 0" :src="nodata" style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)" alt="">
     </div>
     <!--<div class="boxMar_T box_row rowRight">-->
       <!--<Page :total="100" />-->
@@ -27,11 +28,14 @@
 
 <script>
   import videoCard from './comp/cardItem'
+  import nodata from '@/assets/images/nodata.png'
+
   export default {
     name: "index",
     components:{videoCard},
     data() {
       return {
+        nodata,
         roomList: [
           {
             _id: "b3c8b2cee5e74d69a0eef578ce31e6bc",

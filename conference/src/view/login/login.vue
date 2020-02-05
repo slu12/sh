@@ -20,11 +20,11 @@
           <div class="proTit">
             视频会议管理平台
           </div>
-          <div>
-            <img :src="ewm" width="165px" height="165px" @click="login" alt="">
+          <div style="width:220px;height:220px" @click="login">
+            <img :src="ewm" style="width:220px;height:220px" alt="">
           </div>
           <div class="labTxt">
-            扫描二维码登录
+            请用微信扫码登录
           </div>
         </div>
 
@@ -38,7 +38,8 @@
 import { mapActions,mapMutations } from 'vuex'
 
 import log from './file/log.png'
-import ewm from './file/ewm.png'
+// import ewm from './file/ewm.png'
+import ajaxUrl from '@/axios/api.js'
 
 export default {
   components: {
@@ -47,14 +48,13 @@ export default {
   data(){
     return {
       log,
-      ewm
+      ewm:""
     }
   },
   created(){
-    // this.getEWM()
+    this.ewm = ajaxUrl.url+"/serverless/getQrcode/"+this.getRandom()
   },
   mounted(){
-    // this.clearTagNavList()
   },
   methods: {
     ...mapActions([
@@ -62,7 +62,6 @@ export default {
       'getUserInfo'
     ]),
     ...mapMutations([
-      'clearTagNavList'
     ]),
     getRandom(val) {//取随机数
       let line = 1
@@ -76,13 +75,16 @@ export default {
       return num
     },
     getEWM(){
-      this.$http.post('/serverless/getQrcode/'+this.getRandom(8)).then(res=>{
-        this.ewm = res.message
+      let ps = this.getRandom(8)
+      this.$http.get('/serverless/getQrcode/'+ps).then(res=>{
+        console.log(res);
+        this.ewm = res
       }).catch(err=>{
 
       })
     },
     login(){
+      console.log(this.$config.homeName);
       this.$router.push({
         // name: this.$config.homeName
         name:"home"

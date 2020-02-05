@@ -141,7 +141,7 @@
         formInline: {
           "name": "会议",
           // zcr: {},
-          "phone": "14112341234",
+          "phone": "15827209956",
           "idcard": "111112",//证件号码后六位
           "zcrname": "1",
 
@@ -201,16 +201,15 @@
                 type: 'warning'
               })
               v.$refs['cheItem'].formInlineC.phone = ""
-              return
-            } else {
-              if (index == this.formInline.chr.length - 1) {
-                // this.formInline.chr.push(it)
-                this.formInline.chr.splice(0, 0,it)
-                v.$refs['cheItem'].formInlineC = {
-                  "phone": "",
-                  "idcard": "",
-                  "name": ""
-                }
+
+            }
+            if (index == this.formInline.chr.length - 1) {
+              // this.formInline.chr.push(it)
+              this.formInline.chr.splice(0, 0,it)
+              v.$refs['cheItem'].formInlineC = {
+                "phone": "",
+                "idcard": "",
+                "name": ""
               }
             }
           })

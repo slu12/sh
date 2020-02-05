@@ -68,8 +68,10 @@
           </div>
 
           <div class="boxMar_B">
-            <Button v-if="!startCon" type="success" long @click="startConEvent">会议开始</Button>
-            <Button v-else type="warning" long @click="endConEvent">会议结束</Button>
+            <Button v-if="startCon == 0" type="success" long @click="startConEvent">会议开始</Button>
+            <Button v-else-if="startCon == 1" type="warning" long @click="endConEvent">会议结束</Button>
+            <Button v-else-if="startCon == -1" long>会议已结束</Button>
+
           </div>
         </div>
       </div>
@@ -175,10 +177,11 @@
         roomMEss: {},
         orderAudioStop: false,//关闭其他音频流通道
         conTime: 0,//会议时长
-        startCon: false,//开始会议
+        startCon: 0,//开始会议 0 开始会议 1 结束会议 -1会议已结束
       }
     },
     created() {
+      console.log(this.$route);
       if (this.$route.params._id) {
         console.log(this.$route.room);
         this.roomMEss = this.$route.params
@@ -186,20 +189,33 @@
       } else {
         this.$router.back()
       }
-      console.log(this.$route);
+
+      if(this.$route.params.zt!='10'){
+        localStorage.removeItem("VDPS");
+      }else {
+        this.getVerifyVideo()
+      }
     },
     mounted() {
-      localStorage.removeItem("VDPS");
+
       this.$nextTick(() => {
-        this.getRoomToken(()=>{
-          this.createClient();
-          this.handleEvents();
-        })
+        // this.getRoomToken(()=>{
+          // this.createClient();
+          // this.handleEvents();
+        // })
       })
     },
     methods: {
+      getVerifyVideo(){//验证正在录制的视频是否有效
+        let a = JSON.parse(localStorage.getItem('VDPS'))
+        this.$http.get('/serverless/api/checkRecording/'+a.resourceId+'/'+a.sid).then(res=>{
+          this.startCon=1
+        }).error(err=>{
+          this.startCon=0
+        })
+      },
       getRoomToken(callBack) {//获取房间token
-        this.$http.get('/getVideoToken/'+this.params.uid+'/'+this.$route.query.room).then(res=>{
+        this.$http.get('/serverless/api/getVideoToken/'+this.params.uid+'/'+this.$route.query.room).then(res=>{
           this.key = res.message
           callBack && callBack()
         }).catch(err=>{})
@@ -385,10 +401,9 @@
         })
       },
       //屏幕共享
-      getShareRoomToken(callBack) {//获取房间token
-        this.$http.get('/getVideoToken/'+this.shareParams.uid+'/'+this.$route.query.room).then(res=>{
+      getShareRoomToken() {//获取房间token
+        this.$http.get('/serverless/api/getVideoToken/'+this.shareParams.uid+'/'+this.$route.query.room).then(res=>{
           this.shareToken = res.message
-          callBack && callBack()
           this.shareEvent()
         }).catch(err=>{})
       },
@@ -397,7 +412,7 @@
         this.shareClient = AgoraRTC.createClient(v.rtcConfig);//屏幕共享终端
 
         this.shareClient.init(v.appid, function () {//初始化客户端
-          v.shareClient.join(v.shareToken, v.roomName, v.shareParams.shareParams, function () {
+          v.shareClient.join(v.shareToken, v.roomName, v.shareParams.uid, function () {
             v.getDevices((obj) => {//获取设备ID(视频、音频)
               v.shareCreateStream()
             })
@@ -481,7 +496,6 @@
 
         this.$router.back()
       },
-
       showMaxVideo(it) {//小屏幕切换
         var v = this
         if (it == '0000') {

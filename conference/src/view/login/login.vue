@@ -45,6 +45,11 @@ export default {
   components: {
     // LoginForm
   },
+  computed:{
+    tagNavList () {
+      return this.$store.state.app.tagNavList
+    },
+  },
   data(){
     return {
       log,
@@ -52,6 +57,8 @@ export default {
     }
   },
   created(){
+    // this.closeTags()
+    localStorage.removeItem("tagNaveList");
     this.ewm = ajaxUrl.url+"/serverless/getQrcode/"+this.getRandom()
   },
   mounted(){
@@ -63,6 +70,28 @@ export default {
     ]),
     ...mapMutations([
     ]),
+    closeTags(){
+      let res = this.tagNavList.filter(item => item.name === this.$config.homeName)
+      this.turnToPage(this.$config.homeName)
+    },
+    turnToPage (route) {
+      let { name, params, query } = {}
+      if (typeof route === 'string') name = route
+      else {
+        name = route.name
+        params = route.params
+        query = route.query
+      }
+      if (name.indexOf('isTurnByHref_') > -1) {
+        window.open(name.split('_')[1])
+        return
+      }
+      // this.$router.push({
+      //   name,
+      //   params,
+      //   query
+      // })
+    },
     getRandom(val) {//取随机数
       let line = 1
       if (val && val > 1) {

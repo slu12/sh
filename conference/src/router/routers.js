@@ -59,26 +59,26 @@ export default [
       }
     ]
   },
-  {
-    path: '/system_setting',
-    name: 'SYSTEM-SETTING',
-    meta: {
-      icon: 'logo-buffer',
-      title: '----'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'setting',
-        name: 'setting',
-        meta: {
-          icon: 'md-person',
-          title: '基础配置',
-        },
-        component: () => import('@/viewConference/setting')
-      },
-    ]
-  },
+  // {
+  //   path: '/system_setting',
+  //   name: 'SYSTEM-SETTING',
+  //   meta: {
+  //     icon: 'logo-buffer',
+  //     title: '----'
+  //   },
+  //   component: Main,
+  //   children: [
+  //     {
+  //       path: 'setting',
+  //       name: 'setting',
+  //       meta: {
+  //         icon: 'md-person',
+  //         title: '基础配置',
+  //       },
+  //       component: () => import('@/viewConference/setting')
+  //     },
+  //   ]
+  // },
   {
     path: '/system-video',
     name: 'SYSTEM-VIDEO',

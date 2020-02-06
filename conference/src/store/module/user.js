@@ -1,4 +1,4 @@
-import { setToken, getToken } from '@/libs/util'
+import { setToken, getToken, setAppid } from '@/libs/util'
 
 export default {
   state: {
@@ -28,8 +28,7 @@ export default {
       state.access = access
     },
     setToken (state, token) {
-      state.token = token
-      setToken(token)
+
     },
     setHasGetInfo (state, status) {
       state.hasGetInfo = status
@@ -67,6 +66,11 @@ export default {
     },
     // 退出登录
     handleLogOut ({ state, commit }) {
+      return new Promise((resolve, reject) => {
+        setToken('');
+        setAppid('');
+        resolve();
+      })
     },
     // 获取用户相关信息
     getUserInfo ({ state, commit }) {

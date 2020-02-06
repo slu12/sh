@@ -24,7 +24,7 @@
             <img :src="ewm" style="width:220px;height:220px" alt="">
           </div>
           <div class="labTxt">
-            请用微信扫码登录
+            <Icon v-if="value != null" type="md-checkmark-circle-outline" size="24" style="color:#19be6b"/>{{ tipText }}
           </div>
         </div>
 
@@ -40,6 +40,7 @@ import { mapActions,mapMutations } from 'vuex'
 import log from './file/log.png'
 // import ewm from './file/ewm.png'
 import ajaxUrl from '@/axios/api.js'
+import { setToken,setAppid } from '@/libs/util'
 
 export default {
   components: {
@@ -48,13 +49,21 @@ export default {
   data(){
     return {
       log,
-      ewm:""
+      ewm:"",
+      loginTimer:null,
+      tipText:'请用微信扫码登录',
+      value:null,
+      ranNum: null
     }
   },
   created(){
-    this.ewm = ajaxUrl.url+"/serverless/getQrcode/"+this.getRandom()
+    this.ranNum = this.getRandom(8);
+    this.ewm = ajaxUrl.url+"/serverless/getQrcode/" + this.ranNum;
   },
   mounted(){
+      this.loginTimer = setInterval(()=>{
+          this.checkScan();
+      }, 3000);
   },
   methods: {
     ...mapActions([
@@ -63,6 +72,36 @@ export default {
     ]),
     ...mapMutations([
     ]),
+    checkScan(){
+      //监听是否已经扫码登录成功
+      if (this.ranNum){
+        console.log('/serverless/testAdmin/'+this.ranNum);
+        this.$http.get('/serverless/testAdmin/'+this.ranNum).then(res=>{
+            console.log(res);
+
+            if (res.value){
+                this.value = res.value;
+                this.tipText = '登录成功';
+                if (res.value){
+                    setToken(res.value)
+                }
+                if (res.appid){
+                    setAppid(res.appid)
+                }
+
+                clearInterval(this.loginTimer);
+                this.loginTimer = null;
+                setTimeout(()=>{
+                  this.$router.push({
+                      name:"home"
+                  })
+                }, 2000);
+            }
+        }).catch(err=>{
+
+        })
+      }
+    },
     getRandom(val) {//取随机数
       let line = 1
       if (val && val > 1) {
@@ -84,7 +123,6 @@ export default {
       })
     },
     login(){
-      console.log(this.$config.homeName);
       this.$router.push({
         // name: this.$config.homeName
         name:"home"

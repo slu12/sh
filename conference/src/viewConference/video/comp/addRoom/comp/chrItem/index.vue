@@ -33,9 +33,9 @@
     data() {
       return {
         formInlineC: {
-          "phone": "13112121212",
-          "idcard": "666666",
-          "name": "网系哦啊"
+          "phone": "",
+          "idcard": "",
+          "name": ""
         },
         ruleInlineC: {
           name:[

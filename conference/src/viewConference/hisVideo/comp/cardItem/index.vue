@@ -4,12 +4,6 @@
       <div class="roomNumber">
         {{item.name}}
       </div>
-      <div class="roomTyp">
-
-      </div>
-    </div>
-    <div class="videoImgBox boxMar">
-      <Icon type="logo-youtube" />
     </div>
 
     <div class="messBox boxMar_LR">
@@ -45,6 +39,9 @@
 </template>
 
 <script>
+  import videojs from 'video.js'
+  import 'videojs-contrib-hls'
+
   export default {
     name: "index",
     props:{
@@ -56,6 +53,12 @@
           }
         }
       }
+    },
+    data() {
+        return {
+            myVideo: '',
+            videoSrc:""
+        }
     },
     methods:{
       hisEvent(){//会议回放

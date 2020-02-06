@@ -4,21 +4,6 @@
            controls preload="auto" style='width: 100%;height: 100%'>
       <source :src="videoSrc" type="application/x-mpegURL">
     </video>
-    <!--<div v-if="false" id="" class="pagerRightBox box_col_auto boxPadd_LR boxPadd_T">-->
-    <!--</div>-->
-    <!--<div class="settingBox box_row">-->
-    <!--<div class="settingItem">-->
-    <!--<Icon type="ios-rewind" />-->
-    <!--</div>-->
-    <!--<div class="settingItem">-->
-    <!--<Icon type="ios-play" />-->
-    <!--</div>-->
-    <!--<div class="settingItem">-->
-    <!--<Icon type="ios-pause" />-->
-    <!--</div>-->
-    <!--<div class="settingItem">-->
-    <!--<Icon type="ios-fastforward" />-->
-    <!--</div>-->
 
     <div title="关闭" @click="closePager" style="position: fixed;top: 10px;right: 10px">
       <Tooltip content="退出" placement="bottom">

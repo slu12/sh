@@ -2,7 +2,7 @@ export default {
   /**
    * @description 配置显示在浏览器标签的title
    */
-  title: '会议',
+  title: '司法科技 助力仲裁',
   /**
    * @description token在Cookie中存储的天数，默认1天
    */

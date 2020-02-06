@@ -60,25 +60,6 @@
       <!--</div>-->
     <!--</Card>-->
 
-    <div class="itemBox box_row colCenter" style="width: 200px;background-color: #999999">
-      <div>
-        123
-      </div>
-      <div class="box_row_100">
-        <div>title</div>
-        <div class="box_row ">
-          <div style="margin-right: 12px">
-            1
-          </div>
-          <div>
-            2
-          </div>
-        </div>
-      </div>
-      <div>
-        but
-      </div>
-    </div>
   </div>
 </template>
 

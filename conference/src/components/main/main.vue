@@ -100,6 +100,11 @@ export default {
     }
   },
   methods: {
+    getUserInfo(){
+      this.$http.get('/serverless/api/getUserInfo').then(res=>{
+
+      }).catch(err=>{})
+    },
     ...mapMutations([
       'setBreadCrumb',
       'setTagNavList',
@@ -182,6 +187,9 @@ export default {
     }
     // 获取未读消息条数
     // this.getUnreadMessageCount()
+  },
+  created(){
+    this.getUserInfo()
   }
 }
 </script>

@@ -39,7 +39,7 @@ export default {
     ]),
     logout () {
       this.handleLogOut().then(() => {
-        this.clearTagNavList()
+        // this.clearTagNavList()
         this.$router.push({
           name: 'login'
         })

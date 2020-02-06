@@ -1,16 +1,29 @@
 <template>
-  <div id="app">
+  <div id="app" :style="{height: AF.getBody_H()+'px'}">
     <router-view/>
   </div>
 </template>
 
 <script>
-export default {
+  import { setToken,setAppid } from '@/libs/util'
+
+  export default {
   name: 'App',
   data(){
     return {
       urlParams:{}
     }
+  },
+  created(){
+    let token = this.$route.query.token
+    let appid = this.$route.query.appid
+    if (token){
+      setToken(token)
+    }
+    if (appid){
+      setAppid(appid)
+    }
+
   },
   mounted(){
     // var url = location.href;

@@ -47,7 +47,7 @@ export default [
     },
     children: [
       {
-        path: '/',
+        path: '/home',
         name: 'home',
         meta: {
           hideInMenu: !true,
@@ -108,7 +108,6 @@ export default [
     },
     component: () => import('@/viewConference/video/videoMess.vue')
   },
-
   {
     path: '/system-hisvideo',
     name: 'SYSTEM-HISVIDEO',
@@ -137,6 +136,67 @@ export default [
       hideInMenu: true
     },
     component: () => import('@/viewConference/hisVideo/videoMess.vue')
+  },
+
+  {
+    path: '/video-postpone',
+    name: 'VIDEO-POSTPONE',
+    meta: {
+      icon: 'logo-buffer',
+      title: '----'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'postpone',
+        name: 'POSTPONE',
+        meta: {
+          icon: 'md-arrow-dropdown-circle',
+          title: '延期申请'
+        },
+        component: () => import('@/viewConference/postpone')
+      },
+    ]
+  },
+  {
+    path: '/video-evidence',
+    name: 'VIDEO-EVIDENCE',
+    meta: {
+      icon: 'logo-buffer',
+      title: '----'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'evidence',
+        name: 'EVIDENCE',
+        meta: {
+          icon: 'md-arrow-dropdown-circle',
+          title: '提交证据'
+        },
+        component: () => import('@/viewConference/evidence')
+      },
+    ]
+  },
+  {
+    path: '/video-record',
+    name: 'VIDEO-RECORD',
+    meta: {
+      icon: 'logo-buffer',
+      title: '----'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'record',
+        name: 'RECORD',
+        meta: {
+          icon: 'md-arrow-dropdown-circle',
+          title: '在线立案'
+        },
+        component: () => import('@/viewConference/record')
+      },
+    ]
   },
   /**
   {

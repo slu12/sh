@@ -40,28 +40,30 @@ import { mapActions,mapMutations } from 'vuex'
 import log from './file/log.png'
 // import ewm from './file/ewm.png'
 import ajaxUrl from '@/axios/api.js'
+import { setToken,setAppid } from '@/libs/util'
 
 export default {
   components: {
     // LoginForm
   },
-  computed:{
-    tagNavList () {
-      return this.$store.state.app.tagNavList
-    },
-  },
   data(){
     return {
       log,
-      ewm:""
+      ewm:"",
+      loginTimer:null,
+      tipText:'请用微信扫码登录',
+      value:null,
+      ranNum: null
     }
   },
   created(){
-    // this.closeTags()
-    localStorage.removeItem("tagNaveList");
-    this.ewm = ajaxUrl.url+"/serverless/getQrcode/"+this.getRandom()
+    this.ranNum = this.getRandom(8);
+    this.ewm = ajaxUrl.url+"/serverless/getQrcode/" + this.ranNum;
   },
   mounted(){
+      this.loginTimer = setInterval(()=>{
+          this.checkScan();
+      }, 3000);
   },
   methods: {
     ...mapActions([
@@ -70,27 +72,35 @@ export default {
     ]),
     ...mapMutations([
     ]),
-    closeTags(){
-      let res = this.tagNavList.filter(item => item.name === this.$config.homeName)
-      this.turnToPage(this.$config.homeName)
-    },
-    turnToPage (route) {
-      let { name, params, query } = {}
-      if (typeof route === 'string') name = route
-      else {
-        name = route.name
-        params = route.params
-        query = route.query
+    checkScan(){
+      //监听是否已经扫码登录成功
+      if (this.ranNum){
+        console.log('/serverless/testAdmin/'+this.ranNum);
+        this.$http.get('/serverless/testAdmin/'+this.ranNum).then(res=>{
+            console.log(res);
+
+            if (res.value){
+                this.value = res.value;
+                this.tipText = '登录成功';
+                if (res.value){
+                    setToken(res.value)
+                }
+                if (res.appid){
+                    setAppid(res.appid)
+                }
+
+                clearInterval(this.loginTimer);
+                this.loginTimer = null;
+                setTimeout(()=>{
+                  this.$router.push({
+                      name:"home"
+                  })
+                }, 2000);
+            }
+        }).catch(err=>{
+
+        })
       }
-      if (name.indexOf('isTurnByHref_') > -1) {
-        window.open(name.split('_')[1])
-        return
-      }
-      // this.$router.push({
-      //   name,
-      //   params,
-      //   query
-      // })
     },
     getRandom(val) {//取随机数
       let line = 1
@@ -113,7 +123,6 @@ export default {
       })
     },
     login(){
-      console.log(this.$config.homeName);
       this.$router.push({
         // name: this.$config.homeName
         name:"home"

@@ -43,28 +43,7 @@
       return {
         nodata,
         compName: "",
-        roomList: [
-          {
-            "_id": "f6f73ade-c399-48f9-9ea1-73a1a51587a1",
-            "cjsj": "2020-01-26 10:00:00",
-            "ly": "武仲云",
-            "token": "00691dd00e92095452bb2cb1c28cc42c1d5IAAA4dPPJkrE8CNVq39BkasYQ9J/FMZ6GTct72xF9L3RKjVihjeGk+ouEADvg/WpgWI3XgEAAQAAAAAA",
-            "kssj": "2020-02-02 10:00:00",
-            "zcr": {
-              "phone": "15827209956",
-              "name": "李仲裁员"
-            },
-            "chr": {
-              "phone": ["15827209956", "18602714782"],
-              "name": ["被申请人", "申请人"]
-            },
-            "name": "招商银行信用卡纠纷执行庭审",
-            "ptr": "旁听人json",
-            "zt": "01",
-            "record_url": "",
-            "room_name": "2020013100002"
-          }
-        ],
+        roomList: [],
         dateTime: [],
         params: {
           zt: "00,01,10",//,20
@@ -74,7 +53,7 @@
       }
     },
     created() {
-      // this.getRoom()
+        this.getRoom()
     },
     methods: {
       getRoom() {

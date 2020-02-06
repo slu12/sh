@@ -44,8 +44,16 @@
       buildMap() {
         var v = this
         // 百度地图API功能
-        this.map = new BMap.Map("carouselBox2", {minZoom: 4, maxZoom: 20});    // 创建Map实例
-        this.map.centerAndZoom(new BMap.Point(114.298273, 30.560577), 12);  // 初始化地图,设置中心点坐标和地图级别
+        this.map = new BMap.Map("carouselBox2", {minZoom: 4, maxZoom: 20});
+        // 创建Map实例
+        if (localStorage.getItem('jd')&&localStorage.getItem('wd')){
+          var jd = localStorage.getItem('jd')
+          var wd = localStorage.getItem('wd')
+        }else {
+          var jd = 114.298273
+          var wd = 30.560577
+        }
+        this.map.centerAndZoom(new BMap.Point(jd, wd), 12);  // 初始化地图,设置中心点坐标和地图级别
         this.map.enableScrollWheelZoom(true);    //开启鼠标滚轮缩放
         // this.map.enableDragging();
         this.map.addEventListener('click', function (val) {
@@ -63,6 +71,8 @@
           console.log(res);
           if (res.code == 200) {
             this.addMarkCode(res.result.jd, res.result.wd, res.result.fxj)
+            localStorage.setItem('jd',res.result.jd)
+            localStorage.setItem('wd',res.result.wd)
           }
         }).catch(err => {})
         setTimeout(()=>{
@@ -97,6 +107,7 @@
                 // v.map.setZoom(22)
               }
               pois.push(new BMap.Point(it.longitude, it.latitude))
+              localStorage.setItem('pois',pois)
               if (index == res.result.length - 1) {
                 var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
                   scale: 0.6,//图标缩放大小

@@ -70,7 +70,7 @@ public class ScreenApi {
             return ApiResponse.success(photo);
         }
         URL url = new URL(photo);
-        String filePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + sbh + "-" + chn + System.currentTimeMillis() + ".jpg";
+        String filePath = "/zp/scrn.jpg";
         FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath));
         String file = path + filePath;
         return ApiResponse.success(file);
@@ -246,7 +246,9 @@ public class ScreenApi {
         condition.lte(ClGpsLs.InnerColumn.cjsj, endtime.toDate());
         condition.setOrderByClause(" cjsj asc , id asc");
         list = gpsLsService.findByCondition(condition);
-
+        if(CollectionUtils.size(list) > 200) {
+            list = list.subList(list.size() - 200, list.size());
+        }
         List<Point> points = new ArrayList<>();
         list.forEach(clGpsLs -> {
             Point point = new Point();

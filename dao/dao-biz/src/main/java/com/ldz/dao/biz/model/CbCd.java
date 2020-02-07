@@ -9,7 +9,7 @@ import javax.persistence.Table;
 /**
  * 车队管理 , 存储用户查询条件
  */
-@Table(name = "CB_CD")
+@Table(name = "CB_CD_NEW")
 @Data
 public class CbCd {
 

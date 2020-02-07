@@ -3,7 +3,7 @@
     <div class="topBox boxPadd box_row colCenter rowBetween">
       <div class="box_row">
         <div class="conName">
-          会议主题
+          {{roomMEss.name}}
         </div>
       </div>
       <div class="box_row colCenter">
@@ -28,7 +28,7 @@
               <div class="box_row colCenter">
                 <Avatar>A</Avatar>
                 <div class="namebox">
-                  name
+                  {{roomMEss.zcr.name}}
                 </div>
               </div>
               <div class="box_row colCenter">
@@ -64,7 +64,9 @@
           <div class="box_col_autoY boxMar_TB">
             <video-item-box v-if="remoteStreams.length>0"
                             v-for="(it,index) in remoteStreams"
-                            :key="index" :item="it"></video-item-box>
+                            :key="index" :item="it"
+                            @showMaxVideo="showMaxVideo"
+            ></video-item-box>
           </div>
 
           <div class="boxMar_B">
@@ -77,8 +79,11 @@
       </div>
       <div class="pagerRightBox box_row_1auto boxMar boxPadd">
         <div class="box_col">
-          <div id="local_stream" class="box_col_100">
+          <div v-if="showMaxVideoBox" id="local_stream" class="box_col_100">
 
+          </div>
+          <div v-else class="box_col_100">
+            <!--占位-->
           </div>
           <div class="eventBoxBottom boxMar_T box_row colCenter">
             <div class="box_row_100">
@@ -135,6 +140,7 @@
     data() {
       return {
         //===========
+        showMaxVideoBox:true,
         rtcConfig: {
           mode: "rtc",
           codec: "h264",
@@ -162,7 +168,11 @@
         },
         DevicesInfo: {},//浏览器设备信息
         localStreamMin: "",//创建音视频流对象 小窗口。
-        remoteStreams: [],//接收的音视频流对象
+        remoteStreams: [
+          // {
+          //   getID:'100001'
+          // }
+        ],//接收的音视频流对象
         //本地通道
         muteAudio: true,//音频轨道
         muteVideo: true,//视频轨道
@@ -174,7 +184,7 @@
           uid: 9999
         },
         //  =============
-        roomMEss: {},
+        roomMEss: {},//会议房间信息
         orderAudioStop: false,//关闭其他音频流通道
         conTime: 0,//会议时长
         startCon: 0,//开始会议 0 开始会议 1 结束会议 -1会议已结束
@@ -199,10 +209,10 @@
     mounted() {
 
       this.$nextTick(() => {
-        // this.getRoomToken(()=>{
-          // this.createClient();
+        this.getRoomToken(()=>{
+          this.createClient();
           // this.handleEvents();
-        // })
+        })
       })
     },
     methods: {
@@ -264,6 +274,9 @@
         });
         v.localStreamMin.init(function () {
           v.localStreamMin.play("localVidioBox")//本地视频流小模块
+          // v.client.publish(v.localStreamMin, function (e) {
+          //   console.log('将本地视频流发布出去**********************************');
+          // });
         });
       },
       getDevices(callback) {
@@ -478,13 +491,13 @@
       },
       setVideo() {//启用/关闭 视频轨道
         if (this.muteVideo) {
-          let nut = this.localStreamMin.muteVideo()
+          let nut = this.localStream.muteVideo()
           let nutMin = this.localStreamMin.muteVideo()
           if (nut || nutMin) {
             this.muteVideo = !this.muteVideo
           }
         } else {
-          let nut = this.localStreamMin.unmuteVideo()
+          let nut = this.localStream.unmuteVideo()
           let nutMin = this.localStreamMin.unmuteVideo()
           if (nut || nutMin) {
             this.muteVideo = !this.muteVideo
@@ -497,10 +510,16 @@
         this.$router.back()
       },
       showMaxVideo(it) {//小屏幕切换
-        var v = this
-        if (it == '0000') {
-          v.localStream.play("local_stream")
-        }
+        this.showMaxVideo = false
+        setTimeout(()=>{
+          this.showMaxVideo = true
+          var v = this
+          if (it == '0000') {
+            v.localStream.play("local_stream")
+          }else{
+            it.play("local_stream")
+          }
+        },20)
       },
       setOrderAudio(val) {//设置接收流声音
         this.orderAudioStop = val

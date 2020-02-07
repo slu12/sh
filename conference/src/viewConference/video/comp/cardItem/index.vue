@@ -68,7 +68,8 @@
         <!--</div>-->
       <!--</div>-->
       <div style="margin: 12px 0">
-        <Button type="success" :disabled="item.zt=='00'?true:false"
+        <!--:disabled="item.zt=='00'?true:false"-->
+        <Button type="success"
                 @click="joinEvent" long>开始会议</Button>
       </div>
     </div>

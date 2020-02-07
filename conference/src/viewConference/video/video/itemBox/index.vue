@@ -4,20 +4,26 @@
       <div class="box_row colCenter">
         <Avatar>A</Avatar>
         <div class="namebox">
-          name{{item.getId()}}
+          <!--{{item.getID | getName}}-->
+          {{getName(item.getID)}}
+          <!--{{item.getId}}-->
         </div>
       </div>
-      <div v-if="item==0">
-        主讲
-      </div>
-      <div v-else-if="item>0 && item<6">
-        参与
-      </div>
-      <div v-else-if="item>5">
-        旁听
-      </div>
+      <Icon type="md-expand" size="22"
+            style="cursor: pointer"
+            @click.native="showMaxVideo()"/>
+      <!--<div v-if="item==0">-->
+        <!--主讲-->
+      <!--</div>-->
+      <!--<div v-else-if="item>0 && item<6">-->
+        <!--参与-->
+      <!--</div>-->
+      <!--<div v-else-if="item>5">-->
+        <!--旁听-->
+      <!--</div>-->
     </div>
-    <div :id="'remote_video_'+item.getId()" class="videoBox">
+    <!--+item.getId()-->
+    <div :id="'remote_video_'" class="videoBox">
       <Icon type="logo-youtube" />
     </div>
     <div style="position: relative">
@@ -47,6 +53,17 @@
         type: ''
       }
     },
+    filters:{
+      // getName:function (val) {
+        // let chrName = this.$parent.roomMEss.chr.name
+        // let chrUid =  this.$parent.roomMEss.chr.uid
+        // chrUid.forEach((it,index)=>{
+        //   if(it == val){
+        //     return chrName[index]
+        //   }
+        // })
+      // }
+    },
     computed:{
       orderAudioStop(){
         return this.$parent.orderAudioStop
@@ -65,18 +82,31 @@
       }
     },
     created(){
-      console.log('********************',this.item.getId());
+      console.log('********************',this.item.getID());
     },
     mounted(){
-      console.log(this.$parent.orderAudioStop);
-      console.log("***************************");
-      console.log(this.orderAudioStop);
-      console.log("***************************");
       this.$nextTick(()=>{
         this.item.play("remote_video_"+this.item.getId())
       })
     },
+    beforeDestroy(){
+      this.$emit('showMaxVideo','0000')
+    },
     methods:{
+      showMaxVideo(){
+        this.$emit('showMaxVideo',this.item)
+      },
+      getName(uid){
+        const chrName = this.$parent.roomMEss.chr.name
+        const chrUid =  this.$parent.roomMEss.chr.uid
+        let key = ''
+        chrUid.forEach((it,index)=>{
+          if(it == uid){
+            key = index
+          }
+        })
+        return chrName[key]
+      },
       setAudio() {//启用/关闭 音频轨道
         if (this.muteAudio) {
           let nut = this.item.muteAudio()

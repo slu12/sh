@@ -12,12 +12,20 @@
                @on-search="getRoom"/>
       </div>
     </div>
-    <div class="box_col_autoY">
+    <div class="box_col_autoY" style="position: relative">
+<!--      <Row :gutter="16">-->
+<!--        <Col span="8" v-for="(it,index) in roomList">-->
+<!--          <video-card :item="it"></video-card>-->
+<!--        </Col>-->
+<!--      </Row>-->
+
       <Row :gutter="16">
-        <Col span="8" v-for="(it,index) in roomList">
-          <video-card :item="it"></video-card>
+        <Col span="23">
+          <Table border :columns="columns1" :data="roomList"></Table>
         </Col>
       </Row>
+      <img v-if="roomList.length == 0" :src="nodata" style="position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%)" alt="">
+
     </div>
     <!--<div class="boxMar_T box_row rowRight">-->
       <!--<Page :total="100" />-->
@@ -27,40 +35,76 @@
 
 <script>
   import videoCard from './comp/cardItem'
+  import nodata from '@/assets/images/nodata.png'
+
   export default {
     name: "index",
     components:{videoCard},
     data() {
       return {
-        roomList: [
-          {
-            _id: "b3c8b2cee5e74d69a0eef578ce31e6bc",
-            cjsj: "2020-02-04 23:00:59",
-            ly:'' ,
-            token: '',
-            kssj: "2020-02-05 23:00:00",
-            name: "会议",
-            zcr:{
-              idcard: "111111",
-              name: "9956",
-              phone: "15827209956",
-            },
-            chr:{
-              name: ["网系哦啊"],
-              phone: ["13112121212"],
-              uid: [100000],
-            },
-            ptr: null,
-            zt: "20",
-            record_url: "http://video.168car.net/20200204/23/1c0bcdf61d4c3395f7d67c8649da871c_20200204kzMbssVL.m3u8",
-            room_name: "20200204kzMbssVL",
-            startTime: "2020-02-04 23:05:46",
-            stopTime: "2020-02-04 23:06:15",
-            resourceId: "0t-jRBFRRFqDkP6FEGJg83Dv_VAMNAHTxLAKjyVxLrnRpDLY7Q6_kA5AsLkXYIu2d6ZuT1U4WlPSUrY6QFCP0gF_dhngpVQJG_wahHtXqakoHd3G6InbsmgNpnM7qL95T8UO6_vTvKPrZhu3WdtseuSSbKQD9izyE--NNBOqg4TgKiZEwqTXbyuEU9NRMPIcyOgMkR9sTKkQhOj5x68FaQeljJx4cvu17LwmesFSc7xQUnbBvWJBeKMM4CujFIQFgWF50yXy-gWI8zp1utzRRg",
-            sid: "1c0bcdf61d4c3395f7d67c8649da871c",
-          }
-        ],
+        nodata,
+        roomList: [],
         dateTime:[
+        ],
+        columns1: [
+            {
+                title: '#',
+                width:60,
+                type: 'index'
+            },
+            {
+                title: '会议室',
+                key: 'name'
+            },
+            {
+                title: '主持人',
+                key: 'zcr',
+                render: (h, params) => {
+                    return h('div', params.row.zcr.name);
+                }
+            },
+            {
+                title: '参会人数',
+                key: 'chr',
+                render: (h, params) => {
+                    return h('div', params.row.chr.name.length);
+                }
+            },
+            {
+                title: '开始时间',
+                key: 'startTime'
+            },
+            {
+                title: '结束时间',
+                key: 'stopTime'
+            },
+            {
+                title: '会议记录',
+                render: (h, params) => {
+                    return h('Button', {
+                        props: {
+                            type: 'primary',
+                            size: 'small'
+                        },
+                        style: {
+                            marginRight: '5px'
+                        },
+                        on: {
+                            click: () => {
+                                this.$router.push({
+                                    name:"HISROOM",
+                                    query:{
+                                        videoUrl:params.row.record_url,
+                                    },
+                                    params:{
+                                        url:params.row.record_url
+                                    }
+                                })
+                            }
+                        }
+                    }, '视频回看');
+                }
+            }
         ],
         params:{
           zt:"20",//,20
@@ -70,7 +114,7 @@
       }
     },
     created() {
-      // this.getRoom()
+       this.getRoom()
     },
     methods: {
       getRoom() {

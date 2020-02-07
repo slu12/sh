@@ -20,11 +20,11 @@
           <div class="proTit">
             视频会议管理平台
           </div>
-          <div>
-            <img :src="ewm" width="165px" height="165px" @click="login" alt="">
+          <div style="width:220px;height:220px" @click="login">
+            <img :src="ewm" style="width:220px;height:220px" alt="">
           </div>
           <div class="labTxt">
-            扫描二维码登录
+            请用微信扫码登录
           </div>
         </div>
 
@@ -38,7 +38,9 @@
 import { mapActions,mapMutations } from 'vuex'
 
 import log from './file/log.png'
-import ewm from './file/ewm.png'
+// import ewm from './file/ewm.png'
+import ajaxUrl from '@/axios/api.js'
+import { setToken,setAppid } from '@/libs/util'
 
 export default {
   components: {
@@ -47,14 +49,21 @@ export default {
   data(){
     return {
       log,
-      ewm
+      ewm:"",
+      loginTimer:null,
+      tipText:'请用微信扫码登录',
+      value:null,
+      ranNum: null
     }
   },
   created(){
-    // this.getEWM()
+    this.ranNum = this.getRandom(8);
+    this.ewm = ajaxUrl.url+"/serverless/getQrcode/" + this.ranNum;
   },
   mounted(){
-    // this.clearTagNavList()
+      this.loginTimer = setInterval(()=>{
+          this.checkScan();
+      }, 3000);
   },
   methods: {
     ...mapActions([
@@ -62,8 +71,37 @@ export default {
       'getUserInfo'
     ]),
     ...mapMutations([
-      'clearTagNavList'
     ]),
+    checkScan(){
+      //监听是否已经扫码登录成功
+      if (this.ranNum){
+        console.log('/serverless/testAdmin/'+this.ranNum);
+        this.$http.get('/serverless/testAdmin/'+this.ranNum).then(res=>{
+            console.log(res);
+
+            if (res.value){
+                this.value = res.value;
+                this.tipText = '登录成功';
+                if (res.value){
+                    setToken(res.value)
+                }
+                if (res.appid){
+                    setAppid(res.appid)
+                }
+
+                clearInterval(this.loginTimer);
+                this.loginTimer = null;
+                setTimeout(()=>{
+                  this.$router.push({
+                      name:"home"
+                  })
+                }, 2000);
+            }
+        }).catch(err=>{
+
+        })
+      }
+    },
     getRandom(val) {//取随机数
       let line = 1
       if (val && val > 1) {
@@ -76,8 +114,10 @@ export default {
       return num
     },
     getEWM(){
-      this.$http.post('/serverless/getQrcode/'+this.getRandom(8)).then(res=>{
-        this.ewm = res.message
+      let ps = this.getRandom(8)
+      this.$http.get('/serverless/getQrcode/'+ps).then(res=>{
+        console.log(res);
+        this.ewm = res
       }).catch(err=>{
 
       })

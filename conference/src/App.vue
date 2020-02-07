@@ -23,24 +23,24 @@
     if (appid){
       setAppid(appid)
     }
-
   },
   mounted(){
-    // var url = location.href;
-    // this.urlParams = {};
-    // try{
-    //   const keyValueArr = url.split('?')[1].split('&');
-    //   keyValueArr.forEach(item => {
-    //     const keyValue = item.split('=')
-    //     this.urlParams[keyValue[0]] = keyValue[1]
-    //   })
-    // }catch(e){ }
-    // //获取请求参数
-    // this.$router.push({
-    //   name:"CH",
-    //   params: this.urlParams
-    // });
-    // sessionStorage.setItem('urlParams',JSON.stringify(this.urlParams))
+    var url = location.href;
+    this.urlParams = {};
+    try{
+      const keyValueArr = url.split('?')[1].split('&');
+      keyValueArr.forEach(item => {
+        const keyValue = item.split('=')
+        this.urlParams[keyValue[0]] = keyValue[1]
+      })
+    }catch(e){ }
+
+    if (this.urlParams.token && this.urlParams.appid){
+        sessionStorage.setItem('urlParams',JSON.stringify(this.urlParams))
+        this.$router.push({
+            name:"home"
+        })
+    }
   }
 }
 </script>

@@ -2,31 +2,25 @@
   <Card class="videoCardBoxSty">
     <div class="boxPadd_LR boxPadd_B topLineBox box_row rowBetween">
       <div class="roomNumber">
-        #{{item.room_name}}
+        {{item.name}}
       </div>
       <div class="roomTyp">
         <Tag color="magenta">{{item.zt | roomZT}}</Tag>
       </div>
-    </div>
-    <div class="themeSty">
-      <h3>{{item.name}}</h3>
-    </div>
-    <div class="startTime">
-      {{moment(item.kssj).format('YYYY-MM-DD HH:mm:ss')}}
     </div>
     <div class="videoImgBox boxMar">
       <Icon type="logo-youtube"/>
     </div>
 
     <div class="messBox boxMar_LR">
-      <!--<div class="box_row colCenter">-->
-      <!--<div class="labTit">-->
-      <!--会议名称：-->
-      <!--</div>-->
-      <!--<div class="labVal">-->
-      <!--Arron-->
-      <!--</div>-->
-      <!--</div>-->
+      <div class="box_row colCenter mesline">
+        <div class="labTit">
+          开始时间：
+        </div>
+        <div class="labValName">
+          {{moment(item.kssj).format('YYYY-MM-DD HH:mm')}}
+        </div>
+      </div>
       <div class="box_row colCenter mesline">
         <div class="labTit">
           主讲人：
@@ -40,17 +34,11 @@
           参与人：
         </div>
         <div class="joinPerBox box_row_100 box_row">
-          <div class="perItem">
-            A
-          </div>
-          <div class="perItem">
-            A
-          </div>
-          <div class="perItem">
-            A
+          <div class="perItem" v-for="(chrItem, index) in item.chr.name" >
+            {{ chrItem[index] }}
           </div>
           <div class="perNum">
-            +5
+            +{{item.chr.name.length}}
           </div>
         </div>
         <div class="flexItemE">
@@ -80,8 +68,9 @@
         <!--</div>-->
       <!--</div>-->
       <div style="margin: 12px 0">
-        <Button type="success" :disabled="item.zt=='00'?true:false"
-                @click="joinEvent" long>开始会议 {{item.zt}}</Button>
+        <!--:disabled="item.zt=='00'?true:false"-->
+        <Button type="success"
+                @click="joinEvent" long>开始会议</Button>
       </div>
     </div>
   </Card>

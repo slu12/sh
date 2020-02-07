@@ -37,7 +37,7 @@
           val:3,
           loop:true,
           autoplay:true,
-          autoplaySpeed:5000,
+          autoplaySpeed:50000,
           fileUrl:[login1,login2,login1,login2]
         },
         domeEH:{

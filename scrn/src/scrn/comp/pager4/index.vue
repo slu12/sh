@@ -43,8 +43,11 @@
           w: 0,
           h: 0
         },
-        itUrl: ""
+        itUrl: "http://223.240.68.90:9092/zp/scrn.jpg"
       }
+    },
+    created(){
+
     },
     mounted() {
       var v = this
@@ -69,6 +72,7 @@
           if (res.code == 200) {
             // this.$Message.success('抓拍成功');
             this.itUrl = res.message
+            localStorage.setItem('itUrl',res.message)
           } else {
             // this.$Message.warning(res.message);
           }

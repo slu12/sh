@@ -25,7 +25,7 @@
                 <FormItem label="会议日期" prop="kssj">
                   <DatePicker v-model="formInline.kssj" type="date"
                               :options="options"
-                              placeholder="Select date" style="width: 100%"></DatePicker>
+                              placeholder="选择日期" style="width: 100%"></DatePicker>
                 </FormItem>
               </Col>
               <Col span="4">
@@ -36,17 +36,17 @@
               </Col>
             </Row>
             <Row :gutter="16">
-              <Col span="10">
+              <Col span="8">
                 <FormItem label="主持人姓名" prop="zcrname">
                   <Input v-model="formInline.zcrname" placeholder="主持人姓名"/>
                 </FormItem>
               </Col>
-              <Col span="10">
+              <Col span="8">
                 <FormItem label="主持人手机号" prop="phone">
                   <Input v-model="formInline.phone" placeholder="主持人手机号"/>
                 </FormItem>
               </Col>
-              <Col span="4">
+              <Col span="8">
                 <FormItem label="证件号码后6位" prop="idcard">
                   <Input v-model="formInline.idcard" placeholder="证件号码后6位"/>
                 </FormItem>
@@ -54,7 +54,6 @@
             </Row>
             <Row :gutter="16">
               <Col span="12">
-
               </Col>
               <Col span="12">
 
@@ -139,11 +138,11 @@
           }
         },
         formInline: {
-          "name": "会议",
+          "name": "",
           // zcr: {},
-          "phone": "14112341234",
-          "idcard": "111112",//证件号码后六位
-          "zcrname": "1",
+          "phone": "",
+          "idcard": "",//证件号码后六位
+          "zcrname": "",
 
           "kssj": "",//YYYY-MM-DD HH
           "time": 12,
@@ -201,16 +200,15 @@
                 type: 'warning'
               })
               v.$refs['cheItem'].formInlineC.phone = ""
-              return
-            } else {
-              if (index == this.formInline.chr.length - 1) {
-                // this.formInline.chr.push(it)
-                this.formInline.chr.splice(0, 0,it)
-                v.$refs['cheItem'].formInlineC = {
-                  "phone": "",
-                  "idcard": "",
-                  "name": ""
-                }
+
+            }
+            if (index == this.formInline.chr.length - 1) {
+              // this.formInline.chr.push(it)
+              this.formInline.chr.splice(0, 0,it)
+              v.$refs['cheItem'].formInlineC = {
+                "phone": "",
+                "idcard": "",
+                "name": ""
               }
             }
           })

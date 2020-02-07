@@ -2,17 +2,8 @@
   <Card class="hisVideoCardBoxSty">
     <div class="boxPadd_LR boxPadd_B topLineBox box_row rowBetween">
       <div class="roomNumber">
-        #{{item.room_name}}
+        {{item.name}}
       </div>
-      <div class="roomTyp">
-
-      </div>
-    </div>
-    <div class="themeSty">
-      <h2>{{item.name}}</h2>
-    </div>
-    <div class="videoImgBox boxMar">
-      <Icon type="logo-youtube" />
     </div>
 
     <div class="messBox boxMar_LR">
@@ -48,6 +39,9 @@
 </template>
 
 <script>
+  import videojs from 'video.js'
+  import 'videojs-contrib-hls'
+
   export default {
     name: "index",
     props:{
@@ -60,6 +54,12 @@
         }
       }
     },
+    data() {
+        return {
+            myVideo: '',
+            videoSrc:""
+        }
+    },
     methods:{
       hisEvent(){//会议回放
         this.$router.push({
@@ -67,6 +67,9 @@
           query:{
             videoUrl:this.item.record_url,
           },
+          params:{
+            url:this.item.record_url
+          }
 
         })
       },

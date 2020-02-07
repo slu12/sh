@@ -44,8 +44,18 @@
       buildMap() {
         var v = this
         // 百度地图API功能
-        this.map = new BMap.Map("carouselBox2", {minZoom: 4, maxZoom: 20});    // 创建Map实例
-        this.map.centerAndZoom(new BMap.Point(114.298273, 30.560577), 12);  // 初始化地图,设置中心点坐标和地图级别
+        this.map = new BMap.Map("carouselBox2", {minZoom: 4, maxZoom: 20});
+        // 创建Map实例
+        if (localStorage.getItem('jd')&&localStorage.getItem('wd')){
+          var jd = localStorage.getItem('jd')
+          var wd = localStorage.getItem('wd')
+          this.map.centerAndZoom(new BMap.Point(jd, wd), 12);
+        }else {
+          var jd = 114.298273
+          var wd = 30.560577
+          this.map.centerAndZoom(new BMap.Point(jd, wd), 6);
+        }
+        // this.map.centerAndZoom(new BMap.Point(jd, wd), 12);  // 初始化地图,设置中心点坐标和地图级别
         this.map.enableScrollWheelZoom(true);    //开启鼠标滚轮缩放
         // this.map.enableDragging();
         this.map.addEventListener('click', function (val) {
@@ -63,6 +73,8 @@
           console.log(res);
           if (res.code == 200) {
             this.addMarkCode(res.result.jd, res.result.wd, res.result.fxj)
+            localStorage.setItem('jd',res.result.jd)
+            localStorage.setItem('wd',res.result.wd)
           }
         }).catch(err => {})
         setTimeout(()=>{
@@ -80,6 +92,30 @@
         marker.setRotation(parseFloat(fxj) + 90)
         this.map.addOverlay(marker);               // 将标注添加到地图中
         this.map.setCenter(new BMap.Point(bdjd, bdwd))
+        this.get_GJ_Code()
+      },
+      huaxian(){
+        var v = this
+        let a = new Date()
+        let pois = localStorage.getItem('pois')
+        console.log(pois);
+        var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+          scale: 0.6,//图标缩放大小
+          strokeColor: '#fff',//设置矢量图标的线填充颜色
+          strokeWeight: '2',//设置线宽
+        });
+        var icons = new BMap.IconSequence(sy, '10', '30');
+        var polyline = new BMap.Polyline(pois, {
+          enableEditing: false,//是否启用线编辑，默认为false
+          enableClicking: true,//是否响应点击事件，默认为true
+          icons: [icons],
+          strokeWeight: '8',//折线的宽度，以像素为单位
+          strokeOpacity: 0.8,//折线的透明度，取值范围0 - 1
+          strokeColor: "#18a45b" //折线颜色
+        });
+
+        v.map.addOverlay(polyline);          //增加折线
+        v.map.setViewport(pois)
       },
       get_GJ_Code() {//获取轨迹点
         var v = this
@@ -97,6 +133,7 @@
                 // v.map.setZoom(22)
               }
               pois.push(new BMap.Point(it.longitude, it.latitude))
+              localStorage.setItem('pois',pois)
               if (index == res.result.length - 1) {
                 var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
                   scale: 0.6,//图标缩放大小

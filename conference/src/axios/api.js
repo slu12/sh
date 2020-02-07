@@ -1,5 +1,5 @@
 let ajaxUrl = 'https://videov2.dduptop.com/v1';
-// ajaxUrl = 'http://127.0.0.1:8899';
+// ajaxUrl = 'http://tqc825.natappfree.cc/v1';
 export default {
   NETWORK_ERR_STR: '网络加载异常!',
   url: ajaxUrl,

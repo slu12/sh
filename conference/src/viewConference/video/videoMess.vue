@@ -140,7 +140,7 @@
     data() {
       return {
         //===========
-        showMaxVideoBox:true,
+        showMaxVideoBox: true,
         rtcConfig: {
           mode: "rtc",
           codec: "h264",
@@ -160,8 +160,8 @@
         localStream: '',//创建音视频流对象。
         appid: '8d1a79107f9c4decac672c4201a14693',//不变得的
         //token === (key)
-        key:'',
-          // '0068d1a79107f9c4decac672c4201a14693IACqmYeBZm5VzjAJZvG5QPF0FpPgjGKUhIP7UMm+To1Y3Mieo/oAAAAAEAB5HOB85m05XgEAAQDjbTle',
+        key: '',
+        // '0068d1a79107f9c4decac672c4201a14693IACqmYeBZm5VzjAJZvG5QPF0FpPgjGKUhIP7UMm+To1Y3Mieo/oAAAAAEAB5HOB85m05XgEAAQDjbTle',
         roomName: '',//libinbin99
         params: {
           uid: 99999,
@@ -179,7 +179,7 @@
         //屏幕共享参数配置
         shareClient: "",//分享的客户端
         shareStream: '',//创建音视频流对象。
-        shareToken:"",
+        shareToken: "",
         shareParams: {
           uid: 9999
         },
@@ -191,44 +191,43 @@
       }
     },
     created() {
-      console.log(this.$route);
       if (this.$route.params._id) {
-        console.log(this.$route.room);
         this.roomMEss = this.$route.params
         this.roomName = this.$route.query.room
       } else {
         this.$router.back()
       }
 
-      if(this.$route.params.zt!='10'){
+      if (this.$route.params.zt != '10') {
         localStorage.removeItem("VDPS");
-      }else {
+      } else {
         this.getVerifyVideo()
       }
     },
     mounted() {
 
       this.$nextTick(() => {
-        this.getRoomToken(()=>{
-          this.createClient();
+        this.getRoomToken(() => {
+          // this.createClient();
           // this.handleEvents();
         })
       })
     },
     methods: {
-      getVerifyVideo(){//验证正在录制的视频是否有效
+      getVerifyVideo() {//验证正在录制的视频是否有效
         let a = JSON.parse(localStorage.getItem('VDPS'))
-        this.$http.get('/serverless/api/checkRecording/'+a.resourceId+'/'+a.sid).then(res=>{
-          this.startCon=1
-        }).error(err=>{
-          this.startCon=0
+        this.$http.get('/serverless/api/checkRecording/' + a.resourceId + '/' + a.sid).then(res => {
+          this.startCon = 1
+        }).error(err => {
+          this.startCon = 0
         })
       },
       getRoomToken(callBack) {//获取房间token
-        this.$http.get('/serverless/api/getVideoToken/'+this.params.uid+'/'+this.$route.query.room).then(res=>{
+        this.$http.get('/serverless/api/getVideoToken/' + this.params.uid + '/' + this.$route.query.room).then(res => {
           this.key = res.message
           callBack && callBack()
-        }).catch(err=>{})
+        }).catch(err => {
+        })
       },
       createClient() {//创建客户端。
         var v = this
@@ -415,28 +414,36 @@
       },
       //屏幕共享
       getShareRoomToken() {//获取房间token
-        this.$http.get('/serverless/api/getVideoToken/'+this.shareParams.uid+'/'+this.$route.query.room).then(res=>{
+        this.$http.get('/serverless/api/getVideoToken/' + this.shareParams.uid + '/' + this.$route.query.room).then(res => {
           this.shareToken = res.message
           this.shareEvent()
-        }).catch(err=>{})
+        }).catch(err => {
+        })
       },
       shareEvent() {//屏幕共享
         var v = this
         this.shareClient = AgoraRTC.createClient(v.rtcConfig);//屏幕共享终端
 
         this.shareClient.init(v.appid, function () {//初始化客户端
+          console.log("分享----初始化客户端成功 ");
           v.shareClient.join(v.shareToken, v.roomName, v.shareParams.uid, function () {
+            console.log("分享----加入频道成功");
             v.getDevices((obj) => {//获取设备ID(视频、音频)
               v.shareCreateStream()
             })
-          }, function () {
-            console.log(error);
+          }, function (error) {
+            console.log('分享----加入频道失败', error);
+            v.shareClient.leave(function () {
+              console.log('退出频道成功');
+              // v.shareParams.uid = v.shareParams.uid +1
+              //   v.getShareRoomToken()
+            }, function () {
+              console.log('退出频道失败');
+            })
           });
-        }, function (err) {
-          console.log("client init failed ", err);
+        }, function (error) {
+          console.log("分享----初始化客户端失败 ", error);
         });
-        console.log(v.DevicesInfo);
-
       },
       shareCreateStream() {//屏幕共享
         var v = this
@@ -448,12 +455,14 @@
           microphoneId: v.DevicesInfo.audios.value,
           cameraId: v.DevicesInfo.videos.value
         });
+        v.shareStream.close()
         v.shareStream.init(function () {
           // v.shareStream.play("local_stream")//屏幕共享流本地展示
           v.shareClient.publish(v.shareStream, function (e) {
             console.log('将本地视频流发布出去**********************************');
           }, function (err) {
-            console.log(err);
+            console.log('**************', err);
+
           });
         });
 
@@ -511,15 +520,15 @@
       },
       showMaxVideo(it) {//小屏幕切换
         this.showMaxVideo = false
-        setTimeout(()=>{
+        setTimeout(() => {
           this.showMaxVideo = true
           var v = this
           if (it == '0000') {
             v.localStream.play("local_stream")
-          }else{
+          } else {
             it.play("local_stream")
           }
-        },20)
+        }, 20)
       },
       setOrderAudio(val) {//设置接收流声音
         this.orderAudioStop = val
@@ -568,15 +577,32 @@
     beforeDestroy() {
       var v = this
       this.startCon = -1
-      v.client.leave(function () {
-        console.log('退出success');
-      }, function () {
-        console.log('退出error');
-      })
+      try {
+        v.client.leave(function () {
+          console.log('退出success');
+        }, function () {
+          console.log('退出error');
+        })
+      }catch (e) {}
+      try {
+        v.client.unpublish(v.localStream, function (e) {
+          console.log('终止本地视频流发布**********************************');
+        });
+      }catch (e) {}
+      //=========================
+      try {
+        v.shareClient.leave(function () {
+          console.log('退出success');
+        }, function () {
+          console.log('退出error');
+        })
+      }catch (e) {}
+      try {
+        v.shareClient.unpublish(v.localStream, function (e) {
+          console.log('终止本地视频流发布**********************************');
+        });
+      }catch (e) {}
 
-      v.client.unpublish(v.localStream, function (e) {
-        console.log('终止本地视频流发布**********************************');
-      });
       v.localStream.close()
 
       v.localStreamMin.close()

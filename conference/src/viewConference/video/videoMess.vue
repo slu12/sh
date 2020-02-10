@@ -44,20 +44,14 @@
             <div id="localVidioBox" class="videoBox">
               <Icon type="logo-youtube"/>
             </div>
-            <div style="position: relative">
-              <div class="settingBox box_row"
-                   style="position: absolute;
-                    bottom: 0px;
-                    left: 50%;
-                    transform: translateX(-50%);">
-                <div class="settingItem" @click="setAudio">
-                  <Icon v-show="muteAudio" type="md-mic"/>
-                  <Icon v-show="!muteAudio" type="md-mic-off"/>
-                </div>
-                <div class="settingItem" style="position: relative" @click="setVideo">
-                  <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
-                  <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
-                </div>
+            <div class="box_row cardFooterButtonBox">
+              <div class="box_row_100 butItem" @click="setAudio">
+                <Icon v-show="muteAudio" size="18" color="#348EED" type="md-mic"/>
+                <Icon v-show="!muteAudio" size="18" color="#515a6e" type="md-mic-off"/>
+              </div>
+              <div class="box_row_100 butItem" style="position: relative" @click="setVideo">
+                <Icon v-show="muteVideo" size="18" color="#348EED" type=" iconfont iconvideo_on"/>
+                <Icon v-show="!muteVideo" size="18" color="#515a6e" type=" iconfont iconvideo_off"/>
               </div>
             </div>
           </Card>
@@ -69,7 +63,8 @@
 
           <div class="boxMar_B">
             <Button v-if="startCon == 0" :loading="optFlag" type="success" long @click="startConEvent">会议开始</Button>
-            <Button v-else-if="startCon == 1" :loading="optFlag" type="warning" long @click="endConEvent(false)">会议结束</Button>
+            <Button v-else-if="startCon == 1" :loading="optFlag" type="warning" long @click="endConEvent(false)">会议结束
+            </Button>
             <Button v-else-if="startCon == -1" long>会议已结束</Button>
 
           </div>
@@ -149,8 +144,8 @@
         localStream: '',//创建音视频流对象。
         appid: '8d1a79107f9c4decac672c4201a14693',//不变得的
         //token === (key)
-        key:'',
-          // '0068d1a79107f9c4decac672c4201a14693IACqmYeBZm5VzjAJZvG5QPF0FpPgjGKUhIP7UMm+To1Y3Mieo/oAAAAAEAB5HOB85m05XgEAAQDjbTle',
+        key: '',
+        // '0068d1a79107f9c4decac672c4201a14693IACqmYeBZm5VzjAJZvG5QPF0FpPgjGKUhIP7UMm+To1Y3Mieo/oAAAAAEAB5HOB85m05XgEAAQDjbTle',
         roomName: '',//libinbin99
         params: {
           uid: 99999,
@@ -164,7 +159,7 @@
         //屏幕共享参数配置
         shareClient: "",//分享的客户端
         shareStream: '',//创建音视频流对象。
-        shareToken:"",
+        shareToken: "",
         shareParams: {
           uid: 9999
         },
@@ -183,34 +178,35 @@
         this.$router.back()
       }
 
-      if(this.$route.params.zt!='10'){
+      if (this.$route.params.zt != '10') {
         localStorage.removeItem("VDPS");
-      }else {
+      } else {
         this.getVerifyVideo()
       }
     },
     mounted() {
       this.$nextTick(() => {
-        this.getRoomToken(()=>{
+        this.getRoomToken(() => {
           this.createClient();
           this.handleEvents();
         })
       })
     },
     methods: {
-      getVerifyVideo(){//验证正在录制的视频是否有效
+      getVerifyVideo() {//验证正在录制的视频是否有效
         let a = JSON.parse(localStorage.getItem('VDPS'))
-        this.$http.get('/serverless/api/checkRecording/'+a.resourceId+'/'+a.sid).then(res=>{
-          this.startCon=1
-        }).error(err=>{
-          this.startCon=0
+        this.$http.get('/serverless/api/checkRecording/' + a.resourceId + '/' + a.sid).then(res => {
+          this.startCon = 1
+        }).error(err => {
+          this.startCon = 0
         })
       },
       getRoomToken(callBack) {//获取房间token
-        this.$http.get('/serverless/api/getVideoToken/'+this.params.uid+'/'+this.$route.query.room).then(res=>{
+        this.$http.get('/serverless/api/getVideoToken/' + this.params.uid + '/' + this.$route.query.room).then(res => {
           this.key = res.message
           callBack && callBack()
-        }).catch(err=>{})
+        }).catch(err => {
+        })
       },
       createClient() {//创建客户端。
         var v = this
@@ -312,12 +308,12 @@
         })
         //该回调通知 App 有远端用户离线。
         rtc.client.on("peer-leave", function (evt) {
-            var id = evt.uid;
-            if (id == rtc.params.uid) {
-                rtc.removeView(id);
-            }
-            // Toast.notice("peer leave")
-            console.log('peer-leave', id);
+          var id = evt.uid;
+          // if (id == rtc.params.uid) {
+            rtc.removeView(id);
+          // }
+          // Toast.notice("peer leave")
+          console.log('peer-leave', id);
         })
         // 该回调提示有远端用户/主播加入频道。
         rtc.client.on("peer-online", function (evt) {
@@ -326,22 +322,22 @@
         })
         // 该回调通知 App 远端音视频流已添加
         rtc.client.on("stream-added", function (evt) {
-            var remoteStream = evt.stream;
-            var id = remoteStream.getId();
-            if (id !== rtc.params.uid) {
-                rtc.client.subscribe(remoteStream, function (err) {
+          var remoteStream = evt.stream;
+          var id = remoteStream.getId();
+          if (id !== rtc.params.uid) {
+            rtc.client.subscribe(remoteStream, function (err) {
 
-                })
-            }
+            })
+          }
         });
         // 该回调通知 App 已接收远端音视频流。
         rtc.client.on("stream-subscribed", function (evt) {
-            var remoteStream = evt.stream;
-            var id = remoteStream.getId();
-            rtc.remoteStreams.push(remoteStream);//监听推送的视频流
-            setTimeout(()=>{
-              remoteStream.play("remote_video_"+id);
-            },100)
+          var remoteStream = evt.stream;
+          var id = remoteStream.getId();
+          rtc.remoteStreams.push(remoteStream);//监听推送的视频流
+          setTimeout(() => {
+            remoteStream.play("remote_video_" + id);
+          }, 100)
         })
         // 该回调通知 App 已删除远端音视频流，即对方调用了 Client.unpublish。
         rtc.client.on("stream-removed", function (evt) {
@@ -364,10 +360,11 @@
       },
       //屏幕共享
       getShareRoomToken() {//获取房间token
-        this.$http.get('/serverless/api/getVideoToken/'+this.shareParams.uid+'/'+this.$route.query.room).then(res=>{
+        this.$http.get('/serverless/api/getVideoToken/' + this.shareParams.uid + '/' + this.$route.query.room).then(res => {
           this.shareToken = res.message
           this.shareEvent()
-        }).catch(err=>{})
+        }).catch(err => {
+        })
       },
       shareEvent() {//屏幕共享
         var v = this
@@ -443,7 +440,7 @@
             this.muteVideo = !this.muteVideo
           }
           //禁用音视频
-          this.client.unpublish(stream, function(err) {
+          this.client.unpublish(stream, function (err) {
           })
         } else {
           let nut = this.localStreamMin.unmuteVideo()
@@ -452,37 +449,37 @@
             this.muteVideo = !this.muteVideo
           }
           //启用音视频
-          this.client.publish(stream, function(err) {
+          this.client.publish(stream, function (err) {
           })
         }
       },
       closePager() {//关闭页面
         var v = this
-        if (this.startCon == 1){
-            this.swal.fire({
-                type: 'warning', // 弹框类型
-                title: '退出房间', //标题
-                text: "会议正在进行中，请先结束后再退出！", //显示内容
-                confirmButtonColor: '#3085d6',// 确定按钮的 颜色
-                confirmButtonText: '保存',// 确定按钮的 文字
-                showCancelButton: true, // 是否显示取消按钮
-                cancelButtonColor: '#d33', // 取消按钮的 颜色
-                cancelButtonText: "取消", // 取消按钮的 文字
+        if (this.startCon == 1) {
+          this.swal.fire({
+            type: 'warning', // 弹框类型
+            title: '退出房间', //标题
+            text: "会议正在进行中，请先结束后再退出！", //显示内容
+            confirmButtonColor: '#3085d6',// 确定按钮的 颜色
+            confirmButtonText: '保存',// 确定按钮的 文字
+            showCancelButton: true, // 是否显示取消按钮
+            cancelButtonColor: '#d33', // 取消按钮的 颜色
+            cancelButtonText: "取消", // 取消按钮的 文字
 
-                focusCancel: true, // 是否聚焦 取消按钮
-                reverseButtons: true  // 是否 反转 两个按钮的位置 默认是  左边 确定  右边 取消
-            }).then((isConfirm) => {
-                try {
-                    //判断 是否 点击的 确定按钮
-                    if (isConfirm.value) {
-                        this.endConEvent(true);
-                    }
-                } catch (e) {
+            focusCancel: true, // 是否聚焦 取消按钮
+            reverseButtons: true  // 是否 反转 两个按钮的位置 默认是  左边 确定  右边 取消
+          }).then((isConfirm) => {
+            try {
+              //判断 是否 点击的 确定按钮
+              if (isConfirm.value) {
+                this.endConEvent(true);
+              }
+            } catch (e) {
 
-                }
-            });
-        }else{
-            this.$router.back();
+            }
+          });
+        } else {
+          this.$router.back();
         }
       },
       showMaxVideo(it) {//小屏幕切换
@@ -508,25 +505,25 @@
           this.roomMEss.startTime = null;
           this.ST()
         }).catch(err => {
-            this.optFlag = false;
-            this.swal({
-                title: err.message,
-                type: 'error'
-            })
+          this.optFlag = false;
+          this.swal({
+            title: err.message,
+            type: 'error'
+          })
         })
       },
       ST() {//会议计时
         if (this.startCon == 1) {
-          if (this.roomMEss.startTime){
-              var x = moment() - moment(this.roomMEss.startTime, 'YYYY-MM-DD HH:mm:ss')
-              var d = moment.duration(x, 'milliseconds');
-              var hours = Math.floor(d.asHours());
-              var mins = Math.floor(d.asMinutes()) - hours * 60;
-              var sec = Math.floor(d.asSeconds()) - (hours * 60 + mins * 60);
+          if (this.roomMEss.startTime) {
+            var x = moment() - moment(this.roomMEss.startTime, 'YYYY-MM-DD HH:mm:ss')
+            var d = moment.duration(x, 'milliseconds');
+            var hours = Math.floor(d.asHours());
+            var mins = Math.floor(d.asMinutes()) - hours * 60;
+            var sec = Math.floor(d.asSeconds()) - (hours * 60 + mins * 60);
 
-              this.startTime = (hours < 10 ? '0' + hours : hours) + ':' + (mins < 10 ? '0' + mins : mins) + ':' + (sec < 10 ? '0' + sec : sec);
-          }else{
-              this.startTime = '00:00:00';
+            this.startTime = (hours < 10 ? '0' + hours : hours) + ':' + (mins < 10 ? '0' + mins : mins) + ':' + (sec < 10 ? '0' + sec : sec);
+          } else {
+            this.startTime = '00:00:00';
           }
 
           setTimeout(() => {
@@ -544,8 +541,8 @@
         this.$http.post('/serverless/api/stopVideo', vdps).then(res => {
           this.optFlag = true;
           this.startCon = -1
-          if (quitFlag){
-              this.$router.back();
+          if (quitFlag) {
+            this.$router.back();
           }
         }).catch(err => {
           this.optFlag = false;
@@ -580,4 +577,27 @@
 <style lang="less">
   @import "./less/mess";
   @import "./video/itemBox/index.less";
+
+  .cardaItemBox {
+    .ivu-card-body {
+      padding-bottom: 0;
+    }
+  }
+
+  .cardFooterButtonBox {
+    border-top: solid 1px #e8eaec;
+    margin-top: 12px;
+    .butItem {
+      text-align: center;
+      line-height: 30px;
+      height: 30px;
+      cursor: pointer;
+      /*background-color: #999999;*/
+    }
+    .butItem:hover {
+      i {
+        transform: scale(1.3);
+      }
+    }
+  }
 </style>

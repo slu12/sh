@@ -10,33 +10,18 @@
       <Icon type="md-expand" size="22"
             style="cursor: pointer"
             @click.native="showMaxVideo()"/>
-<!--      <div v-if="item==0">-->
-<!--        主讲-->
-<!--      </div>-->
-<!--      <div v-else-if="item>0 && item<6">-->
-<!--        参与-->
-<!--      </div>-->
-<!--      <div v-else-if="item>5">-->
-<!--        旁听-->
-<!--      </div>-->
     </div>
     <div :id="'remote_video_'+item.getId()" class="videoBox">
       <Icon type="logo-youtube" />
     </div>
-    <div style="position: relative">
-      <div class="settingBox box_row"
-           style="position: absolute;
-                    bottom: 0px;
-                    left: 50%;
-                    transform: translateX(-50%);">
-        <div class="settingItem" @click="setAudio">
-          <Icon v-show="muteAudio" type="md-mic"/>
-          <Icon v-show="!muteAudio" type="md-mic-off"/>
-        </div>
-        <div class="settingItem" @click="setVideo">
-          <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
-          <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
-        </div>
+    <div class="box_row cardFooterButtonBox">
+      <div class="box_row_100 butItem" @click="setAudio">
+        <Icon v-show="muteAudio" size="18" color="#348EED" type="md-mic"/>
+        <Icon v-show="!muteAudio" size="18" color="#515a6e" type="md-mic-off"/>
+      </div>
+      <div class="box_row_100 butItem" style="position: relative" @click="setVideo">
+        <Icon v-show="muteVideo" size="18" color="#348EED" type=" iconfont iconvideo_on"/>
+        <Icon v-show="!muteVideo" size="18" color="#515a6e" type=" iconfont iconvideo_off"/>
       </div>
     </div>
   </Card>
@@ -71,7 +56,7 @@
     },
     mounted(){
       this.$nextTick(()=>{
-        this.item.play("remote_video_"+this.item.getId())
+        // this.item.play("remote_video_"+this.item.getId())
       })
     },
     methods:{

@@ -1,5 +1,7 @@
 <template>
-  <Card class="cardaItemBox boxMar_B">
+  <Card :class="sel?'selSty':''"
+        class="cardaItemBox boxMar_B"
+  >
     <div slot="title" class="box_row rowBetween colCenter">
       <div class="box_row colCenter">
         <Avatar>{{getName(item.getId())}}</Avatar>
@@ -7,12 +9,15 @@
           {{getName(item.getId())}}
         </div>
       </div>
-      <Icon type="md-expand" size="22"
+      <Icon v-if="sel" type="md-contract" size="22"
+            color="" style="cursor: pointer"
+            @click.native="closeVideoBox()"/>
+      <Icon v-else type="md-expand" size="22"
             style="cursor: pointer"
             @click.native="showMaxVideo()"/>
     </div>
     <div :id="'remote_video_'+item.getId()" class="videoBox">
-      <Icon type="logo-youtube" />
+      <Icon type="logo-youtube"/>
     </div>
     <div class="box_row cardFooterButtonBox">
       <div class="box_row_100 butItem" @click="setAudio">
@@ -31,37 +36,47 @@
   export default {
     name: "index",
     props: {
-      item: {
-        type: ''
-      }
+      item: '',
+      index: null,
+      sel: false
     },
-    computed:{
-      orderAudioStop(){
+    computed: {
+      orderAudioStop() {
         return this.$parent.orderAudioStop
       }
     },
-    watch:{
-      orderAudioStop:function(n,o){
+    watch: {
+      orderAudioStop: function (n, o) {
         this.setAudio()
       }
     },
-    data(){
+    data() {
       return {
-        muteAudio:true,//音频轨道
-        muteVideo:true,//视频轨道
+        muteAudio: true,//音频轨道
+        muteVideo: true,//视频轨道
       }
     },
-    created(){
+    created() {
 
     },
-    mounted(){
-      this.$nextTick(()=>{
-        // this.item.play("remote_video_"+this.item.getId())
+    mounted() {
+      var v = this
+      this.$nextTick(() => {
+        v.buildVideoBox()
       })
     },
-    methods:{
-      showMaxVideo(){
-          this.$emit('showMaxVideo',this.item)
+    beforeDestroy() {
+      this.closeVideoBox()
+    },
+    methods: {
+      buildVideoBox() {
+        this.item.play("remote_video_" + this.item.getId())
+      },
+      closeVideoBox() {
+        this.$emit('showMaxVideo', '0000')
+      },
+      showMaxVideo() {
+        this.$emit('showMaxVideo', this.index)
       },
       setAudio() {//启用/关闭 音频轨道
         if (this.muteAudio) {
@@ -69,7 +84,7 @@
           if (nut) {
             this.muteAudio = !this.muteAudio
           }
-        }else{
+        } else {
           let nut = this.item.unmuteAudio()
           if (nut) {
             this.muteAudio = !this.muteAudio
@@ -82,24 +97,24 @@
           if (nut) {
             this.muteVideo = !this.muteVideo
           }
-        }else{
+        } else {
           let nut = this.item.unmuteVideo()
           if (nut) {
             this.muteVideo = !this.muteVideo
           }
         }
       },
-      getName(uid){
-          const chrName = this.$parent.roomMEss.chr.name
-          const chrUid =  this.$parent.roomMEss.chr.uid
-          let key = ''
-          chrUid.forEach((it,index)=>{
-              if(it == uid){
-                  key = index
-              }
-          })
+      getName(uid) {
+        const chrName = this.$parent.roomMEss.chr.name
+        const chrUid = this.$parent.roomMEss.chr.uid
+        let key = ''
+        chrUid.forEach((it, index) => {
+          if (it == uid) {
+            key = index
+          }
+        })
 
-          return chrName[key]
+        return chrName[key]
       }
     }
   }
@@ -107,4 +122,9 @@
 
 <style lang="less">
   @import "./index";
+
+  .selSty {
+    border-right-color: #ed4014!important;
+    border-right-width: 3px!important;
+  }
 </style>

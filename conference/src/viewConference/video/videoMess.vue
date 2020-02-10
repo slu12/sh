@@ -1,9 +1,11 @@
 <template>
+  <!--小程序用我的手机号码
+18602714782/123456-->
   <div class="box_col videoMessPager">
     <div class="topBox boxPadd box_row colCenter rowBetween">
       <div class="box_row">
         <div class="conName">
-          会议主题
+          {{roomMEss.name}}
         </div>
       </div>
       <div class="box_row colCenter">
@@ -58,7 +60,12 @@
           <div class="box_col_autoY boxMar_TB">
             <video-item-box v-if="remoteStreams.length>0"
                             v-for="(it,index) in remoteStreams"
-                            :key="index" :item="it"></video-item-box>
+                            :ref="'videoItemBox_'+index"
+                            :key="index" :item="it"
+                            :index="index"
+                            :sel="index==remoteStreamsVal?true:false"
+                            @showMaxVideo="showMaxVideo"
+            ></video-item-box>
           </div>
 
           <div class="boxMar_B">
@@ -153,6 +160,7 @@
         DevicesInfo: {},//浏览器设备信息
         localStreamMin: "",//创建音视频流对象 小窗口。
         remoteStreams: [],//接收的音视频流对象
+        remoteStreamsVal: null,
         //本地通道
         muteAudio: true,//音频轨道
         muteVideo: true,//视频轨道
@@ -236,9 +244,9 @@
         });
         v.localStream.init(function () {
           v.localStream.play("local_stream")//本地视频流大模块
-          v.client.publish(v.localStream, function (e) {
-            console.log('将本地视频流发布出去**********************************');
-          });
+          // v.client.publish(v.localStream, function (e) {
+          //   console.log('将本地视频流发布出去**********************************');
+          // });
         });
 
         v.localStreamMin = AgoraRTC.createStream({
@@ -251,6 +259,9 @@
         });
         v.localStreamMin.init(function () {
           v.localStreamMin.play("localVidioBox")//本地视频流小模块
+          v.client.publish(v.localStreamMin, function (e) {
+            console.log('将本地视频流发布出去**********************************');
+          });
         });
       },
       getDevices(callback) {
@@ -310,7 +321,7 @@
         rtc.client.on("peer-leave", function (evt) {
           var id = evt.uid;
           // if (id == rtc.params.uid) {
-            rtc.removeView(id);
+          rtc.removeView(id);
           // }
           // Toast.notice("peer leave")
           console.log('peer-leave', id);
@@ -335,9 +346,9 @@
           var remoteStream = evt.stream;
           var id = remoteStream.getId();
           rtc.remoteStreams.push(remoteStream);//监听推送的视频流
-          setTimeout(() => {
-            remoteStream.play("remote_video_" + id);
-          }, 100)
+          // setTimeout(() => {
+          //   remoteStream.play("remote_video_" + id);
+          // }, 100)
         })
         // 该回调通知 App 已删除远端音视频流，即对方调用了 Client.unpublish。
         rtc.client.on("stream-removed", function (evt) {
@@ -360,6 +371,18 @@
       },
       //屏幕共享
       getShareRoomToken() {//获取房间token
+        var v = this
+        try {
+          v.shareClient.unpublish(v.shareStream, function (e) {
+          });
+        } catch (e) {
+        }
+        try {
+          v.shareClient.leave(function () {
+          }, function () {
+          })
+        } catch (e) {
+        }
         this.$http.get('/serverless/api/getVideoToken/' + this.shareParams.uid + '/' + this.$route.query.room).then(res => {
           this.shareToken = res.message
           this.shareEvent()
@@ -371,14 +394,18 @@
         this.shareClient = AgoraRTC.createClient(v.rtcConfig);//屏幕共享终端
 
         this.shareClient.init(v.appid, function () {//初始化客户端
+          // console.log("分享----初始化客户端成功 ");
           v.shareClient.join(v.shareToken, v.roomName, v.shareParams.uid, function () {
+            // console.log("分享----加入频道成功");
             v.getDevices((obj) => {//获取设备ID(视频、音频)
               v.shareCreateStream()
             })
-          }, function () {
+          }, function (error) {
+            // console.log('分享----加入频道失败', error);
+            v.getShareRoomToken()
           });
-        }, function (err) {
-          console.log("client init failed ", err);
+        }, function (error) {
+          // console.log("分享----初始化客户端失败 ", error);
         });
       },
       shareCreateStream() {//屏幕共享
@@ -484,9 +511,36 @@
       },
       showMaxVideo(it) {//小屏幕切换
         var v = this
-        if (it == '0000') {
-          v.localStream.play("local_stream")
+        // setTimeout(() => {
+        if (it === '0000') {
+          if (v.remoteStreamsVal === null) {
+            v.localStream.stop()
+          } else {
+            v.remoteStreams[v.remoteStreamsVal].stop()
+            console.log(this.$refs['videoItemBox_' + v.remoteStreamsVal]);
+            this.$refs['videoItemBox_' + v.remoteStreamsVal][0].buildVideoBox()
+          }
+          // setTimeout(() => {
+            v.remoteStreamsVal = null
+            v.localStream.play("local_stream")
+          // }, 1000)
+        } else {
+          if (v.remoteStreamsVal === null) {
+            v.remoteStreamsVal = it
+            v.localStream.stop()
+            v.remoteStreams[it].stop()
+          } else {
+            try {
+              v.localStream.stop()
+            }catch (e) {}
+            v.remoteStreams[v.remoteStreamsVal].stop()
+            v.remoteStreamsVal = it
+          }
+          // setTimeout(() => {
+            v.remoteStreams[it].play("local_stream")
+          // }, 1000)
         }
+        // }, 20)
       },
       setOrderAudio(val) {//设置接收流声音
         this.orderAudioStop = val

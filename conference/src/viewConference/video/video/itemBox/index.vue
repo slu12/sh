@@ -2,28 +2,25 @@
   <Card class="cardaItemBox boxMar_B">
     <div slot="title" class="box_row rowBetween colCenter">
       <div class="box_row colCenter">
-        <Avatar>A</Avatar>
+        <Avatar>{{getName(item.getId())}}</Avatar>
         <div class="namebox">
-          <!--{{item.getID | getName}}-->
-          {{getName(item.getID)}}
-          <!--{{item.getId}}-->
+          {{getName(item.getId())}}
         </div>
       </div>
       <Icon type="md-expand" size="22"
             style="cursor: pointer"
             @click.native="showMaxVideo()"/>
-      <!--<div v-if="item==0">-->
-        <!--主讲-->
-      <!--</div>-->
-      <!--<div v-else-if="item>0 && item<6">-->
-        <!--参与-->
-      <!--</div>-->
-      <!--<div v-else-if="item>5">-->
-        <!--旁听-->
-      <!--</div>-->
+<!--      <div v-if="item==0">-->
+<!--        主讲-->
+<!--      </div>-->
+<!--      <div v-else-if="item>0 && item<6">-->
+<!--        参与-->
+<!--      </div>-->
+<!--      <div v-else-if="item>5">-->
+<!--        旁听-->
+<!--      </div>-->
     </div>
-    <!--+item.getId()-->
-    <div :id="'remote_video_'" class="videoBox">
+    <div :id="'remote_video_'+item.getId()" class="videoBox">
       <Icon type="logo-youtube" />
     </div>
     <div style="position: relative">
@@ -53,17 +50,6 @@
         type: ''
       }
     },
-    filters:{
-      // getName:function (val) {
-        // let chrName = this.$parent.roomMEss.chr.name
-        // let chrUid =  this.$parent.roomMEss.chr.uid
-        // chrUid.forEach((it,index)=>{
-        //   if(it == val){
-        //     return chrName[index]
-        //   }
-        // })
-      // }
-    },
     computed:{
       orderAudioStop(){
         return this.$parent.orderAudioStop
@@ -71,7 +57,6 @@
     },
     watch:{
       orderAudioStop:function(n,o){
-        console.log(n);
         this.setAudio()
       }
     },
@@ -82,30 +67,16 @@
       }
     },
     created(){
-      console.log('********************',this.item.getID());
+
     },
     mounted(){
       this.$nextTick(()=>{
         this.item.play("remote_video_"+this.item.getId())
       })
     },
-    beforeDestroy(){
-      this.$emit('showMaxVideo','0000')
-    },
     methods:{
       showMaxVideo(){
-        this.$emit('showMaxVideo',this.item)
-      },
-      getName(uid){
-        const chrName = this.$parent.roomMEss.chr.name
-        const chrUid =  this.$parent.roomMEss.chr.uid
-        let key = ''
-        chrUid.forEach((it,index)=>{
-          if(it == uid){
-            key = index
-          }
-        })
-        return chrName[key]
+          this.$emit('showMaxVideo',this.item)
       },
       setAudio() {//启用/关闭 音频轨道
         if (this.muteAudio) {
@@ -133,6 +104,18 @@
           }
         }
       },
+      getName(uid){
+          const chrName = this.$parent.roomMEss.chr.name
+          const chrUid =  this.$parent.roomMEss.chr.uid
+          let key = ''
+          chrUid.forEach((it,index)=>{
+              if(it == uid){
+                  key = index
+              }
+          })
+
+          return chrName[key]
+      }
     }
   }
 </script>

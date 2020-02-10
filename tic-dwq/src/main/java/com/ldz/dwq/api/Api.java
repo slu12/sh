@@ -112,6 +112,7 @@ public class Api {
 
 	/**
 	 * 写继电器控制命令
+	 * 写继电器控制命令
 	 * 该接口暂时是单独向一个继电器写配置信息
 	 * @param facId		通道ID
 	 * @param jdqIndex	继电器通道编号。一共1-16个通道

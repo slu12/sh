@@ -6,11 +6,12 @@ spring:
     database: 10
   #数据库连接配置信息
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/eshenhai?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+#    url: jdbc:mysql://127.0.0.1:3306/eshenhai?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://119.3.78.139:3306/beidou_platform?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
 #    url: jdbc:mysql://47.98.39.45:9097/wxdc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
 #    url: jdbc:mysql://127.0.0.1:3306/wxdc?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
-    username: root
-    password: 123456
+    username: ops_beidou
+    password: 'shen2020HAI!@#'
 #  boot:
 #    admin:
 #      url: http://127.0.0.1:9078

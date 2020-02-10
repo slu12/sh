@@ -5,38 +5,46 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
+import java.util.Date;
 
-/**
- * 车队管理 , 存储用户查询条件
- */
-@Table(name = "CB_CD_NEW")
 @Data
-public class CbCd {
+@Table(name = "CB_GPS_BD")
+public class GpsBd {
 
     @Id
     private String id;
 
-    @Column(name = "YH_ID")
-    private String yhId;
+    private Date cjsj;
 
-    private String cjsj;
+    @Column(name = "START_GPS")
+    private String startGps;
 
-    private String cjr;
+    @Column(name = "END_GPS")
+    private String endGps;
 
-    private String json;
+    @Column(name = "DEVICE_ID")
+    private String deviceId;
 
-    private String type;
+    @Column(name = "TIME_BALA")
+    private String timeBala;
 
-    private String name;
+    @Column(name = "GPS_LS_ID")
+    private String gpsLsId;
+
+    @Column(name = "GPS_TIME")
+    private String gpsTime;
 
     public enum InnerColumn{
+
         id("ID"),
-        yhId("YH_ID"),
         cjsj("CJSJ"),
-        cjr("CJR"),
-        json("JSON"),
-        type("TYPE"),
-        name("NAME");
+        startGps("START_GPS"),
+        endGps("END_GPS"),
+        deviceId("DEVICE_ID"),
+        timeBala("TIME_BALA"),
+        gpsLsId("GPS_LS_ID"),
+        gpsTime("GPS_TIME");
 
         private final String column;
 
@@ -61,5 +69,6 @@ public class CbCd {
         }
 
     }
+
 
 }

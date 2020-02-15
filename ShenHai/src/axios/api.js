@@ -1,7 +1,7 @@
 // let ajaxUrl = 'http://192.168.0.115:8081';
 // let ajaxUrl = 'http://dt8hv8.natappfree.cc';
 // let ajaxUrl = 'http://127.0.0.1:8081';
-let ajaxUrl = 'http://223.240.68.90:8083';
+let ajaxUrl = 'http://bddata.eshenhai.cn:8083/biz';
 // let ajaxUrl = 'http://http://119.23.242.234:8080';
 export default {
   NETWORK_ERR_STR: '网络加载异常!',
@@ -15,8 +15,8 @@ export default {
     getUserLoginType:'/getUserLoginType',
   },
   UPLOAD:ajaxUrl+'/biz/upload',
-  STATIC_PATH:'http://223.240.68.90:'+'9092/',//地图icon地址前缀
-  VIDEO_PATH:'http://223.240.68.90:'+'9091/test/',
+  STATIC_PATH:'http://bddata.eshenhai.cn:'+'9092/',//地图icon地址前缀
+  VIDEO_PATH:'http://bddata.eshenhai.cn:'+'9091/test/',
   TXT:'/api/clsbyxsjjl/pager',
   fileDR:'/api/zdgl/excel',
   USERROOT:{

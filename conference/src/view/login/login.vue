@@ -24,7 +24,7 @@
             <img :src="ewm" style="width:220px;height:220px" alt="">
           </div>
           <div class="labTxt">
-            <Icon v-if="value != null" type="md-checkmark-circle-outline" size="24" style="color:#19be6b"/>{{ tipText }}
+            请用微信扫码登录
           </div>
         </div>
 
@@ -74,6 +74,12 @@ export default {
     ]),
     checkScan(){
       //监听是否已经扫码登录成功
+      // setToken('DnWfCxgDL6J3/aWE69GuDdv09IaPZDDHbLDeXcco0qmBRKNXVoFx/8lGCKN2meg8FsRdx686luafWS0NwOxl23F+YWpPLqV6aVFtg83kWDrozg3RMOCdC1e8xVE9vPigmbDcZkoXzIdR82dQQcQm3aQVhB1iFJev4MUFGG3vuqLpjP+cjv9k8PCkaqrTEOUDRoZ8Eovxk/bulzNejEOYTg==')
+      // setAppid('A0001')
+      // this.$router.push({
+      //   name: this.$config.homeName
+      // })
+      // return
       if (this.ranNum){
         console.log('/serverless/testAdmin/'+this.ranNum);
         this.$http.get('/serverless/testAdmin/'+this.ranNum).then(res=>{
@@ -93,7 +99,7 @@ export default {
                 this.loginTimer = null;
                 setTimeout(()=>{
                   this.$router.push({
-                      name:"home"
+                    name: this.$config.homeName
                   })
                 }, 2000);
             }
@@ -113,19 +119,10 @@ export default {
       }
       return num
     },
-    getEWM(){
-      let ps = this.getRandom(8)
-      this.$http.get('/serverless/getQrcode/'+ps).then(res=>{
-        console.log(res);
-        this.ewm = res
-      }).catch(err=>{
-
-      })
-    },
-    login(){
+     login(){
       this.$router.push({
-        // name: this.$config.homeName
-        name:"home"
+        name: this.$config.homeName
+        // name:"home"
       })
     },
     handleSubmit ({ userName, password }) {

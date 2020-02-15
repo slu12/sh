@@ -50,6 +50,9 @@ import routers from '@/router/routers'
 import minLogo from '@/assets/images/logo-min.jpg'
 import maxLogo from '@/assets/images/logo.png'
 import './main.less'
+
+import menuData from './menuListMess'//菜单
+
 export default {
   name: 'Main',
   components: {
@@ -88,7 +91,8 @@ export default {
       return list
     },
     menuList () {
-      return this.$store.getters.menuList
+      // return this.$store.getters.menuList
+      return menuData['admin']
     },
     local () {
       return this.$store.state.app.local

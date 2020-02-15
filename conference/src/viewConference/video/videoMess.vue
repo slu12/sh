@@ -1,14 +1,16 @@
 <template>
+  <!--小程序用我的手机号码
+18602714782/123456-->
   <div class="box_col videoMessPager">
     <div class="topBox boxPadd box_row colCenter rowBetween">
       <div class="box_row">
         <div class="conName">
-          会议主题
+          {{roomMEss.name}}
         </div>
       </div>
       <div class="box_row colCenter">
         <div class="conTime">
-          {{conTime | conTime}}
+          {{ startTime }}
           <!--{{Math.floor(conTime/(60*60))}}:{{Math.floor(conTime/(60*60))}}-->
         </div>
         <div>
@@ -20,15 +22,15 @@
         <Button type="error" class="boxMar_L" :disabled="returnRoom" @click="closePager">退出房间</Button>
       </div>
     </div>
-    <div class="box_row" style="height: 100%">
+    <div class="box_row" style="height: 100%;overflow: auto">
       <div class="pagerLeftBox boxPadd_LR">
         <div class="box_col">
           <Card class="cardaItemBox boxMar_T">
             <div slot="title" class="box_row rowBetween colCenter">
               <div class="box_row colCenter">
-                <Avatar>A</Avatar>
+                <Avatar>{{roomMEss.zcr.name}}</Avatar>
                 <div class="namebox">
-                  name
+                  {{roomMEss.zcr.name}}
                 </div>
               </div>
               <div class="box_row colCenter">
@@ -44,32 +46,32 @@
             <div id="localVidioBox" class="videoBox">
               <Icon type="logo-youtube"/>
             </div>
-            <div style="position: relative">
-              <div class="settingBox box_row"
-                   style="position: absolute;
-                    bottom: 0px;
-                    left: 50%;
-                    transform: translateX(-50%);">
-                <div class="settingItem" @click="setAudio">
-                  <Icon v-show="muteAudio" type="md-mic"/>
-                  <Icon v-show="!muteAudio" type="md-mic-off"/>
-                </div>
-                <div class="settingItem" style="position: relative" @click="setVideo">
-                  <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
-                  <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
-                </div>
+            <div class="box_row cardFooterButtonBox">
+              <div class="box_row_100 butItem" @click="setAudio">
+                <Icon v-show="muteAudio" size="18" color="#348EED" type="md-mic"/>
+                <Icon v-show="!muteAudio" size="18" color="#515a6e" type="md-mic-off"/>
+              </div>
+              <div class="box_row_100 butItem" style="position: relative" @click="setVideo">
+                <Icon v-show="muteVideo" size="18" color="#348EED" type=" iconfont iconvideo_on"/>
+                <Icon v-show="!muteVideo" size="18" color="#515a6e" type=" iconfont iconvideo_off"/>
               </div>
             </div>
           </Card>
           <div class="box_col_autoY boxMar_TB">
             <video-item-box v-if="remoteStreams.length>0"
                             v-for="(it,index) in remoteStreams"
-                            :key="index" :item="it"></video-item-box>
+                            :ref="'videoItemBox_'+index"
+                            :key="index" :item="it"
+                            :index="index"
+                            :sel="index==remoteStreamsVal?true:false"
+                            @showMaxVideo="showMaxVideo"
+            ></video-item-box>
           </div>
 
           <div class="boxMar_B">
-            <Button v-if="startCon == 0" type="success" long @click="startConEvent">会议开始</Button>
-            <Button v-else-if="startCon == 1" type="warning" long @click="endConEvent">会议结束</Button>
+            <Button v-if="startCon == 0" :loading="optFlag" type="success" long @click="startConEvent">会议开始</Button>
+            <Button v-else-if="startCon == 1" :loading="optFlag" type="warning" long @click="endConEvent(false)">会议结束
+            </Button>
             <Button v-else-if="startCon == -1" long>会议已结束</Button>
 
           </div>
@@ -110,17 +112,11 @@
 <script>
   import AgoraRTC from 'agora-rtc-sdk'
   import videoItemBox from './video/itemBox'
+  import moment from 'moment'
 
   export default {
     name: "videoMess",
     components: {videoItemBox},
-    filters: {
-      conTime: (val) => {
-        let m = Math.floor(val / 60)
-        let s = val - m * 60
-        return m + ':' + s
-      }
-    },
     computed: {
       returnRoom() {
         if (this.roomMEss.sid != "" && this.roomMEss.stopTime == "") {
@@ -130,10 +126,11 @@
         } else {
           return false
         }
-      },
+      }
     },
     data() {
       return {
+        optFlag: false,
         //===========
         rtcConfig: {
           mode: "rtc",
@@ -154,8 +151,8 @@
         localStream: '',//创建音视频流对象。
         appid: '8d1a79107f9c4decac672c4201a14693',//不变得的
         //token === (key)
-        key:'',
-          // '0068d1a79107f9c4decac672c4201a14693IACqmYeBZm5VzjAJZvG5QPF0FpPgjGKUhIP7UMm+To1Y3Mieo/oAAAAAEAB5HOB85m05XgEAAQDjbTle',
+        key: '',
+        // '0068d1a79107f9c4decac672c4201a14693IACqmYeBZm5VzjAJZvG5QPF0FpPgjGKUhIP7UMm+To1Y3Mieo/oAAAAAEAB5HOB85m05XgEAAQDjbTle',
         roomName: '',//libinbin99
         params: {
           uid: 99999,
@@ -163,69 +160,67 @@
         DevicesInfo: {},//浏览器设备信息
         localStreamMin: "",//创建音视频流对象 小窗口。
         remoteStreams: [],//接收的音视频流对象
+        remoteStreamsVal: null,
         //本地通道
         muteAudio: true,//音频轨道
         muteVideo: true,//视频轨道
         //屏幕共享参数配置
         shareClient: "",//分享的客户端
         shareStream: '',//创建音视频流对象。
-        shareToken:"",
+        shareToken: "",
         shareParams: {
           uid: 9999
         },
         //  =============
         roomMEss: {},
         orderAudioStop: false,//关闭其他音频流通道
-        conTime: 0,//会议时长
+        startTime: '00:00:00',//会议时长
         startCon: 0,//开始会议 0 开始会议 1 结束会议 -1会议已结束
       }
     },
     created() {
-      console.log(this.$route);
       if (this.$route.params._id) {
-        console.log(this.$route.room);
         this.roomMEss = this.$route.params
         this.roomName = this.$route.query.room
       } else {
         this.$router.back()
       }
 
-      if(this.$route.params.zt!='10'){
+      if (this.$route.params.zt != '10') {
         localStorage.removeItem("VDPS");
-      }else {
+      } else {
         this.getVerifyVideo()
       }
     },
     mounted() {
-
       this.$nextTick(() => {
-        // this.getRoomToken(()=>{
-          // this.createClient();
-          // this.handleEvents();
-        // })
+        this.getRoomToken(() => {
+          this.createClient();
+          this.handleEvents();
+        })
       })
     },
     methods: {
-      getVerifyVideo(){//验证正在录制的视频是否有效
+      getVerifyVideo() {//验证正在录制的视频是否有效
         let a = JSON.parse(localStorage.getItem('VDPS'))
-        this.$http.get('/serverless/api/checkRecording/'+a.resourceId+'/'+a.sid).then(res=>{
-          this.startCon=1
-        }).error(err=>{
-          this.startCon=0
+        this.$http.get('/serverless/api/checkRecording/' + a.resourceId + '/' + a.sid).then(res => {
+          this.startCon = 1
+        }).error(err => {
+          this.startCon = 0
         })
       },
       getRoomToken(callBack) {//获取房间token
-        this.$http.get('/serverless/api/getVideoToken/'+this.params.uid+'/'+this.$route.query.room).then(res=>{
+        this.$http.get('/serverless/api/getVideoToken/' + this.params.uid + '/' + this.$route.query.room).then(res => {
           this.key = res.message
           callBack && callBack()
-        }).catch(err=>{})
+        }).catch(err => {
+        })
       },
       createClient() {//创建客户端。
         var v = this
         this.client = AgoraRTC.createClient(v.rtcConfig);
         //-----
         this.client.init(v.appid, function () {//初始化客户端
-          console.log("client initialized");
           v.client.join(v.key, v.roomName, v.params.uid, function () {
             v.getDevices((obj) => {//获取设备ID(视频、音频)
               v.createStream()
@@ -249,9 +244,9 @@
         });
         v.localStream.init(function () {
           v.localStream.play("local_stream")//本地视频流大模块
-          v.client.publish(v.localStream, function (e) {
-            console.log('将本地视频流发布出去**********************************');
-          });
+          // v.client.publish(v.localStream, function (e) {
+          //   console.log('将本地视频流发布出去**********************************');
+          // });
         });
 
         v.localStreamMin = AgoraRTC.createStream({
@@ -264,6 +259,9 @@
         });
         v.localStreamMin.init(function () {
           v.localStreamMin.play("localVidioBox")//本地视频流小模块
+          v.client.publish(v.localStreamMin, function (e) {
+            console.log('将本地视频流发布出去**********************************');
+          });
         });
       },
       getDevices(callback) {
@@ -319,55 +317,41 @@
         rtc.client.on("error", (err) => {
           console.log(err)
         })
-        // Occurs when the peer user leaves the channel; for example, the peer user calls Client.leave.
+        //该回调通知 App 有远端用户离线。
         rtc.client.on("peer-leave", function (evt) {
           var id = evt.uid;
-          console.log("id", evt);
-          if (id != rtc.params.uid) {
-            rtc.removeView(id);
-          }
+          // if (id == rtc.params.uid) {
+          rtc.removeView(id);
+          // }
           // Toast.notice("peer leave")
           console.log('peer-leave', id);
         })
-        // Occurs when the local stream is published.
-        rtc.client.on("stream-published", function (evt) {
-          // Toast.notice("stream published success")
-          console.log("stream-published");
+        // 该回调提示有远端用户/主播加入频道。
+        rtc.client.on("peer-online", function (evt) {
+          var id = evt.uid;
+          console.log('加入视频的人', id);
         })
-        // Occurs when the remote stream is added.
+        // 该回调通知 App 远端音视频流已添加
         rtc.client.on("stream-added", function (evt) {
-          console.log('加入视频流111111');
           var remoteStream = evt.stream;
           var id = remoteStream.getId();
-          // Toast.info("stream-added uid: " + id)
-          // if (id !== rtc.params.uid) {
-          rtc.client.subscribe(remoteStream, function (err) {
-            console.log('加入视频流222222');
+          if (id !== rtc.params.uid) {
+            rtc.client.subscribe(remoteStream, function (err) {
 
-            console.log("stream subscribe failed", err);
-          })
-          // }
-          console.log('stream-added remote-uid: ', id);
+            })
+          }
         });
-        // Occurs when a user subscribes to a remote stream.
+        // 该回调通知 App 已接收远端音视频流。
         rtc.client.on("stream-subscribed", function (evt) {
-          console.log('监控进入', evt);
           var remoteStream = evt.stream;
           var id = remoteStream.getId();
-          console.log(id);
           rtc.remoteStreams.push(remoteStream);//监听推送的视频流
-          // rtc.remoteStreams.id = remoteStream
-          console.log('监控进入', rtc.remoteStreams);
-          // setTimeout(()=>{
-          //   remoteStream.play("remote_video_"+id);
-          // },100)
-          // Toast.info('stream-subscribed remote-uid: ' + id);
-          console.log('stream-subscribed remote-uid: ', id);
+          // setTimeout(() => {
+          //   remoteStream.play("remote_video_" + id);
+          // }, 100)
         })
-        // Occurs when the remote stream is removed; for example, a peer user calls Client.unpublish.
+        // 该回调通知 App 已删除远端音视频流，即对方调用了 Client.unpublish。
         rtc.client.on("stream-removed", function (evt) {
-          console.log('监控结束', evt);
-
           var remoteStream = evt.stream;
           var id = remoteStream.getId();
           // Toast.info("stream-removed uid: " + id)
@@ -376,24 +360,9 @@
             return stream.getId() !== id
           })
           rtc.removeView(id);
-          console.log('stream-removed remote-uid: ', id);
         })
-        rtc.client.on("onTokenPrivilegeWillExpire", function () {
-          // After requesting a new token
-          // rtc.client.renewToken(token);
-          // Toast.info("onTokenPrivilegeWillExpire")
-          console.log("onTokenPrivilegeWillExpire")
-        });
-        rtc.client.on("onTokenPrivilegeDidExpire", function () {
-          // After requesting a new token
-          // client.renewToken(token);
-          // Toast.info("onTokenPrivilegeDidExpire")
-          console.log("onTokenPrivilegeDidExpire")
-        });
       },
       removeView(id) {
-        console.log('************', id);
-        console.log(this.remoteStreams);
         this.remoteStreams.forEach((it, index) => {
           if (id === it.getId()) {
             this.remoteStreams.splice(index, 1)
@@ -402,28 +371,42 @@
       },
       //屏幕共享
       getShareRoomToken() {//获取房间token
-        this.$http.get('/serverless/api/getVideoToken/'+this.shareParams.uid+'/'+this.$route.query.room).then(res=>{
+        var v = this
+        try {
+          v.shareClient.unpublish(v.shareStream, function (e) {
+          });
+        } catch (e) {
+        }
+        try {
+          v.shareClient.leave(function () {
+          }, function () {
+          })
+        } catch (e) {
+        }
+        this.$http.get('/serverless/api/getVideoToken/' + this.shareParams.uid + '/' + this.$route.query.room).then(res => {
           this.shareToken = res.message
           this.shareEvent()
-        }).catch(err=>{})
+        }).catch(err => {
+        })
       },
       shareEvent() {//屏幕共享
         var v = this
         this.shareClient = AgoraRTC.createClient(v.rtcConfig);//屏幕共享终端
 
         this.shareClient.init(v.appid, function () {//初始化客户端
+          // console.log("分享----初始化客户端成功 ");
           v.shareClient.join(v.shareToken, v.roomName, v.shareParams.uid, function () {
+            // console.log("分享----加入频道成功");
             v.getDevices((obj) => {//获取设备ID(视频、音频)
               v.shareCreateStream()
             })
-          }, function () {
-            console.log(error);
+          }, function (error) {
+            // console.log('分享----加入频道失败', error);
+            v.getShareRoomToken()
           });
-        }, function (err) {
-          console.log("client init failed ", err);
+        }, function (error) {
+          // console.log("分享----初始化客户端失败 ", error);
         });
-        console.log(v.DevicesInfo);
-
       },
       shareCreateStream() {//屏幕共享
         var v = this
@@ -483,60 +466,140 @@
           if (nut || nutMin) {
             this.muteVideo = !this.muteVideo
           }
+          //禁用音视频
+          this.client.unpublish(stream, function (err) {
+          })
         } else {
           let nut = this.localStreamMin.unmuteVideo()
           let nutMin = this.localStreamMin.unmuteVideo()
           if (nut || nutMin) {
             this.muteVideo = !this.muteVideo
           }
+          //启用音视频
+          this.client.publish(stream, function (err) {
+          })
         }
       },
       closePager() {//关闭页面
         var v = this
+        if (this.startCon == 1) {
+          this.swal.fire({
+            type: 'warning', // 弹框类型
+            title: '退出房间', //标题
+            text: "会议正在进行中，请先结束后再退出！", //显示内容
+            confirmButtonColor: '#3085d6',// 确定按钮的 颜色
+            confirmButtonText: '保存',// 确定按钮的 文字
+            showCancelButton: true, // 是否显示取消按钮
+            cancelButtonColor: '#d33', // 取消按钮的 颜色
+            cancelButtonText: "取消", // 取消按钮的 文字
 
-        this.$router.back()
+            focusCancel: true, // 是否聚焦 取消按钮
+            reverseButtons: true  // 是否 反转 两个按钮的位置 默认是  左边 确定  右边 取消
+          }).then((isConfirm) => {
+            try {
+              //判断 是否 点击的 确定按钮
+              if (isConfirm.value) {
+                this.endConEvent(true);
+              }
+            } catch (e) {
+
+            }
+          });
+        } else {
+          this.$router.back();
+        }
       },
       showMaxVideo(it) {//小屏幕切换
         var v = this
-        if (it == '0000') {
-          v.localStream.play("local_stream")
+        // setTimeout(() => {
+        if (it === '0000') {
+          if (v.remoteStreamsVal === null) {
+            v.localStream.stop()
+          } else {
+            v.remoteStreams[v.remoteStreamsVal].stop()
+            console.log(this.$refs['videoItemBox_' + v.remoteStreamsVal]);
+            this.$refs['videoItemBox_' + v.remoteStreamsVal][0].buildVideoBox()
+          }
+          // setTimeout(() => {
+            v.remoteStreamsVal = null
+            v.localStream.play("local_stream")
+          // }, 1000)
+        } else {
+          if (v.remoteStreamsVal === null) {
+            v.remoteStreamsVal = it
+            v.localStream.stop()
+            v.remoteStreams[it].stop()
+          } else {
+            try {
+              v.localStream.stop()
+            }catch (e) {}
+            v.remoteStreams[v.remoteStreamsVal].stop()
+            v.remoteStreamsVal = it
+          }
+          // setTimeout(() => {
+            v.remoteStreams[it].play("local_stream")
+          // }, 1000)
         }
+        // }, 20)
       },
       setOrderAudio(val) {//设置接收流声音
         this.orderAudioStop = val
       },
       startConEvent() {//会议开始
+        this.optFlag = true;
         this.$http.post('/serverless/api/startVideo', {
           room_name: this.roomName,
           _id: this.$route.query.id
         }).then(res => {
+          this.optFlag = false;
           this.roomMEss.sid = res.sid
           let a = JSON.stringify(res)
           localStorage.setItem('VDPS', a)
           this.startCon = 1
+          this.roomMEss.startTime = null;
           this.ST()
         }).catch(err => {
+          this.optFlag = false;
+          this.swal({
+            title: err.message,
+            type: 'error'
+          })
         })
       },
       ST() {//会议计时
-        this.conTime = this.conTime + 1;
         if (this.startCon == 1) {
+          if (this.roomMEss.startTime) {
+            var x = moment() - moment(this.roomMEss.startTime, 'YYYY-MM-DD HH:mm:ss')
+            var d = moment.duration(x, 'milliseconds');
+            var hours = Math.floor(d.asHours());
+            var mins = Math.floor(d.asMinutes()) - hours * 60;
+            var sec = Math.floor(d.asSeconds()) - (hours * 60 + mins * 60);
+
+            this.startTime = (hours < 10 ? '0' + hours : hours) + ':' + (mins < 10 ? '0' + mins : mins) + ':' + (sec < 10 ? '0' + sec : sec);
+          } else {
+            this.startTime = '00:00:00';
+          }
+
           setTimeout(() => {
             this.ST()
           }, 1000)
         }
-        console.log(this.conTime);
       },
-      endConEvent() {//会议结束
+      endConEvent(quitFlag) {//会议结束
+        this.optFlag = true;
         var v = this
         let vdps = localStorage.getItem('VDPS')
         vdps = JSON.parse(vdps)
         vdps.room_name = this.roomName;
         vdps._id = this.$route.query.id;
         this.$http.post('/serverless/api/stopVideo', vdps).then(res => {
+          this.optFlag = true;
           this.startCon = -1
+          if (quitFlag) {
+            this.$router.back();
+          }
         }).catch(err => {
-          console.log(err);
+          this.optFlag = false;
           v.swal({
             title: err.message,
             type: 'error'
@@ -568,4 +631,27 @@
 <style lang="less">
   @import "./less/mess";
   @import "./video/itemBox/index.less";
+
+  .cardaItemBox {
+    .ivu-card-body {
+      padding-bottom: 0;
+    }
+  }
+
+  .cardFooterButtonBox {
+    border-top: solid 1px #e8eaec;
+    margin-top: 12px;
+    .butItem {
+      text-align: center;
+      line-height: 30px;
+      height: 30px;
+      cursor: pointer;
+      /*background-color: #999999;*/
+    }
+    .butItem:hover {
+      i {
+        transform: scale(1.3);
+      }
+    }
+  }
 </style>

@@ -34,8 +34,8 @@
           参与人：
         </div>
         <div class="joinPerBox box_row_100 box_row">
-          <div class="perItem" v-for="(chrItem, index) in item.chr.name" >
-            {{ chrItem[index] }}
+          <div class="perItem" v-for="(chrItem, index) in item.chr.name" v-if="index<3">
+            {{ getNameFrist(chrItem) }}
           </div>
           <div class="perNum">
             +{{item.chr.name.length}}
@@ -68,7 +68,8 @@
         <!--</div>-->
       <!--</div>-->
       <div style="margin: 12px 0">
-        <Button type="success" :disabled="item.zt=='00'?true:false"
+        <!--:disabled="item.zt=='00'?true:false"-->
+        <Button type="success"
                 @click="joinEvent" long>开始会议</Button>
       </div>
     </div>
@@ -122,6 +123,10 @@
             userId: '11111'
           }
         })
+      },
+      getNameFrist(name){
+        let arrName = name.split(' ')
+        return arrName[0]
       }
     }
   }

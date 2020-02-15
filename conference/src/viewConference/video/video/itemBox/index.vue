@@ -1,45 +1,32 @@
 <template>
-  <Card class="cardaItemBox boxMar_B">
+  <Card :class="sel?'selSty':''"
+        class="cardaItemBox boxMar_B"
+  >
     <div slot="title" class="box_row rowBetween colCenter">
       <div class="box_row colCenter">
-        <Avatar>A</Avatar>
+        <Avatar>{{getName(item.getId())}}</Avatar>
         <div class="namebox">
-          <!--{{item.getID | getName}}-->
-          {{getName(item.getID)}}
-          <!--{{item.getId}}-->
+          {{getName(item.getId())}}
         </div>
       </div>
-      <Icon type="md-expand" size="22"
+      <Icon v-if="sel" type="md-contract" size="22"
+            color="" style="cursor: pointer"
+            @click.native="closeVideoBox()"/>
+      <Icon v-else type="md-expand" size="22"
             style="cursor: pointer"
             @click.native="showMaxVideo()"/>
-      <!--<div v-if="item==0">-->
-        <!--主讲-->
-      <!--</div>-->
-      <!--<div v-else-if="item>0 && item<6">-->
-        <!--参与-->
-      <!--</div>-->
-      <!--<div v-else-if="item>5">-->
-        <!--旁听-->
-      <!--</div>-->
     </div>
-    <!--+item.getId()-->
-    <div :id="'remote_video_'" class="videoBox">
-      <Icon type="logo-youtube" />
+    <div :id="'remote_video_'+item.getId()" class="videoBox">
+      <Icon type="logo-youtube"/>
     </div>
-    <div style="position: relative">
-      <div class="settingBox box_row"
-           style="position: absolute;
-                    bottom: 0px;
-                    left: 50%;
-                    transform: translateX(-50%);">
-        <div class="settingItem" @click="setAudio">
-          <Icon v-show="muteAudio" type="md-mic"/>
-          <Icon v-show="!muteAudio" type="md-mic-off"/>
-        </div>
-        <div class="settingItem" @click="setVideo">
-          <Icon v-show="muteVideo" type=" iconfont iconvideo_on"/>
-          <Icon v-show="!muteVideo" type=" iconfont iconvideo_off"/>
-        </div>
+    <div class="box_row cardFooterButtonBox">
+      <div class="box_row_100 butItem" @click="setAudio">
+        <Icon v-show="muteAudio" size="18" color="#348EED" type="md-mic"/>
+        <Icon v-show="!muteAudio" size="18" color="#515a6e" type="md-mic-off"/>
+      </div>
+      <div class="box_row_100 butItem" style="position: relative" @click="setVideo">
+        <Icon v-show="muteVideo" size="18" color="#348EED" type=" iconfont iconvideo_on"/>
+        <Icon v-show="!muteVideo" size="18" color="#515a6e" type=" iconfont iconvideo_off"/>
       </div>
     </div>
   </Card>
@@ -49,63 +36,47 @@
   export default {
     name: "index",
     props: {
-      item: {
-        type: ''
-      }
+      item: '',
+      index: null,
+      sel: false
     },
-    filters:{
-      // getName:function (val) {
-        // let chrName = this.$parent.roomMEss.chr.name
-        // let chrUid =  this.$parent.roomMEss.chr.uid
-        // chrUid.forEach((it,index)=>{
-        //   if(it == val){
-        //     return chrName[index]
-        //   }
-        // })
-      // }
-    },
-    computed:{
-      orderAudioStop(){
+    computed: {
+      orderAudioStop() {
         return this.$parent.orderAudioStop
       }
     },
-    watch:{
-      orderAudioStop:function(n,o){
-        console.log(n);
+    watch: {
+      orderAudioStop: function (n, o) {
         this.setAudio()
       }
     },
-    data(){
+    data() {
       return {
-        muteAudio:true,//音频轨道
-        muteVideo:true,//视频轨道
+        muteAudio: true,//音频轨道
+        muteVideo: true,//视频轨道
       }
     },
-    created(){
-      console.log('********************',this.item.getID());
+    created() {
+
     },
-    mounted(){
-      this.$nextTick(()=>{
-        this.item.play("remote_video_"+this.item.getId())
+    mounted() {
+      var v = this
+      this.$nextTick(() => {
+        v.buildVideoBox()
       })
     },
-    beforeDestroy(){
-      this.$emit('showMaxVideo','0000')
+    beforeDestroy() {
+      this.closeVideoBox()
     },
-    methods:{
-      showMaxVideo(){
-        this.$emit('showMaxVideo',this.item)
+    methods: {
+      buildVideoBox() {
+        this.item.play("remote_video_" + this.item.getId())
       },
-      getName(uid){
-        const chrName = this.$parent.roomMEss.chr.name
-        const chrUid =  this.$parent.roomMEss.chr.uid
-        let key = ''
-        chrUid.forEach((it,index)=>{
-          if(it == uid){
-            key = index
-          }
-        })
-        return chrName[key]
+      closeVideoBox() {
+        this.$emit('showMaxVideo', '0000')
+      },
+      showMaxVideo() {
+        this.$emit('showMaxVideo', this.index)
       },
       setAudio() {//启用/关闭 音频轨道
         if (this.muteAudio) {
@@ -113,7 +84,7 @@
           if (nut) {
             this.muteAudio = !this.muteAudio
           }
-        }else{
+        } else {
           let nut = this.item.unmuteAudio()
           if (nut) {
             this.muteAudio = !this.muteAudio
@@ -126,17 +97,34 @@
           if (nut) {
             this.muteVideo = !this.muteVideo
           }
-        }else{
+        } else {
           let nut = this.item.unmuteVideo()
           if (nut) {
             this.muteVideo = !this.muteVideo
           }
         }
       },
+      getName(uid) {
+        const chrName = this.$parent.roomMEss.chr.name
+        const chrUid = this.$parent.roomMEss.chr.uid
+        let key = ''
+        chrUid.forEach((it, index) => {
+          if (it == uid) {
+            key = index
+          }
+        })
+
+        return chrName[key]
+      }
     }
   }
 </script>
 
 <style lang="less">
   @import "./index";
+
+  .selSty {
+    border-right-color: #ed4014!important;
+    border-right-width: 3px!important;
+  }
 </style>

@@ -34,8 +34,8 @@
           参与人：
         </div>
         <div class="joinPerBox box_row_100 box_row">
-          <div class="perItem" v-for="(chrItem, index) in item.chr.name" >
-            {{ chrItem[index] }}
+          <div class="perItem" v-for="(chrItem, index) in item.chr.name" v-if="index<3">
+            {{ getNameFrist(chrItem) }}
           </div>
           <div class="perNum">
             +{{item.chr.name.length}}
@@ -123,6 +123,10 @@
             userId: '11111'
           }
         })
+      },
+      getNameFrist(name){
+        let arrName = name.split(' ')
+        return arrName[0]
       }
     }
   }

@@ -42,7 +42,7 @@ httpInstance.interceptors.request.use((config) => {
   // role: "video"
   //超级role: "admin"
   //视频权限role: "video"
-  // token = "tX6u34umHNq10++zPL5POcOkkaJIkyu8nA8UfTPzaEtIdCLcrbppzRw8BStYDthDXpYIMIP/2MKukQFs9i3/zBzswhcd58ds5ffehBkd9aO2A9Ki//owqd6gKi6CdxwXoWZgAHtlstezCiEg8lmEj0f08qmypjHn2Fei3GGI5fXOVS11eeSkjtRNVlq1iRv6"
+  // token = "zRw8BStYDthDXpYIMIP/2MKukQFs9i3/zBzswhcd58ds5ffehBkd9aO2A9Ki//owqd6gKi6CdxwXoWZgAHtlstezCiEg8lmEj0f08qmypjHn2Fei3GGI5fXOVS11eeSkjtRNVlq1iRv6"
   //查询权限role: "query"
   // token = "r+AB4hiWOeW9bhdeAYnsQ8OkkaJIkyu8nA8UfTPzaEtIdCLcrbppzRw8BStYDthDXpYIMIP/2MKukQFs9i3/zBzswhcd58ds5ffehBkd9aO2A9Ki//owqd6gKi6CdxwXoWZgAHtlstezCiEg8lmEjyxASe1skibcU9VbkgeHGfoGs/9hTvtU8gx5ARFPUTQq"
   // config.headers.token = token

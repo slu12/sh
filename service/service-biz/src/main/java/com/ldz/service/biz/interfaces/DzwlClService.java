@@ -6,4 +6,6 @@ import com.ldz.dao.biz.model.ClDzwlCl;
 
 public interface DzwlClService extends BaseService<ClDzwlCl,String>{
     ApiResponse<String> saveEntity(ClDzwlCl entity);
+
+    ApiResponse<String> removeDzwl(String... ids);
 }

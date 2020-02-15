@@ -464,8 +464,8 @@ public class ScreenApi {
                 bd.setId(idWorker.nextId() + "");
                 bd.setCjsj(new Date());
                 bd.setDeviceId(deviceId);
-                bd.setEndGps(ls1.getWd() + "," + ls1.getJd());
-                bd.setStartGps(ls.getWd() + "," + ls.getJd());
+                bd.setEndGps(ls1.getBdwd() + "," + ls1.getBdjd());
+                bd.setStartGps(ls.getBdwd() + "," + ls.getBdjd());
                 bd.setGpsLsId(id);
                 bd.setTimeBala(l+"");
                 bd.setGpsTime(format.format(ls.getCjsj()) + "," + format.format(ls1.getCjsj()));
@@ -477,6 +477,22 @@ public class ScreenApi {
             bdMapper.insertList(gpsBds);
         }
         saveBds(deviceId, id);
+    }
+
+    @GetMapping("/getJson")
+    public List<Map<String, String>> getJson(){
+
+        SimpleCondition condition  = new SimpleCondition(GpsBd.class);
+        condition.setOrderByClause(GpsBd.InnerColumn.gpsTime.asc());
+        List<GpsBd> gpsBds = bdMapper.selectByExample(condition);
+        List<Map<String,String>> gpses = new ArrayList<>();
+        gpsBds.forEach(gpsBd -> {
+            Map<String,String>  m= new HashMap<>();
+            m.put("startGps", gpsBd.getStartGps());
+            m.put("endGps", gpsBd.getEndGps());
+            gpses.add(m);
+        });
+        return gpses;
     }
 
 

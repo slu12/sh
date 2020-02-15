@@ -65,6 +65,7 @@
           v.sysEvent()
         })
         this.get_CB_Code()
+        this.huaxian()
         this.get_GJ_Code()
       },
       get_CB_Code() {//获取船舶定位点

@@ -7,6 +7,7 @@ import com.ldz.dao.biz.mapper.ZdYhMapper;
 import com.ldz.dao.biz.model.*;
 import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.ClYhService;
+import com.ldz.service.biz.interfaces.DzwlClService;
 import com.ldz.service.biz.interfaces.DzwlService;
 import com.ldz.sys.base.BaseServiceImpl;
 import com.ldz.sys.base.LimitedCondition;
@@ -44,6 +45,8 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 	private ClYhService yhService;
 	@Autowired
     private ZdYhMapper zdYhMapper;
+	@Autowired
+	private DzwlClService dzwlClService;
 
 	@Override
 	protected Mapper<ClDzwl> getBaseMapper() {
@@ -199,7 +202,27 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 			}
 
         }
-        return true;
+		String mmsi = getRequestParamterAsString("mmsi");
+        if(StringUtils.isNotBlank(mmsi)){
+			List<Cb> cbs = clService.findLike(Cb.InnerColumn.mmsi, mmsi);
+			if(CollectionUtils.isEmpty(cbs)){
+				return false;
+			}
+			List<String> collect = cbs.stream().map(Cb::getClId).collect(Collectors.toList());
+			if(CollectionUtils.isEmpty(collect)){
+				return false;
+			}
+			List<ClDzwlCl> cls = dzwlClService.findIn(ClDzwlCl.InnerColumn.clId, collect);
+			if(CollectionUtils.isEmpty(cls)){
+				return false;
+			}
+			List<String> list = cls.stream().map(ClDzwlCl::getWlId).collect(Collectors.toList());
+			if(CollectionUtils.isEmpty(list)){
+				return false;
+			}
+			condition.in(ClDzwl.InnerColumn.id, list);
+		}
+		return true;
     }
 
 	@Override

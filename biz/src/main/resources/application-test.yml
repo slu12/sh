@@ -27,7 +27,7 @@ server:
 biz:
   scTime: 30000
 
-staticPath:  /data/wwwroot/file
+staticPath:  /usr/beidou/wwwroot/file
 znzpurl: http://127.0.0.1:9888/api
 obdCheckUrl: http://119.23.242.234:9082/api/3007
 videoPath: http://www.168car.net:9091/test/

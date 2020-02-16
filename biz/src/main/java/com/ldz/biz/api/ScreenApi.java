@@ -23,6 +23,7 @@ import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.gps.Gps;
 import com.ldz.util.gps.PositionUtil;
 import lombok.extern.log4j.Log4j2;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -77,7 +78,7 @@ public class ScreenApi {
         }
         URL url = new URL(photo);
         String filePath = "/zp/scrn.jpg";
-        FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath));
+        FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath));
         String file = path + filePath;
         return ApiResponse.success(file);
     }
@@ -205,7 +206,7 @@ public class ScreenApi {
     @GetMapping("/saveListCb")
     public ApiResponse<String> saveList() throws IOException {
 
-        List<String> list = FileUtils.readLines(new File("/data/wwwroot/file/1.txt"), "UTF-8");
+        List<String> list = FileUtils.readLines(new File("/usr/beidou/wwwroot/file/1.txt"), "UTF-8");
         list.forEach(s -> {
             String[] split = s.split(",");
             Cb cb = new Cb();
@@ -372,8 +373,8 @@ public class ScreenApi {
     public ApiResponse<String> testCmd() {
 
         String cmdStr = "/usr/local/ffmpeg/bin/ffmpeg -i @input -vcodec h264 @output";
-        String input = "/data/wwwroot/file/video/" + "2020-01-02/" + "1577979204952.mp4";
-        String output = "/data/wwwroot/file/video/" + "2020-01-02/" + "test-" + System.currentTimeMillis() + ".mp4";
+        String input = "/usr/beidou/wwwroot/file/video/" + "2020-01-02/" + "1577979204952.mp4";
+        String output = "/usr/beidou/wwwroot/file/video/" + "2020-01-02/" + "test-" + System.currentTimeMillis() + ".mp4";
         cmdStr = cmdStr.replace("@input", input).replace("@output", output);
         System.out.println("cmdstr --> " + cmdStr);
 
@@ -493,6 +494,29 @@ public class ScreenApi {
             gpses.add(m);
         });
         return gpses;
+    }
+
+    @GetMapping("/tranimg")
+    public ApiResponse<String> transImg() throws IOException {
+        String path = "/usr/beidou/wwwroot/file/zp";
+        File file = new File(path);
+        if(file.isDirectory()){
+            File[] files = file.listFiles();
+            for (File f : files) {
+                if(f.isDirectory()){
+                    File[] listFiles = f.listFiles();
+                    for (File listFile : listFiles) {
+                        File sFile = new File(listFile.getAbsolutePath().replace(".jpg", "-s.jpg"));
+                        Thumbnails.of(listFile.getAbsolutePath()).scale(1f).outputQuality(0.3f).toFile(sFile.getAbsolutePath());
+                    }
+                }
+                if(f.isFile() && f.getName().endsWith(".jpg")){
+                    File sFile = new File(f.getAbsolutePath().replace(".jpg", "-s.jpg"));
+                    Thumbnails.of(f.getAbsolutePath()).scale(1f).outputQuality(0.3f).toFile(sFile.getAbsolutePath());
+                }
+            }
+        }
+        return ApiResponse.success();
     }
 
 

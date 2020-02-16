@@ -158,7 +158,7 @@
         selList: {},
         searchList: {
           portname: {
-            label: "港口信息：",
+            label: "船籍港：",
             showAll: false,
             selectList: [
               {

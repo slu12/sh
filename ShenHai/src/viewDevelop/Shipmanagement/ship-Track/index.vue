@@ -502,7 +502,7 @@
       },
       codeEvent(item) {
         console.log(item,'111');
-        this.$refs.nbss.fqLr(item)
+        this.$refs.nbss.fqLr(item);
         this.$refs.carInfoRef.init(item);
       },
       rowClick(item) {

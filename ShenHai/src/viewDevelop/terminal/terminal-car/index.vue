@@ -266,7 +266,8 @@
                                             on: {
                                                 click: () => {
                                                     this.choosedRow = params.row
-                                                    this.componentName = 'jkdz'
+                                                  console.log('jkdz');
+                                                  this.componentName = 'jkdz'
                                                 }
                                             }
                                         }),

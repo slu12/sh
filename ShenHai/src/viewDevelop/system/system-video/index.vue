@@ -13,8 +13,8 @@
           <!--@on-keyup.enter="getPageData()"></Input>-->
           <Input v-model="param.zdbhLike" placeholder='终端编号' style="width: 200px"
                  @on-keyup.enter="getPageData()"></Input>
-          <Input v-model="param.cphLike" placeholder='车牌号' style="width: 200px"
-                 @on-keyup.enter="getPageData()"></Input>
+<!--          <Input v-model="param.cphLike" placeholder='车牌号' style="width: 200px"-->
+<!--                 @on-keyup.enter="getPageData()"></Input>-->
           <!--<Input v-model="param.versionLike" placeholder="请输入版本号" style="width: 200px"-->
           <!--@on-keyup.enter="getPageData()"></Input>-->
           <Select v-model="param.zxzt"
@@ -106,11 +106,10 @@
         //弹层
         showModal: false,
         tableTiT: [
-          {   tit:"ORDER",
-            type: 'index2', align: 'center', minWidth: 80, fixed: 'left',
-            render: (h, params) => {
-              return h('span', params.index + (this.param.pageNum - 1) * this.param.pageSize + 1);
-            }
+          {
+            type: 'index',
+            width: 60,
+            align: 'center'
           },
           {
             title: '设备号',
@@ -126,21 +125,21 @@
             key: 'chns',
             minWidth: 150,
           },
-          {
-            title: '在线状态',
-            tit:"ON_LINE_STATE_TAB",
-            align: 'center',
-            key: 'zxzt',
-            minWidth: 100,
-            render: (h, p) => {
-              let val = this.dictUtil.getValByCode(this, this.lmdmDictionary, p.row.zxzt)
-              return h('div', {
-                style: {
-                  color: p.row.zxzt == 20 ? '#727272' : (p.row.zxzt == 10 ? '#ed4014' : '#279a3b')
-                }
-              }, val)
-            }
-          },
+          // {
+          //   title: '在线状态',
+          //   tit:"ON_LINE_STATE_TAB",
+          //   align: 'center',
+          //   key: 'zxzt',
+          //   minWidth: 100,
+          //   render: (h, p) => {
+          //     let val = this.dictUtil.getValByCode(this, this.lmdmDictionary, p.row.zxzt)
+          //     return h('div', {
+          //       style: {
+          //         color: p.row.zxzt == 20 ? '#727272' : (p.row.zxzt == 10 ? '#ed4014' : '#279a3b')
+          //       }
+          //     }, val)
+          //   }
+          // },
           {
             title: '创建时间',
             tit:"EXPIRATION_DATE",

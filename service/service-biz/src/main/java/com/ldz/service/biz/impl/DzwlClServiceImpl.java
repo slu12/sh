@@ -60,6 +60,17 @@ public class DzwlClServiceImpl extends BaseServiceImpl<ClDzwlCl,String> implemen
         return ApiResponse.saveSuccess();
     }
 
+    @Override
+    public ApiResponse<String> removeDzwl(String... ids) {
+        for (String id : ids) {
+            dzwlService.remove(id);
+            SimpleCondition condition = new SimpleCondition(ClDzwlCl.class);
+            condition.eq(ClDzwlCl.InnerColumn.wlId, id);
+            entityMapper.deleteByExample(condition);
+        }
+        return ApiResponse.deleteSuccess();
+    }
+
 
     @Override
     protected void afterPager(PageInfo<ClDzwlCl> resultPage){

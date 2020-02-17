@@ -113,12 +113,10 @@
                 //弹层
                 showModal: false,
                   tableTiT: [
-                    {   tit:"ORDER",
-                        type: 'index2', align: 'center', minWidth: 80,
-                          fixed: 'left',
-                        render: (h, params) => {
-                            return h('span', params.index + (this.param.pageNum - 1) * this.param.pageSize + 1);
-                        }
+                    {
+                      type: 'index',
+                      width: 60,
+                      align: 'center'
                     },
                     {
                         title: '终端编号',
@@ -266,7 +264,8 @@
                                             on: {
                                                 click: () => {
                                                     this.choosedRow = params.row
-                                                    this.componentName = 'jkdz'
+                                                  console.log('jkdz');
+                                                  this.componentName = 'jkdz'
                                                 }
                                             }
                                         }),

@@ -90,11 +90,11 @@
           ></DatePicker>
         </div>
 
+<!--        <div class="body-r-1 inputSty">-->
+<!--          <Input type="text" v-model="param.cphLike" placeholder='车牌号'></Input>-->
+<!--        </div>-->
         <div class="body-r-1 inputSty">
-          <Input type="text" v-model="param.cphLike" placeholder='车牌号'></Input>
-        </div>
-        <div class="body-r-1 inputSty">
-          <Input type="text" v-model="param.zdbhLike" placeholder='终端编号'></Input>
+          <Input type="text" v-model="param.mmsiLike" placeholder='终端编号'></Input>
         </div>
         <div class="butevent">
           <Button type="primary" @click="findMessList()">

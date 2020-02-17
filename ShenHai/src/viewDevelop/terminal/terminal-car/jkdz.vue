@@ -5,7 +5,7 @@
 	<div>
 		<Modal v-model="showModal" width='900'
 			:closable='false' :mask-closable="mesF"
-			   :title='$t("INTERFACE_ADDRESS")'>
+			   title='设置接口地址'>
 			<div style="overflow: auto;">
 				<Form
 					:model="param"
@@ -15,14 +15,14 @@
 					:styles="{top: '20px'}">
 					<Row>
 						<Col span="12">
-							<FormItem :label='$t("TERMINAL_NUMBER")'>
-								<Input :readonly="dataRead" type="text" v-model="param.zdbh" :placeholder='$t("TERMINAL_NUM")'>
+							<FormItem label='终端编号'>
+								<Input :readonly="dataRead" type="text" v-model="param.zdbh" placeholder='终端编号'>
 								</Input>
 							</FormItem>
 						</Col>
 						<Col span="12">
-							<FormItem  :label='$t("EQUIPMENT_NAME")'>
-								<Input :readonly="dataRead" type="text" v-model="param.mc" :placeholder='$t("TERMINAL_NAME")'>
+							<FormItem  label='终端名称'>
+								<Input :readonly="dataRead" type="text" v-model="param.mc" placeholder='终端名称'>
 								</Input>
 							</FormItem>
 						</Col>
@@ -49,17 +49,16 @@
 							</FormItem>-->
 						<!--</Col>-->
 						<Col span="24" v-show="dataRead">
-							<FormItem :label='$t("INTERFACE_ADDRESS_TAB")'>
-								<Input type="text" v-model="param.cmd" :placeholder='$t("SET_INTERFACE_ADDRESS")'></Input>
+							<FormItem label='接口地址'>
+								<Input type="text" v-model="param.cmd" placeholder='接口地址'></Input>
 							</FormItem>
 						</Col>
 					</Row>
 				</Form>
 			</div>
-			</Form>
 			<div slot='footer'>
-				<Button type="default" @click="close">{{$t("CLOSE")}}</Button>
-				<Button type="success" @click="seet('addmess')">{{$t("SET")}}</Button>
+				<Button type="default" @click="close">关闭</Button>
+				<Button type="success" @click="seet('addmess')">提交</Button>
 			</div>
 		</Modal>
 	</div>
@@ -144,7 +143,7 @@
 			},
 			bud(){
 				var v = this
-				swal({
+				this.swal({
 			        title: "终端设备添加成功,是否绑定接口地址？",
 			        text: "",
 			        icon: "success",

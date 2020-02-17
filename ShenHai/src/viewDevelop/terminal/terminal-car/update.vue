@@ -5,7 +5,7 @@
 	<div>
 		<Modal v-model="showModal" width='900'
 			   :closable='false' :mask-closable="mesF"
-			   :title='$t("ON_LINE_UPGRADE")'>
+			   title='设备升级'>
 			<div style="overflow: auto;">
 				<Form
 						:model="param"
@@ -15,17 +15,17 @@
 						:styles="{top: '20px'}">
 					<Row>
 						<Col v-if="param.zdbh != ''" span="12">
-							<FormItem :label='$t("TERMINAL_NUMBER")'>
-								<Input :readonly="dataRead" type="text" v-model="param.zdbh" :placeholder='$t("TERMINAL_NUM")'></Input>
+							<FormItem label='终端编号'>
+								<Input :readonly="dataRead" type="text" v-model="param.zdbh" placeholder='终端编号'></Input>
 							</FormItem>
 						</Col>
 						<Col span="24" v-show="dataRead">
-							<FormItem :label='$t("INTERFACE_ADDRESS_TAB")'>
-								<Input type="text" v-model="param.cmd" :placeholder='$t("TERMINAL_INTERFACE_ADDRESS")'></Input>
+							<FormItem label='接口地址'>
+								<Input type="text" v-model="param.cmd" placeholder='接口地址'></Input>
 							</FormItem>
 						</Col>
 						<Col span="24">
-							<FormItem :label='$t("CURRENT_VERSION")'>
+							<FormItem label='接口地址'>
 								<Input type="text" v-model="versionInfo" placeholder="..." readonly></Input>
 							</FormItem>
 						</Col>
@@ -33,8 +33,8 @@
 				</Form>
 			</div>
 			<div slot='footer'>
-				<Button type="default" @click="close">{{$t("CLOSE")}}</Button>
-				<Button type="success" @click="seet('addmess')">{{$t("DETERMINE")}}</Button>
+				<Button type="default" @click="close">关闭</Button>
+				<Button type="success" @click="seet('addmess')">升级</Button>
 			</div>
 		</Modal>
 	</div>

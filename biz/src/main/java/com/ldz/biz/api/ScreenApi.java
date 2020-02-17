@@ -497,8 +497,12 @@ public class ScreenApi {
     }
 
     @GetMapping("/tranimg")
-    public ApiResponse<String> transImg() throws IOException {
-        String path = "/usr/beidou/wwwroot/file/zp";
+    public ApiResponse<String> transImg(String p) throws IOException {
+
+        String path = "/usr/beidou/wwwroot/file/zp" ;
+        if(StringUtils.isNotBlank(p)){
+            path += "/" + p;
+        }
         File file = new File(path);
         if(file.isDirectory()){
             File[] files = file.listFiles();
@@ -514,6 +518,11 @@ public class ScreenApi {
                     File sFile = new File(f.getAbsolutePath().replace(".jpg", "-s.jpg"));
                     Thumbnails.of(f.getAbsolutePath()).scale(1f).outputQuality(0.3f).toFile(sFile.getAbsolutePath());
                 }
+            }
+        }else {
+            if(file.isFile() && file.getName().endsWith(".jpg")){
+                File sFile = new File(file.getAbsolutePath().replace(".jpg", "-s.jpg"));
+                Thumbnails.of(file.getAbsolutePath()).scale(1f).outputQuality(0.3f).toFile(sFile.getAbsolutePath());
             }
         }
         return ApiResponse.success();

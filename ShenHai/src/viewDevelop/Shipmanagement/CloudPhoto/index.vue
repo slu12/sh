@@ -284,9 +284,11 @@
           v.pageTotal = res.page.total
           for (let r of res.page.list) {
             if (r.url) {
+              r.url = r.url.replace(".jpg", "-s.jpg")
               r.video = false
               r.imgdz = r.url.replace('video', 'cache');
               r.imgdz = r.imgdz.replace('mp4', 'jpg')
+
             }
           }
           this.videoList = res.page.list

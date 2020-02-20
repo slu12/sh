@@ -24,6 +24,7 @@ import com.ldz.util.exception.RuntimeCheck;
 import com.ldz.util.gps.Gps;
 import com.ldz.util.gps.PositionUtil;
 import com.ldz.util.redis.RedisTemplateUtil;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -710,8 +711,10 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         }
         URL url = new URL(photo);
         String filePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn + ".jpg";
-        FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath));
-        String file = path + filePath;
+        String sfilePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn + "-s.jpg";
+        FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath));
+        String file = path + sfilePath;
+        Thumbnails.of("/usr/beidou/wwwroot/file" + filePath).scale(1f).outputQuality(0.3f).toFile("/usr/beidou/wwwroot/file" +sfilePath);
         return ApiResponse.success(file);
     }
 
@@ -892,6 +895,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
                 String filePath = "/zp/" + sbh + "-" + i + ".jpg";
+                String sfilePath = "/zp/" + sbh + "-" + i + "-s.jpg";
                 String file = path + filePath;
                 urls[i] = file;
                 int finalI = i;
@@ -902,7 +906,8 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
                             return;
                         }
                         URL url = new URL(photo);
-                        FileUtils.copyURLToFile(url, new File("/data/wwwroot/file" + filePath), 100000, 100000);
+                        FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath), 100000, 100000);
+                        Thumbnails.of("/usr/beidou/wwwroot/file" + filePath).scale(1f).outputQuality(0.3f).toFile("/usr/beidou/wwwroot/file" +sfilePath);
                     } catch (IOException e) {
                     }
                 });
@@ -982,11 +987,13 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         RuntimeCheck.ifBlank(photo, "设备不在线,请稍后再试");
         String now ="/zp/" +  DateTime.now().toString("yyyy-MM-dd");
         String fileName = "F" + mmsi + "_" + System.currentTimeMillis() + ".jpg";
+        String sfileName =  "F" + mmsi + "_" + System.currentTimeMillis() + "-s.jpg";
         String s = now + "/" +fileName ;
         File f = new File(filePath + s);
         URL u = new URL(photo);
         try {
             FileUtils.copyURLToFile(u, f);
+            Thumbnails.of("/usr/beidou/wwwroot/file" + s).scale(1f).outputQuality(0.3f).toFile("/usr/beidou/wwwroot/file" +now + "/" + sfileName);
         }catch (Exception e){
             RuntimeCheck.ifTrue(true, "请求异常 , 请稍后再试");
         }

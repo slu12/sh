@@ -10,4 +10,4 @@ spring:
 biz:
   scTime: 30000
 
-  staticPath: /data/wwwroot/file
+  staticPath: /usr/beidou/wwwroot/file

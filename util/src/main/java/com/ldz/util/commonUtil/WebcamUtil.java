@@ -168,11 +168,11 @@ public class WebcamUtil {
             URL u = new URL(downUrl);
             HttpURLConnection conn = (HttpURLConnection) u.openConnection();
             InputStream stream = conn.getInputStream();
-            File file = new File("/data/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + filename);
+            File file = new File("/usr/beidou/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + filename);
             FileUtils.copyInputStreamToFile(stream, file);
             System.out.println("filename-->" + filename);
-            String input = "/data/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + filename;
-            String output = "/data/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + name;
+            String input = "/usr/beidou/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + filename;
+            String output = "/usr/beidou/wwwroot/file/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + name;
 
             try {
                /* List<String> command = new ArrayList<>();

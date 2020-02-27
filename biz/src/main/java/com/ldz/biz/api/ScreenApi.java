@@ -6,10 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ldz.dao.biz.mapper.GpsBdMapper;
-import com.ldz.dao.biz.model.Cb;
-import com.ldz.dao.biz.model.ClGps;
-import com.ldz.dao.biz.model.ClGpsLs;
-import com.ldz.dao.biz.model.GpsBd;
+import com.ldz.dao.biz.mapper.GpsBdSbMapper;
+import com.ldz.dao.biz.model.*;
 import com.ldz.service.biz.interfaces.CbService;
 import com.ldz.service.biz.interfaces.GpsLsService;
 import com.ldz.service.biz.interfaces.GpsService;
@@ -20,6 +18,7 @@ import com.ldz.util.commonUtil.HttpUtil;
 import com.ldz.util.commonUtil.SnowflakeIdWorker;
 import com.ldz.util.commonUtil.WebcamUtil;
 import com.ldz.util.exception.RuntimeCheck;
+import com.ldz.util.gps.DistanceUtil;
 import com.ldz.util.gps.Gps;
 import com.ldz.util.gps.PositionUtil;
 import lombok.extern.log4j.Log4j2;
@@ -64,6 +63,8 @@ public class ScreenApi {
     private GpsService gpsService;
     @Autowired
     private GpsBdMapper bdMapper;
+    @Autowired
+    private GpsBdSbMapper bdSbMapper;
 
     /**
      * 抓拍接口
@@ -465,6 +466,10 @@ public class ScreenApi {
                 bd.setId(idWorker.nextId() + "");
                 bd.setCjsj(new Date());
                 bd.setDeviceId(deviceId);
+                double distance = DistanceUtil.getShortDistance(ls.getBdjd().doubleValue(), ls.getBdwd().doubleValue(), ls1.getBdjd().doubleValue(), ls1.getBdwd().doubleValue());
+                if(distance <= 50){
+                    continue;
+                }
                 bd.setEndGps(ls1.getBdwd() + "," + ls1.getBdjd());
                 bd.setStartGps(ls.getBdwd() + "," + ls.getBdjd());
                 bd.setGpsLsId(id);
@@ -480,8 +485,75 @@ public class ScreenApi {
         saveBds(deviceId, id);
     }
 
+
+    @GetMapping("/saveBdSb")
+    public ApiResponse<String> saveGpsBdSB(String deviceId){
+        RuntimeCheck.ifBlank(deviceId, "请选择终端");
+        SimpleCondition condition = new SimpleCondition(GpsBdSb.class);
+        condition.eq(GpsBdSb.InnerColumn.deviceId, deviceId);
+        condition.setOrderByClause(GpsBdSb.InnerColumn.gpsLsId.desc());
+        List<GpsBdSb> bds = bdSbMapper.selectByExample(condition);
+        String lsid = "0";
+        if(CollectionUtils.isNotEmpty(bds)){
+            lsid = bds.get(0).getGpsLsId();
+        }
+        saveBdsSb(deviceId, lsid);
+        return ApiResponse.saveSuccess();
+    }
+
+    private void saveBdsSb(String deviceId, String lsid) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleCondition simpleCondition = new SimpleCondition(ClGpsLs.class);
+        simpleCondition.gte(ClGpsLs.InnerColumn.id , lsid);
+        simpleCondition.eq(ClGpsLs.InnerColumn.zdbh, deviceId);
+        simpleCondition.setOrderByClause(ClGpsLs.InnerColumn.id.asc());
+        PageInfo<ClGpsLs> info = PageHelper.startPage(0, 100).doSelectPageInfo(() -> gpsLsService.findByCondition(simpleCondition));
+        List<ClGpsLs> gpsLs = info.getList();
+        if(CollectionUtils.isEmpty(gpsLs) || CollectionUtils.size(gpsLs) <= 1){
+            return;
+        }
+        List<GpsBdSb> gpsBds = new ArrayList<>();
+        String id = gpsLs.get(gpsLs.size() - 1).getId();
+        for (int i = 0; i < gpsLs.size() -1; i++) {
+            ClGpsLs ls = gpsLs.get(i);
+            ClGpsLs ls1 = gpsLs.get(i + 1);
+            // 两个gps点比较 , 如果大于 10 分钟的跨度就记录
+            if(ls.getCjsj() == null){
+                continue;
+            }
+            if(ls1.getCjsj() ==null){
+                continue;
+            }
+            long time = ls.getCjsj().getTime();
+            long time1 = ls1.getCjsj().getTime();
+            long l = time1 - time;
+            if((l - 10 * 60 * 1000) > 0){
+                GpsBdSb bd = new GpsBdSb();
+                bd.setId(idWorker.nextId() + "");
+                bd.setCjsj(new Date());
+                bd.setDeviceId(deviceId);
+                double distance = DistanceUtil.getShortDistance(ls.getJd().doubleValue(), ls.getWd().doubleValue(), ls1.getJd().doubleValue(), ls1.getWd().doubleValue());
+                if(distance <= 50){
+                    continue;
+                }
+                bd.setEndGps(ls1.getWd() + "," + ls1.getJd());
+                bd.setStartGps(ls.getWd() + "," + ls.getJd());
+                bd.setGpsLsId(id);
+                bd.setTimeBala(l+"");
+                bd.setGpsTime(format.format(ls.getCjsj()) + "," + format.format(ls1.getCjsj()));
+                gpsBds.add(bd);
+            }
+        }
+        if(CollectionUtils.isNotEmpty(gpsBds)){
+            System.out.println("有值了");
+            bdSbMapper.insertList(gpsBds);
+        }
+        saveBdsSb(deviceId, id);
+    }
+
+
     @GetMapping("/getJson")
-    public List<Map<String, String>> getJson(){
+    public List<Map<String, String>> getJson(String deviceId){
 
         SimpleCondition condition  = new SimpleCondition(GpsBd.class);
         condition.setOrderByClause(GpsBd.InnerColumn.gpsTime.asc());
@@ -491,6 +563,24 @@ public class ScreenApi {
             Map<String,String>  m= new HashMap<>();
             m.put("startGps", gpsBd.getStartGps());
             m.put("endGps", gpsBd.getEndGps());
+            m.put("gpsTime", gpsBd.getGpsTime());
+            gpses.add(m);
+        });
+        return gpses;
+    }
+
+    @GetMapping("/getJsonSb")
+    public List<Map<String, String>> getJsonSB(String deviceId){
+
+        SimpleCondition condition  = new SimpleCondition(GpsBdSb.class);
+        condition.setOrderByClause(GpsBd.InnerColumn.gpsTime.asc());
+        List<GpsBdSb> gpsBds = bdSbMapper.selectByExample(condition);
+        List<Map<String,String>> gpses = new ArrayList<>();
+        gpsBds.forEach(gpsBd -> {
+            Map<String,String>  m= new HashMap<>();
+            m.put("startGps", gpsBd.getStartGps());
+            m.put("endGps", gpsBd.getEndGps());
+            m.put("gpsTime", gpsBd.getGpsTime());
             gpses.add(m);
         });
         return gpses;

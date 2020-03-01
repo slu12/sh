@@ -200,7 +200,7 @@
                   localStorage.setItem('user',this.form.username)
                   Cookies.set('usermess', this.form.username);
                   Cookies.set('accessToken', res.result.accessToken);
-
+                  sessionStorage.setItem('userInfo',JSON.stringify(res.result.userInfo))
                   localStorage.setItem('menuList', JSON.stringify(res.result.menuTree))
                   v.setMenuList()
                   v.initDict(res.result.dictList);

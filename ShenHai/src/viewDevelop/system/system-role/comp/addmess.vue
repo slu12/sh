@@ -3,11 +3,11 @@
 </style>
 <template>
 	<div>
-		<Modal v-model="showModal" width='900' :closable='mesF' :mask-closable="mesF" :title='operate+$t("ROLE_ADD")'>
+		<Modal v-model="showModal" width='900' :closable='mesF' :mask-closable="mesF" :title='operate+"角色"'>
 			<div v-if="SpinShow" style="width:100%;height:100%;position: fixed;top: 0;left:0;z-index: 1111;">
 				<Spin fix>
 					<Icon type="load-c" size=55 class="demo-spin-icon-load"></Icon>
-					<div style="font-size: 30px;">{{$t("DATA_LOADING")}}</div>
+					<div style="font-size: 30px;">数据加载中请稍后</div>
 				</Spin>
 			</div>
 			<div  style="height:600px;overflow: scroll;">
@@ -19,26 +19,26 @@
 	    			:styles="{top: '20px'}">
                     <Row>
                         <Col span="10">
-                            <FormItem prop="jsmc" :label='$t("ROLE_NAME")+":"'>
-                                <Input type="text" v-model="addmess.jsmc" :placeholder='$t("ROLE_NAME_TAB")'>
+                            <FormItem prop="jsmc" label='角色名称:'>
+                                <Input type="text" v-model="addmess.jsmc" placeholder='请填写角色名称'>
                                 </Input>
                             </FormItem>
-                            <FormItem prop="jsId"  :label='$t("ROLE_CODE")+":"'>
-                                <Input type="text" v-model="addmess.jsId" :placeholder='$t("ROLE_CODE_TAB")' :disabled="edit">
+                            <FormItem prop="jsId"  label='角色代码:'>
+                                <Input type="text" v-model="addmess.jsId" placeholder='请填写角色代码' :disabled="edit">
                                 </Input>
                             </FormItem>
-                            <FormItem :label='$t("TYPE")+":"' :placeholder='$t("ROLE_TYPE_TAB")'>
+                            <FormItem label='类型' placeholder='请选择角色类型'>
                                 <Select filterable clearable  v-model="addmess.jslx">
                                     <Option v-for = '(item,index) in Dictionary' :value="item.key">{{item.val}}</Option>
                                 </Select>
                             </FormItem>
-                            <FormItem :label='$t("COMMONT")+":"'>
-                                <Input type="text" v-model="addmess.sm" :placeholder='$t("COMMENT")'>
+                            <FormItem label='备注:'>
+                                <Input type="text" v-model="addmess.sm" placeholder='备注'>
                                 </Input>
                             </FormItem>
                         </Col>
                         <Col span="10" offset="4"  style="height: 580px;overflow: scroll">
-                            <FormItem :label='$t("PERMISSION")+":"'>
+                            <FormItem label='权限选择:'>
                                 <br>
                                 <menu-choose v-if="showTree" :data="permissionTree" :choosedData="roleFunctionCodes" @treeChange="treeChange"></menu-choose>
                                 <!--<Tree :data="permissionTree" show-checkbox multiple></Tree>-->
@@ -48,8 +48,8 @@
 	    		</Form>
 			</div>
 			<div slot='footer'>
-				<Button type="default" @click="colse"style="color: #949494">{{$t("CANCEL")}}</Button>
-				<Button type="primary" @click="AddDataListOk('addmess')">{{$t("DETERMINE")}}</Button>
+				<Button type="default" @click="colse"style="color: #949494">取消</Button>
+				<Button type="primary" @click="AddDataListOk('addmess')">确认</Button>
 			</div>
 		</Modal>
 	</div>
@@ -69,7 +69,7 @@
 			return {
 				SpinShow:false,
 				showModal: true,
-				operate:this.$t("CREATE"),
+				operate:'新增',
 				mesF: false,
 				addmess: {
 					jsmc: '',
@@ -78,10 +78,10 @@
 				},
 				ruleInline: {
                   	jsmc: [
-                  		{ required: true, message: this.$t("ROLE_NAME_TAB"), trigger: 'blur' }
+                  		{ required: true, message: '请填写角色名称', trigger: 'blur' }
                   	],
                   	jsId: [
-                  		{ required: true, message: this.$t("ROLE_CODE_TAB"), trigger: 'blur' }
+                  		{ required: true, message: '请填写角色代码', trigger: 'blur' }
                   	]
               	},
 				permissionTree: [
@@ -103,10 +103,13 @@
 			},
 		},
 		created(){
-            if(this.usermesType == 'CHANGE'){
+		  console.log("+6+66+6")
+      console.log(this.usermesType, '12345665');
+      if(this.usermesType == 'CHANGE'){
                 this.addmess = this.$parent.messdata
-                this.operate = this.$t("EDIT");
+                this.operate = '编辑';
                 this.edit = true;
+        console.log("+++++++")
 			}
             this.getOrgPermissionTree();
         },
@@ -121,14 +124,19 @@
                 this.Dictionary = this.dictUtil.getByCode(this,this.lmdmDictionary);
             },
             getOrgPermissionTree(){
+              console.log("54645646488979879")
                 let orgCode = '';
+              console.log(this.usermesType , "989897987987")
                 if(!this.usermesType){
                     orgCode = this.$parent.messdata.jgdm;
                 }else{
                     let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                  console.log(userInfo, 'userinfo')
                     orgCode = userInfo.jgdm;
                 }
+              console.log('+++6+998798789789')
                 this.permissionTree = [];
+
                 this.$http.get(this.apis.FUNCTION.getPermissionTreeWithChecked+"?hideSystem=true&parentCode="+orgCode).then((res) =>{
                     if(res.code===200){
                         this.permissionTree = res.result;
@@ -197,12 +205,12 @@
                             }
                             v.SpinShow = false
                         }).catch((error) =>{
-                            v.$Message.error(this.$t("ERROR_ALERM"));
+                            v.$Message.error('出错了!!!');
                             v.SpinShow = false
                         })
                     } else {
                     	v.SpinShow = false
-                        v.$Message.warning(this.$t("WRITE_INFOR"));
+                        v.$Message.warning('请填写用户信息');
                     }
                 })
             },

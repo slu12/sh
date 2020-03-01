@@ -21,7 +21,7 @@
             <Icon type="md-search"></Icon>
             <!--查询-->
           </Button>
-          <Button type="primary" @click="AddDataList()">
+          <Button type="primary" @click="AddDataList">
             <Icon type="md-add"></Icon>
           </Button>
         </div>
@@ -140,6 +140,7 @@
                                             this.userMesType = 'CHANGE'
                                             this.messdata = params.row
                                             this.compName = 'addrole'
+                                          console.log("1111111")
                                         }
                                     }
                                 }),
@@ -231,6 +232,7 @@
                 v.compName = 'addrole'
                 this.userMesType = 'ADD'
                 this.messdata = null
+              console.log('1');
             },
             listF(res) {
                 this.findMessList()

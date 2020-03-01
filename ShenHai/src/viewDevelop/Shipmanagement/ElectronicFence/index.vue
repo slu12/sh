@@ -26,7 +26,7 @@
       <div class="box_row rowRight">
         <div class="body-r-1 inputSty">
           <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
-          <Input v-model="param.cphLike" placeholder='请输入船舶mmsi号查询' style="width: 200px"
+          <Input v-model="param.mmsi" placeholder='请输入船舶mmsi号查询' style="width: 200px"
                  @on-keyup.enter="findMessList()"></Input>
         </div>
         <div class="butevent">
@@ -342,10 +342,11 @@
             //     label: item.mmsi
             //   };
             // });
-            console.log(this.data1);
+            // console.log(this.data1 ,  "----");
             this.options2 = this.data1.filter(item =>{
-                return item.clId.indexOf(query.toUpperCase()) != -1
+                return item.mmsi.indexOf(query.toUpperCase()) != -1
             });
+            // console.log(this.options2, "+++");
           }, 200);
         } else {
           this.options2 = [];

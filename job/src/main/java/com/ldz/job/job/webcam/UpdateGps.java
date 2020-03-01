@@ -15,6 +15,9 @@ import com.ldz.util.commonUtil.WebcamUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -66,7 +69,13 @@ public class UpdateGps implements Job {
         List<ClGps> gps = gpsMapper.selectByExample(condition);
         log.info("gps --> " + JSON.toJSONString(gps));
         Map<String, ClGps> collect = gps.stream().collect(Collectors.toMap(ClGps::getZdbh, p -> p));
+        DateTimeFormatter pattern = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.S");
         for (WebcamBean webcamBean : beans) {
+            // gt 上传时间 , 跟当前时间比较 如果在五分钟内就存储 否则返回
+            String gt = webcamBean.getGt();
+            if (DateTime.parse(gt,pattern).plusMinutes(5).isBeforeNow()) {
+                continue;
+            }
             String ps = webcamBean.getPs();
             String[] split = ps.split(",");
             if(StringUtils.equals(split[0], "0")){

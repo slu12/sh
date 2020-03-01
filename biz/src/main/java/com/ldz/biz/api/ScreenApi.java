@@ -618,5 +618,11 @@ public class ScreenApi {
         return ApiResponse.success();
     }
 
+    @GetMapping("/logout")
+    public ApiResponse<String> logout(){
+        reids.delete("webcam_jsession");
+        return ApiResponse.success();
+    }
+
 
 }

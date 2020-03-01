@@ -1,7 +1,7 @@
 <template>
   <div>
     <Modal
-      :v-model="showModal"
+      v-model="showModal"
       height="600"
       width="900"
       :closable='false'
@@ -87,7 +87,7 @@
 
 
   export default {
-    name: '',
+    name: 'newmess',
     data() {
       return {
         showModal: true,
@@ -135,11 +135,12 @@
       }
     },
     created() {
+      console.log(this.showModal)
       if (this.usermesType) {
         console.log(1);
         this.showPsd = true;
       } else {
-        console.log(1);
+        console.log(2);
         this.addmess = this.usermes
         this.operate = '修改'
         this.getOrgPath(this.addmess.jgdm);

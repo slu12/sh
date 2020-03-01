@@ -12,9 +12,9 @@ var Db *gorm.DB
 func Init() {
 	log.Println("init db")
 	var err error
-	mysqlConn := config.Config.Mysql.Conn
-	Db, err = gorm.Open("mysql", mysqlConn)
-	//Db, err = gorm.Open("mysql", "root:123456@/kt_test?charset=utf8&parseTime=True&loc=Local")
+	//mysqlConn := config.Config.Mysql.Conn
+	//Db, err = gorm.Open("mysql", mysqlConn)
+	Db, err = gorm.Open("mysql", "ops_beidou:shen2020HAI!@#@(119.3.78.139:3306)/beidou_platform?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
 	}

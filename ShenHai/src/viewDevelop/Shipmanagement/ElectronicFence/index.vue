@@ -21,7 +21,7 @@
 </style>
 <template>
   <div class="box-col">
-    <div class="box_row rowBetween colItemCenter boxMar_B"  v-show="!RootShow">
+    <div class="box_row rowBetween colItemCenter boxMar_B" v-show="!RootShow">
       <pager-tit></pager-tit>
       <div class="box_row rowRight">
         <div class="body-r-1 inputSty">
@@ -40,8 +40,7 @@
         </div>
       </div>
     </div>
-
-    <div class="body" v-show="!RootShow">
+    <div class="body" v-if="!RootShow">
       <Table ref="table"
              :height="tabHeight"
              :row-class-name="rowClassName"
@@ -64,7 +63,7 @@
           @on-change='pageChange'></Page>
       </Row>
     </div>
-    <div class="body" v-show="RootShow" style="height: 80%;">
+    <div class="body" v-else style="height: 80%;">
       <div class="box">
         <div style="z-index: 999">
           <h1 style="float: left;">新增电子围栏</h1>
@@ -92,13 +91,13 @@
                   style="width: 500px"
                   :remote-method="remoteMethod2"
                   :loading="loading2">
-                  <Option v-for="(option, index) in options2" :value="option.clId" :key="index" >{{option.mmsi}}</Option>
+                  <Option v-for="(option, index) in options2" :value="option.clId" :key="index">{{option.mmsi}}</Option>
                 </Select>
-<!--                <Input type="text"-->
-<!--                       v-model="mmsi"-->
-<!--                       size="large"-->
-<!--                       placeholder='请输入MMSI'-->
-<!--                       style="width: 200px"></Input>-->
+                <!--                <Input type="text"-->
+                <!--                       v-model="mmsi"-->
+                <!--                       size="large"-->
+                <!--                       placeholder='请输入MMSI'-->
+                <!--                       style="width: 200px"></Input>-->
               </FormItem>
               <Button type="success"
                       size="large"
@@ -113,20 +112,20 @@
         </div>
         <div class="body">
           <div class="box-row" style="height: 700px;">
-<!--            <div class="carlist carlistBor" style="width: 180px;height: 100%;">-->
-<!--              <div class="box">-->
-<!--                <div class="tit">-->
-<!--                  <Input value="" placeholder="请输入船舶信息..." size="small"-->
-<!--                         style="width: 100%"></Input>-->
-<!--                </div>-->
-<!--                <div class="body">-->
-<!--                  <Tree :data="data1" ref="tree"-->
-<!--                        show-checkbox-->
-<!--                        @on-check-change='checkClick'-->
-<!--                        @on-select-change='treeClick'></Tree>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
+            <!--            <div class="carlist carlistBor" style="width: 180px;height: 100%;">-->
+            <!--              <div class="box">-->
+            <!--                <div class="tit">-->
+            <!--                  <Input value="" placeholder="请输入船舶信息..." size="small"-->
+            <!--                         style="width: 100%"></Input>-->
+            <!--                </div>-->
+            <!--                <div class="body">-->
+            <!--                  <Tree :data="data1" ref="tree"-->
+            <!--                        show-checkbox-->
+            <!--                        @on-check-change='checkClick'-->
+            <!--                        @on-select-change='treeClick'></Tree>-->
+            <!--                </div>-->
+            <!--              </div>-->
+            <!--            </div>-->
             <div class="body-F carlistBor" style="position: relative;height: 100%;">
               <my-map ref='maps' :mapDot="mapDot" @choosePoint="choosePoint"></my-map>
             </div>
@@ -150,7 +149,7 @@
 
   export default {
     name: '',
-    mixins: [mixins,i18nTabTit],
+    mixins: [mixins, i18nTabTit],
     components: {
       myMap, formData, bkShow
     },
@@ -188,50 +187,50 @@
         tableTiT: [
           {
             title: '序号',
-            tit:"ORDER",
+            tit: "ORDER",
             type: 'index',
             width: 60,
             align: 'center'
           },
           {
             title: '机构名称',
-            tit:"CAR_NUM_TAB",
+            tit: "CAR_NUM_TAB",
             align: 'center',
             key: 'jgmc'
           },
           {
             title: '围栏名称',
-            tit:"FENCE_NAME",
+            tit: "FENCE_NAME",
             align: 'center',
             key: 'wlmc'
           },
           {
             title: '绑定船舶mmsi',
             align: 'center',
-            key:'l',
-            render:(h,p)=>{
-              if (p.row.cls && p.row.cls.length>0){
+            key: 'l',
+            render: (h, p) => {
+              if (p.row.cls && p.row.cls.length > 0) {
                 let l = ''
-                for(let i = 0 ;i< p.row.cls.length;i++) {
-                   l = l+p.row.cls[i].mmsi+','
+                for (let i = 0; i < p.row.cls.length; i++) {
+                  l = l + p.row.cls[i].mmsi + ','
                   console.log(l);
                 }
-                return h('div',l)
-              }else {
-                return h('div','无绑定船舶')
+                return h('div', l)
+              } else {
+                return h('div', '无绑定船舶')
               }
             }
           },
           {
             title: '创建时间',
-            tit:"CREATE_TIME",
+            tit: "CREATE_TIME",
             width: 180,
             align: 'center',
             key: 'cjsj'
           },
           {
             title: '操作',
-            tit:"OPERATION",
+            tit: "OPERATION",
             key: 'action',
             width: 150,
             align: 'center',
@@ -275,9 +274,7 @@
             }
           }
         ],
-        data9: [
-
-        ],
+        data9: [],
         data1: [{
           "children": [{
             "mapCenMap": {},
@@ -316,7 +313,7 @@
         wlid: '',
         loading2: false,
         options2: [],
-        list:['1','2','3']
+        list: ['1', '2', '3']
       };
     },
     computed: {},
@@ -331,7 +328,7 @@
       this.getCarTree()
     },
     methods: {
-      remoteMethod2 (query) {
+      remoteMethod2(query) {
         if (query !== '') {
           this.loading2 = true;
           setTimeout(() => {
@@ -343,8 +340,8 @@
             //   };
             // });
             // console.log(this.data1 ,  "----");
-            this.options2 = this.data1.filter(item =>{
-                return item.mmsi.indexOf(query.toUpperCase()) != -1
+            this.options2 = this.data1.filter(item => {
+              return item.mmsi.indexOf(query.toUpperCase()) != -1
             });
             // console.log(this.options2, "+++");
           }, 200);
@@ -360,9 +357,10 @@
       },
       finish() {
         this.saveDzwl();
+        this.findList();
       },
       getCarTree(mmsi) {
-        this.$http.post('/api/cl/getCbForDzwl',{pageNum:1,pageSize:99999999}).then((res) => {
+        this.$http.post('/api/cl/getCbForDzwl', {pageNum: 1, pageSize: 99999999}).then((res) => {
           this.data1 = res.result
         }).catch((error) => {
         })
@@ -379,8 +377,8 @@
         this.RootShow = !this.RootShow
       },
       AddRali() {
-        this.$refs.maps.bk();
         this.RootShow = !this.RootShow
+        this.$refs.maps.bk();
       },
       //树多选框
       checkClick(event) {
@@ -469,7 +467,7 @@
         delete this.param.dlxxzb;
         delete this.param.wlmc;
         this.$http.get(this.apis.DZWL.QUERY, {params: v.param}).then((res) => {
-          if (res.code == 200){
+          if (res.code == 200) {
             v.data9 = res.page.list
             v.pageTotal = res.page.total
             v.SpinShow = false;

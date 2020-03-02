@@ -29,10 +29,10 @@
 </style>
 <!--地图选点-->
 <template>
-  <div style="height: 100%;background-color: #00FFFF;">
+  <div style="height: 100%; ">
     <!--<car-info ref="carInfoButton"></car-info>-->
     <!-- <div id="allmap1"></div> -->
-    <div id="viewDiv" style="height: 100%;background-color: #00FFFF;"></div>
+    <div id="viewDiv" style="height: 100%;"></div>
   </div>
 </template>
 

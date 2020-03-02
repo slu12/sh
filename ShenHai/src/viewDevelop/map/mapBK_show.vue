@@ -4,178 +4,204 @@
 -->
 
 <style type="text/css">
-    #allmap{
-        height: 100%;
-        width: 100%;
-    }
-    .claer{
-        position: absolute;
-        width: 64px;
-        height: 47px;
-        top: 5px;
-        right: 0;
-        z-index: 100;
-        background-color: rgb(255, 255, 255);
-        text-align: center;
-        line-height: 45px;
-        border: solid 1px #696666;
-        border-radius: 7px;
-    }
+  #allmap {
+    height: 100%;
+    width: 100%;
+  }
+
+  .claer {
+    position: absolute;
+    width: 64px;
+    height: 47px;
+    top: 5px;
+    right: 0;
+    z-index: 100;
+    background-color: rgb(255, 255, 255);
+    text-align: center;
+    line-height: 45px;
+    border: solid 1px #696666;
+    border-radius: 7px;
+  }
 </style>
 
 <template>
-    <div style="height:500px;background-color: #00FFFF;position: relative;">
-        <div id="allmap1" style="height:100%"></div>
-    </div>
+  <div style="height:500px;background-color: #00FFFF;position: relative;">
+    <div id="allmap1" style="height:100%"></div>
+  </div>
 </template>
 
 <script>
 
-    export default {
-        name:'',
-        data(){
-            return{
-                map:'',
-                mapcenter:{
-                    lng: 118.439435,//bdjd
-                    lat: 31.358537//bdwd
-                },
-                zoom:16,
-                points:[
-                    {
-                        lng: 114.3724431,
-                        lat: 30.544572
-                    },
-                    {
-                        lng: 114.3725432,
-                        lat: 30.564572
-                    }
-                ],
-                // carID:'437316001277673472',
-                wlDot:[]
+  export default {
+    name: '',
+    data() {
+      return {
+        map: '',
+        mapcenter: {
+          lng: 118.439435,//bdjd
+          lat: 31.358537//bdwd
+        },
+        zoom: 16,
+        points: [
+          {
+            lng: 114.3724431,
+            lat: 30.544572
+          },
+          {
+            lng: 114.3725432,
+            lat: 30.564572
+          }
+        ],
+        // carID:'437316001277673472',
+        wlDot: []
+      }
+    },
+    props: {
+      wlid: {
+        type: String,
+        default: ''
+      },
+    },
+    created() {
+
+    },
+    mounted() {
+      var v = this
+      // 百度地图API功能
+      this.$nextTick(() => {
+        this.map = new BMap.Map("allmap1"); // 创建Map实例
+        this.mapCenter()
+        this.bkDot(this.wlid)
+      })
+
+
+    },
+    methods: {
+      //电子围栏点
+      bkDot(id) {
+        var v = this
+        this.$http.get(this.apis.DZWL.GET + "/" + id).then((res) => {
+          if (res.code === 200 && res.result) {
+            if(res.result.dlxxzb){
+              let ditpoints = res.result.dlxxzb.split(';');
+              let dotLength = res.result.dlxxzb.split(';').length;
+              ditpoints.forEach((it,index)=>{
+                if(it){
+                  v.wlDot.push(
+                    new BMap.Point(it.split(',')[0], it.split(',')[1])
+                  )
+                }
+                if(index == ditpoints.length-1){
+                    v.map.setViewport(v.wlDot);
+                    v.bkshow(v.wlDot)//电子围栏显示
+                }
+              })
+            }else {
+              this.swal({
+                title:"暂无电子围栏数据",
+                type:"warning"
+              })
             }
-        },
-        props:{
-          wlid:{
-                type:String,
-                default:''
-            },
-        },
-        created(){
-
-        },
-        mounted(){
-          var v = this
-            // 百度地图API功能
-          this.$nextTick(()=>{
-            this.map = new BMap.Map("allmap1"); // 创建Map实例
-            this.mapCenter()
-            this.bkDot(this.wlid)
-          })
 
 
-        },
-        methods:{
-            //电子围栏点
-            bkDot(id){
-              var v = this
-                this.$http.get(this.apis.DZWL.GET + "/" + id).then((res) => {
-                    if (res.code === 200 && res.result) {
-                        let ditpoints  = res.result.dlxxzb.split(';');
-                        let dotLength = res.result.dlxxzb.split(';').length;
-                        for(var i = 0 ; i<dotLength ; i++){
-                            v.wlDot.push(
-                                new BMap.Point(ditpoints[i].split(',')[0],ditpoints[i].split(',')[1])
-                            )
-                        }
-                        setTimeout(function () {
-                            v.map.setViewport(v.wlDot);
-                            v.bkshow(v.wlDot)//电子围栏显示
-                        },100)
-                    }
-                })
-            },
-            //地图级别中心
-            mapCenter(){
-                var v = this
-                var point = new BMap.Point(v.mapcenter.lng, v.mapcenter.lat);
-                this.map.centerAndZoom(point, 12);// 初始化地图,设置中心点坐标和地图级别
-                this.map.addControl(new BMap.MapTypeControl({
-                    mapTypes:[
-                        BMAP_NORMAL_MAP
-                    ]}));
-                //添加地图类型控件
-                this.map.enableScrollWheelZoom(true);     					     //开启鼠标滚轮缩放
-                this.map.addControl(new BMap.ScaleControl()); 					 // 添加比例尺控件
-                this.map.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
-                this.map.addControl(new BMap.NavigationControl()); 				// 添加平移缩放控件
-            },
-            //撒点
-            disDot(list){
-                this.clear()
-                // 编写自定义函数,创建标注
-                var v = this
-                function addMarker(point){
-                    var marker = new BMap.Marker(point);
-                    v.map.addOverlay(marker);
-                }
-                // 随机向地图添加25个标注
-                for (var i = 0; i < list.length; i ++) {
-                    var point = new BMap.Point(list[i].mapCen.lng, list[i].mapCen.lat);
-                    addMarker(point);
-                }
-            },
-            bkshow(mess){
-                var v = this
-                    // mess=[
-                    // new BMap.Point(116.387112,39.920977),
-                    //     new BMap.Point(116.385243,39.913063),
-                    //     new BMap.Point(116.394226,39.917988),
-                    //     new BMap.Point(116.401772,39.921364),
-                    //     new BMap.Point(116.41248,39.927893)
-                    // ]
-                var polygon = new BMap.Polygon(mess, {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});  //创建多边形
-                v.map.addOverlay(polygon);           //增加多边形
-                // v.map.setViewport(mess);             //可视化点
-            },
-            //布控
-            bk(){
-                var v = this
-                var styleOptions = {//覆盖层的样式
-                    strokeColor:"red",    //边线颜色。
-                    fillColor:"red",      //填充颜色。当参数为空时，圆形将没有填充效果。
-                    strokeWeight: 3,       //边线的宽度，以像素为单位。
-                    strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
-                    fillOpacity: 0.6,      //填充的透明度，取值范围0 - 1。
-                    strokeStyle: 'solid' //边线的样式，solid或dashed。
-                }
+            // for (var i = 0; i < dotLength; i++) {
+            //   v.wlDot.push(
+            //     new BMap.Point(ditpoints[i].split(',')[0], ditpoints[i].split(',')[1])
+            //   )
+            // }
 
-                var drawingManager = new BMapLib.DrawingManager(v.map, {
-                    isOpen: false, //是否开启绘制模式
-                    enableDrawingTool: true, //是否显示工具栏
-                    drawingToolOptions: {
-                        anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
-                        offset: new BMap.Size(64, 5), //偏离值
-                    },
-                    circleOptions: styleOptions, //圆的样式
-                    polylineOptions: styleOptions, //线的样式
-                    polygonOptions: styleOptions, //多边形的样式
-                    rectangleOptions: styleOptions //矩形的样式
-                })
-                drawingManager.addEventListener("overlaycomplete", function(e) {
-                    console.log(e);
-                    v.$emit('choosePoint',e.overlay.ia)
-                });
-            },
-            //清除层
-            clear(){
-                this.map.clearOverlays()
-            },
-            bk_OK(){
+            // setTimeout(function () {
+            //   v.map.setViewport(v.wlDot);
+            //   v.bkshow(v.wlDot)//电子围栏显示
+            // }, 100)
+          }
+        })
+      },
+      //地图级别中心
+      mapCenter() {
+        var v = this
+        var point = new BMap.Point(v.mapcenter.lng, v.mapcenter.lat);
+        this.map.centerAndZoom(point, 12);// 初始化地图,设置中心点坐标和地图级别
+        this.map.addControl(new BMap.MapTypeControl({
+          mapTypes: [
+            BMAP_NORMAL_MAP
+          ]
+        }));
+        //添加地图类型控件
+        this.map.enableScrollWheelZoom(true);     					     //开启鼠标滚轮缩放
+        this.map.addControl(new BMap.ScaleControl()); 					 // 添加比例尺控件
+        this.map.addControl(new BMap.OverviewMapControl());              //添加缩略地图控件
+        this.map.addControl(new BMap.NavigationControl()); 				// 添加平移缩放控件
+      },
+      //撒点
+      disDot(list) {
+        this.clear()
+        // 编写自定义函数,创建标注
+        var v = this
 
-            }
+        function addMarker(point) {
+          var marker = new BMap.Marker(point);
+          v.map.addOverlay(marker);
         }
+
+        // 随机向地图添加25个标注
+        for (var i = 0; i < list.length; i++) {
+          var point = new BMap.Point(list[i].mapCen.lng, list[i].mapCen.lat);
+          addMarker(point);
+        }
+      },
+      bkshow(mess) {
+        console.log(mess);
+        var v = this
+        // mess=[
+        // new BMap.Point(116.387112,39.920977),
+        //     new BMap.Point(116.385243,39.913063),
+        //     new BMap.Point(116.394226,39.917988),
+        //     new BMap.Point(116.401772,39.921364),
+        //     new BMap.Point(116.41248,39.927893)
+        // ]
+        var polygon = new BMap.Polygon(mess, {strokeColor: "blue", strokeWeight: 2, strokeOpacity: 0.5});  //创建多边形
+        v.map.addOverlay(polygon);           //增加多边形
+        // v.map.setViewport(mess);             //可视化点
+      },
+      //布控
+      bk() {
+        var v = this
+        var styleOptions = {//覆盖层的样式
+          strokeColor: "red",    //边线颜色。
+          fillColor: "red",      //填充颜色。当参数为空时，圆形将没有填充效果。
+          strokeWeight: 3,       //边线的宽度，以像素为单位。
+          strokeOpacity: 0.8,    //边线透明度，取值范围0 - 1。
+          fillOpacity: 0.6,      //填充的透明度，取值范围0 - 1。
+          strokeStyle: 'solid' //边线的样式，solid或dashed。
+        }
+
+        var drawingManager = new BMapLib.DrawingManager(v.map, {
+          isOpen: false, //是否开启绘制模式
+          enableDrawingTool: true, //是否显示工具栏
+          drawingToolOptions: {
+            anchor: BMAP_ANCHOR_TOP_RIGHT, //位置
+            offset: new BMap.Size(64, 5), //偏离值
+          },
+          circleOptions: styleOptions, //圆的样式
+          polylineOptions: styleOptions, //线的样式
+          polygonOptions: styleOptions, //多边形的样式
+          rectangleOptions: styleOptions //矩形的样式
+        })
+        drawingManager.addEventListener("overlaycomplete", function (e) {
+          console.log(e);
+          v.$emit('choosePoint', e.overlay.ia)
+        });
+      },
+      //清除层
+      clear() {
+        this.map.clearOverlays()
+      },
+      bk_OK() {
+
+      }
     }
+  }
 </script>
 
 <style>

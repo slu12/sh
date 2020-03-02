@@ -1,8 +1,10 @@
 <template>
-  <div class="box_col" style="flex: 1;background-color: #F5CBD1">
+  <div class="box_col" style="flex: 1">
     <div class="box_row" style="height: 100%">
       <div class="box_row_100">
         <component ref="map" :is="compName" @codeEvent="codeEvent" :mess="mess"></component>
+        <!--<B_myMap ref="map" @codeEvent="codeEvent" :mess="mess"></B_myMap>-->
+
       </div>
       <template>
         <nbss ref="nbss" @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>

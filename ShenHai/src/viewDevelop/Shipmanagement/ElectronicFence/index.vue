@@ -176,7 +176,8 @@
           pageNum: 1,
           pageSize: 8,
           dlxxzb: '',
-          clIds: ''
+          clIds: '',
+          wlmc:''
         },
         ruleInline: {
           // wlmc: [
@@ -443,7 +444,7 @@
           v.$Message.error('请输入围栏名称');
           return;
         }
-        this.$http.post(this.apis.DZWL.ADD, v.param).then((res) => {
+        this.$http.post(this.apis.DZWL.ADD, {wlmc:v.param.wlmc}).then((res) => {
           if (res.code === 200) {
             this.fanceId = res.message;
             this.save();

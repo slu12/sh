@@ -47,6 +47,8 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
     private ZdYhMapper zdYhMapper;
 	@Autowired
 	private DzwlClService dzwlClService;
+	@Autowired
+	private DzwlService dzwlService;
 
 	@Override
 	protected Mapper<ClDzwl> getBaseMapper() {
@@ -71,7 +73,7 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 		entity.setJgdm(user.getJgdm());
 		entity.setJgmc(org.getJgmc());
 		entity.setZt(Dict.CommonStatus.VALID.getCode());
-		save(entity);
+				save(entity);
 		return ApiResponse.success(entity.getId());
 	}
 
@@ -117,7 +119,10 @@ public class DzwlServiceImpl extends BaseServiceImpl<ClDzwl, String> implements 
 
 	@Override
 	public ApiResponse<String> setCarsDzwl(String carIds, String wlid, String mmsi) {
-		RuntimeCheck.ifTrue( StringUtils.isBlank(carIds) && StringUtils.isBlank(mmsi), "请选择船舶");
+		if (StringUtils.isBlank(carIds) && StringUtils.isBlank(mmsi)) {
+			dzwlService.remove(wlid);
+			return ApiResponse.fail("请选择船舶");
+		}
 		RuntimeCheck.ifBlank(wlid, "请选择围栏");
 		List<Cb> carList;
 		Date now = new Date();

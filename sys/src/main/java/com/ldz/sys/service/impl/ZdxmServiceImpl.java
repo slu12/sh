@@ -62,7 +62,11 @@ public class ZdxmServiceImpl extends BaseServiceImpl<SysZdxm,String> implements 
         condition.eq(SysZdxm.InnerColumn.zdlmdm,zdxm.getZdlmdm());
         int count = zdxmMapper.selectCountByExample(condition);
         RuntimeCheck.ifTrue(count != 0,"字典代码已存在");
-
+        condition = new SimpleCondition(SysZdxm.class);
+        condition.eq(SysZdxm.InnerColumn.zddm,zdxm.getZdmc());
+        condition.eq(SysZdxm.InnerColumn.zdlmdm,zdxm.getZdlmdm());
+        count = zdxmMapper.selectCountByExample(condition);
+        RuntimeCheck.ifTrue(count != 0,"类目名称已存在");
         zdxm.setCjr(getOperateUser());
         zdxm.setCjsj(new Date());
         zdxm.setZdId(genId());

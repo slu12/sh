@@ -1,11 +1,13 @@
 <template>
-  <div class="box_col" style="flex: 1;background-color: #F5CBD1">
+  <div class="box_col" style="flex: 1">
     <div class="box_row" style="height: 100%">
       <div class="box_row_100">
-        <component ref="map" :is="compName"></component>
+        <component ref="map" :is="compName" @codeEvent="codeEvent" :mess="mess"></component>
+        <!--<B_myMap ref="map" @codeEvent="codeEvent" :mess="mess"></B_myMap>-->
+
       </div>
       <template>
-        <nbss @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
+        <nbss ref="nbss" @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
       </template>
     </div>
   </div>
@@ -15,6 +17,7 @@
   import B_myMap from '../../map/carJK.vue';
   import carInfo from './carInfo';
   import nbss from './comp/nbss'
+  import bkShow from "../ship-mess/comp/BKshow";
 
   export default {
     name: 'VehicleMonitoring',
@@ -39,6 +42,7 @@
     },
     data() {
       return {
+        mess:'',
         compName: 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
@@ -150,7 +154,7 @@
           })
           // console.log('lisr',this.mapCarList);
           // this.mapCarList = this.carArray[0];
-          this.$refs.map.update();
+          // this.$refs.map.update();
           /* if(this.choosedCar != n
           ull){
                this.$refs.carInfoRef.init(this.choosedCar);
@@ -205,7 +209,7 @@
 
                 this.onGpsInfo(it);
                 newCarList.push(it)
-                if (index == res.result.length - 1) {
+                if (index3 == res.result.length - 1) {
                   // console.log(newCarList);
                   this.$store.commit('ChcarCodeList', newCarList);
                   if (this.choosedCar != null && this.choosedCar.zxzt == '00') {
@@ -218,21 +222,9 @@
           }
         })
       },
-      showFance(carId) {
-        console.log(carId);
-        this.fancePoints = [];
-        var v = this
-        this.$http.get(this.apis.DZWL.GET_BY_CAR_ID + "?clId=" + carId).then((res) => {
-          if (res.code === 200) {
-            let s = res.result.dlxxzb;
-            let ps = s.split(";");
-            for (let r of ps) {
-              let point = r.split(",");
-              this.fancePoints.push({lng: point[1], lat: point[0]})
-            }
-            this.addArea(this.fancePoints);
-          }
-        })
+      showFance(car) {
+          this.compName = ''
+          this.mess = car
       },
       addArea(points) {
         let ps = [];
@@ -327,7 +319,7 @@
           let n = this.updateItem(exist, m);
           newCar = n;
           let index = this.allCarList.indexOf(exist);
-          this.allCarList.splice(index, 1, n);
+          this.allCarList.splice(index3, 1, n);
         } else {
           this.handleItem(m);
           newCar = m;
@@ -511,6 +503,8 @@
         }
       },
       codeEvent(item) {
+        console.log(item,'111');
+        this.$refs.nbss.fqLr(item);
         this.$refs.carInfoRef.init(item);
       },
       rowClick(item) {
@@ -551,4 +545,3 @@
     }
   };
 </script>
-

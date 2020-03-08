@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTTLByHslColorTransform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -41,7 +40,6 @@ import tk.mybatis.mapper.common.Mapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -968,9 +966,10 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     }
 
     @Override
-    public ApiResponse<List<Map<String, String>>> getCbs() {
-        List<Map<String, String>> maps = entityMapper.getCbs();
-        return ApiResponse.success(maps);
+    public ApiResponse<PageInfo<Map<String, String>>> getCbs(String mmsi, String shipname, String cond, int pageNum, int pageSize) {
+        PageInfo<Map<String,String>> info = PageHelper.startPage(pageNum, pageSize).doSelectPageInfo(() -> entityMapper.getCbs(mmsi, shipname, cond));
+//        List<Map<String, String>> maps = entityMapper.getCbs(mmsi, shipname);
+        return ApiResponse.success(info);
     }
 
     @Override

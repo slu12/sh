@@ -1,6 +1,7 @@
 package com.ldz.biz.controller;
 
 import com.alibaba.fastjson.JSONArray;
+import com.github.pagehelper.PageInfo;
 import com.ldz.dao.biz.bean.WebsocketInfo;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
@@ -252,8 +253,8 @@ public class CbCtrl extends BaseController<Cb, String> {
 	}
 
 	@PostMapping("/getCbs")
-	public ApiResponse<List<Map<String, String>>> getCbs(){
-		return clservice.getCbs();
+	public ApiResponse<PageInfo<Map<String, String>>> getCbs(String mmsi, String shipname, String cond, @RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "8") int pageSize){
+		return clservice.getCbs(mmsi, shipname, cond,pageNum,pageSize);
 	}
 
 	/**

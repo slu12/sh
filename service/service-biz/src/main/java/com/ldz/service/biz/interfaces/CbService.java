@@ -1,6 +1,7 @@
 package com.ldz.service.biz.interfaces;
 
 import com.alibaba.fastjson.JSONArray;
+import com.github.pagehelper.PageInfo;
 import com.ldz.dao.biz.model.Cb;
 import com.ldz.dao.biz.model.ClGpsLs;
 import com.ldz.sys.base.BaseService;
@@ -8,7 +9,6 @@ import com.ldz.util.bean.ApiResponse;
 import com.ldz.util.bean.Point;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +66,7 @@ public interface CbService extends BaseService<Cb,String>{
 
     ApiResponse<List<Point>> newXc(String mmsi, String start, String end);
 
-    ApiResponse<List<Map<String, String>>> getCbs();
+    ApiResponse<PageInfo<Map<String, String>>> getCbs(String mmsi, String shipname, String cond, int pageNum, int pageSize);
 
     ApiResponse<String> zp(String mmsi, String chn) throws IOException;
 

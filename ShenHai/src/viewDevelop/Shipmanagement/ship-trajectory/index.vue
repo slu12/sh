@@ -743,7 +743,7 @@
                 show: true,
                 formatter: function (params) {
                   let time = params.value;
-                  let speed = v.speeds[time]
+                  let speed = v.speeds[time]?v.speeds[time]:'0';
                   return "瞬时速度：" + speed + " Km/h";
                 },
                 backgroundColor: '#004E52'

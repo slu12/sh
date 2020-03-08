@@ -44,6 +44,7 @@
       text-align: center;
       background-color: #262743;
       color: #fff;
+      height: 30px !important;
     }
   }
 
@@ -115,17 +116,46 @@
       <div class="box">
         <div style="padding: 8px">
           <div class="carNumber">
-            <Select class="select" v-model="formItem.mmsi" filterable>
+            <!--<Select class="select" v-model="formItem.mmsi" filterable>-->
+              <!--<Option v-for="(item,index) in carList" :value="item.mmsi" :key="index">{{item.shipname}}</Option>-->
+            <!--</Select>-->
+
+            <Select
+              class="select"
+              v-model="formItem.mmsi"
+              filterable
+              remote
+              :clearable="true"
+              :remote-method="remoteMethod"
+              placeholder="请输入终端设备名称或设备编码查找设备"
+              :loading="loadingSel"
+              @on-change="getHisMess"
+            >
               <Option v-for="(item,index) in carList" :value="item.mmsi" :key="index">{{item.shipname}}</Option>
             </Select>
           </div>
           <div class="sTime" style="margin-top: 6px">
-            <DatePicker v-model="timeRange"
-                        format="yyyy-MM-dd"
-                        type="daterange"
-                        placement="bottom-end"
-                        @on-change="setTime"
-                        placeholder="请选择时间段" style="width:100%"></DatePicker>
+            <!--<DatePicker v-model="timeRange"-->
+            <!--format="yyyy-MM-dd"-->
+            <!--type="daterange"-->
+            <!--placement="bottom-end"-->
+            <!--@on-change="setTime"-->
+            <!--placeholder="请选择时间段" style="width:100%"></DatePicker>-->
+            <Row justify="center" align="middle">
+              <Col span="9">
+                <DatePicker v-model="upTime.day" type="date" placeholder="Select date" style="width: 100%"></DatePicker>
+              </Col>
+              <Col span="8">
+                <TimePicker v-model="upTime.time" format="HH:mm" :steps="[1, 15, 15]" type="time"
+                            placeholder="Select time" style="width: 100%"></TimePicker>
+              </Col>
+              <Col span="7">
+                <Select v-model="upTime.dan" class="select" filterable placeholder="请选择查询时间段">
+                  <Option v-for="(item,index) in ['10','20','30']" :value="item" :key="index">{{item}}</Option>
+                </Select>
+              </Col>
+
+            </Row>
           </div>
           <div style="margin-top: 6px;text-align: center">
             <Button type="info"
@@ -133,101 +163,7 @@
                     style="width: 60px" @click="formItemList">查询
             </Button>
           </div>
-<!--          <div class="carMessH" style="margin-top: 6px">-->
-<!--            <div class="box-row-nh">-->
-<!--              <div class="body-1" style="margin: 4px;">-->
-<!--                <div class="tit">-->
-<!--                  总时长(min)-->
-<!--                </div>-->
-<!--                <div class="mess">-->
-<!--                  {{getMinute(totalTime) | GLmess}}-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="body-1" style="margin: 4px;">-->
-<!--                <div class="tit">-->
-<!--                  总里程(km)-->
-<!--                </div>-->
-<!--                <div class="mess">-->
-<!--                  {{(totalLC/1000).toFixed(2)}}-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="body-1" style="margin: 4px;">-->
-<!--                <div class="tit">-->
-<!--                  驾驶次数-->
-<!--                </div>-->
-<!--                <div class="mess">-->
-<!--                  {{pathList.length | GLmess}}-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px">&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
-<!--              &lt;!&ndash;最高时速(km/h)&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
-<!--              &lt;!&ndash;150&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--            </div>-->
-<!--          </div>-->
         </div>
-<!--        <div class="body" style="padding: 8px;margin-top: 8px">-->
-<!--          <div class="pageListCarH" v-for="(item,index) in pathList" @click="itemClick(item,index)"-->
-<!--               :class="{'choosed':choosedIndex == index}">-->
-<!--            <div>-->
-<!--              <Icon type="ios-location"-->
-<!--                    color="#00c3c1" size="22"></Icon>-->
-<!--              <span class="pageMessH">-->
-<!--								{{item.departportname}}——{{item.arrivedportname}}-->
-<!--							</span>-->
-<!--            </div>-->
-<!--            <div>-->
-<!--              <Icon type="ios-clock"-->
-<!--                    color="#2fa2d7" size="20"></Icon>-->
-<!--              <span class="pageMessH">-->
-<!--								{{item.departtime}}-->
-<!--							</span><br>-->
-<!--              <Icon type="ios-clock"-->
-<!--                    color="#2fa2d7" size="20"></Icon>-->
-<!--              <span class="pageMessH">-->
-<!--								{{item.ata}}-->
-<!--							</span>-->
-<!--            </div>-->
-<!--            <div class="box-row-nh">-->
-<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px;">&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
-<!--              &lt;!&ndash;里程&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
-<!--              &lt;!&ndash;200&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              <div class="body-1" style="margin: 4px;">-->
-<!--                <div class="tit">-->
-<!--                  耗时 {{dateFormat(item.sc)}}-->
-<!--                </div>-->
-<!--                &lt;!&ndash;<div class="mess">&ndash;&gt;-->
-
-<!--                &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              </div>-->
-<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px;">&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
-<!--              &lt;!&ndash;油耗&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
-<!--              &lt;!&ndash;200&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="body-1" style="margin: 4px;">&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="tit">&ndash;&gt;-->
-<!--              &lt;!&ndash;最高时速&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;<div class="mess">&ndash;&gt;-->
-<!--              &lt;!&ndash;3600&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--              &lt;!&ndash;</div>&ndash;&gt;-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
       </div>
     </div>
   </div>
@@ -284,13 +220,6 @@
           this.formItem.endTime = this.getTodayDate() + " 23:59:59";
         }
       },
-    },
-    computed: {
-      local() {
-        return this.$store.state.app.local;
-      }
-    },
-    watch: {
       local: function (n, o) {
         this.formItem.startTime = this.getTodayDate() + " 00:00:00";
         this.formItem.endTime = this.getTodayDate() + " 23:59:59";
@@ -298,6 +227,11 @@
         this.timeRange = [this.formItem.startTime, this.formItem.endTime];
         this.choosedIndex = 0;
         this.getCarList();
+      }
+    },
+    computed: {
+      local() {
+        return this.$store.state.app.local;
       }
     },
     data() {
@@ -332,7 +266,9 @@
         speedList: [],
         stationList: [],
         carCode: '',
-        carList: [],
+        carList: [],//终端数据集合
+        loadingSel: false,
+
         timeRange: [],
         pathList: [],
         formItem: {
@@ -347,19 +283,49 @@
         totalLC: 0,
         speeds: {},
         choosedIndex: 0,
+        upTime: {
+          day: "",//YYYY-MM-DD
+          time: "",//HH:mm
+          dan: "30"
+        }
       }
     },
+    created() {
+      this.upTime.day = this.moment().format("YYYY-MM-DD")
+      this.upTime.time = this.moment().format("HH:00")
+    },
     mounted() {
-      if (this.$route.params.mmsi){
+      if (this.$route.params.mmsi) {
         this.formItem.mmsi = this.$route.params.mmsi;
       }
       this.formItem.startTime = this.getTodayDate() + " 00:00:00";
       this.formItem.endTime = this.getTodayDate() + " 23:59:59";
       this.timeRange = [this.formItem.startTime, this.formItem.endTime];
       this.choosedIndex = 0;
-      this.getCarList();
+      // this.getCarList();
     },
     methods: {
+      //终端远程收索
+      remoteMethod(query) {
+        var v = this
+        if (query !== '') {
+          this.loadingSel = true;
+          // setTimeout(() => {
+          // this.loadingSel = false;
+          // const list = this.list.map(item => {
+          //   return {
+          //     value: item,
+          //     label: item
+          //   };
+          // });
+          // this.carList = list.filter(item => item.label.toLowerCase().indexOf(query.toLowerCase()) > -1);
+          v.getCarList(query)
+          // }, 200);
+        } else {
+          this.carList = [];
+        }
+      },
+
       setTime(val) {
         this.formItem.startTime = val[0] + " 00:00:00";
         this.formItem.endTime = val[1] + " 23:59:59";
@@ -393,86 +359,114 @@
         // }
         return s;
       },
-      getCarList() {
-        this.$http.post('/api/cl/getCbs').then((res) => {
+      getCarList(cond) {
+        let a = {
+          pageSize: 50,
+          pageNum: 1,
+          cond: cond
+        }
+        this.$http.post('/api/cl/getCbs', a).then((res) => {
           if (res.code === 200 && res.result) {
-            this.carList = res.result;
+            this.carList = res.result.list;
+            this.loadingSel = false;
             if (this.carList.length != 0) {
-              this.formItemList();
+              // this.formItemList();
             }
           }
         })
+      },
+      getHisMess(){
+        this.formItemList()
       },
       getTodayDate() {
         let now = new Date();
         return now.format("yyyy-MM-dd");
       },
       formItemList() {
-        let startTime = this.formItem.startTime;
-        let endTime = this.formItem.endTime;
-        startTime = startTime.replace(new RegExp('/', 'gm'), '-');
-        endTime = endTime.replace(new RegExp('/', 'gm'), '-');
-        // if (typeof startTime === 'object') {
-        //     startTime = startTime.format('yyyy-MM-dd hh:mm:ss');
-        // }
-        // if (typeof endTime === 'object') {
-        //     endTime = endTime.format('yyyy-MM-dd hh:mm:ss');
-        // }
-        let p = {
-          start: startTime,
-          end: endTime,
-          mmsi: this.formItem.mmsi,
+        if (this.formItem.mmsi == '') {
+          this.$Message['warning']({
+            background: true,
+            content: '请选着终端设备!'
+          });
+        } else {
+
+          // let startTime = this.formItem.startTime;
+          // let endTime = this.formItem.endTime;
+          let a = this.moment(this.upTime.day).format("YYYY-MM-DD") + " " + this.upTime.time + ":00"
+          let T = new Date(a)
+          let times = T.getTime()
+          let timesEnd = times + parseInt(this.upTime.dan) * 60 * 1000
+          let startTime = this.moment(times).format("YYYY-MM-DD HH:mm:ss")
+          let endTime = this.moment(timesEnd).format("YYYY-MM-DD HH:mm:ss")
+          startTime = startTime.replace(new RegExp('/', 'gm'), '-');
+          endTime = endTime.replace(new RegExp('/', 'gm'), '-');
+          // if (typeof startTime === 'object') {
+          //     startTime = startTime.format('yyyy-MM-dd hh:mm:ss');
+          // }
+          // if (typeof endTime === 'object') {
+          //     endTime = endTime.format('yyyy-MM-dd hh:mm:ss');
+          // }
+          let p = {
+            start: startTime,
+            end: endTime,
+            mmsi: this.formItem.mmsi,
+          }
+          this.totalTime = 0;
+          this.totalLC = 0;
+          this.pathList = [];
+          this.item = {};
+          this.showMap = false;
+          this.speeds = []
+          this.$http.post('/api/cl/newXc', p).then((res) => {
+            if (res.code === 200 && res.result) {
+              var geoc = new BMap.Geocoder();
+              for (let r of res.result) {
+                if (!r.ksjps || !r.jsjps) continue
+                let ksgps = r.ksjps.split(',');
+                let jsgps = r.jsjps.split(',');
+                r.kswd = ksgps[1];
+                r.ksjd = ksgps[0];
+                r.jswd = jsgps[1];
+                r.jsjd = jsgps[0];
+                r.ksdz = '出发地';
+                r.jsdz = '目的地';
+                this.totalTime += r.sc;
+                this.totalLC += parseFloat(r.totalvoyage)
+                // console.log(r);
+                //解析开始地址
+                geoc.getLocation(new BMap.Point(r.ksjd, r.kswd), (rs) => {
+                  var addComp = rs.addressComponents;
+                  r.ksdz = addComp.street;
+                });
+                //解析结束地址
+                geoc.getLocation(new BMap.Point(r.jsjd, r.jswd), (rs) => {
+                  var addComp = rs.addressComponents;
+                  r.jsdz = addComp.street;
+                });
+              }
+              this.pathList = res.result;
+              if (this.pathList.length > 0) {
+                this.itemClick(this.pathList[0], 0);
+              }
+
+              this.stationList = res.result;
+              for (let r of this.stationList) {
+                let date = this.getdateTime(r.loc_time);
+                let speed = parseInt(r.speed);
+                this.speedList.push([date, speed]);
+                this.speeds[r.loc_time * 1000] = speed;
+              }
+              console.log(this.speeds, 'chart');
+
+              this.Buildmap()
+            } else {
+              this.$Message['info']({
+                background: true,
+                content: '未查找到轨迹数据！'
+              });
+            }
+          })
         }
-        this.totalTime = 0;
-        this.totalLC = 0;
-        this.pathList = [];
-        this.item = {};
-        this.showMap = false;
-        this.speeds = []
-        this.$http.post('/api/cl/newXc', p).then((res) => {
-          if (res.code === 200 && res.result) {
-            var geoc = new BMap.Geocoder();
-            for (let r of res.result) {
-              if (!r.ksjps || !r.jsjps) continue
-              let ksgps = r.ksjps.split(',');
-              let jsgps = r.jsjps.split(',');
-              r.kswd = ksgps[1];
-              r.ksjd = ksgps[0];
-              r.jswd = jsgps[1];
-              r.jsjd = jsgps[0];
-              r.ksdz = '出发地';
-              r.jsdz = '目的地';
-              this.totalTime += r.sc;
-              this.totalLC += parseFloat(r.totalvoyage)
-              // console.log(r);
-              //解析开始地址
-              geoc.getLocation(new BMap.Point(r.ksjd, r.kswd), (rs) => {
-                var addComp = rs.addressComponents;
-                r.ksdz = addComp.street;
-              });
-              //解析结束地址
-              geoc.getLocation(new BMap.Point(r.jsjd, r.jswd), (rs) => {
-                var addComp = rs.addressComponents;
-                r.jsdz = addComp.street;
-              });
-            }
-            this.pathList = res.result;
-            if (this.pathList.length > 0) {
-              this.itemClick(this.pathList[0], 0);
-            }
-
-          }
-          this.stationList = res.result;
-          for (let r of this.stationList) {
-            let date = this.getdateTime(r.loc_time);
-            let speed = parseInt(r.speed);
-            this.speedList.push([date, speed]);
-            this.speeds[r.loc_time*1000] = speed;
-          }
-          console.log(this.speeds,'chart');
-
-          this.Buildmap()
-        })
       },
       getBdData() {
         let p = {
@@ -520,7 +514,7 @@
               r.longitude = r.bdjd;
               r.latitude = r.bdwd;
             }
-            console.log(this.speedList,'chart');
+            console.log(this.speedList, 'chart');
             if (this.local == 'en-US') {
               v.Buildmap()
             } else {
@@ -689,15 +683,15 @@
           v.drawLineChart();
         }, 100)
       },
-      getdateTime(timestamp){
-          var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-          var Y = date.getFullYear() + '-';
-          var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-          var D = date.getDate() + ' ';
-          var h = date.getHours() + ':';
-          var m = date.getMinutes() + ':';
-          var s = date.getSeconds();
-          return Y+M+D+h+m+s;
+      getdateTime(timestamp) {
+        var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+        var Y = date.getFullYear() + '-';
+        var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+        var D = date.getDate() + ' ';
+        var h = date.getHours() + ':';
+        var m = date.getMinutes() + ':';
+        var s = date.getSeconds();
+        return Y + M + D + h + m + s;
       },
       drawLineChart() {
         let v = this;
@@ -743,7 +737,7 @@
                 show: true,
                 formatter: function (params) {
                   let time = params.value;
-                  let speed = v.speeds[time]?v.speeds[time]:'0';
+                  let speed = v.speeds[time] ? v.speeds[time] : '0';
                   return "瞬时速度：" + speed + " Km/h";
                 },
                 backgroundColor: '#004E52'

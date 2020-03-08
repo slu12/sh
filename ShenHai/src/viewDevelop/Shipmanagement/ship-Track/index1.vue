@@ -205,7 +205,7 @@
 
                 this.onGpsInfo(it);
                 newCarList.push(it)
-                if (index == res.result.length - 1) {
+                if (index1 == res.result.length - 1) {
                   // console.log(newCarList);
                   this.$store.commit('ChcarCodeList', newCarList);
                   if (this.choosedCar != null && this.choosedCar.zxzt == '00') {
@@ -327,7 +327,7 @@
           let n = this.updateItem(exist, m);
           newCar = n;
           let index = this.allCarList.indexOf(exist);
-          this.allCarList.splice(index, 1, n);
+          this.allCarList.splice(index1, 1, n);
         } else {
           this.handleItem(m);
           newCar = m;

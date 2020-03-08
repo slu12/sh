@@ -52,8 +52,9 @@ public interface ClClMapper extends Mapper<Cb> {
 	@Update("update cl_cl  set sbh = null where mmsi = #{mmsi}")
     void unbindWebcam(@Param("mmsi") String mmsi);
 
-	@Select(" select shipname,mmsi,cl_id clId from cl_cl")
-    List<Map<String,String>> getCbs();
+	@Select("<script> select shipname,mmsi,cl_id clId from cl_cl where 1=1 <if test=' mmsi != null and mmsi != \"\"'> and  mmsi like '%${mmsi}%' </if> <if test= ' shipname != null and shipname != \"\" '> and " +
+			" shipname like '%${shipname}%'</if>  <if test='cond != null and cond != \"\"'> and ( mmsi like '%${cond}%' or shipname like '%${cond}%')</if></script>")
+    List<Map<String,String>> getCbs(@Param("mmsi") String mmsi,@Param("shipname") String shipname, @Param("cond") String cond);
 
 	@Select(" select shipname,mmsi,cl_id clId from cl_cl where  (zdbh is not null or zdbh != '' ) or (sbh is not null or sbh != '')")
 	List<Map<String,String>> getCbsForDzwl();

@@ -238,7 +238,8 @@
 </template>
 
 <script>
-  import carJK from "@/viewDevelop/map/carJK";
+  // import carJK from "@/viewDevelop/map/carJK";
+  import carJK from "@/viewDevelop/map/carJK0";
   import videojs from 'video.js'
   import 'videojs-contrib-hls'
 
@@ -575,7 +576,7 @@
 
             }
 
-            // this.$parent.initGps(this.shipData)
+            this.$parent.initGps(this.shipData) //百度地图用
           }
         })
       }

@@ -1,23 +1,21 @@
 <template>
-  <div class="box_col" style="flex: 1">
+  <div class="box_col" style="flex: 1;background-color: #F5CBD1">
     <div class="box_row" style="height: 100%">
       <div class="box_row_100">
-        <component ref="map" :is="compName" @codeEvent="codeEvent" :mess="mess"></component>
-        <!--<B_myMap ref="map" @codeEvent="codeEvent" :mess="mess"></B_myMap>-->
-
+        <component ref="map" :is="compName"></component>
       </div>
       <template>
-        <nbss ref="nbss" @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
+        <nbss @reflh="rowClick" @showFance="showFance" @initGps="initGps"></nbss>
       </template>
     </div>
   </div>
 </template>
 
 <script>
-  import B_myMap from '../../map/carJK.vue';
+  // import B_myMap from '../../map/carJK.vue';
+  import B_myMap from '../../map/carJK0.vue';
   import carInfo from './carInfo';
   import nbss from './comp/nbss'
-  import bkShow from "../ship-mess/comp/BKshow";
 
   export default {
     name: 'VehicleMonitoring',
@@ -42,7 +40,6 @@
     },
     data() {
       return {
-        mess:'',
         compName: 'B_myMap',
         showGJ: false,
         tabShowFlag: false,
@@ -154,7 +151,7 @@
           })
           // console.log('lisr',this.mapCarList);
           // this.mapCarList = this.carArray[0];
-          // this.$refs.map.update();
+          this.$refs.map.update();
           /* if(this.choosedCar != n
           ull){
                this.$refs.carInfoRef.init(this.choosedCar);
@@ -222,9 +219,21 @@
           }
         })
       },
-      showFance(car) {
-          this.compName = ''
-          this.mess = car
+      showFance(carId) {
+        console.log(carId);
+        this.fancePoints = [];
+        var v = this
+        this.$http.get(this.apis.DZWL.GET_BY_CAR_ID + "?clId=" + carId).then((res) => {
+          if (res.code === 200) {
+            let s = res.result.dlxxzb;
+            let ps = s.split(";");
+            for (let r of ps) {
+              let point = r.split(",");
+              this.fancePoints.push({lng: point[1], lat: point[0]})
+            }
+            this.addArea(this.fancePoints);
+          }
+        })
       },
       addArea(points) {
         let ps = [];
@@ -503,8 +512,6 @@
         }
       },
       codeEvent(item) {
-        console.log(item,'111');
-        this.$refs.nbss.fqLr(item);
         this.$refs.carInfoRef.init(item);
       },
       rowClick(item) {
@@ -545,3 +552,4 @@
     }
   };
 </script>
+

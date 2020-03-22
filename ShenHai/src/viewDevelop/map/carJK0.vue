@@ -145,8 +145,9 @@
           console.log(val);
         });
         v.map.addEventListener("zoomend", function (val) {
+          v.zoom = v.map.getZoom()
           console.log(v.map.getZoom());//级别值 小于 14 用三角  否则用 gpsIcon
-          console.log('zoom',val);
+          this.init();
         });
         this.init();
       },
@@ -210,16 +211,16 @@
       },
       addMarker(item, point) {
         var v = this
-        // var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(4*7, 2*7), {anchor: new BMap.Size(4*70/2, 2*7/2)});
-        var myIcon = new BMap.Icon(this.getIconM(item), new BMap.Size(20, 20), {anchor: new BMap.Size(10, 10)});
+        if(v.zoom<10){
+          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(4*7, 2*7), {anchor: new BMap.Size(4*70/2, 2*7/2)});
+        }else {
+          var myIcon = new BMap.Icon(this.getIconM(item), new BMap.Size(20, 20), {anchor: new BMap.Size(10, 10)});
+        //                                                         icon展示的尺寸                     icon 偏移量
+        }
         console.log(this.getIconM(item));
         var marker = new BMap.Marker(point, {icon: myIcon});
         marker.setRotation(-45)
         marker.addEventListener("click", (code) => {
-          // console.log('店事件',code);
-          // console.log('item',item);
-          // console.log('point',point);
-          // v.$parent.$refs.carInfoRef.init(item);
           v.$emit('codeEvent', item)
           v.addLabel(item, point);
         });
@@ -239,11 +240,11 @@
       getIconM(car){
         switch (car.status) {
           case 1:
-            return this.apis.STATIC_PATH + 'icon/iconG.png';
+            return 'http://bddata.eshenhai.cn:9092/icon/iconG.png';
           case 2:
-            return this.apis.STATIC_PATH + 'icon/iconR.png';
+            return 'http://bddata.eshenhai.cn:9092/icon/iconR.png';
           default:
-            return this.apis.STATIC_PATH + 'icon/iconD.png'
+            return 'http://bddata.eshenhai.cn:9092/icon/iconD.png'
         }
       },
       addClickHandler(item, marker) {

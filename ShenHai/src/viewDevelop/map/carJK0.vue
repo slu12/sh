@@ -212,7 +212,7 @@
       addMarker(item, point) {
         var v = this
         if(v.zoom<10){
-          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(4*7, 2*7), {anchor: new BMap.Size(4*70/2, 2*7/2)});
+          var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(4*7, 2*7), {anchor: new BMap.Size(4*7/2, 2*7/2)});
         }else {
           var myIcon = new BMap.Icon(this.getIconM(item), new BMap.Size(20, 20), {anchor: new BMap.Size(10, 10)});
         //                                                         icon展示的尺寸                     icon 偏移量

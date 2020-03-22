@@ -80,14 +80,14 @@
                                                      style="margin-top: 6px;font-size: 18px;font-weight: 600">
                                                       <Col span="6">{{treeMess.title}}</Col>
                                                       <Col span="6"><span>终端数量:</span> {{treeMess.zdsl}}</Col>
-                                                      <Col span="6"><span>接口授权码</span>
-                                                            <i-switch v-model="treeMess.jkSq" :disabled="true"
-                                                                      true-value="00" false-value="10"
-                                                                      size="large">
-                                                                  <span slot="open">授权</span>
-                                                                  <span slot="close">停用</span>
-                                                            </i-switch>
-                                                      </Col>
+<!--                                                      <Col span="6"><span>接口授权码</span>-->
+<!--                                                            <i-switch v-model="treeMess.jkSq" :disabled="true"-->
+<!--                                                                      true-value="00" false-value="10"-->
+<!--                                                                      size="large">-->
+<!--                                                                  <span slot="open">授权</span>-->
+<!--                                                                  <span slot="close">停用</span>-->
+<!--                                                            </i-switch>-->
+<!--                                                      </Col>-->
                                                       <Col span="6"><span>备注说明:</span> {{treeMess.jgsm}}</Col>
                                                 </Row>
                                                 <Row type="flex" :getter="12"

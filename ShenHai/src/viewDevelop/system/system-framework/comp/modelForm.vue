@@ -23,22 +23,22 @@
                                                        placeholder="请填写机构负责人联系电话"></Input>
                                           </FormItem>
                                           <Row>
-                                                <Col span="8">
-                                                      <FormItem label='接口授权状态'>
-                                                            <i-switch v-model="formItem.jkSq"
-                                                                      true-value="00" false-value="10"
-                                                                      size="large">
-                                                                  <span slot="open">授权</span>
-                                                                  <span slot="close">停用</span>
-                                                            </i-switch>
-                                                      </FormItem>
-                                                </Col>
-                                                <Col span="16" v-if="formItem.jkSq == '00'">
-                                                      <FormItem label='接口ip地址' prop="jkIp">
-                                                            <Input type="text" v-model="formItem.jkIp"
-                                                                   placeholder="接口ip地址"></Input>
-                                                      </FormItem>
-                                                </Col>
+<!--                                                <Col span="8">-->
+<!--                                                      <FormItem label='接口授权状态'>-->
+<!--                                                            <i-switch v-model="formItem.jkSq"-->
+<!--                                                                      true-value="00" false-value="10"-->
+<!--                                                                      size="large">-->
+<!--                                                                  <span slot="open">授权</span>-->
+<!--                                                                  <span slot="close">停用</span>-->
+<!--                                                            </i-switch>-->
+<!--                                                      </FormItem>-->
+<!--                                                </Col>-->
+<!--                                                <Col span="16" v-if="formItem.jkSq == '00'">-->
+<!--                                                      <FormItem label='接口ip地址' prop="jkIp">-->
+<!--                                                            <Input type="text" v-model="formItem.jkIp"-->
+<!--                                                                   placeholder="接口ip地址"></Input>-->
+<!--                                                      </FormItem>-->
+<!--                                                </Col>-->
                                           </Row>
                                           <FormItem label='地址所在'>
                                                 <Input type="textarea" :autosize="{minRows: 3,maxRows: 3}"
@@ -145,7 +145,7 @@
                 this.formItem.fjgdm = this.$parent.parentNode.jgdm;
                 this.parentCode = this.$parent.parentNode.jgdm;
 
-                this.getOrgPermissionTree();
+                // this.getOrgPermissionTree();  //获取权限列表
             }
             this.getUserList();
         },

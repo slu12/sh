@@ -220,6 +220,7 @@
             return this.apis.STATIC_PATH + 'icon/ic_car.png';
           case 2:
             return this.apis.STATIC_PATH + 'icon/running.png';
+            // return 'http://bddata.eshenhai.cn:\'+\'9092/\'icon/iconR.png';
           default:
             return this.apis.STATIC_PATH + 'icon/ic_car_offline.png'
         }

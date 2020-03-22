@@ -7,15 +7,19 @@
           <Row style="padding: 20px 0;text-align:center">
             <Col style="margin: 0 300px">
               <Input v-model="param.mmsi" search @on-search="getvideo()"
-                     enter-button="搜索" placeholder="请输入 mmsi/视频id/设备号 查询" />
+                     enter-button="搜索" placeholder="请输入mmsi查询" />
             </Col>
           </Row>
 
         <div style="text-align: center;margin: 0 200px">
           <Row v-show="videoList.length>0">
-            <Col span="8" v-for="(item,index) in videoList" :key="index" style="height: 250px;">
-                <Card>
-                  <h5>{{index+1}}号通道</h5>
+            <Col span="8" v-for="(item,index) in videoList" :key="index" style="height: 300px;">
+                <Card :bordered="false">
+                    <Col>
+                      {{index+1}}号通道
+                      <Button type="primary" v-if="videoimageList[index]!=''" @click="ZP(param.mmsi,index+1)">拍图片</Button>
+                      <Button type="primary" v-if="videoimageList[index]!=''" @click="ZPsp(param.mmsi,index+1)">拍视频</Button>
+                    </Col>
                   <video
                     data-setup='{"fluid":true,"aspectRatio":"16:9"}'
                     :poster="videoimageList[index]"
@@ -23,7 +27,7 @@
                     class="video-js vjs-default-skin"
                     controls preload="auto"
                     @click="playVideo('my-video' + index)"
-                    style="object-fit: fill;width: 100%">
+                    style="object-fit: fill;width: 100%;height: 230px">
                     <source :src="item" type="application/x-mpegURL">
                   </video>
                 </Card>
@@ -67,6 +71,24 @@
       }
     },
     methods: {
+      ZPsp(a,b){
+        this.$http.post('/api/cl/lx',{mmsi:a,chn:b,sec:'30'}).then((res)=>{
+          if (res.code == 200){
+            this.$Message.succes(res.message+',请在视频库中查看')
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
+      ZP(a,b){
+        this.$http.post('/api/cl/zp',{mmsi:a,chn:b}).then((res)=>{
+          if (res.code == 200){
+            this.$Message.succes(res.message+',请在图片库中查看')
+          }else {
+            this.$Message.error(res.message)
+          }
+        })
+      },
       playVideo(id){  //播放视频
         console.log(id);
         videojs(id, {

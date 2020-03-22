@@ -152,6 +152,8 @@
                     console.log(e);
                     v.$emit('choosePoint', e.overlay.ia)
                 });
+              polyline.enableEditing();
+              polygon.enableEditing();
             },
             //清除层
             clear() {

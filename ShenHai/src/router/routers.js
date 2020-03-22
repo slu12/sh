@@ -173,15 +173,15 @@ export default [
         },
         component: () => import('@/viewDevelop/system/system-video')
       },
-      // {
-      //   path: 'system-ITSM',
-      //   name: 'system-ITSM',
-      //   meta: {
-      //     icon: 'md-contacts',
-      //     title: '服务管理',
-      //   },
-      //   component: () => import('@/viewDevelop/system/system-ITSM')
-      // },
+      {
+        path: 'system-framework',
+        name: 'system-framework',
+        meta: {
+          icon: 'md-contacts',
+          title: 'jigou',
+        },
+        component: () => import('@/viewDevelop/system/system-framework')
+      },
       // {
       //   path: 'system-function',
       //   icon: 'android-clipboard',

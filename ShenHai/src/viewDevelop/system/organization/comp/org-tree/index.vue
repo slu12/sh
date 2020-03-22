@@ -22,8 +22,8 @@
   import './index.less'
 
   const menuDic = {
-    edit: '编辑部门',
-    detail: '查看部门',
+    // edit: '编辑部门',
+    // detail: '查看部门',
     new: '新增子部门',
     delete: '删除部门'
   }

@@ -33,11 +33,17 @@
 </template>
 
 <script>
+  import iconG from './maxIcon/iconG.png'
+  import iconR from './maxIcon/iconR.png'
+  import iconD from './maxIcon/iconD.png'
+
+
   export default {
     name: 'getmapdot',
     components: {},
     data() {
       return {
+        // iconG,iconR,iconD,
         componentName: '',
         choosedItem: null,
         map: '',
@@ -56,12 +62,13 @@
       }
     },
     created() {
+      console.log(iconG);
     },
     mounted() {
       this.$nextTick(() => {
         this.Buildmap();
         setTimeout(() => {
-          this.init();
+          // this.init();
         }, 1000)
       })
 
@@ -92,7 +99,7 @@
         v.showCarPosition();
       },
       moveMap() {
-        console.log(this.carList, 'this.carList');
+        // console.log(this.carList, 'this.carList');
         if (this.carList.length == 0) return;
         var v = this
         if (this.carList && this.carList.length == 1) {
@@ -101,7 +108,7 @@
         }
       },
       init() {
-        console.log('this.$parent.mapCarList', this.$parent.mapCarList)
+        // console.log('this.$parent.mapCarList', this.$parent.mapCarList)
         this.carList = this.$parent.mapCarList;
         if (this.carList.length === 1) {
           this.car = this.carList[0];
@@ -137,12 +144,19 @@
         map.addControl(top_left_control);
         map.addControl(top_left_navigation);
         // map.addControl(top_right_navigation);
-
         v.map = map
+        v.map.addEventListener("click", function (val) {
+          console.log(val);
+        });
+        v.map.addEventListener("zoomend", function (val) {
+          console.log(v.map.getZoom());//级别值 小于 14 用三角  否则用 gpsIcon
+          console.log('zoom',val);
+        });
+        this.init();
       },
       //撒点
       showCarPosition() {
-        console.log('撒点')
+        // console.log('撒点')
         this.clear()
         var v = this
         for (let r of this.carList) {
@@ -200,7 +214,9 @@
       },
       addMarker(item, point) {
         var v = this
-        var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(32, 32), {anchor: new BMap.Size(16, 32)});
+        // var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(4*7, 2*7), {anchor: new BMap.Size(4*70/2, 2*7/2)});
+        var myIcon = new BMap.Icon(this.getIconM(item), new BMap.Size(20, 20), {anchor: new BMap.Size(10, 10)});
+        console.log(this.getIconM(item));
         var marker = new BMap.Marker(point, {icon: myIcon});
         marker.setRotation(-45)
         marker.addEventListener("click", (code) => {
@@ -222,6 +238,16 @@
             return this.apis.STATIC_PATH + 'icon/running.png';
           default:
             return this.apis.STATIC_PATH + 'icon/ic_car_offline.png'
+        }
+      },
+      getIconM(car){
+        switch (car.status) {
+          case 1:
+            return this.apis.STATIC_PATH + 'icon/iconG.png';
+          case 2:
+            return this.apis.STATIC_PATH + 'icon/iconR.png';
+          default:
+            return this.apis.STATIC_PATH + 'icon/iconD.png'
         }
       },
       addClickHandler(item, marker) {

@@ -33,9 +33,6 @@
 </template>
 
 <script>
-  import iconG from './maxIcon/iconG.png'
-  import iconR from './maxIcon/iconR.png'
-  import iconD from './maxIcon/iconD.png'
 
 
   export default {
@@ -62,7 +59,6 @@
       }
     },
     created() {
-      console.log(iconG);
     },
     mounted() {
       this.$nextTick(() => {

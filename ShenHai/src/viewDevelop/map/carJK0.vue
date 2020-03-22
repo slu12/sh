@@ -147,9 +147,10 @@
         v.map.addEventListener("zoomend", function (val) {
           v.zoom = v.map.getZoom()
           console.log(v.map.getZoom());//级别值 小于 14 用三角  否则用 gpsIcon
-          this.init();
+          v.clear()
+          v.init();
         });
-        this.init();
+        v.init();
       },
       //撒点
       showCarPosition() {
@@ -211,7 +212,7 @@
       },
       addMarker(item, point) {
         var v = this
-        if(v.zoom<10){
+        if(v.zoom<14){
           var myIcon = new BMap.Icon(this.getIcon(item), new BMap.Size(4*7, 2*7), {anchor: new BMap.Size(4*7/2, 2*7/2)});
         }else {
           var myIcon = new BMap.Icon(this.getIconM(item), new BMap.Size(20, 20), {anchor: new BMap.Size(10, 10)});
@@ -241,11 +242,11 @@
       getIconM(car){
         switch (car.status) {
           case 1:
-            return 'http://bddata.eshenhai.cn:9092/icon/iconG.png';
+            return this.apis.STATIC_PATH + 'icon/iconG.png';
           case 2:
-            return 'http://bddata.eshenhai.cn:9092/icon/iconR.png';
+            return this.apis.STATIC_PATH +'icon/iconR.png';
           default:
-            return 'http://bddata.eshenhai.cn:9092/icon/iconD.png'
+            return this.apis.STATIC_PATH +'icon/iconD.png'
         }
       },
       addClickHandler(item, marker) {

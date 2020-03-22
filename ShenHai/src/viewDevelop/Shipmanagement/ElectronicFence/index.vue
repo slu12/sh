@@ -25,12 +25,11 @@
       <pager-tit></pager-tit>
       <div class="box_row rowRight">
         <div class="body-r-1 inputSty">
-          <!--<DatePicker v-model="cjsjInRange" format="yyyy-MM-dd" type="daterange" placement="bottom-end" placeholder="请输时间" @on-keyup.enter="findMessList()" style="width: 220px"></DatePicker>-->
           <Input v-model="param.mmsi" placeholder='请输入船舶mmsi号查询' style="width: 200px"
                  @on-keyup.enter="findMessList()"></Input>
         </div>
         <div class="butevent">
-          <Button type="success" @click="findList">
+          <Button type="success" @click="findList" style="margin-right: 12px">
             <Icon type="md-search"></Icon>
             <!--查询-->
           </Button>
@@ -40,7 +39,7 @@
         </div>
       </div>
     </div>
-    <div class="body" v-if="!RootShow">
+    <div class="body">
       <Table ref="table"
              :height="tabHeight"
              :row-class-name="rowClassName"
@@ -63,95 +62,27 @@
           @on-change='pageChange'></Page>
       </Row>
     </div>
-    <div class="body" v-else style="height: 80%;">
-      <div class="box">
-        <div style="z-index: 999">
-          <h1 style="float: left;">新增电子围栏</h1>
-          <div id="input" style="float: right;padding: 5px;">
-            <Form
-              ref="param"
-              :model="param"
-              :rules="ruleInline"
-              :label-width="100"
-              :styles="{top: '20px'}"
-            >
-              <FormItem label='围栏名称' prop="wlmc">
-                <Input type="text"
-                       v-model="param.wlmc"
-                       size="large"
-                       placeholder='请输入电子围栏名称'
-                       style="width: 200px"></Input>
-              </FormItem>
-              <FormItem label='MMSI' prop="mmsi">
-                <Select
-                  v-model="mmsi"
-                  multiple
-                  filterable
-                  remote
-                  style="width: 500px"
-                  :remote-method="remoteMethod2"
-                  :loading="loading2">
-                  <Option v-for="(option, index) in options2" :value="option.clId" :key="index">{{option.mmsi}}</Option>
-                </Select>
-                <!--                <Input type="text"-->
-                <!--                       v-model="mmsi"-->
-                <!--                       size="large"-->
-                <!--                       placeholder='请输入MMSI'-->
-                <!--                       style="width: 200px"></Input>-->
-              </FormItem>
-              <Button type="success"
-                      size="large"
-                      style="margin: 0 8px;"
-                      @click="finish">完成
-              </Button>
-              <Button type="primary" size="large" @click="cancelRali" style="">
-                取消
-              </Button>
-            </Form>
-          </div>
-        </div>
-        <div class="body">
-          <div class="box-row" style="height: 700px;">
-            <!--            <div class="carlist carlistBor" style="width: 180px;height: 100%;">-->
-            <!--              <div class="box">-->
-            <!--                <div class="tit">-->
-            <!--                  <Input value="" placeholder="请输入船舶信息..." size="small"-->
-            <!--                         style="width: 100%"></Input>-->
-            <!--                </div>-->
-            <!--                <div class="body">-->
-            <!--                  <Tree :data="data1" ref="tree"-->
-            <!--                        show-checkbox-->
-            <!--                        @on-check-change='checkClick'-->
-            <!--                        @on-select-change='treeClick'></Tree>-->
-            <!--                </div>-->
-            <!--              </div>-->
-            <!--            </div>-->
-            <div class="body-F carlistBor" style="position: relative;height: 100%;">
-              <my-map ref='maps' :mapDot="mapDot" @choosePoint="choosePoint"></my-map>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <component
       ref="comp"
       :is="componentName"
-      :mess="mess"></component>
+      :mess="mess"
+      @close="closeModal"
+    ></component>
   </div>
 </template>
 
 <script>
-  import myMap from '../../map/mapBK.vue'
   import i18nTabTit from '@/mixins/i18nTabTit'
   import mixins from '@/mixins'
   import formData from './comp/formData'
-  import bkShow from '../vehicle-management/comp/BKshow'
-
+  import bkShow from './comp/BKshow'
+  //新增电子围栏
+  import addRail from './comp/addNewRail'
   export default {
     name: '',
     mixins: [mixins, i18nTabTit],
     components: {
-      myMap, formData, bkShow
+      formData, bkShow,addRail
     },
     data() {
       return {
@@ -214,7 +145,7 @@
                 let l = ''
                 for (let i = 0; i < p.row.cls.length; i++) {
                   l = l + p.row.cls[i].mmsi + ','
-                  console.log(l);
+                  // console.log(l);
                 }
                 return h('div', l)
               } else {
@@ -329,6 +260,11 @@
       this.getCarTree()
     },
     methods: {
+      closeModal(){
+        this.componentName = '';
+        this.findMessList();
+        this.getCarTree()
+      },
       remoteMethod2(query) {
         if (query !== '') {
           this.loading2 = true;
@@ -375,11 +311,13 @@
       },
       //电子围栏
       cancelRali() {
-        this.RootShow = !this.RootShow
+        // this.componentName = "addRail"
+        // this.RootShow = !this.RootShow
       },
       AddRali() {
-        this.RootShow = !this.RootShow
-        this.$refs.maps.bk();
+        this.componentName = "addRail"
+        // this.RootShow = !this.RootShow
+        // this.$refs.maps.bk();
       },
       //树多选框
       checkClick(event) {

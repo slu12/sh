@@ -334,6 +334,15 @@ export default [
         component: () => import('@/viewDevelop/Shipmanagement/ship-Video')
       },
       {
+        path: 'ship-Video-html',
+        name: 'ship-Video-html',
+        meta: {
+          icon: 'ios-cog',
+          title: '视频监控(html)',
+        },
+        component: () => import('@/viewDevelop/Shipmanagement/ship-Video-html')
+      },
+      {
         path: 'CloudPhoto',
         name: 'CloudPhoto',
         meta: {

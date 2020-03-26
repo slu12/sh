@@ -25,7 +25,7 @@
 </style>
 
 <template>
-  <div style="height:500px;background-color: #00FFFF;position: relative;">
+  <div style="height:600px;background-color: #00FFFF;position: relative;">
     <div id="allmap1" style="height:100%"></div>
   </div>
 </template>

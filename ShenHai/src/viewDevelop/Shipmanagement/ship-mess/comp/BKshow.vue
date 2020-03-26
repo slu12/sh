@@ -2,7 +2,7 @@
     <div>
         <Modal
                 v-model="showModal"
-                width='70'
+                :width='900'
                 :closable='false'
                 :mask-closable="false"
                 title="电子围栏">

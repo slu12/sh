@@ -156,24 +156,24 @@
                     }
                   }
                 }),
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    icon: 'md-menu',
-                    shape: 'circle',
-                    size: 'small'
-                  },
-                  style: {
-                    cursor: "pointer",
-                    margin: '0 8px 0 0'
-                  },
-                  on: {
-                    click: () => {
-                      this.RootShowF(params.row)
-
-                    }
-                  }
-                }),
+                // h('Button', {
+                //   props: {
+                //     type: 'primary',
+                //     icon: 'md-menu',
+                //     shape: 'circle',
+                //     size: 'small'
+                //   },
+                //   style: {
+                //     cursor: "pointer",
+                //     margin: '0 8px 0 0'
+                //   },
+                //   on: {
+                //     click: () => {
+                //       this.RootShowF(params.row)
+                //
+                //     }
+                //   }
+                // }),
                 h('Button', {
                   props: {
                     type: 'error',

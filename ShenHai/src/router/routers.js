@@ -109,15 +109,15 @@ export default [
       //   },
       //   component: () => import('@/viewDevelop/system/systemUser')
       // },
-      {
-        path: 'organization',
-        name: 'ORGANIZATION',
-        meta: {
-          icon: 'md-arrow-dropdown-circle',
-          title: '组织架构'
-        },
-        component: () => import('@/viewDevelop/system/organization')
-      },
+      // {
+      //   path: 'organization',
+      //   name: 'ORGANIZATION',
+      //   meta: {
+      //     icon: 'md-arrow-dropdown-circle',
+      //     title: '组织架构'
+      //   },
+      //   component: () => import('@/viewDevelop/system/organization')
+      // },
       {
         path: 'system-user',
         name: 'system-user',
@@ -173,15 +173,15 @@ export default [
         },
         component: () => import('@/viewDevelop/system/system-video')
       },
-      // {
-      //   path: 'system-ITSM',
-      //   name: 'system-ITSM',
-      //   meta: {
-      //     icon: 'md-contacts',
-      //     title: '服务管理',
-      //   },
-      //   component: () => import('@/viewDevelop/system/system-ITSM')
-      // },
+      {
+        path: 'system-framework',
+        name: 'system-framework',
+        meta: {
+          icon: 'md-contacts',
+          title: '组织机构',
+        },
+        component: () => import('@/viewDevelop/system/system-framework')
+      },
       // {
       //   path: 'system-function',
       //   icon: 'android-clipboard',

@@ -29,14 +29,14 @@
       }
     },
     watch: {
-      local: function (n, o) {
-        if (n == 'en-US') {
-          this.compName = 'B_myMap'
-        } else {
-          this.compName = 'B_myMap'
-        }
-        this.initGps()
-      }
+      // local: function (n, o) {
+      //   if (n == 'en-US') {
+      //     this.compName = 'B_myMap'
+      //   } else {
+      //     this.compName = 'B_myMap'
+      //   }
+      //   this.initGps()
+      // }
     },
     data() {
       return {
@@ -134,28 +134,16 @@
     methods: {
       switchGJ(s) {
         this.showGJ = s;
-        // console.log("shsh564564sh",this.showGJ)
-        /*this.$refs.map.init();
-        this.$refs.carInfoRef.init(item);*/
         if (this.showGJ && this.choosedCar != null) {
-          // console.log("shshsh",this.showGJ)
           this.getCarListCode(this.choosedCar.zdbh);
         } else {
-          // this.$refs.map.clear();
-          // this.$refs.map.update();
           this.mapCarList = [];
           this.carArray[0].forEach((item, index) => {
             if (item.zdbh == this.choosedCar.zdbh) {
               this.mapCarList.push(item);
             }
           })
-          // console.log('lisr',this.mapCarList);
-          // this.mapCarList = this.carArray[0];
           this.$refs.map.update();
-          /* if(this.choosedCar != n
-          ull){
-               this.$refs.carInfoRef.init(this.choosedCar);
-           }*/
         }
       },
       startQuery() {
@@ -173,7 +161,6 @@
         }, 5000)
       },
       queryGps() {
-        // console.log('queryGps');
         let deviceIds = '';
         for (let r of this.allCarList) {
           deviceIds += r.zdbh + ",";
@@ -185,9 +172,6 @@
           } else {
 
             if (res.result && res.result.length > 0) {
-              // for (let r of res.result){
-              //     this.onGpsInfo(JSON.parse(r));
-              // }
               let li = this.$store.state.app.carCodeList;
               // console.log("li ----> " , li)
               let newCarList = []

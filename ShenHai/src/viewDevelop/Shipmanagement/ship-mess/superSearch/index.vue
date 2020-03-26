@@ -177,6 +177,11 @@
             label: "船舶类别：",
             showAll: false,
             selectList: []
+          },
+          CJG:{
+            label: "船籍：",
+            showAll: false,
+            selectList: []
           }
         }
       }
@@ -189,6 +194,8 @@
       this.searchList.shiptype.selectList = cblxList
       let snztList = this.dictUtil.getByCode(this, 'ZDCLK0032')
       this.searchList.nav.selectList = snztList
+      let CJG = this.dictUtil.getByCode(this, 'CJG')
+      this.searchList.CJG.selectList = CJG
       // this.getJGList()
     },
     methods: {

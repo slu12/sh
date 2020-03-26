@@ -16,19 +16,19 @@
                                     <FormItem label='制造商:'>
                                           <Input v-model="param.zzsmc" placeholder="请填写设备制造商"/>
                                     </FormItem>
-                                    <FormItem prop="zdLx" label='设备类型:'>
-                                          <Select v-model="param.zdLx" placeholder="设备类型">
-                                                <Option v-for="(item,index) in sbList" :value="item.key" :key="index">{{item.val}}</Option>
-                                          </Select>
-                                    </FormItem>
-                                    <FormItem prop="fwnx" label='服务时间:'>
-                                          <RadioGroup v-model="param.fwnx">
-                                                <Radio label="1">1年</Radio>
-                                                <Radio label="2">2年</Radio>
-                                                <Radio label="3">3年</Radio>
-                                                <Radio label="5">5年</Radio>
-                                          </RadioGroup>
-                                    </FormItem>
+<!--                                    <FormItem prop="zdLx" label='设备类型:'>-->
+<!--                                          <Select v-model="param.zdLx" placeholder="设备类型">-->
+<!--                                                <Option v-for="(item,index) in sbList" :value="item.key" :key="index">{{item.val}}</Option>-->
+<!--                                          </Select>-->
+<!--                                    </FormItem>-->
+<!--                                    <FormItem prop="fwnx" label='服务时间:'>-->
+<!--                                          <RadioGroup v-model="param.fwnx">-->
+<!--                                                <Radio label="1">1年</Radio>-->
+<!--                                                <Radio label="2">2年</Radio>-->
+<!--                                                <Radio label="3">3年</Radio>-->
+<!--                                                <Radio label="5">5年</Radio>-->
+<!--                                          </RadioGroup>-->
+<!--                                    </FormItem>-->
                                     <FormItem prop="zdbhs" label='设备编码:'>
                                           <Input v-model="param.zdbhs" type="textarea" :autosize="{minRows: 6,maxRows: 6}"
                                                  placeholder="请填写设备编号,编号之间请用逗号  ‘ , ’  分割" />

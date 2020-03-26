@@ -51,14 +51,13 @@
                                     </div>
                                     <div class="body" style="margin: 6px;"
                                          :style="RootTree.children.length==0 ? TreeListStyleC : TreeListStyleF">
-                                          <Tree v-for="(item,index) in RootTree.children" :data="item"
+                                          <Tree v-for="(item,index) in RootTree.children" :key="index" :data="item"
                                                 @on-select-change="treeClick"
                                                 @on-toggle-expand="treeToggleClick"></Tree>
                                     </div>
                               </div>
                         </div>
                         <div class="body-F frame-mess">
-
                               <div style="padding: 6px;">
                                     <div class="box">
                                           <div class="tit"

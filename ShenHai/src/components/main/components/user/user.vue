@@ -1,5 +1,11 @@
 <template>
   <div class="user-avatar-dropdown">
+<!--  <div>-->
+<!--    <div style="">-->
+<!--      <Button type="warning" @click="xgmm">修改密码</Button>-->
+<!--      <Button type="error" @click="logout">退出登录</Button>-->
+<!--    </div>-->
+
     <Dropdown @on-click="handleClick">
       <Badge :dot="!!messageUnreadCount">
         <Avatar :src="userAvatar"/>
@@ -9,18 +15,18 @@
         <DropdownItem name="message">
           消息中心<Badge style="margin-left: 10px" :count="messageUnreadCount"></Badge>
         </DropdownItem>
-        <DropdownItem name="password">修改密码</DropdownItem>
+        <DropdownItem name="passworld">修改密码</DropdownItem>
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
-    <component :is="compName"></component>
+    <component :is="compName" @logout="logout"></component>
   </div>
 </template>
 
 <script>
 import './user.less'
 import { mapActions,mapMutations } from 'vuex'
-import passworld from "./passworld";
+import passworld from './passworld';
 export default {
   name: 'User',
   components: {

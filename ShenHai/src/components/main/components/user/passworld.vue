@@ -83,11 +83,11 @@
 	                            this.$Message.success('密码改成功,请重新登陆');
 	                            this.editPasswordModal = false;
 	                            this. editPasswordForm = {
-					                'oldPwd': '',
-					                'newPwd': '',
-					                'secPwd': ''
-					            }
-	                            this.$parent.handleClickUserDropdown()
+                              'oldPwd': '',
+                              'newPwd': '',
+                              'secPwd': ''
+                            }
+                            this.$emit('logout');
 	                        }else{
 	                        	this.$Message.error(res.message);
 	                        }

@@ -55,7 +55,7 @@
                 kh:'',
                 param: {
                     zdbhs:'',//终端编号
-                    zdLx:'',//终端类型
+                    zdLx:'00',//终端类型
                     jgdm:this.$parent.treeMess.jgdm,
                     fwnx:'',//服务年限  #永久
                 },

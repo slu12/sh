@@ -112,7 +112,7 @@
         </Col>
       </Row>
     </div>
-    <div style="width: 310px;background-color: #262743">
+    <div style="width: 260px;background-color: #262743">
       <div class="box">
         <div style="padding: 8px">
           <div class="carNumber">
@@ -142,19 +142,20 @@
             <!--@on-change="setTime"-->
             <!--placeholder="请选择时间段" style="width:100%"></DatePicker>-->
             <Row justify="center" align="middle">
-              <Col span="9">
+              <Col span="16">
                 <DatePicker v-model="upTime.day" type="date" placeholder="Select date" style="width: 100%"></DatePicker>
               </Col>
               <Col span="8">
                 <TimePicker v-model="upTime.time" format="HH:mm" :steps="[1, 15, 15]" type="time"
                             placeholder="Select time" style="width: 100%"></TimePicker>
               </Col>
-              <Col span="7">
+            </Row>
+            <Row>
+              <Col span="24">
                 <Select v-model="upTime.dan" class="select" filterable placeholder="请选择查询时间段">
-                  <Option v-for="(item,index) in ['10','20','30']" :value="item" :key="index">{{item}}</Option>
+                  <Option v-for="(item,index) in ['10','20','30']" :value="item" :key="index">{{item}}分钟内的数据</Option>
                 </Select>
               </Col>
-
             </Row>
           </div>
           <div style="margin-top: 6px;text-align: center">
@@ -395,9 +396,9 @@
           let a = this.moment(this.upTime.day).format("YYYY-MM-DD") + " " + this.upTime.time + ":00"
           let T = new Date(a)
           let times = T.getTime()
-          let timesEnd = times + parseInt(this.upTime.dan) * 60 * 1000
-          let startTime = this.moment(times).format("YYYY-MM-DD HH:mm:ss")
-          let endTime = this.moment(timesEnd).format("YYYY-MM-DD HH:mm:ss")
+          let timesEnd = times- parseInt(this.upTime.dan) * 60 * 1000
+          let startTime = this.moment(timesEnd).format("YYYY-MM-DD HH:mm:ss")
+          let endTime = this.moment(times).format("YYYY-MM-DD HH:mm:ss")
           startTime = startTime.replace(new RegExp('/', 'gm'), '-');
           endTime = endTime.replace(new RegExp('/', 'gm'), '-');
           // if (typeof startTime === 'object') {

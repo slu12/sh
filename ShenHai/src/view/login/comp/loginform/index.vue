@@ -82,7 +82,7 @@
         YzUrl:'',
         form: {
           username: 'admini',
-          password: '123456',
+          password: '42yvOSSp.*20',
           captcha:'',
           codeID:''
         },

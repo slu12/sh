@@ -25,9 +25,9 @@
               </FormItem>
             </Col>
             <Col span="16">
-              <FormItem label='MMSI' prop="mmsi">
+              <FormItem label='MMSI'>
                 <Select
-                  v-model="mmsi"
+                  v-model="param.mmsi"
                   multiple
                   filterable
                   remote
@@ -78,7 +78,8 @@
           pageSize: 8,
           dlxxzb: '',
           clIds: '',
-          wlmc: ''
+          wlmc: '',
+          mmsi:[]
         },
         ruleInline: {
           wlmc: [
@@ -151,12 +152,13 @@
       },
       save(wlID) {
         console.log('savedz');
+        console.log(this.param.mmsi);
         this.$http.post(this.apis.DZWL.setCarsDzwl, {
           wlid: wlID,
-          carIds: this.mmsi.toString()
+          carIds: this.param.mmsi.toString()
         }).then((res) => {
           if (res.code === 200) {
-            this.mmsi = null
+            this.param.mmsi = null
           } else {
             this.$Message.error(res.message);
           }

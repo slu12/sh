@@ -13,6 +13,7 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,10 @@ public class ScheduleComponent {
 
     @Autowired
     private SchedulerFactoryBean schedulerFactory;
+
+    @Value("${gpscron}")
+    private String gpscron;
+
     private List<JobConfig> jobConfigs = new ArrayList<>();
 
     private void addJob(Class<? extends Job> cls, String cron, String group){
@@ -46,7 +51,7 @@ public class ScheduleComponent {
         // 上传鹰眼定时任务
         addJob(ZdToYyJob.class,"0 0 0 1/1 * ? ","zdToYy");
         // gps同步job
-        addJob(GpsSaveJob.class,"0 0/1 * * * ? *","GPSSync");
+        addJob(GpsSaveJob.class,gpscron,"GPSSync");
         // 设备运行事件记录周期，每一分钟运行一次
         addJob(SbYxSjJlJob.class,"0 0/1 * * * ? *","sbyxsjjl");
         // 车辆年审日期获取job

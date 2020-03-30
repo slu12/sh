@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.common.Mapper;
@@ -46,6 +47,8 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
     private ClyyMapper clyymapper;
     @Autowired
     private ClGpsLsMapper clgpslsMapper;
+    @Value("${gpssave}")
+    private String gpssave;
 
     @Override
     protected Mapper<ClGps> getBaseMapper() {
@@ -82,14 +85,25 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                     String index = (String) boundListOps.index(0);
                     if (StringUtils.isNotEmpty(index)) {
                         Long length = boundListOps.size();
-                        for (int i = 0; i < length; i++) {
-                            if(i == length -1 ){
+                        if (StringUtils.equals(gpssave, "1")) {
+                            for (int i = 0; i < length; i++) {
+
+                                String clgpsls = (String) boundListOps.rightPop();
+                                if (i == length - 1) {
+                                    ClGpsLs gpssss = JsonUtil.toBean(clgpsls, ClGpsLs.class);
+                                    list.add(gpssss);
+                                }
+
+                            }
+                        } else {
+                            for (int i = 0; i < length; i++) {
                                 String clgpsls = (String) boundListOps.rightPop();
                                 ClGpsLs gpssss = JsonUtil.toBean(clgpsls, ClGpsLs.class);
                                 list.add(gpssss);
-                            }
 
+                            }
                         }
+
                     }
                 } else {
                     String bean = (String) redis.boundValueOps(key).get();

@@ -69,3 +69,6 @@ ticserver:
    url: http://127.0.0.1:9095/api/push/checkOnlin/
 znzp:
    url:
+
+gpssave: '1'
+gpscron: '0/30 * * * * ? *'

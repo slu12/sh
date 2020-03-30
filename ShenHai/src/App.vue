@@ -33,6 +33,15 @@ export default {
 </script>
 
 <style lang="less">
+  .vertical-center-modal{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /*.ivu-modal{*/
+      /*top: 0;*/
+    /*}*/
+  }
 .size{
   width: 100%;
   height: 100%;

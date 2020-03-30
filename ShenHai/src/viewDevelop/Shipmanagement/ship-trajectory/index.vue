@@ -112,7 +112,7 @@
         </Col>
       </Row>
     </div>
-    <div style="width: 260px;background-color: #262743">
+    <div style="width: 300px;background-color: #262743">
       <div class="box">
         <div style="padding: 8px">
           <div class="carNumber">
@@ -129,8 +129,7 @@
               :remote-method="remoteMethod"
               placeholder="请输入终端设备名称或设备编码查找设备"
               :loading="loadingSel"
-              @on-change="getHisMess"
-            >
+              @on-change="getHisMess">
               <Option v-for="(item,index) in carList" :value="item.mmsi" :key="index">{{item.shipname}}</Option>
             </Select>
           </div>
@@ -141,26 +140,34 @@
             <!--placement="bottom-end"-->
             <!--@on-change="setTime"-->
             <!--placeholder="请选择时间段" style="width:100%"></DatePicker>-->
-            <Row justify="center" align="middle">
-              <Col span="16">
-                <DatePicker v-model="upTime.day" type="date" placeholder="Select date" style="width: 100%"></DatePicker>
-              </Col>
-              <Col span="8">
-                <TimePicker v-model="upTime.time" format="HH:mm" :steps="[1, 15, 15]" type="time"
-                            placeholder="Select time" style="width: 100%"></TimePicker>
-              </Col>
-            </Row>
-            <Row>
-              <Col span="24">
-                <Select v-model="upTime.dan" class="select" filterable placeholder="请选择查询时间段">
-                  <Option v-for="(item,index) in ['10','20','30']" :value="item" :key="index">{{item}}分钟内的数据</Option>
-                </Select>
-              </Col>
-            </Row>
+
+            <!--<Row justify="center" align="middle">-->
+              <!--<Col span="16">-->
+                <!--<DatePicker v-model="upTime.day" type="date" placeholder="Select date" style="width: 100%"></DatePicker>-->
+              <!--</Col>-->
+              <!--<Col span="8">-->
+                <!--<TimePicker v-model="upTime.time" format="HH:mm" :steps="[1, 15, 15]" type="time"-->
+                            <!--placeholder="Select time" style="width: 100%"></TimePicker>-->
+              <!--</Col>-->
+            <!--</Row>-->
+            <!--<Row>-->
+              <!--<Col span="24">-->
+                <!--<Select v-model="upTime.dan" class="select" filterable placeholder="请选择查询时间段">-->
+                  <!--<Option v-for="(item,index) in ['10','20','30']" :value="item" :key="index">{{item}}分钟内的数据</Option>-->
+                <!--</Select>-->
+              <!--</Col>-->
+            <!--</Row>-->
+            <div>
+              <DatePicker v-model="selTime" type="datetimerange" format="yyyy-MM-dd HH:mm"
+                          :clearable="false"
+                          placeholder="Select date and time(Excluding seconds)"
+                          placement="bottom-end"
+                          style="width: 100%"></DatePicker>
+            </div>
+
           </div>
           <div style="margin-top: 6px;text-align: center">
-            <Button type="info"
-                    size="small"
+            <Button type="info" size="small"
                     style="width: 60px" @click="formItemList">查询
             </Button>
           </div>
@@ -208,19 +215,19 @@
       bkshow
     },
     watch: {
-      timeRange: function (newQuestion, oldQuestion) {
-        console.log(newQuestion);
-        if (typeof newQuestion[0] === 'string') {
-          return;
-        }
-        if (newQuestion.length > 0 && newQuestion[0] != '') {
-          this.formItem.startTime = this.getdateParaD(newQuestion[0]) + " 00:00:00";
-          this.formItem.endTime = this.getdateParaD(newQuestion[1]) + " 23:59:59";
-        } else {
-          this.formItem.startTime = this.getTodayDate() + " 00:00:00";
-          this.formItem.endTime = this.getTodayDate() + " 23:59:59";
-        }
-      },
+      // timeRange: function (newQuestion, oldQuestion) {
+      //   console.log(newQuestion);
+      //   if (typeof newQuestion[0] === 'string') {
+      //     return;
+      //   }
+      //   if (newQuestion.length > 0 && newQuestion[0] != '') {
+      //     this.formItem.startTime = this.getdateParaD(newQuestion[0]) + " 00:00:00";
+      //     this.formItem.endTime = this.getdateParaD(newQuestion[1]) + " 23:59:59";
+      //   } else {
+      //     this.formItem.startTime = this.getTodayDate() + " 00:00:00";
+      //     this.formItem.endTime = this.getTodayDate() + " 23:59:59";
+      //   }
+      // },
       local: function (n, o) {
         this.formItem.startTime = this.getTodayDate() + " 00:00:00";
         this.formItem.endTime = this.getTodayDate() + " 23:59:59";
@@ -284,9 +291,10 @@
         totalLC: 0,
         speeds: {},
         choosedIndex: 0,
+        selTime:[],
         upTime: {
           day: "",//YYYY-MM-DD
-          time: "",//HH:mm
+          time: '',//HH:mm
           dan: "30"
         }
       }
@@ -377,36 +385,35 @@
         })
       },
       getHisMess(){
-        this.formItemList()
+        // this.formItemList()
       },
       getTodayDate() {
         let now = new Date();
         return now.format("yyyy-MM-dd");
       },
       formItemList() {
+        console.log(this.selTime);
+        // return
         if (this.formItem.mmsi == '') {
           this.$Message['warning']({
             background: true,
             content: '请选着终端设备!'
           });
-        } else {
+        }else if(this.selTime[0] == ""){
+          this.$Message['warning']({
+            background: true,
+            content: '请选择时间!'
+          });
+        }else {
 
-          // let startTime = this.formItem.startTime;
-          // let endTime = this.formItem.endTime;
-          let a = this.moment(this.upTime.day).format("YYYY-MM-DD") + " " + this.upTime.time + ":00"
-          let T = new Date(a)
-          let times = T.getTime()
-          let timesEnd = times- parseInt(this.upTime.dan) * 60 * 1000
-          let startTime = this.moment(timesEnd).format("YYYY-MM-DD HH:mm:ss")
-          let endTime = this.moment(times).format("YYYY-MM-DD HH:mm:ss")
+          // let a = this.moment(this.upTime.day).format("YYYY-MM-DD") + " " + this.upTime.time + ":00"
+          // let T = new Date(a)
+          // let times = T.getTime()
+          // let timesEnd = times- parseInt(this.upTime.dan) * 60 * 1000
+          let startTime = this.moment(this.selTime[0]).format("YYYY-MM-DD HH:mm:ss")
+          let endTime = this.moment(this.selTime[1]).format("YYYY-MM-DD HH:mm:ss")
           startTime = startTime.replace(new RegExp('/', 'gm'), '-');
           endTime = endTime.replace(new RegExp('/', 'gm'), '-');
-          // if (typeof startTime === 'object') {
-          //     startTime = startTime.format('yyyy-MM-dd hh:mm:ss');
-          // }
-          // if (typeof endTime === 'object') {
-          //     endTime = endTime.format('yyyy-MM-dd hh:mm:ss');
-          // }
           let p = {
             start: startTime,
             end: endTime,

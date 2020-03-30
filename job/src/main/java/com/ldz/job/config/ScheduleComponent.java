@@ -46,7 +46,7 @@ public class ScheduleComponent {
         // 上传鹰眼定时任务
         addJob(ZdToYyJob.class,"0 0 0 1/1 * ? ","zdToYy");
         // gps同步job
-        addJob(GpsSaveJob.class,"0 0/1 * * * ? *","GPSSync");
+        addJob(GpsSaveJob.class,"0/30 * * * * ? *","GPSSync");
         // 设备运行事件记录周期，每一分钟运行一次
         addJob(SbYxSjJlJob.class,"0 0/1 * * * ? *","sbyxsjjl");
         // 车辆年审日期获取job

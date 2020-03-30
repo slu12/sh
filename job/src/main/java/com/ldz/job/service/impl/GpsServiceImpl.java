@@ -83,10 +83,12 @@ public class GpsServiceImpl extends BaseServiceImpl<ClGps, String> implements Gp
                     if (StringUtils.isNotEmpty(index)) {
                         Long length = boundListOps.size();
                         for (int i = 0; i < length; i++) {
-                            String clgpsls = (String) boundListOps.rightPop();
-                            ClGpsLs gpssss = JsonUtil.toBean(clgpsls, ClGpsLs.class);
+                            if(i == length -1 ){
+                                String clgpsls = (String) boundListOps.rightPop();
+                                ClGpsLs gpssss = JsonUtil.toBean(clgpsls, ClGpsLs.class);
+                                list.add(gpssss);
+                            }
 
-                            list.add(gpssss);
                         }
                     }
                 } else {

@@ -60,7 +60,7 @@
                 <menu-choose v-if="showTree" :data="orgTree"
                              :choosedData="hasPermissionCodes"
                              @treeChange="treeChange"></menu-choose>
-                <!--<Tree :data="orgTree" show-checkbox multiple></Tree>-->
+                <Tree :data="orgTree" show-checkbox multiple></Tree>
               </FormItem>
             </Col>
           </Row>

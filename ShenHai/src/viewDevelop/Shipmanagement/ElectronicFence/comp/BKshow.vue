@@ -3,13 +3,14 @@
     <Modal
       v-model="showModal"
       width='80%'
+      class-name="vertical-center-modal"
       :closable='true'
       :mask-closable="true"
       :title="mess.wlmc + ' 电子围栏'"
       @on-visible-change="visible"
       :footer-hide="true"
     >
-      <div>
+      <div style="height: 600px">
         <bkshow :wlid="wlid"></bkshow>
       </div>
       <div slot='footer'>

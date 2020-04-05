@@ -45,14 +45,24 @@
           </FormItem>
         </Form>
       </div>
-      <div slot='footer'>
-        <Button type="primary" size="large" @click="close" style="">
-          取消
-        </Button>
-        <Button type="success"
-                size="large"
-                style="margin: 0 8px;"
-                @click="finish">保存电子围栏</Button>
+      <div slot='footer' class="box_row rowBetween">
+        <div>
+          <Button type="primary" size="large" @click="clearMap" style="">
+            清除图层
+          </Button>
+          <Button type="primary" size="large" @click="editMap" style="">
+            围栏编辑
+          </Button>
+        </div>
+        <div>
+          <Button type="primary" size="large" @click="close" style="">
+            取消
+          </Button>
+          <Button type="success"
+                  size="large"
+                  style="margin: 0 8px;"
+                  @click="finish">保存电子围栏</Button>
+        </div>
       </div>
     </Modal>
   </div>
@@ -108,12 +118,12 @@
         })
       },
       choosePoint(points) {
-        console.log(points);
+        // console.log(points);
         this.param.dlxxzb = '';
         for (let r of points) {
           this.param.dlxxzb += r.lng + "," + r.lat + ";";
         }
-        console.log(this.param.dlxxzb);
+        // console.log(this.param.dlxxzb);
       },
       remoteMethod2(query) {
         if (query !== '') {
@@ -133,6 +143,7 @@
         this.RootShow = !this.RootShow
       },
       finish() {
+        this.$refs['maps'].getLineList()
         this.$refs['param'].validate((valid) => {
           if (valid) {
             this.saveDzwl();
@@ -151,8 +162,8 @@
         })
       },
       save(wlID) {
-        console.log('savedz');
-        console.log(this.param.mmsi);
+        // console.log('savedz');
+        // console.log(this.param.mmsi);
         this.$http.post(this.apis.DZWL.setCarsDzwl, {
           wlid: wlID,
           carIds: this.param.mmsi.toString()
@@ -164,6 +175,14 @@
           }
           this.close()
         })
+      },
+      clearMap(){
+        this.$refs['maps'].clear()
+        this.$refs['maps'].bk()
+      },
+      editMap(){
+        this.$refs['maps'].eiitLine()
+        this.$refs['maps'].bk()
       },
       visible(val) {
         if (!val) {

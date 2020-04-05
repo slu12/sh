@@ -88,10 +88,10 @@
     <div class="body-F">
       <Row>
         <Col span="24">
-          <div v-show="showMap" id="allmap" style="width: 100%;height: 500px;"></div>
-          <div v-show="!showMap"
-               style="width: 100%;height: 500px;text-align: center;padding-top: 30%"><h1>
-            暂无轨迹信息......</h1></div>
+          <div  id="allmap" style="width: 100%;height: 500px;"></div>
+          <!--<div v-show="!showMap"-->
+               <!--style="width: 100%;height: 500px;text-align: center;padding-top: 30%"><h1>-->
+            <!--暂无轨迹信息......</h1></div>-->
         </Col>
       </Row>
       <Row v-if="showMap">
@@ -159,8 +159,8 @@
             <!--</Row>-->
             <div>
               <DatePicker v-model="selTime" type="datetimerange" format="yyyy-MM-dd HH:mm"
-                          :clearable="false"
-                          placeholder="Select date and time(Excluding seconds)"
+                          :clearable="false" split-panels
+                          placeholder="请选择查询时间"
                           placement="bottom-end"
                           style="width: 100%"></DatePicker>
             </div>
@@ -215,19 +215,6 @@
       bkshow
     },
     watch: {
-      // timeRange: function (newQuestion, oldQuestion) {
-      //   console.log(newQuestion);
-      //   if (typeof newQuestion[0] === 'string') {
-      //     return;
-      //   }
-      //   if (newQuestion.length > 0 && newQuestion[0] != '') {
-      //     this.formItem.startTime = this.getdateParaD(newQuestion[0]) + " 00:00:00";
-      //     this.formItem.endTime = this.getdateParaD(newQuestion[1]) + " 23:59:59";
-      //   } else {
-      //     this.formItem.startTime = this.getTodayDate() + " 00:00:00";
-      //     this.formItem.endTime = this.getTodayDate() + " 23:59:59";
-      //   }
-      // },
       local: function (n, o) {
         this.formItem.startTime = this.getTodayDate() + " 00:00:00";
         this.formItem.endTime = this.getTodayDate() + " 23:59:59";
@@ -270,7 +257,7 @@
           lng: 114.357527,
           lat: 30.550822
         },
-        zoom: 14,
+        zoom: 12,
         speedList: [],
         stationList: [],
         carCode: '',
@@ -304,6 +291,9 @@
       this.upTime.time = this.moment().format("HH:00")
     },
     mounted() {
+      this.$nextTick(()=>{
+        this.Buildmap()
+      })
       if (this.$route.params.mmsi) {
         this.formItem.mmsi = this.$route.params.mmsi;
       }
@@ -312,6 +302,7 @@
       this.timeRange = [this.formItem.startTime, this.formItem.endTime];
       this.choosedIndex = 0;
       // this.getCarList();
+
     },
     methods: {
       //终端远程收索
@@ -406,10 +397,6 @@
           });
         }else {
 
-          // let a = this.moment(this.upTime.day).format("YYYY-MM-DD") + " " + this.upTime.time + ":00"
-          // let T = new Date(a)
-          // let times = T.getTime()
-          // let timesEnd = times- parseInt(this.upTime.dan) * 60 * 1000
           let startTime = this.moment(this.selTime[0]).format("YYYY-MM-DD HH:mm:ss")
           let endTime = this.moment(this.selTime[1]).format("YYYY-MM-DD HH:mm:ss")
           startTime = startTime.replace(new RegExp('/', 'gm'), '-');
@@ -546,20 +533,34 @@
         // 百度地图API功能
         this.map = new BMap.Map("allmap"); // 创建Map实例
         //添加地图类型控件
-        this.map.addControl(new BMap.MapTypeControl({
-          mapTypes: [
-            BMAP_NORMAL_MAP
-          ]
-        }));
+        // this.map.addControl(new BMap.MapTypeControl({
+        //   mapTypes: [
+        //     BMAP_NORMAL_MAP
+        //   ]
+        // }));
         this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
         this.map.addControl(new BMap.ScaleControl()); // 添加比例尺控件
         this.map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件
         this.map.addControl(new BMap.NavigationControl()); // 添加平移缩放控件
-        this.map.centerAndZoom(new BMap.Point(this.stationList[0].longitude, this.stationList[0].latitude), this.zoom); // 初始化地图,设置中心点坐标和地图级别
 
-        setTimeout(() => {
-          v.line();
-        }, 100)
+        if(this.stationList.length == 0){
+          var geolocation = new BMap.Geolocation();
+          geolocation.getCurrentPosition(function(r){
+            if(this.getStatus() == BMAP_STATUS_SUCCESS){
+              console.log('您的位置：'+r.point.lng+','+r.point.lat)
+              v.map.centerAndZoom(r.point, 11); // 初始化地图,设置中心点坐标和地图级别
+            }
+            else {
+              console.log('failed'+this.getStatus());
+            }
+          },{enableHighAccuracy: true})
+        }else {
+          this.map.centerAndZoom(new BMap.Point(this.stationList[0].longitude, this.stationList[0].latitude), this.zoom); // 初始化地图,设置中心点坐标和地图级别
+
+          setTimeout(() => {
+            v.line();
+          }, 100)
+        }
       },
       Build_G_Map() {
         const v = this

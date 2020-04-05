@@ -57,10 +57,10 @@
             <Col span="10" offset="4" style="height: 580px;overflow: scroll">
               <FormItem label='权限选择:'>
                 <br>
-                <menu-choose v-if="showTree" :data="orgTree"
-                             :choosedData="hasPermissionCodes"
-                             @treeChange="treeChange"></menu-choose>
-                <Tree :data="orgTree" show-checkbox multiple></Tree>
+<!--                <menu-choose v-if="showTree" :data="orgTree"-->
+<!--                             :choosedData="hasPermissionCodes"-->
+<!--                             @treeChange="treeChange"></menu-choose>-->
+<!--                <Tree :data="orgTree" show-checkbox multiple></Tree>-->
               </FormItem>
             </Col>
           </Row>

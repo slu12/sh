@@ -128,10 +128,22 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         // 更新定位坐标
         List<String> collect = cbList.stream().map(Cb::getSbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
         List<String> list = cbList.stream().map(Cb::getMmsi).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        List<String> zdbhs = cbList.stream().map(Cb::getZdbh).filter(StringUtils::isNotBlank).collect(Collectors.toList());
+        Map<String, String> ztmap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(zdbhs)) {
+            List<ClZdgl> zdgls = zdglService.findIn(ClZdgl.InnerColumn.zdbh, zdbhs);
+            ztmap = zdgls.stream().collect(Collectors.toMap(ClZdgl::getZdbh, ClZdgl::getZxzt));
+        }
         collect.addAll(list);
         List<ClGps> gpses = gpsService.findIn(ClGps.InnerColumn.zdbh, collect);
         Map<String, ClGps> map = gpses.stream().collect(Collectors.toMap(ClGps::getZdbh, p -> p));
+        Map<String, String> finalZtmap = ztmap;
         cbList.forEach(cb -> {
+            if(finalZtmap.containsKey(cb.getZdbh())){
+                cb.setZxzt(finalZtmap.get(cb.getZdbh()));
+            }else{
+                cb.setZxzt("20");
+            }
             if(StringUtils.isBlank(cb.getZdbh()) && StringUtils.isNotBlank(cb.getSbh())){
                 ClGps clGps = map.get(cb.getSbh());
                 if(clGps == null){

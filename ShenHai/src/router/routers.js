@@ -31,8 +31,6 @@ export const otherRouter = {
   ]
 };
 export default [
-
-
   {
     path: '/login',
     name: 'login',
@@ -75,20 +73,20 @@ export default [
       hideInMenu: !true,
       notCache: true
     },
-    children: [
-      {
-        path: '/home',
-        name: 'home',
-        meta: {
-          hideInMenu: !true,
-          title: '首页',
-          notCache: true,
-          icon: 'md-home'
-        },
-        component: () => import('@/view/mapDemo')
-        // component: () => import('@/view/single-page/home')
-      }
-    ]
+    // children: [
+    //   {
+    //     path: '/home',
+    //     name: 'home',
+    //     meta: {
+    //       hideInMenu: !true,
+    //       title: '首页',
+    //       notCache: true,
+    //       icon: 'md-home'
+    //     },
+    //     component: () => import('@/view/mapDemo')
+    //     // component: () => import('@/view/single-page/home')
+    //   }
+    // ]
   },
 
   {

@@ -27,7 +27,7 @@
                     class="video-js vjs-default-skin"
                     controls preload="auto"
                     @click="playVideo('my-video' + index)"
-                    style="object-fit: fill;width: 100%;height: 230px">
+                    style="object-fit: fill;width: 100%;height: 100%">
                     <source :src="item" type="application/x-mpegURL">
                   </video>
                 </Card>

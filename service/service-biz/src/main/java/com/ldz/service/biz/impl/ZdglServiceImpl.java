@@ -157,7 +157,7 @@ public class ZdglServiceImpl extends BaseServiceImpl<ClZdgl,String> implements Z
     	if (findById!=null) {
 			return ApiResponse.fail("终端编号已存在");
 		}
-
+        entity.setFwnx("#");
 		RuntimeCheck.ifBlank(entity.getFwnx(),"终端的服务年限不能为空");
 
         SimpleCondition condition = new SimpleCondition(ClZdgl.class);

@@ -1,5 +1,5 @@
 <template>
-  <div id="app" style="transform: translateY(-18px)">
+  <div id="app" :style="{height:bodyH+'px'}">
     <router-view/>
   </div>
 </template>
@@ -9,25 +9,14 @@ export default {
   name: 'App',
   data(){
     return {
-      urlParams:{}
+      urlParams:{},
+      bodyH:960
     }
   },
   mounted(){
-    // var url = location.href;
-    // this.urlParams = {};
-    // try{
-    //   const keyValueArr = url.split('?')[1].split('&');
-    //   keyValueArr.forEach(item => {
-    //     const keyValue = item.split('=')
-    //     this.urlParams[keyValue[0]] = keyValue[1]
-    //   })
-    // }catch(e){ }
-    // //获取请求参数
-    // this.$router.push({
-    //   name:"CH",
-    //   params: this.urlParams
-    // });
-    // sessionStorage.setItem('urlParams',JSON.stringify(this.urlParams))
+    this.$nextTick(()=>{
+      this.bodyH = document.body.clientHeight
+    })
   }
 }
 </script>
@@ -53,6 +42,7 @@ html,body{
   padding: 0;
 }
 #app {
+  transform: translateY(-18px);
   .size;
 }
 </style>

@@ -41,6 +41,32 @@ export default [
     component: () => import('@/view/login/login.vue')
   },
   {
+    path: '/home',
+    name: '_home',
+    redirect: '/home',
+    component: Main,
+    meta: {
+      hideInMenu: !true,
+      notCache: true
+    },
+    children: [
+      {
+        path: '/home',
+        name: 'home',
+        meta: {
+          hideInMenu: !true,
+          title: '首页',
+          notCache: true,
+          icon: 'md-home'
+        },
+        // component: () => import('@/view/mapDemo')
+        component: () => import('@/viewDevelop/home')
+
+        // component: () => import('@/view/single-page/home')
+      }
+    ]
+  },
+  {
     path: '/',
     name: 'ship-Track',
     redirect: '/ship-Track',
@@ -64,30 +90,7 @@ export default [
       },
     ]
   },
-  {
-    path: '/home',
-    name: '_home',
-    redirect: '/home',
-    component: Main,
-    meta: {
-      hideInMenu: !true,
-      notCache: true
-    },
-    // children: [
-    //   {
-    //     path: '/home',
-    //     name: 'home',
-    //     meta: {
-    //       hideInMenu: !true,
-    //       title: '首页',
-    //       notCache: true,
-    //       icon: 'md-home'
-    //     },
-    //     component: () => import('@/view/mapDemo')
-    //     // component: () => import('@/view/single-page/home')
-    //   }
-    // ]
-  },
+
 
   {
     path: '/system',

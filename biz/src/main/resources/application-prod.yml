@@ -4,10 +4,10 @@ spring:
     host: 127.0.0.1
     database: 10
   datasource:
-    url: jdbc:mysql://192.168.0.245:3306/eshenhai?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    url: jdbc:mysql://124.70.166.238:10066/beidou_platform?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
     username: root
-    password: 'G7%bB2@dF6@g'
+    password: 'shen2020HAI!@#'
 biz:
   scTime: 30000
 
-  staticPath: /usr/beidou/wwwroot/file
+  staticPath: /mnt/bddata/data/wwwroot/file

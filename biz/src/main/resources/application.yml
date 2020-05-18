@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: test  #合并 application-test.yml 中的配置参数
+    active: prod  #合并 application-test.yml 中的配置参数
   #上传文件设置
   http:
     multipart:
@@ -65,4 +65,6 @@ lowSpeed: 25
 
 shipApi:
   ip: http://223.240.68.90:8091
+filePath: http://124.70.166.238:9092
+ffmpeg:  /usr/local/bin/ffmpeg
 

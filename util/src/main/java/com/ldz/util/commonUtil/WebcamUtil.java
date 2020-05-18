@@ -48,6 +48,8 @@ public class WebcamUtil {
 
     static Logger error = LoggerFactory.getLogger("error_info");
 
+    private static final String ffmpeg = "/usr/local/bin/ffmpeg";
+
     /**
      * 用户登录  存储 jsession 到redis 里面
      */
@@ -188,7 +190,7 @@ public class WebcamUtil {
                 videoProcess.waitFor();*/
 
                 try {
-                    String cmdStr =  "/usr/local/ffmpeg/bin/ffmpeg -i " + input + " -vcodec h264 " + output;
+                    String cmdStr = ffmpeg +  " -i " + input + " -vcodec h264 " + output;
                     logger.info("线程执行命令1------"+cmdStr);
                     Process process  = Runtime.getRuntime().exec(new String[]{"sh","-c",cmdStr});
                     StreamGobbler errorGobbler  =  new  StreamGobbler(process.getErrorStream(),  "ERROR");
@@ -200,25 +202,8 @@ public class WebcamUtil {
                     e.printStackTrace();
                     logger.error("exeCmd1 error:"+e);
                 }
-               /* System.out.println("video-->" + output);
-                // 视频编码转换完成 , 获取封面图
-                // -ss 00:00 -i @videofile -y -f image2 -r 1 -t 00:01 @cachefile
-                List<String> imgcmd = new ArrayList<>();
-                imgcmd.add("/usr/local/ffmpeg/bin/ffmpeg");
-                imgcmd.add("-i");
-                imgcmd.add(output);
-                imgcmd.add("-y");
-                imgcmd.add("-f");
-                imgcmd.add("image2");
-                imgcmd.add("-t");
-                imgcmd.add("1");
-                imgcmd.add(output.replace("mp4","jpg"));
-                Process imgProcess = new ProcessBuilder(imgcmd).redirectErrorStream(true).start();
-                new  com.ldz.util.bean.PrintStream(imgProcess.getInputStream()).start();
-                new  com.ldz.util.bean.PrintStream(imgProcess.getErrorStream()).start();
-                imgProcess.waitFor();*/
                 try {
-                    String cmdStr =  "/usr/local/ffmpeg/bin/ffmpeg -i " + output + "  -y -f image2 -t 1 " + output.replace("mp4","jpg");
+                    String cmdStr =  ffmpeg + " -i " + output + "  -y -f image2 -t 1 " + output.replace("mp4","jpg");
                     logger.info("线程执行命令1------"+cmdStr);
                     Process process  = Runtime.getRuntime().exec(new String[]{"sh","-c",cmdStr});
                     StreamGobbler errorGobbler  =  new  StreamGobbler(process.getErrorStream(),  "ERROR");
@@ -273,15 +258,10 @@ public class WebcamUtil {
             params.put("jsession", jsession);
             res = HttpUtil.get(url, params);
             object = JSON.parseObject(res);
-
-
         }
         if (!StringUtils.equals(object.getString("result"), "0")) {
             return "";
         }
-
-//        RuntimeCheck.ifTrue(result == 32, "设备不在线 ,请稍后再试");
-//        RuntimeCheck.ifFalse(result == 0, "操作失败, 请稍后再试");
 
         String imgurl = IP + ":6611/3/5?Type=3";
         String flength = object.getString("FLENGTH");

@@ -1,4 +1,4 @@
-let ajaxUrl = 'http://bddata.eshenhai.cn:8083/biz';
+let ajaxUrl = 'http://124.70.166.238:8083/biz';
 // let ajaxUrl = 'http://223.240.68.90:8083';
 // let ajaxUrl = 'http://http://119.23.242.234:8080';
 export default {

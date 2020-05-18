@@ -74,7 +74,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
     @Autowired
     private GpsService gpsService;
     @Value("${staticPath}")
-    private String filePath;
+    private String staticPath;
     @Autowired
     private SpkService spkService;
     @Autowired
@@ -722,9 +722,9 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         URL url = new URL(photo);
         String filePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn + ".jpg";
         String sfilePath = "/zp/" + DateTime.now().toString("yyyy-MM-dd") + "/" + mmsi + "-" + chn + "-s.jpg";
-        FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath));
+        FileUtils.copyURLToFile(url, new File(staticPath + filePath));
         String file = path + sfilePath;
-        Thumbnails.of("/usr/beidou/wwwroot/file" + filePath).scale(1f).outputQuality(0.3f).toFile("/usr/beidou/wwwroot/file" +sfilePath);
+        Thumbnails.of(staticPath + filePath).scale(1f).outputQuality(0.3f).toFile(staticPath +sfilePath);
         return ApiResponse.success(file);
     }
 
@@ -916,9 +916,9 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
                             return;
                         }
                         URL url = new URL(photo);
-                        FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath), 100000, 100000);
-                        Thumbnails.of("/usr/beidou/wwwroot/file" + filePath).scale(1f).outputQuality(0.3f).toFile("/usr/beidou/wwwroot/file" +sfilePath);
-                    } catch (IOException e) {
+                        FileUtils.copyURLToFile(url, new File(staticPath + filePath), 100000, 100000);
+                        Thumbnails.of(staticPath + filePath).scale(1f).outputQuality(0.3f).toFile(staticPath +sfilePath);
+                    } catch (IOException ignored) {
                     }
                 });
                 //String url = "http://139.196.253.185:6604/hls/1_"+ cb.getSbh()  +"_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids) ;
@@ -1000,11 +1000,11 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         String fileName = "F" + mmsi + "_" + System.currentTimeMillis() + ".jpg";
         String sfileName =  "F" + mmsi + "_" + System.currentTimeMillis() + "-s.jpg";
         String s = now + "/" +fileName ;
-        File f = new File(filePath + s);
+        File f = new File(staticPath + s);
         URL u = new URL(photo);
         try {
             FileUtils.copyURLToFile(u, f);
-            Thumbnails.of("/usr/beidou/wwwroot/file" + s).scale(1f).outputQuality(0.3f).toFile("/usr/beidou/wwwroot/file" +now + "/" + sfileName);
+            Thumbnails.of(staticPath + s).scale(1f).outputQuality(0.3f).toFile(staticPath +now + "/" + sfileName);
         }catch (Exception e){
             RuntimeCheck.ifTrue(true, "请求异常 , 请稍后再试");
         }

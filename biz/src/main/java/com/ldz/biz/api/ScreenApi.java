@@ -38,9 +38,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Log4j2
 @RestController
@@ -65,6 +68,12 @@ public class ScreenApi {
     private GpsBdMapper bdMapper;
     @Autowired
     private GpsBdSbMapper bdSbMapper;
+    @Value("${staticPath}")
+    private String staticPath;
+    @Value("${ffmpeg}")
+    private String ffmpeg;
+
+    private ExecutorService excutor = Executors.newSingleThreadExecutor();
 
     /**
      * 抓拍接口
@@ -73,13 +82,21 @@ public class ScreenApi {
     public ApiResponse<String> zp(String sbh, String chn) throws IOException {
         RuntimeCheck.ifBlank(sbh, "请选择设备");
         RuntimeCheck.ifBlank(chn, "请选择拍照通道");
-        String photo = WebcamUtil.photo(reids, sbh, chn);
-        if (StringUtils.isBlank(photo)) {
-            return ApiResponse.success(photo);
-        }
-        URL url = new URL(photo);
         String filePath = "/zp/scrn.jpg";
-        FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath));
+        excutor.submit(()-> {
+            String photo = WebcamUtil.photo(reids, sbh, chn);
+            if (StringUtils.isBlank(photo)) {
+                return ;
+            }
+            URL url = null;
+            try {
+                url = new URL(photo);
+                FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath));
+            } catch (IOException e) {
+                log.error("抓拍失败: {} , {}",e,e.getMessage());
+            }
+        });
+
         String file = path + filePath;
         return ApiResponse.success(file);
     }
@@ -373,14 +390,14 @@ public class ScreenApi {
     @GetMapping("/testCmd")
     public ApiResponse<String> testCmd() {
 
-        String cmdStr = "/usr/local/ffmpeg/bin/ffmpeg -i @input -vcodec h264 @output";
+        String cmdStr = ffmpeg +" -i @input -vcodec h264 @output";
         String input = "/usr/beidou/wwwroot/file/video/" + "2020-01-02/" + "1577979204952.mp4";
         String output = "/usr/beidou/wwwroot/file/video/" + "2020-01-02/" + "test-" + System.currentTimeMillis() + ".mp4";
         cmdStr = cmdStr.replace("@input", input).replace("@output", output);
         System.out.println("cmdstr --> " + cmdStr);
 
         List<String> command = new ArrayList<>();
-        command.add("/usr/local/ffmpeg/bin/ffmpeg");
+        command.add(ffmpeg);
         command.add("-i");
         command.add(input);
         command.add("-vcodec");
@@ -394,7 +411,7 @@ public class ScreenApi {
             videoProcess.waitFor();
 
             List<String> imgcmd = new ArrayList<>();
-            imgcmd.add("/usr/local/ffmpeg/bin/ffmpeg");
+            imgcmd.add(ffmpeg);
 //            imgcmd.add("-ss");
 //            imgcmd.add("00:00");
             imgcmd.add("-i");

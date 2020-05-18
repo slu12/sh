@@ -9,7 +9,7 @@ util.title = function (title) {
     window.document.title = title;
 };
 
-const ajaxUrl = 'http://bddata.eshenhai.cn:8083/biz';
+const ajaxUrl = 'http://124.70.166.238:8083/biz';
 // const ajaxUrl = 'http://127.0.0.1:8080';
 
 util.ajax = axios.create({

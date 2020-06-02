@@ -1,7 +1,7 @@
 // let ajaxUrl = 'http://192.168.0.115:8081';
 // let ajaxUrl = 'http://dt8hv8.natappfree.cc';
-// let ajaxUrl = 'http://127.0.0.1:8081';
-let ajaxUrl = 'http://124.70.166.238:8083/biz';
+// let ajaxUrl = 'http://127.0.0.1:80';
+// let ajaxUrl = 'http://124.70.166.238:8083/biz';
 // let ajaxUrl = 'http://http://119.23.242.234:8080';
 export default {
   NETWORK_ERR_STR: '网络加载异常!',

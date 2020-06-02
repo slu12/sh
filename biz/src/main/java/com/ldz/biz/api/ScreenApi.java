@@ -26,6 +26,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -88,16 +89,16 @@ public class ScreenApi {
             if (StringUtils.isBlank(photo)) {
                 return ;
             }
-            URL url = null;
+            URL url;
             try {
                 url = new URL(photo);
-                FileUtils.copyURLToFile(url, new File("/usr/beidou/wwwroot/file" + filePath));
+                FileUtils.copyURLToFile(url, new File(staticPath + filePath));
             } catch (IOException e) {
                 log.error("抓拍失败: {} , {}",e,e.getMessage());
             }
         });
 
-        String file = path + filePath;
+        String file = path + filePath + "?" + RandomUtils.nextInt(0,9999999);
         return ApiResponse.success(file);
     }
 
@@ -114,7 +115,7 @@ public class ScreenApi {
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
-                String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno=" + sbh + "&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
+                String url = "http://124.70.164.52/808gps/open/hls/index.html?lang=zh&devIdno=" + sbh + "&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
                 urls[i] = url;
             } else {
                 urls[i] = "";
@@ -136,7 +137,7 @@ public class ScreenApi {
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
-                String url = "http://139.196.253.185:6604/hls/1_" + sbh + "_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids);
+                String url = "http://124.70.164.52:6604/hls/1_" + sbh + "_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids);
                 urls[i] = url;
             } else {
                 urls[i] = "";

@@ -36,12 +36,14 @@ import java.util.stream.Collectors;
 @Log4j2
 public class WebcamUtil {
 
-    private static String IP = "http://139.196.253.185";
+//    private static String IP = "http://139.196.253.185";
+    private static String IP = "http://124.70.164.52:8088/";
 
     private static final Logger logger = LoggerFactory.getLogger(WebcamUtil.class);
 
     //    private static String ZH = "ES4G870";
-    private static String ZH = "ES4G856";
+//    private static String ZH = "ES4G856";
+    private static String ZH = "test";
 //    private static String ZH = "AHD30895";
 
     private static String PWD = "000000";
@@ -228,7 +230,7 @@ public class WebcamUtil {
             }
         }
         if (StringUtils.isNotBlank(filename)) {
-            return "http://223.240.68.90:9092/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + name;
+            return "http://124.70.166.238:9092/video/" + DateTime.now().toString("yyyy-MM-dd") + "/" + name;
         } else {
             return "";
         }
@@ -263,7 +265,7 @@ public class WebcamUtil {
             return "";
         }
 
-        String imgurl = IP + ":6611/3/5?Type=3";
+        String imgurl = IP.replace(":8088/","") + ":6611/3/5?Type=3";
         String flength = object.getString("FLENGTH");
         imgurl += "&FLENGTH=" + flength;
         String foffset = object.getString("FOFFSET");

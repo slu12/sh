@@ -773,7 +773,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
-                String url = "http://139.196.253.185/808gps/open/hls/index.html?lang=zh&devIdno=" + cb.getSbh() + "&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
+                String url = "http://124.70.164.52:8088/808gps/open/hls/index.html?lang=zh&devIdno=" + cb.getSbh() + "&jsession=" + WebcamUtil.login(reids) + "&channel=" + i;
                 urls[i] = url;
             } else {
                 urls[i] = "";
@@ -871,7 +871,7 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         List<String> split = Arrays.asList(ch.split(","));
         for (int i = 0; i < 9; i++) {
             if (split.contains((i + 1) + "")) {
-                String url = "http://139.196.253.185:6604/hls/1_" + cb.getSbh() + "_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids);
+                String url = "http://124.70.164.52:6604/hls/1_" + cb.getSbh() + "_" + i + "_1.m3u8?JSESSIONID=" + WebcamUtil.login(reids);
                 urls[i] = url;
             } else {
                 urls[i] = "";
@@ -1000,13 +1000,18 @@ public class CbServiceImpl extends BaseServiceImpl<Cb, String> implements CbServ
         String fileName = "F" + mmsi + "_" + System.currentTimeMillis() + ".jpg";
         String sfileName =  "F" + mmsi + "_" + System.currentTimeMillis() + "-s.jpg";
         String s = now + "/" +fileName ;
+        File d = new File(staticPath + now );
+        if(!d.exists()){
+            d.mkdirs();
+        }
         File f = new File(staticPath + s);
         URL u = new URL(photo);
         try {
             FileUtils.copyURLToFile(u, f);
             Thumbnails.of(staticPath + s).scale(1f).outputQuality(0.3f).toFile(staticPath +now + "/" + sfileName);
         }catch (Exception e){
-            RuntimeCheck.ifTrue(true, "请求异常 , 请稍后再试");
+
+            RuntimeCheck.ifTrue(true, e.getMessage());
         }
 
         String file = this.path + s;

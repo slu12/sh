@@ -140,6 +140,7 @@ public class MainController {
 				rMap.put("dictList",zdlmList);
 				result.setResult(rMap);
 			} catch (Exception e) {
+				log.info("error: {} , {}" ,e.getMessage() , e );
 				result.setCode(ApiResponse.FAILED);
 				result.setMessage("用户登陆失败，请重试！");
 				return result;

@@ -12,7 +12,7 @@
             <Card>
                   <div class="tit headTit padding">
                         <h1>
-                              派车单
+                              创建订单
                         </h1>
                   </div>
                   <div class="body padding-top-10" style="border-top: solid #dddee1 2px;">
@@ -21,19 +21,19 @@
                                     <Col span="8">
                                           <FormItem label="">
                                                 <h3>
-                                                      用车单位
+                                                      用船单位
                                                 </h3>
                                                 <Cascader @on-change="change" change-on-select :data="orgTree"
-                                                          placeholder="请选择用车单位" filterable clearable></Cascader>
+                                                          placeholder="请选择用船单位" filterable clearable></Cascader>
                                           </FormItem>
                                     </Col>
                                     <Col span="8">
                                           <FormItem label="">
                                                 <h3>
-                                                      用车人
+                                                      用船人
                                                 </h3>
                                                 <Input v-model="formItem.ck" size="large"
-                                                       placeholder="请填写用车人姓名"></Input>
+                                                       placeholder="请填写用船人姓名"></Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="8">
@@ -42,16 +42,16 @@
                                                       客户电话
                                                 </h3>
                                                 <Input v-model="formItem.cklxdh" size="large"
-                                                       placeholder="请填写用车人电话"></Input>
+                                                       placeholder="请填写用船人电话"></Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="8">
                                           <FormItem label="">
                                                 <h3>
-                                                      候车地点
+                                                      候船地点
                                                 </h3>
                                                 <Input v-model="formItem.hcdz" size="large"
-                                                       placeholder="请填写候车地点..."></Input>
+                                                       placeholder="请填写候船地点..."></Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="8">
@@ -66,14 +66,14 @@
                                     <Col span="4">
                                           <FormItem label="">
                                                 <h3>
-                                                      出车时间
+                                                      出船时间
                                                 </h3>
                                                 <DatePicker v-model="formItem.yysj"
                                                             size="large" placement="left"
                                                             format="yyyy-MM-dd HH:mm:ss"
                                                             type="datetime"
                                                             :options="options"
-                                                            placeholder="请填写用车时间"></DatePicker>
+                                                            placeholder="请填写用船时间"></DatePicker>
                                           </FormItem>
                                     </Col>
                                     <Col span="4">
@@ -135,7 +135,7 @@
                                                 <Col span="12">
                                                       <FormItem label="">
                                                             <h3>
-                                                                  车型
+                                                                  船型
                                                             </h3>
                                                             <Cascader @on-change="changeCLLX"
                                                                       :data="CasData"></Cascader>
@@ -157,7 +157,7 @@
                                                       事由
                                                 </h3>
                                                 <Input v-model="formItem.sy" type="textarea" :rows="6"
-                                                       placeholder="请填写用车事由"></Input>
+                                                       placeholder="请填写用船事由"></Input>
                                           </FormItem>
                                     </Col>
                                     <Col span="24" style="padding: 8px 0 8px 50px;">
@@ -188,14 +188,14 @@
                 formItem: {
                     jgmc: '',//单位名称
                     jgdm: '',//单位Code
-                    ck: '',//用车人
-                    cklxdh: '',//用车电话
-                    hcdz: '',//候车地点
+                    ck: '',//用船人
+                    cklxdh: '',//用船电话
+                    hcdz: '',//候船地点
                     mdd: '',//目的点
-                    yysj: '',//发车时间
+                    yysj: '',//发船时间
                     fkfs: '',//费用来源
                     ktcode: '',//课题
-                    cllx: '',//车型
+                    cllx: '',//船型
                     zws: '',//座位数
                     zj: '',//总价
                     sy: '',//备注
@@ -205,15 +205,15 @@
                         return date && date.valueOf() < Date.now() - 86400000;
                     }
                 },
-                // 机构代码(用车单位ID)	JGDM
-                // 机构名称(用车单位名称)	jgmc
+                // 机构代码(用船单位ID)	JGDM
+                // 机构名称(用船单位名称)	jgmc
                 // 乘客姓名  ck
                 // 乘客联系电话	cklxdh
-                //     候车地址  hcdz;
+                //     候船地址  hcdz;
                 // 目的地  mdd;
                 // 预约时间   yysj
                 // 付款方式(费用来源)	fkfs
-                //车型cllx
+                //船型cllx
                 // 座位数		zws
                 // 总价  zj
 
@@ -225,7 +225,7 @@
                 ],
                 CasData: [{
                     value: '20',
-                    label: '大车',
+                    label: '大船',
                     children: [{
                         value: '20',
                         label: '20',
@@ -241,7 +241,7 @@
                     }]
                 }, {
                     value: '10',
-                    label: '小车',
+                    label: '小船',
                     disabled: false,
                     children: [{
                         value: '5',
@@ -262,7 +262,7 @@
             this.$store.commit('setCurrentPath', [{
                 title: '首页',
             }, {
-                title: '车辆管理',
+                title: '船舶管理',
             }, {
                 title: '订单管理',
             }, {
@@ -302,7 +302,8 @@
             },
             //表单数据提交
             AddNewlist() {
-                log(this.formItem)
+
+                console.log(this.formItem)
                 // if (this.treeValue.length === 0){
                 //    this.$Message.error('请选择机构');
                 //    return;
@@ -328,14 +329,14 @@
                         this.formItem = {
                             jgmc: '',//单位名称
                             jgdm: '',//单位Code
-                            ck: '',//用车人
-                            cklxdh: '',//用车电话
-                            hcdz: '',//候车地点
+                            ck: '',//用船人
+                            cklxdh: '',//用船电话
+                            hcdz: '',//候船地点
                             mdd: '',//目的点
-                            yysj: '',//发车时间
+                            yysj: '',//发船时间
                             fkfs: '',//费用来源
                             ktcode: '',//课题
-                            cllx: '',//车型
+                            cllx: '',//船型
                             zws: '',//座位数
                             zj: '',//总价
                             sy: '',//备注

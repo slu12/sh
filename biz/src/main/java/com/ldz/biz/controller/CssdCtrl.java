@@ -53,7 +53,7 @@ public class CssdCtrl extends BaseController<ClCssd, String> {
 
 	@PostMapping("/setCssds")
 	public ApiResponse<String> setCssds(String cphs, String csz) {
-		RuntimeCheck.ifBlank(cphs,"请先绑定车辆");
+		RuntimeCheck.ifBlank(cphs,"请先绑定船舶");
 		return service.setCssds(cphs, csz);
 	}
 

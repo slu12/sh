@@ -114,11 +114,11 @@
 						      active-name="1">
 							<Menu-item name="1" style="font-size: 22px">
 								<Icon type="ios-paper"></Icon>
-								内部车
+								内部船
 							</Menu-item>
 							<Menu-item name="2"  style="font-size: 22px">
 								<Icon type="ios-people"></Icon>
-								外借车
+								外借船
 							</Menu-item>
 						</Menu>
 					</div>
@@ -247,7 +247,7 @@
             this.$store.commit('setCurrentPath', [{
                 title: '首页',
             },{
-                title: '车辆管理',
+                title: '船辆管理',
             },{
                 title: '订单管理',
             },{
@@ -259,7 +259,7 @@
         mounted(){
         },
         methods:{
-            menuClick(val){//内部车与外部车
+            menuClick(val){//内部船与外部船
                 // alert(val)
 		if(val==1){
                     this.zjcx = '2030'

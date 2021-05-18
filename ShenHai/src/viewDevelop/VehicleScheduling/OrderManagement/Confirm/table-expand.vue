@@ -8,7 +8,7 @@
     <div>
         <Row class="expand-row">
         	<Col span="6">
-            	<h3>候车地点：</h3>
+            	<h3>候船地点：</h3>
             	<div>
             		{{row.hcdz}}
             	</div>
@@ -34,7 +34,7 @@
         </Row>
         <Row class="expand-row">
             <Col span="6">
-            	<h3>行车里程：</h3>
+            	<h3>行船里程：</h3>
             	<div>
             		{{row.lc}}
             	</div>

@@ -258,7 +258,7 @@
 									if (params.seriesData.length == 1){
                                         value = params.seriesData[0].data[1];
 									}
-                                    return "车辆瞬时速度："+value+" Km/h";
+                                    return "船舶瞬时速度："+value+" Km/h";
                                 },
                                 backgroundColor: '#004E52'
                             },

@@ -106,7 +106,7 @@
 			<div style="height: 45px;line-height: 45px;">
 				<div class="margin-top-10 box-row">
 					<div class="titmess">
-						<span>订单分派(小车)</span>
+						<span>订单分派(小船)</span>
 					</div>
 					<div class="body-r-1 inputSty">
 					</div>
@@ -234,7 +234,7 @@
 			this.$store.commit('setCurrentPath', [{
                 title: '首页',
             },{
-                title: '车辆管理',
+                title: '船辆管理',
             },{
                 title: '订单管理',
             },{

@@ -23,7 +23,7 @@
                         </MenuItem>
                         <MenuItem name="3">
                               <Icon type="ios-paper"></Icon>
-                              车辆轨迹
+                              船辆轨迹
                         </MenuItem>
                         <MenuItem name="4">
                               <Icon type="ios-paper"></Icon>
@@ -34,7 +34,7 @@
             <div v-show="horizontal=='1'" style="overflow: hidden;" class="topmar">
                   <Row class="expand-row">
                         <Col span="6">
-                              <h3>候车地点：</h3>
+                              <h3>候船地点：</h3>
                               <div>
                                     {{row.hcdz}}
                               </div>
@@ -60,7 +60,7 @@
                   </Row>
                   <Row class="expand-row">
                         <Col span="6">
-                              <h3>行车里程：</h3>
+                              <h3>行船里程：</h3>
                               <div>
                                     {{row.lc}}
                               </div>
@@ -136,25 +136,25 @@
             <div v-if="horizontal=='4' && detail.initialOracle.length > 0" v-for="item in detail.initialOracle"
                  style="overflow: hidden;" class="topmar">
                   <Col span="6" class="margin-top-5">
-                        <h5>用车单位：</h5>{{item.jgmc}}
+                        <h5>用船单位：</h5>{{item.jgmc}}
                   </Col>
                   <Col span="6" class="margin-top-5">
-                        <h5>用车人：</h5>{{item.ck}}
+                        <h5>用船人：</h5>{{item.ck}}
                   </Col>
                   <Col span="6" class="margin-top-5">
                         <h5>电话：</h5>{{item.cklxdh}}
                   </Col>
                   <Col span="6" class="margin-top-5">
-                        <h5>出车时间：</h5>{{item.yysj}}
+                        <h5>出船时间：</h5>{{item.yysj}}
                   </Col>
                   <Col span="6" class="margin-top-5">
-                        <h5>候车地点：</h5>{{item.hcdz}}
+                        <h5>候船地点：</h5>{{item.hcdz}}
                   </Col>
                   <Col span="6" class="margin-top-5">
                         <h5>目的地：</h5>{{item.mdd}}
                   </Col>
                   <Col span="6" class="margin-top-5">
-                        <h5>行车里程：</h5>{{item.lc}}
+                        <h5>行船里程：</h5>{{item.lc}}
                   </Col>
                   <Col span="6" class="margin-top-5">
                         <h5>等时：</h5>{{item.ck}}

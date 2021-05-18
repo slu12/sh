@@ -1,5 +1,5 @@
 <style lang="less">
-	@import '../../../../../styles/common.less';
+	@import '../../../../styles/common.less';
 </style>
 <template>
 	<div>
@@ -14,30 +14,30 @@
 				<Form :model="param" :label-width="80">
 					<Row :gutter="16">
 						<Col span="8">
-							<FormItem label="用车单位">
-								<Select disabled filterable clearable  v-model="param.jgdm" size="large" placeholder="请选择用车单位" filterable>
+							<FormItem label="用船单位">
+								<Select disabled filterable clearable  v-model="param.jgdm" size="large" placeholder="请选择用船单位" filterable>
 									<Option v-for="item in jgdmList" :value="item.jgdm">{{item.jgmc}}</Option>
 								</Select>
 							</FormItem>
 						</Col>
 						<Col span="8">
-							<FormItem label="用车人">
-								<Input v-model="param.ck" size="large" placeholder="请填写用车人姓名"></Input>
+							<FormItem label="用船人">
+								<Input v-model="param.ck" size="large" placeholder="请填写用船人姓名"></Input>
 							</FormItem>
 						</Col>
 						<Col span="8">
 							<FormItem label="客户电话">
-								<Input v-model="param.cklxdh" size="large" placeholder="请填写用车人电话"></Input>
+								<Input v-model="param.cklxdh" size="large" placeholder="请填写用船人电话"></Input>
 							</FormItem>
 						</Col>
 						<Col span="8">
-							<FormItem label="出车时间">
-								<DatePicker v-model="param.yysj" size="large"  format="yyyy-MM-dd HH:mm:ss" type="datetime" placement="bottom-end" placeholder="请填写用车时间" ></DatePicker>
+							<FormItem label="出船时间">
+								<DatePicker v-model="param.yysj" size="large"  format="yyyy-MM-dd HH:mm:ss" type="datetime" placement="bottom-end" placeholder="请填写用船时间" ></DatePicker>
 							</FormItem>
 						</Col>
 						<Col span="8">
-							<FormItem label="候车地点">
-								<Input v-model="param.hcdz" size="large" placeholder="请填写候车地点..."></Input>
+							<FormItem label="候船地点">
+								<Input v-model="param.hcdz" size="large" placeholder="请填写候船地点..."></Input>
 							</FormItem>
 						</Col>
 						<Col span="8">
@@ -73,33 +73,33 @@
 												placeholder="添加课题"></Input>
 										<Select filterable clearable
 												v-else
-												v-model="param.ktcode" size="large" placeholder="请选择用车单位" filterable>
+												v-model="param.ktcode" size="large" placeholder="请选择用船单位" filterable>
 											<Option v-for="item in ctasklList" :value="item.value"></Option>
 										</Select>
 									</FormItem>
 								</Col>
 								<Col span="12">
-									<FormItem label="车型">
+									<FormItem label="船型">
 										<Cascader @on-change="changeCLLX" :data="CasData" v-model="cllx" ></Cascader>
 									</FormItem>
 								</Col>
 							</Row>
 							<Row v-else	>
-								<FormItem label="车型">
+								<FormItem label="船型">
 									<Cascader @on-change="changeCLLX" :data="CasData" v-model="cllx" ></Cascader>
 								</FormItem>
 							</Row>
 						</Col>
 						<Col span="16">
 							<FormItem label="事由">
-								<Input v-model="param.sy" type="textarea" :rows="6" placeholder="请填写用车事由"></Input>
+								<Input v-model="param.sy" type="textarea" :rows="6" placeholder="请填写用船事由"></Input>
 							</FormItem>
 						</Col>
 					</Row>
 					<Row>
 						<Col span="8">
-							<FormItem label="行车里程">
-								<Input v-model="param.lc" type="text" :rows="6" placeholder="请填写行车里程"></Input>
+							<FormItem label="行船里程">
+								<Input v-model="param.lc" type="text" :rows="6" placeholder="请填写行船里程"></Input>
 							</FormItem>
 						</Col>
 						<Col span="8">
@@ -166,7 +166,7 @@
 
                 CasData:[{
                     value: '20',
-                    label: '大车',
+                    label: '大船',
                     children: [{
                         value: '20',
                         label: '20',
@@ -182,7 +182,7 @@
                     }]
                 }, {
                     value: '10',
-                    label: '小车',
+                    label: '小船',
                     disabled: false,
                     children: [{
                         value: '5',

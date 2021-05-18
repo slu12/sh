@@ -102,18 +102,31 @@
                 type:"warning"
               })
             }
-
-
-            // for (var i = 0; i < dotLength; i++) {
-            //   v.wlDot.push(
-            //     new BMap.Point(ditpoints[i].split(',')[0], ditpoints[i].split(',')[1])
-            //   )
-            // }
-
-            // setTimeout(function () {
-            //   v.map.setViewport(v.wlDot);
-            //   v.bkshow(v.wlDot)//电子围栏显示
-            // }, 100)
+          }else {
+            this.$http.get(this.apis.DZWL.GET_BY_CAR_ID + "?clId=" + id ).then( res=> {
+              if (res.code === 200 && res.result) {
+                if(res.result.dlxxzb){
+                  let ditpoints = res.result.dlxxzb.split(';');
+                  let dotLength = res.result.dlxxzb.split(';').length;
+                  ditpoints.forEach((it,index)=>{
+                    if(it){
+                      v.wlDot.push(
+                        new BMap.Point(it.split(',')[0], it.split(',')[1])
+                      )
+                    }
+                    if(index == ditpoints.length-1){
+                      v.map.setViewport(v.wlDot);
+                      v.bkshow(v.wlDot)//电子围栏显示
+                    }
+                  })
+                }else {
+                  this.swal({
+                    title:"暂无电子围栏数据",
+                    type:"warning"
+                  })
+                }
+              }
+            })
           }
         })
       },

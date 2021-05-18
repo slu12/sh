@@ -17,7 +17,7 @@
                                     <Cascader
                                             style="width:300px;float: right;margin-top: 7px;margin-left: 4px;padding-right: 16px;"
                                             @on-change="change" change-on-select :data="orgTree"
-                                            placeholder="请选择用车单位" filterable clearable></Cascader>
+                                            placeholder="请选择用船单位" filterable clearable></Cascader>
                                     <Input v-model="param.ckLike" type="text" placeholder="输入乘客姓名查询"
                                            style="width: 220px"></Input>
                                     <Input v-model="param.sjxmLike" type="text" placeholder="输入司机姓名查询"
@@ -101,12 +101,12 @@
                         }
                     },
                     {
-                        title: '用车单位',
+                        title: '用船单位',
                         align: 'center',
                         key: 'jgmc'
                     },
                     {
-                        title: '用车人',
+                        title: '用船人',
                         align: 'center',
                         key: 'ck'
                     },
@@ -116,7 +116,7 @@
                         key: 'cklxdh'
                     },
                     {
-                        title: '出车司机',
+                        title: '出船司机',
                         align:'center',
                         key: 'sjxm'
                     },
@@ -126,14 +126,14 @@
                         key: 'DriverPhone'
                     },
                     {
-                        title: '约车时间',
+                        title: '约船时间',
                         key: 'yysj',
                         render:(h,p)=>{
                             return h('div', p.row.yysj.substring(0, 13));
                         }
                     },
                     {
-                        title: '约车地点',
+                        title: '约船地点',
                         key: 'hcdz'
                     },
                     {
@@ -148,10 +148,10 @@
                             let cx = ''
                             switch (p.row.cllx) {
                                 case '10':
-                                    cx = '小车';
+                                    cx = '小船';
                                     break;
                                 case '20':
-                                    cx = '大车';
+                                    cx = '大船';
                                     break;
                             }
                             return h('span', cx + '/' + p.row.zws)
@@ -167,7 +167,7 @@
         	this.$store.commit('setCurrentPath', [{
                 title: '首页',
             },{
-                title: '车辆管理',
+                title: '船辆管理',
             },{
                 title: '订单管理',
             },{

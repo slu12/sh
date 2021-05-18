@@ -1,6 +1,6 @@
 <!--
 历史轨迹
-车辆历史轨迹 地图展示界组件
+船辆历史轨迹 地图展示界组件
 -->
 
 <template>
@@ -188,7 +188,7 @@
 									if (params.seriesData.length == 1){
                                         value = params.seriesData[0].data[1];
 									}
-                                    return "车辆瞬时速度："+value+" Km/h";
+                                    return "船辆瞬时速度："+value+" Km/h";
                                 },
                                 backgroundColor: '#004E52'
                             },

@@ -252,35 +252,6 @@ export default [
     ]
   },
   {
-    path: '/order',
-    name: 'order',
-    meta: {
-      icon: 'ios-cog',
-      title: '船舶调度'
-    },
-    component: Main,
-    children: [
-      {
-        path: 'establish',
-        name: 'establish',
-        meta: {
-          icon: 'ios-cog',
-          title: '订单创建'
-        },
-        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Establish')
-      },
-      {
-        path: 'toexamine',
-        name: 'toexamine',
-        meta: {
-          icon: 'ios-cog',
-          title: '订单审核'
-        },
-        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/ToExamine')
-      }
-    ]
-  },
-  {
     path: '/security',
     name: 'security',
     meta: {
@@ -328,6 +299,228 @@ export default [
       title: '404'
     },
     component: () => import('@/view/error-page/404.vue')
+  },
+  {
+    path: '/order',
+    name: 'order',
+    meta: {
+      icon: 'ios-cog',
+      title: '船舶调度'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'driver_management',
+        name: 'driver_management',
+        meta: {
+          icon: 'ios-cog',
+          title: '驾驶员管理'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/DriverManagement')
+      },
+      {
+        path: 'establish',
+        name: 'establish',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单创建'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Establish')
+      },
+      {
+        path: 'toexamine',
+        name: 'toexamine',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单审核'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/ToExamine')
+      },
+      {
+        path: 'dz_confirm',
+        name: 'dz_confirm',
+        meta: {
+          icon: 'ios-cog',
+          title: '队长审核'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/dz_Confirm')
+      },
+      {
+        path: 'confirm',
+        name: 'confirm',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单确认'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Confirm')
+      },
+      {
+        path: 'assignment',
+        name: 'assignment',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单分派(小船)'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Assignment')
+      },
+      {
+        path: 'assignment_max',
+        name: 'assignment_max',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单分派(大船)'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Assignment_max')
+      },
+      {
+        path: 'consult',
+        name: 'consult',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单查询'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Consult')
+      }
+    ]
+  },
+  {
+    path: '/echarts',
+    name: 'echarts',
+    meta: {
+      icon: 'ios-cog',
+      title: '数据报表'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'safe_driving',
+        name: 'safe_driving',
+        meta: {
+          icon: 'ios-cog',
+          title: '安全驾驶'
+        },
+        component: () => import('@/viewDevelop/Echarts/SafeDriving')
+      },
+      {
+        path: 'collection_statistics',
+        name: 'collection_statistics',
+        meta: {
+          icon: 'ios-cog',
+          title: '收款统计'
+        },
+        component: ()=> import('@/viewDevelop/Echarts/CollectionStatistics')
+      },
+      {
+        path: 'order_statistics',
+        name: 'order_statistics',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单统计'
+        },
+        component: () => import('@/viewDevelop/Echarts/OrderStatistics')
+      },
+      {
+        path: 'overspeed_statistics',
+        name: 'overspeed_statistics',
+        meta: {
+          icon: 'ios-cog',
+          title: '超速统计'
+        },
+        component: () => import('@/viewDevelop/Echarts/OverspeedStatistics')
+      },
+      {
+        path: 'seimbursement_statistics',
+        name: 'seimbursement_statistics',
+        meta: {
+          icon: 'ios-cog',
+          title: '报销记账'
+        },
+        component: () => import('@/viewDevelop/Echarts/ReimbursementStatistics')
+      },
+      {
+        path: 'payment_statistics',
+        name: 'payment_statistics',
+        meta: {
+          icon: 'ios-cog',
+          title: '付款统计'
+        },
+        component: () => import('@/viewDevelop/Echarts/PaymentStatistics')
+      },
+      {
+        path: 'terminal_anomaly',
+        name: 'terminal_anomaly',
+        meta: {
+          icon: 'ios-cog',
+          title: '终端异常'
+        },
+        component: () => import('@/viewDevelop/Echarts/TerminalAnomaly')
+      },
+      {
+        path: 'traffic_statistics',
+        name: 'traffic_statistics',
+        meta: {
+          icon: 'ios-cog',
+          title: '出船统计'
+        },
+        component: () => import('@/viewDevelop/Echarts/TrafficStatistics')
+      },
+      {
+        path: 'vehicle_accident',
+        name: 'vehicle_accident',
+        meta: {
+          icon: 'ios-cog',
+          title: '事故管理'
+        },
+        component: () => import('@/viewDevelop/Echarts/VehicleAccident')
+      }
+    ]
+  },
+  {
+    path: '/financial_settlement',
+    name: 'financial_settlement',
+    meta: {
+      icon: 'ios-cog',
+      title: '财务结算'
+    },
+    component: Main,
+    children: [
+      {
+        path: 'accounting_formula',
+        name: 'accounting_formula',
+        meta: {
+          icon: 'ios-cog',
+          title: '核算公式',
+        },
+        component: () => import('@/viewDevelop/FinancialSettlement/AccountingFormula')
+      },
+      {
+        path: 'payment_management',
+        name: 'payment_management',
+        meta: {
+          icon: 'ios-cog',
+          title: '应付单据',
+        },
+        component: () => import('@/viewDevelop/FinancialSettlement/PaymentManagement')
+      },
+      {
+        path: 'receivables_management',
+        name: 'receivables_management',
+        meta: {
+          icon: 'ios-cog',
+          title: '应收单据',
+        },
+        component: () => import('@/viewDevelop/FinancialSettlement/ReceivablesManagement')
+      },
+      {
+        path: 'reimbursement',
+        name: 'reimbursement',
+        meta: {
+          icon: 'ios-cog',
+          title: '报销记账',
+        },
+        component: () => import('@/viewDevelop/FinancialSettlement/Reimbursement')
+      }
+    ]
   },
 // 作为Main组件的子页面展示但是不在左侧菜单显示的路由写在otherRouter里
   // { path: 'historyTarck', title: '历史轨迹', name: 'historyTarck_new', component: () => import('@/viewDevelop/historyTarck') },

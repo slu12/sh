@@ -36,17 +36,17 @@
                         align: 'center'
                     },
                     {
-                        title: '用车人',
+                        title: '用船人',
                         key: 'ck',
                         align: 'center'
                     },
                     {
-                        title: '用车时间',
+                        title: '用船时间',
                         key: 'yysj',
                         align: 'center'
                     },
                     {
-                        title: '候车地点',
+                        title: '候船地点',
                         key: 'hcdz',
                         align: 'center'
                     },

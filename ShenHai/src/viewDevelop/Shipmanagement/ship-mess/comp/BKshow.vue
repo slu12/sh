@@ -7,7 +7,7 @@
                 :mask-closable="false"
                 title="电子围栏">
             <div :style="bodyH">
-                <bkshow :carNumber="carID"></bkshow>
+                <bkshow :wlid="carID"></bkshow>
             </div>
             <div slot='footer'>
                 <Button type="default" @click="colse">关闭</Button>

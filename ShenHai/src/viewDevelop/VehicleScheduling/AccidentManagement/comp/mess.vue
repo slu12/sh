@@ -19,7 +19,7 @@
 							</FormItem>
 						</Col>
 						<Col span="12">
-							<FormItem prop="sj" label='司机'>
+							<FormItem prop="sj" label='驾驶员'>
 								<Select filterable clearable  v-model="formItem.sj">
 									<Option v-for="(item) in drivers" :value="item.sfzhm" :key="item.sfzhm">{{item.xm}}</Option>
 								</Select>
@@ -132,14 +132,14 @@
 			removeFile(url){
                 log('图片',url)
 				log('原图片',this.formItem.filePaths)
-				
+
                 let aindex = this.formItem.filePaths.indexOf(url)//开始的位置
                 let urlLength = url.length//传递的长度
                 let filePath = this.formItem.filePaths//原数据拼接
                 let filelength = filePath.length//原数据长度
-                
+
                 this.formItem.filePaths = filePath.slice(0,aindex)+filePath.slice(aindex+urlLength,filelength)
-                
+
 				log('修改数据',this.formItem.filePaths)
 			},
             save(){

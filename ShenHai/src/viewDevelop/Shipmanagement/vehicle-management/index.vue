@@ -137,7 +137,7 @@
             editCar(car) {
                 this.messType = false
                 this.mess = car
-                //由于数据传递丢失 司机ID 司机 姓名 单独传递
+                //由于数据传递丢失 驾驶员ID 驾驶员 姓名 单独传递
                 this.derMes.sjId = car.sjId
                 this.derMes.sjxm = car.sjxm
                 this.compName = newmes

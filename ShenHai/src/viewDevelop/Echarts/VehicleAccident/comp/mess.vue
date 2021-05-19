@@ -147,8 +147,8 @@
                 this.formItem.filePaths += path+",";
 			},
 			removeFile(url){
-                log('图片',url)
-				log('原图片',this.formItem.filePaths)
+                console.log('图片',url)
+				console.log('原图片',this.formItem.filePaths)
 
                 let aindex = this.formItem.filePaths.indexOf(url)//开始的位置
                 let urlLength = url.length//传递的长度
@@ -157,7 +157,7 @@
 
                 this.formItem.filePaths = filePath.slice(0,aindex)+filePath.slice(aindex+urlLength,filelength)
 
-				log('修改数据',this.formItem.filePaths)
+				console.log('修改数据',this.formItem.filePaths)
 			},
             save(){
                 var v = this

@@ -94,8 +94,8 @@
 				this.map = new BMap.Map("allmap"); // 创建Map实例
 				let jd = this.gpsList[0].bdjd;
 				let wd = this.gpsList[0].bdwd;
-                log('jd', jd)
-                log('wd', wd)
+                console.log('jd', jd)
+                console.log('wd', wd)
 				// this.map.centerAndZoom(new BMap.Point(this.gpsList[0].bdwd, this.gpsList[0].bdjd), this.zoom); // 初始化地图,设置中心点坐标和地图级别
 				this.map.centerAndZoom(new BMap.Point(jd, wd), this.zoom); // 初始化地图,设置中心点坐标和地图级别
 				// this.map.centerAndZoom(new BMap.Point(this.mapcenter.lng, this.mapcenter.lat), this.zoom); // 初始化地图,设置中心点坐标和地图级别

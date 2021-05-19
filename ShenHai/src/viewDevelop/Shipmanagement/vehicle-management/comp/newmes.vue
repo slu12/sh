@@ -36,7 +36,7 @@
                                           </FormItem>
                                     </Col>
                                     <Col span="12">
-                                          <FormItem prop="sjxm" label='司机：'>
+                                          <FormItem prop="sjxm" label='驾驶员：'>
                                                 <Select filterable clearable v-model="addmess.sjId">
                                                       <Option v-for="(item) in drivers" :value="item.sfzhm"
                                                               :key="item.sfzhm">{{item.xm}}

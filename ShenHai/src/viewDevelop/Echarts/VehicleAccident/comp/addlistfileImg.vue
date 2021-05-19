@@ -62,7 +62,7 @@
 			}
 		},
         created(){
-        	log(this.urlList)
+        	console.log(this.urlList)
         	this.dataList()
         },
         methods: {
@@ -79,7 +79,7 @@
             handleRemove (file) {
                 const fileList = this.$refs.upload.fileList;
                 this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
-                log('移出文件',file)
+                console.log('移出文件',file)
 //              this.formItem.filePaths.replace(url+',','')
                 this.$emit('removeFile',file.url.replace(this.apis.STATIC_PATH,'')+',')
             },

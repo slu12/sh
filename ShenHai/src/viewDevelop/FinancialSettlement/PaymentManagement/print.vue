@@ -28,7 +28,7 @@
 						<th width="40">用船人员</th>
 						<th width="40">出发地</th>
 						<th width="40">目的地</th>
-						<th width="40">司机</th>
+						<th width="40">驾驶员</th>
 						<th width="40">船型</th>
 						<th width="40">出船时间</th>
 						<th width="40">里程</th>

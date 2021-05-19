@@ -134,9 +134,9 @@
                 this.formItem.filePaths += path+",";
 			},
 			selectC(){
-				log(this.formItem.filePaths)
+				console.log(this.formItem.filePaths)
 				this.formItem.filePaths =''
-				log(this.formItem.filePaths)
+				console.log(this.formItem.filePaths)
 			},
             save(name){
                 var v = this

@@ -106,7 +106,7 @@ export default {
             ghostClass: 'placeholder-style',
             fallbackClass: 'iview-admin-cloned-item',
             onRemove (event) {
-            	log('数据移出',event)
+            	console.log('数据移出',event)
 //              vm.doArray.splice(event.newIndex, 0, vm.todoArray[event.item.getAttribute('data-index')]);
 //          	vm.doArray.splice(event.newIndex, 0, vm.todoArray[]
             }
@@ -121,21 +121,21 @@ export default {
             filter: '.iview-admin-draggable-delete',
             animation: 120,
             fallbackClass: 'iview-admin-cloned-item',
-            
+
             setData: function (/** DataTransfer */dataTransfer, /** HTMLElement*/dragEl) {
-				log('1')
+				console.log('1')
             },
-		
+
 			// Element is chosen
 			onChoose: function (/**Event*/evt) {
-				log('2',evt)
+				console.log('2',evt)
 			},
-		
+
 			// Element dragging started
 			onStart: function (/**Event*/evt) {
-				log('3')
+				console.log('3')
 			},
-		
+
 //			onEnd: function (/**Event*/evt) {
 //				var itemEl = evt.item;  // dragged HTMLElement
 //				evt.to;    // target list
@@ -143,34 +143,34 @@ export default {
 //				evt.oldIndex;  // element's old index within old parent
 //				evt.newIndex;  // element's new index within new parent
 //			},
-		
+
 			// Element is dropped into the list from another list
 			onAdd: function (/**Event*/evt) {
 				// same properties as onEnd
-				log('4',evt)
-				
+				console.log('4',evt)
+
 			},
-		
+
 			// Changed sorting within list
 			onUpdate: function (/**Event*/evt) {
 				// same properties as onEnd
-				log('5')
+				console.log('5')
 			},
-		
+
 			// Called by any change to the list (add / update / remove)
 			onSort: function (/**Event*/evt) {
 				// same properties as onEnd
 //				evt.bubbles = false
 //				var ad = evt.item.getAttribute('data-index')
-//				var ad = 
+//				var ad =
 				evt.item.innerHTML = evt.item.innerText+
 				'<button type="button" onclick=onRemove class="ivu-btn ivu-btn-error ivu-btn-circle ivu-btn-small" style=""><!----> <i class="ivu-icon ivu-icon-close"></i> <span>1</span></button>'
 //				'<button type="button" class="ivu-btn ivu-btn-primary ivu-btn-circle ivu-btn-icon-only"><!----> <i class="ivu-icon ivu-icon-ios-search"></i> <!----></button>'+
 //				'<button type="button" class="ivu-btn ivu-btn-error ivu-btn-circle ivu-btn-icon-only"><!----> <i class="ivu-icon ivu-icon-close"></i> <!----></button>'
 //				log('6',ad)
-				log('6',evt)
+				console.log('6',evt)
 			},
-		
+
 			onFilter: function (/**Event*/evt) {
 				var itemEl = evt.item;  // HTMLElement receiving the `mousedown|tapstart` event.
 			},

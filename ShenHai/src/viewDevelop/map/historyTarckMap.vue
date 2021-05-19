@@ -204,7 +204,7 @@
                 this.map.addOverlay(polyline);          //增加折线
 
 				// 增加起点
-                log((v.stationList[0].bdjd, v.stationList[0].bdwd));
+                console.log((v.stationList[0].bdjd, v.stationList[0].bdwd));
                 var pt1 = new BMap.Point(v.stationList[0].bdjd, v.stationList[0].bdwd);
                 var myIcon1 = new BMap.Icon("http://119.23.242.234:9092/icon/map_line_begin.png", new BMap.Size(37,62), {anchor: new BMap.Size(19,62),});
                 var marker1 = new BMap.Marker(pt1,{icon:myIcon1});  // 创建标注
@@ -335,9 +335,9 @@
 						 //给chart补充完数据后，再开启该方法
 						 this.movingChartOptions.animation = false;
 						 //更新chart移动轨迹
-                        log('index');
-                        log(this.playAndStopBtnGroup.playIndex);
-                        log(this.speedList[this.playAndStopBtnGroup.playIndex][0]);
+                        console.log('index');
+                        console.log(this.playAndStopBtnGroup.playIndex);
+                        console.log(this.speedList[this.playAndStopBtnGroup.playIndex][0]);
                         this.movingChartOptions.xAxis.axisPointer.value = this.speedList[this.playAndStopBtnGroup.playIndex][0];
 						 //重置chart属性来实现自动移动
 						 this.movingChart.setOption(this.movingChartOptions);

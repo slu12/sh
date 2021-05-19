@@ -143,7 +143,7 @@
                           tit:"DESTINATION",
                         key: 'mdd'
                     }, {
-                        title: '司机',
+                        title: '驾驶员',
                             tit:"DRIVER",
                         key: 'sjxm'
                     }, {
@@ -211,7 +211,7 @@
                         title: '目的地',
                         key: 'mdd'
                     }, {
-                        title: '司机',
+                        title: '驾驶员',
                         key: 'sjxm'
                     }, {
                         title: '船型',

@@ -119,7 +119,7 @@
             </div>
             <div v-show="horizontal=='3'" style="overflow: hidden;text-align: center;" class="topmar">
                   <div v-if="detail.sjqrsj == ''">
-                        <h2>司机未确认行程结束</h2>
+                        <h2>驾驶员未确认行程结束</h2>
                   </div>
                   <div v-else>
                         <h2 v-if="simpleRoute == null">暂无轨迹信息</h2>
@@ -212,9 +212,9 @@
                     case '13':
                         return '已派单';
                     case '20':
-                        return '司机已确认';
+                        return '驾驶员已确认';
                     case '21':
-                        return '司机完成行程';
+                        return '驾驶员完成行程';
                     case '30':
                         return '队长确认';
                 }

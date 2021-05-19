@@ -199,7 +199,7 @@
         		var v = this
         		v.SpinShow = true;
         		this.$http.get(this.apis.DAILY.QUERY,{params:v.param}).then((res) =>{
-					log('数据',res)
+					console.log('数据',res)
 					v.tableData = res.page.list
                     v.pageTotal = res.page.total;
 					v.SpinShow = false;

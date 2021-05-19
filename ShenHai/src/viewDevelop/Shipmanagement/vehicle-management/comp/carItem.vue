@@ -37,11 +37,11 @@
                         </Select>
                     </Col>
                     <Col span="4" offset="4">
-                        <Tooltip content="绑定司机" v-if="!bindDriverFlag">
+                        <Tooltip content="绑定驾驶员" v-if="!bindDriverFlag">
                             <Button type="text" icon="md-code-working" style="color:#2db7f5;font-size:24px;margin-top: -16px;" ghost @click="chooseDriver"></Button>
                         </Tooltip>
                         <div v-else-if="bindDriverFlag">
-                            <Tooltip content="绑定司机">
+                            <Tooltip content="绑定驾驶员">
                                 <Button type="success" shape='circle' size="small" icon="md-checkmark" @click="bindDriver"></Button>
                             </Tooltip>
                             <Tooltip content="取消绑定">

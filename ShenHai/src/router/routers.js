@@ -337,24 +337,6 @@ export default [
         component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/ToExamine')
       },
       {
-        path: 'dz_confirm',
-        name: 'dz_confirm',
-        meta: {
-          icon: 'ios-cog',
-          title: '队长审核'
-        },
-        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/dz_Confirm')
-      },
-      {
-        path: 'confirm',
-        name: 'confirm',
-        meta: {
-          icon: 'ios-cog',
-          title: '订单确认'
-        },
-        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Confirm')
-      },
-      {
         path: 'assignment',
         name: 'assignment',
         meta: {
@@ -371,6 +353,24 @@ export default [
           title: '订单分派(大船)'
         },
         component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Assignment_max')
+      },
+      {
+        path: 'confirm',
+        name: 'confirm',
+        meta: {
+          icon: 'ios-cog',
+          title: '订单确认'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/Confirm')
+      },
+      {
+        path: 'dz_confirm',
+        name: 'dz_confirm',
+        meta: {
+          icon: 'ios-cog',
+          title: '队长审核'
+        },
+        component: () => import('@/viewDevelop/VehicleScheduling/OrderManagement/dz_Confirm')
       },
       {
         path: 'consult',

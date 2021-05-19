@@ -276,15 +276,15 @@ public class DdServiceImpl extends BaseServiceImpl<ClDd, String> implements DdSe
 		// 验证一个司机，只能绑定一个车辆，如果一个司机没有绑定或者绑定数超过的话，就不显示。
 		// 1、排班表中该司机ID没有排班的，2、司机要与车辆有关联绑定
 		String cllx = entity.getZjcx();
-		RuntimeCheck.ifTrue(StringUtils.isBlank(cllx), "请填写车辆类型");
-		// 车辆类型 车辆类型 10、小车 20、大车 30、校巴
-		List<String> li = new ArrayList<String>();
-		if (cllx.indexOf("2030")>-1) {
-			li.add("20");
-			li.add("30");
-		} else {
-			li.add(cllx);
-		}
+//		RuntimeCheck.ifTrue(StringUtils.isBlank(cllx), "请填写车辆类型");
+//		// 车辆类型 车辆类型 10、小车 20、大车 30、校巴
+		List<String> li = null;
+//		if (cllx.indexOf("2030")>-1) {
+//			li.add("20");
+//			li.add("30");
+//		} else {
+//			li.add(cllx);
+//		}
 		String zkl = StringUtils.trim(entity.getZkl());
 		zkl = StringUtils.isEmpty(zkl) ? null : zkl;
 		List<ClJsyModel> list = clJsyMapper.getDispatchDriver(entity.getXm(), li, zkl);
@@ -304,7 +304,7 @@ public class DdServiceImpl extends BaseServiceImpl<ClDd, String> implements DdSe
 			list = new ArrayList<ClJsyModel>();
 		}
 		//如果需要查外部车，就需要转40接口
-		if(cllx.indexOf("40")>-1){
+		if(StringUtils.isNotBlank(cllx) && cllx.indexOf("40")>-1){
 			SimpleCondition condition = new SimpleCondition(ClLsc.class);
 			condition.eq(ClLsc.InnerColumn.zt, "00");
 			List<ClLsc> lscList = clLscMapper.selectByExample(condition);
@@ -405,15 +405,15 @@ public class DdServiceImpl extends BaseServiceImpl<ClDd, String> implements DdSe
 			Cb clCl = cl.get(0);
 			RuntimeCheck.ifNull(clCl, "该司机未关联车辆，不能进行派单操作");
 
-			Short zkl = clCl.getZkl();//
-			RuntimeCheck.ifNull(zkl, "，车辆" + clCl.getCph() + "载客量为空，不能进行派单操作");
+//			Short zkl = clCl.getZkl();//
+//			RuntimeCheck.ifNull(zkl, "，车辆" + clCl.getCph() + "载客量为空，不能进行派单操作");
 			Short zws = clDd.getZws();
 			RuntimeCheck.ifNull(zws, "该订单座位数为空，不能进行派单操作");
 
-			RuntimeCheck.ifTrue(zws > zkl, "该车的载客量为:" + zkl + " 订单乘客人数:" + zws + ",不能进行派单操作");
+//			RuntimeCheck.ifTrue(zws > zkl, "该车的载客量为:" + zkl + " 订单乘客人数:" + zws + ",不能进行派单操作");
 
-			ClCd clcd = clCdMapper.selectByPrimaryKey(clCl.getCdbh());
-			RuntimeCheck.ifNull(clcd, "未找到该车辆所关联的车队记录");
+//			ClCd clcd = clCdMapper.selectByPrimaryKey(clCl.getCdbh());
+//			RuntimeCheck.ifNull(clcd, "未找到该车辆所关联的车队记录");
 
 			// 3-4、对要修改的字段进行给值
 			newClDd.setSjSx("10");// 司机属性 内部司机、外部司机
@@ -422,8 +422,8 @@ public class DdServiceImpl extends BaseServiceImpl<ClDd, String> implements DdSe
 			newClDd.setClId(clCl.getClId());// 车辆ID
 			newClDd.setCph(clCl.getCph());// 车牌号
 			// newClDd.setZws((short) 0);//座位数
-			newClDd.setDzbh(clcd.getDzbh());// 队长编号
-			newClDd.setCdbh(clcd.getCdbh());// 车队编号
+//			newClDd.setDzbh(clcd.getDzbh());// 队长编号
+//			newClDd.setCdbh(clcd.getCdbh());// 车队编号
 			newClDd.setZdbm(clCl.getZdbh());// 终端编号
 			sjId = jsy.getSjh();//
 

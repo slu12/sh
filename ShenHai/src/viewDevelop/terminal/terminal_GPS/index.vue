@@ -364,7 +364,7 @@
                     if (res.code === 200) {
                         this.tableData = res.page.list;
                         this.pageTotal = res.page.total;
-                        log('数据结构', this.tableData)
+                        console.log('数据结构', this.tableData)
                     }
                 })
             },

@@ -33,7 +33,7 @@
 	    <!--<Modal title="View Image" v-model="visible">
 	        <img :src="'https://o5wwk8baw.qnssl.com/' + imgName + '/large'" v-if="visible" style="width: 100%">
 	    </Modal>-->
-		
+
 	</div>
 </template>
 <script>
@@ -75,7 +75,7 @@
             },
             handleSuccess (res, file,fileList) {
                 this.$emit('addImg',res.message);
-                log(res);
+                console.log(res);
                 file.url = this.apis.STATIC_PATH + res.message;
             },
             handleFormatError (file) {
@@ -101,7 +101,7 @@
             }
         },
         mounted () {
-        	log('fileList',this.$refs.upload.fileList)
+        	console.log('fileList',this.$refs.upload.fileList)
             this.uploadList = this.$refs.upload.fileList;
         }
     }

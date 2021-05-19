@@ -131,7 +131,7 @@
 						tit:"DESTINATION",
                         key: 'mdd'
                     },{
-                        title: '司机',
+                        title: '驾驶员',
 						tit:"DRIVER",
                         key: 'sjxm'
                     },{
@@ -202,7 +202,7 @@
 						tit:"DESTINATION",
 						key: 'mdd'
 					},{
-						title: '司机',
+						title: '驾驶员',
 						tit:"DRIVER",
 						key: 'sjxm'
 					},{

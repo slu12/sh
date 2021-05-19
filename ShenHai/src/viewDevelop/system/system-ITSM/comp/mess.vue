@@ -106,7 +106,7 @@
 						delete this.addmess.cjsj
 						delete this.addmess.xgsj
 						this.$http.post(this.apis.ITMS.CHANGE,this.addmess).then((res) =>{
-							log(this.$t("FUNCTION_DATA"),res)
+							console.log(this.$t("FUNCTION_DATA"),res)
 							if(res.code===200){
 								v.$Message.success(this.$t("CREATE_SUCCESS"));
 							}else{

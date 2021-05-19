@@ -19,7 +19,7 @@
 							</FormItem>
 						</Col>
 						<Col span="12">
-							<FormItem prop="sj" label='司机'>
+							<FormItem prop="sj" label='驾驶员'>
 								<Select filterable clearable  v-model="formItem.sj">
 									<Option v-for="(item) in drivers" :value="item.sfzhm" :key="item.sfzhm">{{item.xm}}</Option>
 								</Select>

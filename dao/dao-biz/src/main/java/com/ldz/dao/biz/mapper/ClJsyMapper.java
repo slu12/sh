@@ -15,7 +15,7 @@ public interface ClJsyMapper extends Mapper<ClJsy> {
     @Select("<script> SELECT J.ZT,J.SFZHM,J.XM,J.CDBH,J.SJH,L.CX,L.CPH,L.ZKL " +
             ",(SELECT COUNT(1) FROM CL_DD D WHERE DATE_FORMAT(D.YYSJ,'%Y-%m-%d')=DATE_FORMAT(SYSDATE(),'%Y-%m-%d') AND J.SFZHM=D.SJ AND D.DDZT='20') ENDORDERCOUNT " +
             ",(SELECT COUNT(1) FROM CL_DD D WHERE DATE_FORMAT(D.YYSJ,'%Y-%m-%d')=DATE_FORMAT(SYSDATE(),'%Y-%m-%d') AND J.SFZHM=D.SJ AND D.DDZT='13') STARTORDERCOUNT " +
-            "   FROM CL_JSY J,CL_CL L WHERE J.SFZHM=L.SJ_ID AND L.ZT='00'" +
+            "   FROM CL_JSY J,CL_CL L WHERE J.SFZHM=L.SJ_ID " +
             " <if test='zkl != null'> " +
             "  AND L.ZKL >= #{zkl}" +
             " </if>  " +

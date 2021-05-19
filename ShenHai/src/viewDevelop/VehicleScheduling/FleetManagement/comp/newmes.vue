@@ -61,12 +61,12 @@
                         <Card dis-hover>
                             <p slot="title">
                                 <Icon type="ios-people" size="large"/>
-                                司机
+                                驾驶员
                             </p>
                             <div>
                                 <Tag color="success" v-for="item in selectedDriver" :key="item.sfzhm" :name="item.xm">{{ item.xm}}</Tag>
                                 <Poptip placement="right" width="400" @on-popper-show="show">
-                                    <Button icon="ios-add" type="dashed" size="small">添加司机</Button>
+                                    <Button icon="ios-add" type="dashed" size="small">添加驾驶员</Button>
                                     <div class="api" slot="content">
                                         <choose-dvr v-if="showDriverPop" @driverChange="driverChange" :selectedData="selectedDriver"></choose-dvr>
                                     </div>

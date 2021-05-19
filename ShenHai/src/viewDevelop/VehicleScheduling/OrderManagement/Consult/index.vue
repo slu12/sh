@@ -20,7 +20,7 @@
                                             placeholder="请选择用船单位" filterable clearable></Cascader>
                                     <Input v-model="param.ckLike" type="text" placeholder="输入乘客姓名查询"
                                            style="width: 220px"></Input>
-                                    <Input v-model="param.sjxmLike" type="text" placeholder="输入司机姓名查询"
+                                    <Input v-model="param.sjxmLike" type="text" placeholder="输入驾驶员姓名查询"
                                            style="width: 220px"></Input>
                               </div>
                               <div class="butevent">
@@ -116,12 +116,12 @@
                         key: 'cklxdh'
                     },
                     {
-                        title: '出船司机',
+                        title: '出船驾驶员',
                         align:'center',
                         key: 'sjxm'
                     },
                     {
-                        title: '司机电话',
+                        title: '驾驶员电话',
                         align:'center',
                         key: 'DriverPhone'
                     },

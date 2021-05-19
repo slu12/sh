@@ -35,7 +35,7 @@
 			附件：
 		</div>
 		<div v-if="row.wjlx=='00'">
-			<div class="demo-upload-list" 
+			<div class="demo-upload-list"
 				v-for="(item,index) in uploadList"
 				v-if="(index+1)!=uploadList.length">
 				<div class="demo-upload-list-box">
@@ -60,8 +60,8 @@
 			</Modal>
 		</div>
 		<div v-else-if="row.wjlx=='01'">
-			<div class="demo-upload-list" 
-				v-for="(item,index) in uploadList" 
+			<div class="demo-upload-list"
+				v-for="(item,index) in uploadList"
 				v-if="(index+1)!=uploadList.length">
 				<div>
 					<video :src="staticPath+imgUrl" controls="controls" height="100%"></video>
@@ -106,7 +106,7 @@
 			}
 		},
 		created(){
-			log('tupian',this.row.filePaths)
+			console.log('tupian',this.row.filePaths)
             if (this.row.filePaths){
                 let paths = [];
                 this.uploadList = [];
@@ -127,7 +127,7 @@
 				if(this.Ix==0){
 					this.Ix = this.uploadList.length-2
 					this.imgUrl = this.uploadList[this.Ix].url
-					return 
+					return
 				}
 				this.Ix --
 				this.imgUrl = this.uploadList[this.Ix].url
@@ -136,7 +136,7 @@
 				if(this.Ix==this.uploadList.length-2){
 					this.Ix = 0
 					this.imgUrl = this.uploadList[this.Ix].url
-					return 
+					return
 				}
 				this.Ix ++
 				this.imgUrl = this.uploadList[this.Ix].url

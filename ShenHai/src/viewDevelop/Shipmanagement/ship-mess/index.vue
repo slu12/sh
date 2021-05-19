@@ -19,7 +19,7 @@
                      @on-keyup.enter="findMessList()"></Input>
               <Input v-model="param.zdbhLike" placeholder='终端号' style="width: 200px"
                      @on-keyup.enter="findMessList()"></Input>
-              <Input v-model="param.sjxmLike" placeholder='司机姓名' style="width: 200px"
+              <Input v-model="param.sjxmLike" placeholder='驾驶员姓名' style="width: 200px"
                      @on-keyup.enter="findMessList()"></Input>
             </div>
             <div class="butevent">
@@ -169,7 +169,7 @@
                         click: () => {
                           this.messType = false
                           this.mess = params.row
-                          //由于数据传递丢失 司机ID 司机 姓名 单独传递
+                          //由于数据传递丢失 驾驶员ID 驾驶员 姓名 单独传递
                           this.derMes.sjId = params.row.sjId
                           this.derMes.sjxm = params.row.sjxm
                           this.compName = newmes
@@ -312,7 +312,7 @@
       editCar(car) {
         this.messType = false
         this.mess = car
-        //由于数据传递丢失 司机ID 司机 姓名 单独传递
+        //由于数据传递丢失 驾驶员ID 驾驶员 姓名 单独传递
         this.derMes.sjId = car.sjId
         this.derMes.sjxm = car.sjxm
         this.compName = newmes

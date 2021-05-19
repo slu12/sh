@@ -157,8 +157,8 @@
 							</Poptip>
 						</div>
 						<div>
-							<span class="_16pt">司机：</span>
-							<span class="_16pt">{{item.sjxm ? item.sjxm : '未绑定司机'}}</span>
+							<span class="_16pt">驾驶员：</span>
+							<span class="_16pt">{{item.sjxm ? item.sjxm : '未绑定驾驶员'}}</span>
 						</div>
 						<div style="margin-top: 18px">
 							<span  class="_14pt" style="color: #919191">{{item.text}}</span><br>

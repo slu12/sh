@@ -17,7 +17,7 @@
 						<div class="body-r-1 inputSty">
 							<Cascader style="width:300px;float: right;margin-top: 7px;margin-left: 4px;padding-right: 16px;" @on-change="change" change-on-select :data="orgTree"  placeholder="请选择用船单位"  filterable clearable  ></Cascader>
 							<Input v-model="param.ckLike" type="text" placeholder="输入乘客姓名查询" style="width: 220px"></Input>
-							<Input v-model="param.sjxmLike" type="text" placeholder="输入司机姓名查询" style="width: 220px"></Input>						</div>
+							<Input v-model="param.sjxmLike" type="text" placeholder="输入驾驶员姓名查询" style="width: 220px"></Input>						</div>
 						<div class="butevent">
 							<Button type="primary" @click="findMessList()">
 								<Icon type="md-search"></Icon>
@@ -232,8 +232,8 @@
         		window.print()
         	},
             listEve(num,event){
-        		log('event',event)
-        		log('num',num)
+        		console.log('event',event)
+        		console.log('num',num)
         		var v = this
 				swal({
 				  title: "审核通过?",
